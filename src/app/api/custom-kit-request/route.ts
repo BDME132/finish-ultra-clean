@@ -5,47 +5,14 @@ import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
 import { CustomKitFormData } from "@/types/custom-kit-request";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "hello@finishultra.com";
-
-const VALID_DISTANCES = ["50K", "100K", "100M", "other"];
-const VALID_EXPERIENCE = ["first", "few", "experienced"];
-const VALID_BUDGETS = ["under-50", "50-100", "100-150", "150-plus"];
-const VALID_DIETARY = ["vegan", "vegetarian", "gluten-free", "dairy-free", "none"];
-const VALID_FLAVORS = ["sweet", "salty", "neutral", "fruity"];
-const MAX_TEXT_LENGTH = 1000;
-const MAX_SHORT_FIELD = 200;
-
-// Rate limiting: Map of IP -> { count, resetTime }
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX = 5; // 5 requests per window
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function truncate(str: string, max: number): string {
-  return str.length > max ? str.slice(0, max) : str;
-}
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
-    return false;
+let _resend: Resend | null = null;
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
   }
-
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
+  return _resend;
 }
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "hello@finishultra.com";
 
 const VALID_DISTANCES = ["50K", "100K", "100M", "other"];
 const VALID_EXPERIENCE = ["first", "few", "experienced"];
@@ -231,7 +198,7 @@ export async function POST(request: Request) {
       <p><strong>Additional Notes:</strong> ${escapeHtml(data.additionalNotes || "None")}</p>
     `;
 
-    const { error: emailError } = await resend.emails.send({
+    const { error: emailError } = await getResend().emails.send({
       from: "FinishUltra <noreply@finishultra.com>",
       to: ADMIN_EMAIL,
       subject: `New Custom Kit Request from ${escapeHtml(data.name)}`,
