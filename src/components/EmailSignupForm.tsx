@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EmailSignupResponse } from "@/types/email-signup";
+
+type Status = "idle" | "loading" | "countdown" | "success" | "error";
 
 export default function EmailSignupForm() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [countdownNumber, setCountdownNumber] = useState(3);
+
+  useEffect(() => {
+    if (status === "countdown") {
+      if (countdownNumber > 0) {
+        const timer = setTimeout(() => {
+          setCountdownNumber(countdownNumber - 1);
+        }, 400);
+        return () => clearTimeout(timer);
+      } else {
+        const timer = setTimeout(() => {
+          setStatus("success");
+        }, 400);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [status, countdownNumber]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,7 +54,8 @@ export default function EmailSignupForm() {
         return;
       }
 
-      setStatus("success");
+      setCountdownNumber(3);
+      setStatus("countdown");
       setEmail("");
     } catch {
       setStatus("error");
@@ -43,11 +63,27 @@ export default function EmailSignupForm() {
     }
   }
 
+  if (status === "countdown") {
+    return (
+      <div className="text-center h-24 flex items-center justify-center">
+        <span
+          key={countdownNumber}
+          className="text-6xl font-bold text-primary animate-bounce-in"
+        >
+          {countdownNumber > 0 ? countdownNumber : ""}
+        </span>
+      </div>
+    );
+  }
+
   if (status === "success") {
     return (
-      <div className="text-center">
-        <p className="text-lg text-green-600 font-medium">
-          You're on the list! We'll be in touch soon.
+      <div className="text-center h-24 flex flex-col items-center justify-center animate-scale-in">
+        <p className="text-2xl font-bold text-primary mb-1">
+          You're in!
+        </p>
+        <p className="text-gray-600">
+          We'll be in touch soon.
         </p>
       </div>
     );
@@ -55,25 +91,49 @@ export default function EmailSignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-md">
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col items-center gap-3">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
-          className="flex-1 px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
           disabled={status === "loading"}
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="px-6 py-3 text-lg font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-8 py-3 text-lg font-medium text-white bg-primary rounded-lg hover:bg-primary-dark hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 animate-pulse-glow"
         >
-          {status === "loading" ? "Joining..." : "Join Waitlist"}
+          {status === "loading" ? (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Joining...
+            </span>
+          ) : (
+            "Sign Up"
+          )}
         </button>
       </div>
       {status === "error" && (
-        <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
+        <p className="mt-3 text-sm text-red-600 text-center animate-fade-in">
+          {errorMessage}
+        </p>
       )}
     </form>
   );
