@@ -10,7 +10,7 @@ export default function Header() {
     <header className="bg-white border-b border-gray-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="font-headline text-2xl font-bold text-primary">
+          <Link href="/home" className="font-headline text-2xl font-bold text-primary">
             FinishUltra
           </Link>
 

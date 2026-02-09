@@ -1,21 +1,17 @@
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import FeaturedProducts from "@/components/FeaturedProducts";
-import ValueProps from "@/components/ValueProps";
-import SecondaryCTA from "@/components/SecondaryCTA";
-import Footer from "@/components/Footer";
+import EmailSignupForm from "@/components/EmailSignupForm";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <>
-      <Header />
-      <main>
-        <Hero />
-        <FeaturedProducts />
-        <ValueProps />
-        <SecondaryCTA />
-      </main>
-      <Footer />
-    </>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-white">
+      <div className="text-center max-w-2xl">
+        <h1 className="font-headline text-4xl sm:text-5xl font-bold text-primary mb-4">
+          FinishUltra
+        </h1>
+        <p className="text-xl text-gray-600 mb-8">
+          Premium ultra running nutrition kits, curated for your next big race.
+        </p>
+        <EmailSignupForm />
+      </div>
+    </div>
   );
 }
