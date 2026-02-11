@@ -119,14 +119,16 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
     `;
 
     const { error: welcomeError } = await resend.emails.send({
-      from: "FinishUltra <noreply@finishultra.com>",
+      from: "FinishUltra <noreply@mail.finishultra.com>",
       to: email,
       subject: "Welcome to FinishUltra!",
       html: welcomeHtml,
     });
 
     if (welcomeError) {
-      console.error("Welcome email error:", welcomeError);
+      console.error("Welcome email error:", JSON.stringify(welcomeError, null, 2));
+    } else {
+      console.log("Welcome email sent successfully to:", email);
     }
 
     // Send notification email to admin
@@ -137,7 +139,7 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
     `;
 
     const { error: adminError } = await resend.emails.send({
-      from: "FinishUltra <noreply@finishultra.com>",
+      from: "FinishUltra <noreply@mail.finishultra.com>",
       to: ADMIN_EMAIL,
       subject: "New Email Signup",
       html: adminHtml,

@@ -72,7 +72,7 @@ export async function POST(
       const batch = subscribers.slice(i, i + BATCH_SIZE);
 
       const emailPromises = batch.map((subscriber) => ({
-        from: "FinishUltra <noreply@finishultra.com>",
+        from: "FinishUltra <noreply@mail.finishultra.com>",
         to: subscriber.email,
         subject: subject.trim(),
         html: emailBody.trim(),
