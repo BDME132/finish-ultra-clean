@@ -101,23 +101,50 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
       );
     }
 
-    // Send notification email
-    const emailHtml = `
+    const resend = getResend();
+
+    // Send welcome email to the subscriber
+    const welcomeHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #2563eb;">Welcome to FinishUltra!</h1>
+        <p>Thanks for signing up! You're now on the list to receive updates about our premium race nutrition kits.</p>
+        <p>We'll keep you posted on:</p>
+        <ul>
+          <li>New product launches</li>
+          <li>Exclusive deals and early access</li>
+          <li>Tips for race day nutrition</li>
+        </ul>
+        <p>Stay fueled,<br>The FinishUltra Team</p>
+      </div>
+    `;
+
+    const { error: welcomeError } = await resend.emails.send({
+      from: "FinishUltra <noreply@finishultra.com>",
+      to: email,
+      subject: "Welcome to FinishUltra!",
+      html: welcomeHtml,
+    });
+
+    if (welcomeError) {
+      console.error("Welcome email error:", welcomeError);
+    }
+
+    // Send notification email to admin
+    const adminHtml = `
       <h2>New Email Signup</h2>
       <p><strong>Email:</strong> ${escapeHtml(email)}</p>
       <p><strong>Time:</strong> ${new Date().toISOString()}</p>
     `;
 
-    const { error: emailError } = await getResend().emails.send({
+    const { error: adminError } = await resend.emails.send({
       from: "FinishUltra <noreply@finishultra.com>",
       to: ADMIN_EMAIL,
       subject: "New Email Signup",
-      html: emailHtml,
+      html: adminHtml,
     });
 
-    if (emailError) {
-      console.error("Resend error:", emailError);
-      // Don't fail the request if email fails - data is already saved
+    if (adminError) {
+      console.error("Admin notification error:", adminError);
     }
 
     return NextResponse.json({ success: true });

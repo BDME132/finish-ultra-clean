@@ -31,8 +31,13 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect /account route
-  if (request.nextUrl.pathname.startsWith('/account') && !user) {
+  // Protect /account and /admin routes
+  const protectedPaths = ['/account', '/admin'];
+  const isProtectedPath = protectedPaths.some(path =>
+    request.nextUrl.pathname.startsWith(path)
+  );
+
+  if (isProtectedPath && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
@@ -42,5 +47,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/account/:path*'],
+  matcher: ['/account/:path*', '/admin/:path*'],
 }
