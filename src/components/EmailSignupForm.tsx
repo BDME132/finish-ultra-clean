@@ -83,7 +83,7 @@ export default function EmailSignupForm() {
           You're in!
         </p>
         <p className="text-gray-600">
-          We'll be in touch soon.
+          Check your inbox for your first ultra running guide.
         </p>
       </div>
     );
