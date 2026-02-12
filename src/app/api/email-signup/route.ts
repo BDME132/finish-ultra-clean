@@ -107,14 +107,14 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
     const welcomeHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h1 style="color: #2563eb;">Welcome to FinishUltra!</h1>
-        <p>Thanks for signing up! You're now on the list to receive updates about our premium race nutrition kits.</p>
-        <p>We'll keep you posted on:</p>
+        <p>Thanks for signing up! You're now part of the FinishUltra community — weekly ultra running tips are on the way.</p>
+        <p>Here's what you'll get:</p>
         <ul>
-          <li>New product launches</li>
-          <li>Exclusive deals and early access</li>
-          <li>Tips for race day nutrition</li>
+          <li>Training plan updates and tips</li>
+          <li>Honest gear recommendations</li>
+          <li>Race day strategies for beginners</li>
         </ul>
-        <p>Stay fueled,<br>The FinishUltra Team</p>
+        <p>See you on the trails,<br>The FinishUltra Team</p>
       </div>
     `;
 
