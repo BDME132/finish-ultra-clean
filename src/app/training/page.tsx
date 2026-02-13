@@ -7,6 +7,7 @@ import { trainingPlans } from "@/lib/content/training-plans";
 export const metadata: Metadata = {
   title: "Training Plans | FinishUltra",
   description: "Free ultra marathon training plans for beginners. From base building to your first 50K, with race week prep included.",
+  alternates: { canonical: "/training" },
 };
 
 export default function TrainingPage() {

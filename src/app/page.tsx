@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import FeatureGrid from "@/components/FeatureGrid";
@@ -5,6 +6,10 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import BlogPostCard from "@/components/BlogPostCard";
 import Footer from "@/components/Footer";
 import { blogPosts } from "@/lib/content/blog-posts";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   const recentPosts = blogPosts.slice(0, 3);

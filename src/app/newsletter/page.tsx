@@ -6,6 +6,7 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 export const metadata: Metadata = {
   title: "Newsletter | FinishUltra",
   description: "Sign up for weekly ultra running tips. Training advice, gear recommendations, and beginner Q&A delivered to your inbox.",
+  alternates: { canonical: "/newsletter" },
 };
 
 export default function NewsletterPage() {

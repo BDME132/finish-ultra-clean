@@ -6,12 +6,27 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Base Building for Ultra | FinishUltra",
   description: "A 12-week base building program to prepare your body for ultra marathon training. Build aerobic fitness gradually.",
+  alternates: { canonical: "/training/base-building" },
 };
 
 export default function BaseBuildingPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
+      { "@type": "ListItem", position: 2, name: "Training", item: "https://finishultra.com/training" },
+      { "@type": "ListItem", position: 3, name: "Base Building", item: "https://finishultra.com/training/base-building" },
+    ],
+  };
+
   return (
     <>
       <Header />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -7,6 +7,7 @@ import { blogPosts } from "@/lib/content/blog-posts";
 export const metadata: Metadata = {
   title: "Blog | FinishUltra",
   description: "Guides, gear reviews, and race reports for beginner ultra runners. Practical advice from runners who are still learning.",
+  alternates: { canonical: "/blog" },
 };
 
 export default function BlogPage() {

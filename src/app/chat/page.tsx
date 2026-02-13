@@ -6,6 +6,7 @@ import ChatInterface from "@/components/ChatInterface";
 export const metadata: Metadata = {
   title: "AI Ultra Coach | FinishUltra",
   description: "Get personalized ultra running advice from our AI coach. Ask about training, gear, nutrition, and race day prep.",
+  alternates: { canonical: "/chat" },
 };
 
 export default function ChatPage() {

@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "About | FinishUltra",
   description: "We're two high school runners documenting our journey into ultra running. Built by beginners, for beginners.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

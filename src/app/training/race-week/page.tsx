@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Race Week Protocol | FinishUltra",
   description: "A day-by-day guide for the week before your ultra marathon. Taper, nutrition, gear prep, sleep, and mental preparation.",
+  alternates: { canonical: "/training/race-week" },
 };
 
 const days = [
@@ -46,9 +47,23 @@ const days = [
 ];
 
 export default function RaceWeekPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
+      { "@type": "ListItem", position: 2, name: "Training", item: "https://finishultra.com/training" },
+      { "@type": "ListItem", position: 3, name: "Race Week", item: "https://finishultra.com/training/race-week" },
+    ],
+  };
+
   return (
     <>
       <Header />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

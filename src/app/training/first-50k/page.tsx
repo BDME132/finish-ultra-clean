@@ -7,6 +7,7 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 export const metadata: Metadata = {
   title: "Your First 50K Training Plan | FinishUltra",
   description: "A free 16-week training plan to get you from half marathon fitness to your first 50K ultra marathon. Week-by-week breakdown included.",
+  alternates: { canonical: "/training/first-50k" },
 };
 
 const weeks = [
@@ -29,9 +30,23 @@ const weeks = [
 ];
 
 export default function First50kPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
+      { "@type": "ListItem", position: 2, name: "Training", item: "https://finishultra.com/training" },
+      { "@type": "ListItem", position: 3, name: "Your First 50K", item: "https://finishultra.com/training/first-50k" },
+    ],
+  };
+
   return (
     <>
       <Header />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

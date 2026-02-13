@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Gear | FinishUltra",
   description: "Honest gear recommendations for beginner ultra runners. Curated kits, shoe guides, pack reviews, and nutrition picks.",
+  alternates: { canonical: "/gear" },
 };
 
 const categories = [

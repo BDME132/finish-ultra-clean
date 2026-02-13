@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Start Here | FinishUltra",
   description: "New to ultra running? Start here. A step-by-step roadmap to get you from curious to crossing your first ultra finish line.",
+  alternates: { canonical: "/start-here" },
 };
 
 const steps = [

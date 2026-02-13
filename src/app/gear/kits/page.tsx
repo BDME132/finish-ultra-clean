@@ -8,12 +8,27 @@ import { getProductById } from "@/lib/content/products";
 export const metadata: Metadata = {
   title: "Gear Kits | FinishUltra",
   description: "Curated gear bundles for ultra runners. Everything you need for your first 50K, a budget starter kit, and a mountain 50-miler setup.",
+  alternates: { canonical: "/gear/kits" },
 };
 
 export default function GearKitsPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
+      { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
+      { "@type": "ListItem", position: 3, name: "Kits", item: "https://finishultra.com/gear/kits" },
+    ],
+  };
+
   return (
     <>
       <Header />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
