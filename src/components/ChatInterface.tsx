@@ -1,20 +1,7 @@
 "use client";
 
+import { useChat } from "@ai-sdk/react";
 import { useState, useRef, useEffect } from "react";
-
-interface Message {
-  id: number;
-  role: "user" | "assistant";
-  content: string;
-}
-
-const mockResponses = [
-  "Great question! For your first 50K, the most important thing is to build your long run gradually. Start by adding 1-2 miles per week to your longest run. You don't need to run the full 50K distance in training — getting to 20-22 miles is usually enough.\n\nThe Salomon ADV Skin 5 vest is a great starter pack for carrying water and nutrition. Want me to break down a week-by-week plan?",
-  "Nutrition is where most first-time ultra runners struggle. The simplest strategy: aim for 200-300 calories per hour after the first hour. Tailwind Endurance Fuel is beginner-friendly because it handles calories AND electrolytes in one drink.\n\nThe biggest mistake? Waiting too long to eat. Start fueling at mile 5, not mile 15!",
-  "For shoes, I'd recommend the Hoka Speedgoat 5 for trail or the Hoka Mach for road ultras. The key is cushioning and grip — your feet will thank you after 31 miles.\n\nMake sure to do at least 3-4 long runs in your race shoes before race day. Nothing new on race day is the #1 rule!",
-  "Don't worry about pace in your first ultra — seriously. The goal is to finish, not to hit a time. Most first-time 50K runners finish in 6-8 hours, and that's perfectly fine.\n\nWalk the uphills, run the flats and downhills, and eat at every aid station. That strategy alone will get most beginners to the finish line.",
-  "Race week is all about rest and preparation. Taper your mileage, eat well (but nothing crazy), and lay out all your gear the night before.\n\nMake a checklist: shoes, socks, vest, nutrition, headlamp (if there's any chance you'll be out after dark), body glide, and your race bib. Check the weather forecast and adjust layers accordingly.",
-];
 
 const suggestedPrompts = [
   "I want to run my first 50K",
@@ -24,47 +11,26 @@ const suggestedPrompts = [
 ];
 
 export default function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { messages, sendMessage, status } = useChat();
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const responseIndex = useRef(0);
+
+  const isLoading = status === "submitted" || status === "streaming";
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
-
-  function sendMessage(text: string) {
-    if (!text.trim() || isTyping) return;
-
-    const userMessage: Message = {
-      id: Date.now(),
-      role: "user",
-      content: text.trim(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setIsTyping(true);
-
-    setTimeout(() => {
-      const response = mockResponses[responseIndex.current % mockResponses.length];
-      responseIndex.current++;
-
-      const assistantMessage: Message = {
-        id: Date.now() + 1,
-        role: "assistant",
-        content: response,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-      setIsTyping(false);
-    }, 800 + Math.random() * 800);
-  }
+  }, [messages, isLoading]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    sendMessage(input);
+    if (!input.trim() || isLoading) return;
+    sendMessage({ text: input.trim() });
+    setInput("");
+  }
+
+  function sendSuggested(text: string) {
+    if (isLoading) return;
+    sendMessage({ text });
   }
 
   return (
@@ -85,7 +51,7 @@ export default function ChatInterface() {
               {suggestedPrompts.map((prompt) => (
                 <button
                   key={prompt}
-                  onClick={() => sendMessage(prompt)}
+                  onClick={() => sendSuggested(prompt)}
                   className="text-left text-sm px-4 py-3 bg-light border border-gray-200 rounded-lg hover:border-primary hover:bg-primary/5 transition-colors text-dark"
                 >
                   {prompt}
@@ -110,12 +76,14 @@ export default function ChatInterface() {
                   : "bg-light text-dark border border-gray-100 rounded-bl-md"
               }`}
             >
-              {message.content}
+              {message.parts.map((part, i) =>
+                part.type === "text" ? <span key={i}>{part.text}</span> : null
+              )}
             </div>
           </div>
         ))}
 
-        {isTyping && (
+        {isLoading && messages[messages.length - 1]?.role === "user" && (
           <div className="flex justify-start">
             <div className="bg-light text-dark border border-gray-100 rounded-2xl rounded-bl-md px-4 py-3">
               <div className="flex gap-1.5">
@@ -138,11 +106,11 @@ export default function ChatInterface() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about training, gear, nutrition..."
             className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
-            disabled={isTyping}
+            disabled={isLoading}
           />
           <button
             type="submit"
-            disabled={!input.trim() || isTyping}
+            disabled={!input.trim() || isLoading}
             className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
           >
             Send

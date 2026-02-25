@@ -8,7 +8,7 @@ export default function Hero() {
           Your First Ultra Starts Here
         </h1>
         <p className="text-lg sm:text-xl text-gray max-w-2xl mx-auto mb-10">
-          Free training plans, honest gear advice, and an AI coach who actually gets what it&apos;s like to be a beginner.
+          The all-purpose tool for beginner ultra runners.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
