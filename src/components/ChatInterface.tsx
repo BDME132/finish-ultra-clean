@@ -11,7 +11,7 @@ const suggestedPrompts = [
 ];
 
 export default function ChatInterface() {
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status, error } = useChat();
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -19,7 +19,7 @@ export default function ChatInterface() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+  }, [messages, isLoading, status]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -91,6 +91,32 @@ export default function ChatInterface() {
                 <span className="w-2 h-2 bg-gray/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
                 <span className="w-2 h-2 bg-gray/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
               </div>
+            </div>
+          </div>
+        )}
+
+        {status === "error" && (
+          <div className="flex justify-start">
+            <div className="max-w-[80%] rounded-2xl rounded-bl-md px-4 py-3 bg-red-50 border border-red-200 text-sm leading-relaxed">
+              <p className="text-red-700">Something went wrong. Please try again.</p>
+              {messages.filter((m) => m.role === "user").length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
+                    if (lastUserMessage) {
+                      const text = lastUserMessage.parts
+                        .filter((p): p is { type: "text"; text: string } => p.type === "text")
+                        .map((p) => p.text)
+                        .join("");
+                      if (text) sendMessage({ text });
+                    }
+                  }}
+                  className="mt-2 px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Retry
+                </button>
+              )}
             </div>
           </div>
         )}
