@@ -1,4 +1,4 @@
-import { streamText } from "ai";
+import { streamText, convertToModelMessages } from "ai";
 import { openai } from "@ai-sdk/openai";
 
 export async function POST(req: Request) {
@@ -15,7 +15,7 @@ Guidelines:
 - Keep responses concise (2-3 paragraphs max). Beginners get overwhelmed by walls of text.
 - If someone asks about medical issues or injuries, remind them to see a doctor — you're a coach, not a medical professional.
 - You know about popular ultra running gear (Hoka, Salomon, Tailwind, etc.) and can make specific recommendations.`,
-    messages,
+    messages: await convertToModelMessages(messages),
   });
 
   return result.toUIMessageStreamResponse();
