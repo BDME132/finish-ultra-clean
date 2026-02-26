@@ -1,7 +1,62 @@
 import { streamText, convertToModelMessages } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { NextRequest } from "next/server";
+import { checkChatRateLimit, peekChatRateLimit } from "@/lib/chat-rate-limit";
+import { getSupabase } from "@/lib/supabase";
 
-export async function POST(req: Request) {
+async function resolveSubscription(req: NextRequest): Promise<boolean> {
+  const subscriberEmail = req.cookies.get("chat_subscribed")?.value;
+  if (!subscriberEmail) return false;
+
+  const { data } = await getSupabase()
+    .from("email_signups")
+    .select("email")
+    .eq("email", decodeURIComponent(subscriberEmail))
+    .single();
+  return !!data;
+}
+
+function getIP(req: NextRequest): string {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
+/** GET /api/chat — returns remaining message count without incrementing */
+export async function GET(req: NextRequest) {
+  const ip = getIP(req);
+  const isSubscribed = await resolveSubscription(req);
+  const rateLimit = await peekChatRateLimit(ip, isSubscribed);
+
+  return Response.json({
+    remaining: rateLimit.remaining,
+    resetAt: rateLimit.resetAt,
+    requiresSignup: rateLimit.requiresSignup,
+    allowed: rateLimit.allowed,
+  });
+}
+
+/** POST /api/chat — send a chat message */
+export async function POST(req: NextRequest) {
+  const ip = getIP(req);
+  const isSubscribed = await resolveSubscription(req);
+  const rateLimit = await checkChatRateLimit(ip, isSubscribed);
+
+  if (!rateLimit.allowed) {
+    return Response.json(
+      {
+        error: rateLimit.requiresSignup
+          ? "signup_required"
+          : "daily_limit_reached",
+        remaining: 0,
+        resetAt: rateLimit.resetAt,
+      },
+      { status: 429 }
+    );
+  }
+
   const { messages } = await req.json();
 
   const result = streamText({

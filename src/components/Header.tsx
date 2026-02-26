@@ -13,6 +13,79 @@ const navLinks = [
   { href: "/about", label: "About" },
 ];
 
+/* 16x16 pixel art: running AI coach character */
+function ChatPixelArt() {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className="w-5 h-5"
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+    >
+      {/* Headband - blue */}
+      <rect x="5" y="1" width="1" height="1" fill="#0066FF" />
+      <rect x="6" y="1" width="1" height="1" fill="#0066FF" />
+      <rect x="7" y="1" width="1" height="1" fill="#0066FF" />
+      <rect x="8" y="1" width="1" height="1" fill="#0066FF" />
+      <rect x="9" y="1" width="1" height="1" fill="#0066FF" />
+      <rect x="10" y="1" width="1" height="1" fill="#0066FF" />
+      {/* Head */}
+      <rect x="6" y="2" width="1" height="1" fill="#E2E8F0" />
+      <rect x="7" y="2" width="1" height="1" fill="#E2E8F0" />
+      <rect x="8" y="2" width="1" height="1" fill="#E2E8F0" />
+      <rect x="9" y="2" width="1" height="1" fill="#E2E8F0" />
+      <rect x="6" y="3" width="1" height="1" fill="#E2E8F0" />
+      <rect x="7" y="3" width="1" height="1" fill="#0F172A" />
+      <rect x="8" y="3" width="1" height="1" fill="#E2E8F0" />
+      <rect x="9" y="3" width="1" height="1" fill="#0F172A" />
+      <rect x="6" y="4" width="1" height="1" fill="#E2E8F0" />
+      <rect x="7" y="4" width="1" height="1" fill="#E2E8F0" />
+      <rect x="8" y="4" width="1" height="1" fill="#E2E8F0" />
+      <rect x="9" y="4" width="1" height="1" fill="#E2E8F0" />
+      {/* Body / shirt - dark */}
+      <rect x="5" y="5" width="1" height="1" fill="#0F172A" />
+      <rect x="6" y="5" width="1" height="1" fill="#0F172A" />
+      <rect x="7" y="5" width="1" height="1" fill="#0F172A" />
+      <rect x="8" y="5" width="1" height="1" fill="#0F172A" />
+      <rect x="9" y="5" width="1" height="1" fill="#0F172A" />
+      <rect x="10" y="5" width="1" height="1" fill="#0F172A" />
+      {/* Arms pumping */}
+      <rect x="4" y="6" width="1" height="1" fill="#E2E8F0" />
+      <rect x="6" y="6" width="1" height="1" fill="#0F172A" />
+      <rect x="7" y="6" width="1" height="1" fill="#0F172A" />
+      <rect x="8" y="6" width="1" height="1" fill="#0F172A" />
+      <rect x="9" y="6" width="1" height="1" fill="#0F172A" />
+      <rect x="11" y="6" width="1" height="1" fill="#E2E8F0" />
+      <rect x="3" y="7" width="1" height="1" fill="#E2E8F0" />
+      <rect x="7" y="7" width="1" height="1" fill="#0F172A" />
+      <rect x="8" y="7" width="1" height="1" fill="#0F172A" />
+      <rect x="12" y="7" width="1" height="1" fill="#E2E8F0" />
+      {/* Legs - running stride */}
+      <rect x="6" y="8" width="1" height="1" fill="#0F172A" />
+      <rect x="7" y="8" width="1" height="1" fill="#0F172A" />
+      <rect x="8" y="8" width="1" height="1" fill="#0F172A" />
+      <rect x="9" y="8" width="1" height="1" fill="#0F172A" />
+      <rect x="5" y="9" width="1" height="1" fill="#0F172A" />
+      <rect x="6" y="9" width="1" height="1" fill="#0F172A" />
+      <rect x="9" y="9" width="1" height="1" fill="#0F172A" />
+      <rect x="10" y="9" width="1" height="1" fill="#0F172A" />
+      <rect x="4" y="10" width="1" height="1" fill="#0F172A" />
+      <rect x="5" y="10" width="1" height="1" fill="#0F172A" />
+      <rect x="10" y="10" width="1" height="1" fill="#0F172A" />
+      <rect x="11" y="10" width="1" height="1" fill="#0F172A" />
+      {/* Shoes - orange */}
+      <rect x="3" y="11" width="1" height="1" fill="#FF6B00" />
+      <rect x="4" y="11" width="1" height="1" fill="#FF6B00" />
+      <rect x="11" y="11" width="1" height="1" fill="#FF6B00" />
+      <rect x="12" y="11" width="1" height="1" fill="#FF6B00" />
+      <rect x="2" y="12" width="1" height="1" fill="#FF6B00" />
+      <rect x="3" y="12" width="1" height="1" fill="#FF6B00" />
+      <rect x="12" y="12" width="1" height="1" fill="#FF6B00" />
+      <rect x="13" y="12" width="1" height="1" fill="#FF6B00" />
+    </svg>
+  );
+}
+
 export default function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -26,19 +99,40 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  pathname?.startsWith(link.href)
-                    ? "text-primary"
-                    : "text-dark hover:text-primary"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) =>
+              link.label === "Chat" ? (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-medium transition-colors group ${
+                    pathname?.startsWith(link.href)
+                      ? "text-primary"
+                      : "text-dark hover:text-primary"
+                  }`}
+                >
+                  <span className="block overflow-hidden h-5">
+                    <span className="flex flex-col transition-transform duration-[250ms] ease-in-out group-hover:-translate-y-5">
+                      <span className="h-5 flex items-center">Chat</span>
+                      <span className="h-5 flex items-center justify-center">
+                        <ChatPixelArt />
+                      </span>
+                    </span>
+                  </span>
+                </Link>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-medium transition-colors ${
+                    pathname?.startsWith(link.href)
+                      ? "text-primary"
+                      : "text-dark hover:text-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </nav>
 
           <button
