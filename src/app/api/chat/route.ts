@@ -1,11 +1,11 @@
 import { streamText } from "ai";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: google("gemini-2.0-flash"),
+    model: openai("gpt-4o-mini"),
     system: `You are the FinishUltra Coach, an AI assistant for beginner ultra runners. You help with training plans, gear selection, nutrition strategy, and race day preparation.
 
 Guidelines:
