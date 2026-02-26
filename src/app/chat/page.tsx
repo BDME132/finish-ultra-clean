@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import ChatInterface from "@/components/ChatInterface";
 
 export const metadata: Metadata = {
@@ -13,10 +12,9 @@ export default function ChatPage() {
   return (
     <>
       <Header />
-      <main className="bg-white">
+      <main className="h-[calc(100vh-4rem)] flex bg-light">
         <ChatInterface />
       </main>
-      <Footer />
     </>
   );
 }

@@ -34,8 +34,8 @@ export default function ChatInterface() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] max-w-3xl mx-auto">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 max-w-3xl mx-auto w-full">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
@@ -124,7 +124,7 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t border-gray-100 p-4">
+      <form onSubmit={handleSubmit} className="border-t border-gray-200/60 p-4 max-w-3xl mx-auto w-full">
         <div className="flex gap-3">
           <input
             type="text"
