@@ -100,7 +100,7 @@ export default function Header() {
 
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) =>
-              link.label === "Chat" ? (
+              link.label === "Coach" ? (
                 <Link
                   key={link.href}
                   href={link.href}
