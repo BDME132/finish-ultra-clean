@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import OpenPheidiButton from "@/components/OpenPheidiButton";
 
 export const metadata: Metadata = {
   title: "Start Here | FinishUltra",
@@ -97,12 +98,11 @@ export default function StartHerePage() {
             <p className="text-gray mb-6">
               Pheidi can give you personalized advice for your specific situation.
             </p>
-            <Link
-              href="/pheidi"
+            <OpenPheidiButton
               className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors"
             >
               Chat with Pheidi
-            </Link>
+            </OpenPheidiButton>
           </div>
         </section>
       </main>

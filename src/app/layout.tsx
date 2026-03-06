@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import PheidiShell from "@/components/PheidiShell";
 import "./globals.css";
 
 const inter = Inter({
@@ -101,7 +102,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}
       >
-        {children}
+        <PheidiShell>{children}</PheidiShell>
         <Analytics />
       </body>
     </html>
