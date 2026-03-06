@@ -29,7 +29,7 @@ export default function AdminDashboard() {
         const json: SubscribersResponse = await res.json();
         setData({
           subscriberCount: json.count || 0,
-          newsletters: [], // Newsletters will be fetched separately if needed
+          newsletters: json.newsletters || [],
           loading: false,
           error: null,
         });

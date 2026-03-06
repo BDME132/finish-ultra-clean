@@ -14,22 +14,43 @@ export async function GET(): Promise<NextResponse<SubscribersResponse>> {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch subscribers using service key
-    const { data: subscribers, error } = await getSupabase()
-      .from("email_signups")
-      .select("id, email, created_at")
-      .order("created_at", { ascending: false });
+    const supabase = getSupabase();
 
-    if (error) {
-      console.error("Error fetching subscribers:", error);
+    // Fetch dashboard data in parallel
+    const [
+      { data: subscribers, error: subscribersError },
+      { data: newsletters, error: newslettersError },
+    ] = await Promise.all([
+      supabase
+        .from("email_signups")
+        .select("id, email, created_at")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("newsletters")
+        .select("id, subject, body, sent_at, recipient_count")
+        .order("sent_at", { ascending: false })
+        .limit(10),
+    ]);
+
+    if (subscribersError) {
+      console.error("Error fetching subscribers:", subscribersError);
       return NextResponse.json(
         { error: "Failed to fetch subscribers" },
         { status: 500 }
       );
     }
 
+    if (newslettersError) {
+      console.error("Error fetching newsletters:", newslettersError);
+      return NextResponse.json(
+        { error: "Failed to fetch newsletters" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       subscribers: subscribers || [],
+      newsletters: newsletters || [],
       count: subscribers?.length || 0,
     });
   } catch (error) {
