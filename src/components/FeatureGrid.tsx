@@ -2,9 +2,9 @@ import Link from "next/link";
 
 const features = [
   {
-    title: "AI Coach",
+    title: "Pheidi",
     description: "Get personalized ultra running advice 24/7. Ask about training, nutrition, gear — anything a beginner needs to know.",
-    href: "/chat",
+    href: "/pheidi",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />

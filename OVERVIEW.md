@@ -11,7 +11,7 @@ The target audience is not competitive athletes. It's people who've done a few r
 ## Site Sections
 
 ### Home (`/`)
-The landing page. Introduces the brand, highlights the three core content pillars (Training, Gear, AI Coach), and pushes visitors toward the newsletter signup and Start Here guide.
+The landing page. Introduces the brand, highlights the three core content pillars (Training, Gear, Pheidi), and pushes visitors toward the newsletter signup and Start Here guide.
 
 ### Start Here (`/start-here`)
 The entry point for brand new visitors. Answers the question "I want to run an ultra — where do I begin?" Covers what an ultra actually is, realistic expectations, and where to go next on the site.
@@ -32,8 +32,8 @@ Honest gear guides written for beginners who don't know what they need. Sub-sect
 
 Gear content is the primary monetization surface — affiliate links throughout.
 
-### Coach (`/coach`)
-AI-powered coaching chat. Visitors can ask any ultra running question and get a response from "FinishUltra Coach," a GPT-4o-mini model with a custom system prompt. See **AI Coach** section below.
+### Pheidi (`/pheidi`)
+AI-powered coaching chat. Visitors can ask any ultra running question and get a response from "Pheidi," a GPT-4o-mini model with a custom system prompt. See **Pheidi** section below.
 
 ### Blog (`/blog`)
 Long-form articles covering topics like "How hard is a 50K?", "What to wear for your first ultra", nutrition basics, and race selection. Content is hardcoded in the codebase (see Content Model).
@@ -53,9 +53,9 @@ Not linked anywhere public on the site.
 
 ---
 
-## AI Coach
+## Pheidi
 
-The Coach chat is a key differentiator — a 24/7 coaching assistant tuned specifically for beginner ultra runners.
+Pheidi is a key differentiator — a 24/7 coaching assistant tuned specifically for beginner ultra runners.
 
 **Model:** OpenAI GPT-4o-mini via the Vercel AI SDK (`@ai-sdk/openai`, `ai`)
 
@@ -168,10 +168,10 @@ Located at `/admin`. Protected by a password stored in the `ADMIN_PASSWORD` envi
 ```
 src/
 ├── app/                  # Next.js App Router pages and API routes
-│   ├── api/chat/         # AI coach endpoint (POST = chat, GET = rate limit check)
+│   ├── api/chat/         # Pheidi endpoint (POST = chat, GET = rate limit check)
 │   ├── api/email-signup/ # Newsletter signup endpoint
 │   ├── api/admin/        # Admin-only endpoints (auth, subscribers, newsletter)
-│   ├── coach/            # AI chat page
+│   ├── pheidi/           # Pheidi chat page
 │   ├── blog/             # Blog listing + [slug] pages
 │   ├── gear/             # Gear hub + sub-pages
 │   ├── training/         # Training plan pages

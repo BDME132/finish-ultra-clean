@@ -12,7 +12,7 @@ export default function Footer() {
               FinishUltra
             </Link>
             <p className="text-white/60 text-sm mt-2">
-              Your first ultra starts here. Free training plans, honest gear advice, and an AI coach who gets what it&apos;s like to be a beginner.
+              Your first ultra starts here. Free training plans, honest gear advice, and Pheidi — your AI coach who gets what it&apos;s like to be a beginner.
             </p>
           </div>
 
@@ -22,7 +22,7 @@ export default function Footer() {
               <Link href="/start-here" className="text-white/60 hover:text-white transition-colors text-sm">Start Here</Link>
               <Link href="/gear" className="text-white/60 hover:text-white transition-colors text-sm">Gear</Link>
               <Link href="/training" className="text-white/60 hover:text-white transition-colors text-sm">Training</Link>
-              <Link href="/chat" className="text-white/60 hover:text-white transition-colors text-sm">AI Coach</Link>
+              <Link href="/pheidi" className="text-white/60 hover:text-white transition-colors text-sm">Pheidi</Link>
             </div>
           </div>
 

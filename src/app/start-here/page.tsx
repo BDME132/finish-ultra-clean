@@ -95,13 +95,13 @@ export default function StartHerePage() {
               Still have questions?
             </h2>
             <p className="text-gray mb-6">
-              Our AI coach can give you personalized advice for your specific situation.
+              Pheidi can give you personalized advice for your specific situation.
             </p>
             <Link
-              href="/chat"
+              href="/pheidi"
               className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors"
             >
-              Chat with Coach
+              Chat with Pheidi
             </Link>
           </div>
         </section>

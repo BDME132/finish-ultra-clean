@@ -8,9 +8,9 @@ const navLinks = [
   { href: "/start-here", label: "Start Here" },
   { href: "/gear", label: "Gear" },
   { href: "/training", label: "Training" },
-  { href: "/coach", label: "Coach" },
   { href: "/newsletter", label: "Newsletter" },
   { href: "/about", label: "About" },
+  { href: "/pheidi", label: "Pheidi" },
 ];
 
 /* 16x16 pixel art: running AI coach character */
@@ -100,19 +100,19 @@ export default function Header() {
 
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) =>
-              link.label === "Coach" ? (
+              link.label === "Pheidi" ? (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors group ${
+                  className={`text-sm font-medium transition-all group border rounded-md px-3 py-1 ${
                     pathname?.startsWith(link.href)
-                      ? "text-primary"
-                      : "text-dark hover:text-primary"
+                      ? "text-white bg-primary border-primary"
+                      : "text-primary border-primary/40 hover:bg-primary hover:text-white hover:border-primary"
                   }`}
                 >
                   <span className="block overflow-hidden h-5">
                     <span className="flex flex-col transition-transform duration-[250ms] ease-in-out group-hover:-translate-y-5">
-                      <span className="h-5 flex items-center">Chat</span>
+                      <span className="h-5 flex items-center">Pheidi</span>
                       <span className="h-5 flex items-center justify-center">
                         <ChatPixelArt />
                       </span>

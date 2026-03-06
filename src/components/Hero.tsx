@@ -18,10 +18,10 @@ export default function Hero() {
             Start Here
           </Link>
           <Link
-            href="/chat"
+            href="/pheidi"
             className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-primary bg-white border-2 border-primary rounded-lg hover:bg-light transition-colors"
           >
-            Chat with Coach
+            Chat with Pheidi
           </Link>
         </div>
       </div>

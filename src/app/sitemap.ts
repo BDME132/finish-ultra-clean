@@ -25,7 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/training/first-50k`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${baseUrl}/training/base-building`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${baseUrl}/training/race-week`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${baseUrl}/chat`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${baseUrl}/pheidi`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${baseUrl}/newsletter`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },

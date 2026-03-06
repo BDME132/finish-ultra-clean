@@ -17,7 +17,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "FinishUltra - Your First Ultra Starts Here",
   description:
-    "Free training plans, gear guides, and an AI coach for beginner ultra runners. Built by beginners, for beginners.",
+    "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners. Built by beginners, for beginners.",
   keywords: ["ultra marathon training", "beginner ultra runner", "ultra running gear", "50k training plan", "ultra running nutrition"],
   authors: [{ name: "FinishUltra" }],
   creator: "FinishUltra",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "FinishUltra",
     title: "FinishUltra - Your First Ultra Starts Here",
     description:
-      "Free training plans, gear guides, and an AI coach for beginner ultra runners.",
+      "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
     images: [
       {
         url: "/og-image.png",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "FinishUltra - Your First Ultra Starts Here",
     description:
-      "Free training plans, gear guides, and an AI coach for beginner ultra runners.",
+      "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -74,7 +74,7 @@ export default function RootLayout({
           url: "https://finishultra.com/logo.png",
         },
         description:
-          "Free training plans, gear guides, and an AI coach for beginner ultra runners.",
+          "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
       },
       {
         "@type": "WebSite",
@@ -84,7 +84,7 @@ export default function RootLayout({
         publisher: {
           "@id": "https://finishultra.com/#organization",
         },
-        description: "Free training plans, gear guides, and an AI coach for beginner ultra runners.",
+        description: "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
       },
     ],
   };

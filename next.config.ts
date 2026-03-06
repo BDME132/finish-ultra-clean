@@ -24,6 +24,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/chat", destination: "/pheidi", permanent: true },
+      { source: "/coach", destination: "/pheidi", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

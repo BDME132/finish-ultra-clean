@@ -137,7 +137,7 @@ export default function ChatInterface() {
               </svg>
             </div>
             <h2 className="font-headline text-2xl font-bold text-[#E2E8F0] mb-2 animate-fade-in-up">
-              FinishUltra Coach
+              Pheidi
             </h2>
             <p className="text-[#94A3B8] text-sm mb-8 max-w-md animate-fade-in-up animation-delay-100">
               Ask me anything about ultra running — training, gear, nutrition, race day prep. I&apos;m here to help you get to that finish line.
@@ -192,7 +192,7 @@ export default function ChatInterface() {
             <div className="max-w-[60%] rounded-2xl rounded-bl-md px-4 py-4 bg-[#1A2540] border border-[#2A3A55]">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-[pulse-dot_1.5s_ease-in-out_infinite]" />
-                <span className="text-xs text-[#94A3B8]">Coach is thinking...</span>
+                <span className="text-xs text-[#94A3B8]">Pheidi is thinking...</span>
               </div>
               <div className="space-y-2">
                 <div className="h-3 rounded bg-[#2A3A55] chat-shimmer w-full" />
@@ -211,7 +211,7 @@ export default function ChatInterface() {
                 <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <h3 className="text-sm font-semibold text-[#E2E8F0]">Join the community to keep chatting</h3>
+                <h3 className="text-sm font-semibold text-[#E2E8F0]">Join the community to keep chatting with Pheidi</h3>
               </div>
               <p className="text-xs text-[#94A3B8] mb-4">
                 Sign up for the FinishUltra newsletter to unlock 30 messages per day. Get weekly ultra running tips too.
@@ -233,7 +233,7 @@ export default function ChatInterface() {
                   disabled={signupLoading || !signupEmail.trim()}
                   className="w-full px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {signupLoading ? "Signing up..." : "Sign up & continue chatting"}
+                  {signupLoading ? "Signing up..." : "Sign up & chat with Pheidi"}
                 </button>
               </form>
             </div>
