@@ -19,6 +19,7 @@ export interface SendNewsletterResponse {
 
 export interface SubscribersResponse {
   subscribers?: { id: string; email: string; created_at: string }[];
+  newsletters?: Newsletter[];
   count?: number;
   error?: string;
 }
