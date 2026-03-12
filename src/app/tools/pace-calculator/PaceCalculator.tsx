@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Fragment } from "react";
+import { useState, useMemo, useEffect, useCallback, Fragment } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -103,6 +103,23 @@ export default function PaceCalculator() {
   const [slowdown, setSlowdown] = useState(20);
   const [stationCount, setStationCount] = useState("6");
   const [stationMinutes, setStationMinutes] = useState("3");
+
+  const [splitsFullscreen, setSplitsFullscreen] = useState(false);
+
+  const closeSplitsFullscreen = useCallback(() => setSplitsFullscreen(false), []);
+
+  useEffect(() => {
+    if (!splitsFullscreen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeSplitsFullscreen();
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [splitsFullscreen, closeSplitsFullscreen]);
 
   const effectiveSlowdown = slowdownEnabled ? slowdown : 0;
 
@@ -283,6 +300,135 @@ export default function PaceCalculator() {
   }
 
   const hasResult = distanceMiles > 0 && basePaceSecPerMile > 0;
+
+  // ─── Splits table renderer ─────────────────────────────────────────────────
+
+  function renderSplitsTable(fullscreen: boolean) {
+    return (
+      <table className={`w-full ${fullscreen ? "text-base" : "text-sm"}`}>
+        <thead className={`${fullscreen ? "bg-white" : "bg-light"} sticky top-0`}>
+          <tr>
+            <th className={`text-left font-medium text-gray text-xs uppercase tracking-wider ${fullscreen ? "px-4 sm:px-6 py-4" : "px-4 py-3"}`}>
+              {unit === "km" ? "Km" : "Mile"}
+            </th>
+            <th className={`text-right font-medium text-gray text-xs uppercase tracking-wider ${fullscreen ? "px-4 sm:px-6 py-4" : "px-4 py-3"}`}>
+              Pace/{unitLabel}
+            </th>
+            <th className={`text-right font-medium text-gray text-xs uppercase tracking-wider ${fullscreen ? "px-4 sm:px-6 py-4" : "px-4 py-3"}`}>
+              Cumulative
+            </th>
+            <th className={`w-32 hidden sm:table-cell ${fullscreen ? "px-4 sm:px-6 py-4" : "px-4 py-3"}`} />
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-50">
+          {(() => {
+            let halfwayShown = false;
+            return splits.map((split, i) => {
+              const isHalfway =
+                !halfwayShown &&
+                split.type === "run" &&
+                split.isSecondHalf;
+              if (isHalfway) halfwayShown = true;
+
+              const lastSplit = splits[splits.length - 1];
+              const maxCumulative = lastSplit.cumulativeSeconds;
+              const progressPct =
+                maxCumulative > 0
+                  ? (split.cumulativeSeconds / maxCumulative) * 100
+                  : 0;
+
+              const cellPx = fullscreen ? "px-4 sm:px-6 py-3.5" : "px-4 py-3";
+              const cellPxSmall = fullscreen ? "px-4 sm:px-6 py-3" : "px-4 py-2.5";
+
+              if (split.type === "aid") {
+                return (
+                  <tr key={`aid-${i}`} className="bg-emerald-50/60">
+                    <td className={`${cellPxSmall} font-medium`}>
+                      <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+                        {split.label}
+                      </span>
+                    </td>
+                    <td className={`${cellPxSmall} text-right font-mono text-emerald-700 text-xs`}>
+                      {formatDuration(split.stationSeconds)} stop
+                    </td>
+                    <td className={`${cellPxSmall} text-right font-mono text-emerald-700`}>
+                      {formatTime(split.cumulativeSeconds)}
+                    </td>
+                    <td className={`${cellPxSmall} hidden sm:table-cell`}>
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-emerald-400"
+                          style={{ width: `${progressPct}%` }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }
+
+              return (
+                <Fragment key={`run-${i}`}>
+                  {isHalfway && slowdownEnabled && effectiveSlowdown > 0 && (
+                    <tr className="bg-primary/5">
+                      <td
+                        colSpan={4}
+                        className={`${cellPxSmall} text-xs font-semibold text-primary text-center`}
+                      >
+                        ─ Halfway Point ─ Second half begins ─
+                      </td>
+                    </tr>
+                  )}
+                  <tr
+                    className={`hover:bg-light/60 transition-colors ${
+                      split.isSecondHalf && slowdownEnabled ? "bg-orange-50/30" : ""
+                    }`}
+                  >
+                    <td className={`${cellPx} font-medium text-dark`}>
+                      <span
+                        className={`inline-flex items-center gap-1.5 ${
+                          split.isSecondHalf && slowdownEnabled
+                            ? "text-accent"
+                            : "text-primary"
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                            split.isSecondHalf && slowdownEnabled
+                              ? "bg-accent"
+                              : "bg-primary"
+                          }`}
+                        />
+                        {split.label}
+                      </span>
+                    </td>
+                    <td className={`${cellPx} text-right font-mono text-dark`}>
+                      {formatPace(split.paceSecPerUnit)}
+                    </td>
+                    <td className={`${cellPx} text-right font-mono text-dark`}>
+                      {formatTime(split.cumulativeSeconds)}
+                    </td>
+                    <td className={`${cellPx} hidden sm:table-cell`}>
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            split.isSecondHalf && slowdownEnabled
+                              ? "bg-accent"
+                              : "bg-primary"
+                          }`}
+                          style={{ width: `${progressPct}%` }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </Fragment>
+              );
+            });
+          })()}
+        </tbody>
+      </table>
+    );
+  }
 
   // ─── Render ──────────────────────────────────────────────────────────────────
 
@@ -678,147 +824,39 @@ export default function PaceCalculator() {
             <h2 className="font-headline text-xl font-bold text-dark">
               Projected Splits
             </h2>
-            <div className="flex items-center gap-4 text-xs text-gray">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-primary inline-block" />
-                First half
-              </span>
-              {slowdownEnabled && effectiveSlowdown > 0 && (
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 text-xs text-gray">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block" />
-                  Second half
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary inline-block" />
+                  First half
                 </span>
-              )}
-              {stationPositions.length > 0 && (
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
-                  Aid station
-                </span>
-              )}
+                {slowdownEnabled && effectiveSlowdown > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block" />
+                    Second half
+                  </span>
+                )}
+                {stationPositions.length > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+                    Aid station
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={() => setSplitsFullscreen(true)}
+                className="p-1.5 rounded-lg text-gray hover:text-primary hover:bg-primary/5 transition-colors"
+                title="View fullscreen"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0 0l-5-5m-7 14l-5 5m0 0h4m-4 0v-4m18 4l-5-5m5 5v-4m0 4h-4" />
+                </svg>
+              </button>
             </div>
           </div>
           <div className="border border-gray-100 rounded-xl overflow-hidden">
             <div className="overflow-x-auto max-h-96 overflow-y-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-light sticky top-0">
-                  <tr>
-                    <th className="text-left px-4 py-3 font-medium text-gray text-xs uppercase tracking-wider">
-                      {unit === "km" ? "Km" : "Mile"}
-                    </th>
-                    <th className="text-right px-4 py-3 font-medium text-gray text-xs uppercase tracking-wider">
-                      Pace/{unitLabel}
-                    </th>
-                    <th className="text-right px-4 py-3 font-medium text-gray text-xs uppercase tracking-wider">
-                      Cumulative
-                    </th>
-                    <th className="px-4 py-3 w-32 hidden sm:table-cell" />
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {(() => {
-                    let halfwayShown = false;
-                    return splits.map((split, i) => {
-                    // Check if this is the first second-half run row (show only once)
-                    const isHalfway =
-                      !halfwayShown &&
-                      split.type === "run" &&
-                      split.isSecondHalf;
-                    if (isHalfway) halfwayShown = true;
-
-                    const lastSplit = splits[splits.length - 1];
-                    const maxCumulative = lastSplit.cumulativeSeconds;
-                    const progressPct =
-                      maxCumulative > 0
-                        ? (split.cumulativeSeconds / maxCumulative) * 100
-                        : 0;
-
-                    if (split.type === "aid") {
-                      return (
-                        <tr key={`aid-${i}`} className="bg-emerald-50/60">
-                          <td className="px-4 py-2.5 font-medium">
-                            <span className="inline-flex items-center gap-1.5 text-emerald-700">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
-                              {split.label}
-                            </span>
-                          </td>
-                          <td className="px-4 py-2.5 text-right font-mono text-emerald-700 text-xs">
-                            {formatDuration(split.stationSeconds)} stop
-                          </td>
-                          <td className="px-4 py-2.5 text-right font-mono text-emerald-700">
-                            {formatTime(split.cumulativeSeconds)}
-                          </td>
-                          <td className="px-4 py-2.5 hidden sm:table-cell">
-                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                              <div
-                                className="h-full rounded-full bg-emerald-400"
-                                style={{ width: `${progressPct}%` }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    }
-
-                    return (
-                      <Fragment key={`run-${i}`}>
-                        {isHalfway && slowdownEnabled && effectiveSlowdown > 0 && (
-                          <tr className="bg-primary/5">
-                            <td
-                              colSpan={4}
-                              className="px-4 py-2 text-xs font-semibold text-primary text-center"
-                            >
-                              ─ Halfway Point ─ Second half begins ─
-                            </td>
-                          </tr>
-                        )}
-                        <tr
-                          className={`hover:bg-light/60 transition-colors ${
-                            split.isSecondHalf && slowdownEnabled ? "bg-orange-50/30" : ""
-                          }`}
-                        >
-                          <td className="px-4 py-3 font-medium text-dark">
-                            <span
-                              className={`inline-flex items-center gap-1.5 ${
-                                split.isSecondHalf && slowdownEnabled
-                                  ? "text-accent"
-                                  : "text-primary"
-                              }`}
-                            >
-                              <span
-                                className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                                  split.isSecondHalf && slowdownEnabled
-                                    ? "bg-accent"
-                                    : "bg-primary"
-                                }`}
-                              />
-                              {split.label}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono text-dark">
-                            {formatPace(split.paceSecPerUnit)}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono text-dark">
-                            {formatTime(split.cumulativeSeconds)}
-                          </td>
-                          <td className="px-4 py-3 hidden sm:table-cell">
-                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full rounded-full transition-all ${
-                                  split.isSecondHalf && slowdownEnabled
-                                    ? "bg-accent"
-                                    : "bg-primary"
-                                }`}
-                                style={{ width: `${progressPct}%` }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      </Fragment>
-                    );
-                  });
-                  })()}
-                </tbody>
-              </table>
+              {renderSplitsTable(false)}
             </div>
           </div>
           {stationPositions.length > 0 && (
@@ -826,6 +864,58 @@ export default function PaceCalculator() {
               Aid stations are evenly spaced across the course.
             </p>
           )}
+        </div>
+      )}
+
+      {/* ── Fullscreen Splits Overlay ── */}
+      {splitsFullscreen && hasResult && splits.length > 0 && (
+        <div className="fixed inset-0 z-50 bg-white flex flex-col">
+          {/* Header bar */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-light flex-shrink-0">
+            <div className="flex items-center gap-4">
+              <h2 className="font-headline text-xl font-bold text-dark">
+                Projected Splits
+              </h2>
+              <div className="hidden sm:flex items-center gap-4 text-xs text-gray">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary inline-block" />
+                  First half
+                </span>
+                {slowdownEnabled && effectiveSlowdown > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block" />
+                    Second half
+                  </span>
+                )}
+                {stationPositions.length > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+                    Aid station
+                  </span>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={closeSplitsFullscreen}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray hover:text-dark bg-white border border-gray-200 hover:border-gray-300 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Close
+            </button>
+          </div>
+          {/* Scrollable table */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+              {renderSplitsTable(true)}
+              {stationPositions.length > 0 && (
+                <p className="text-xs text-gray/60 mt-3">
+                  Aid stations are evenly spaced across the course.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
