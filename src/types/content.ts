@@ -44,3 +44,11 @@ export interface BlogPost {
   image: string;
   readTime: string;
 }
+
+export interface GlossaryTerm {
+  term: string;
+  slug: string;
+  category: "training" | "race-day" | "gear" | "nutrition" | "trail";
+  shortDefinition: string;
+  definition: string;
+}
