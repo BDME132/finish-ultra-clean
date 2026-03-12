@@ -715,15 +715,15 @@ export default function PaceCalculator() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {splits.map((split, i) => {
-                    // Check if this run row is the first second-half row
-                    const prev = i > 0 ? splits[i - 1] : null;
+                  {(() => {
+                    let halfwayShown = false;
+                    return splits.map((split, i) => {
+                    // Check if this is the first second-half run row (show only once)
                     const isHalfway =
+                      !halfwayShown &&
                       split.type === "run" &&
-                      split.isSecondHalf &&
-                      i > 0 &&
-                      (prev?.type === "aid" ||
-                        (prev?.type === "run" && !prev.isSecondHalf));
+                      split.isSecondHalf;
+                    if (isHalfway) halfwayShown = true;
 
                     const lastSplit = splits[splits.length - 1];
                     const maxCumulative = lastSplit.cumulativeSeconds;
@@ -734,7 +734,7 @@ export default function PaceCalculator() {
 
                     if (split.type === "aid") {
                       return (
-                        <tr key={`aid-${split.label}`} className="bg-emerald-50/60">
+                        <tr key={`aid-${i}`} className="bg-emerald-50/60">
                           <td className="px-4 py-2.5 font-medium">
                             <span className="inline-flex items-center gap-1.5 text-emerald-700">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
@@ -760,7 +760,7 @@ export default function PaceCalculator() {
                     }
 
                     return (
-                      <Fragment key={split.label}>
+                      <Fragment key={`run-${i}`}>
                         {isHalfway && slowdownEnabled && effectiveSlowdown > 0 && (
                           <tr className="bg-primary/5">
                             <td
@@ -815,7 +815,8 @@ export default function PaceCalculator() {
                         </tr>
                       </Fragment>
                     );
-                  })}
+                  });
+                  })()}
                 </tbody>
               </table>
             </div>
