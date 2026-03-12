@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase/server";
 import { EmailSignupData, EmailSignupResponse } from "@/types/email-signup";
 
 let _resend: Resend | null = null;
@@ -147,6 +148,20 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
 
     if (adminError) {
       console.error("Admin notification error:", adminError);
+    }
+
+    // If a user is logged in, update their profile to mark as subscriber
+    try {
+      const supabaseAuth = await createSupabaseServer();
+      const { data: { user } } = await supabaseAuth.auth.getUser();
+      if (user) {
+        await getSupabase()
+          .from("profiles")
+          .update({ is_newsletter_subscriber: true })
+          .eq("id", user.id);
+      }
+    } catch {
+      // Non-critical — profile update failure shouldn't break signup
     }
 
     return NextResponse.json({ success: true });
