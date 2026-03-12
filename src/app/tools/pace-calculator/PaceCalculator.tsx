@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -12,6 +12,24 @@ interface Preset {
   key: string;
   miles: number;
 }
+
+type SplitRow =
+  | {
+      type: "run";
+      label: string;
+      mile: number;
+      paceSecPerUnit: number;
+      segmentSeconds: number;
+      cumulativeSeconds: number;
+      isSecondHalf: boolean;
+    }
+  | {
+      type: "aid";
+      label: string;
+      mile: number;
+      stationSeconds: number;
+      cumulativeSeconds: number;
+    };
 
 const PRESETS: Preset[] = [
   { label: "50K", key: "50K", miles: 31.07 },
@@ -38,6 +56,13 @@ function formatPace(secondsPerUnit: number): string {
   if (!isFinite(secondsPerUnit) || secondsPerUnit <= 0) return "--:--";
   const m = Math.floor(secondsPerUnit / 60);
   const s = Math.floor(secondsPerUnit % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+/** Format a duration in seconds to M:SS for aid station display */
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
@@ -74,9 +99,12 @@ export default function PaceCalculator() {
   const [goalSec, setGoalSec] = useState("00");
 
   // Shared
+  const [slowdownEnabled, setSlowdownEnabled] = useState(false);
   const [slowdown, setSlowdown] = useState(20);
   const [stationCount, setStationCount] = useState("6");
   const [stationMinutes, setStationMinutes] = useState("3");
+
+  const effectiveSlowdown = slowdownEnabled ? slowdown : 0;
 
   // ─── Derived values ─────────────────────────────────────────────────────────
 
@@ -101,6 +129,11 @@ export default function PaceCalculator() {
     return count * mins * 60;
   }, [stationCount, stationMinutes]);
 
+  /** Per-station time in seconds */
+  const perStationSeconds = useMemo(() => {
+    return (parseFloat(stationMinutes) || 0) * 60;
+  }, [stationMinutes]);
+
   /** Base pace in seconds per mile (first-half pace) */
   const basePaceSecPerMile = useMemo(() => {
     if (mode === "pace-to-time") {
@@ -116,7 +149,7 @@ export default function PaceCalculator() {
       const runningTime = goalTotalSec - aidSeconds;
       if (runningTime <= 0 || distanceMiles <= 0) return 0;
       const halfDist = distanceMiles / 2;
-      const factor = 2 + slowdown / 100;
+      const factor = 2 + effectiveSlowdown / 100;
       return runningTime / (halfDist * factor);
     }
   }, [
@@ -128,7 +161,7 @@ export default function PaceCalculator() {
     goalSec,
     aidSeconds,
     distanceMiles,
-    slowdown,
+    effectiveSlowdown,
   ]);
 
   /** Base pace in seconds per selected unit */
@@ -136,7 +169,7 @@ export default function PaceCalculator() {
     unit === "km" ? basePaceSecPerMile / KM_PER_MILE : basePaceSecPerMile;
 
   /** Second-half pace (seconds per mile) */
-  const secondHalfPaceSecPerMile = basePaceSecPerMile * (1 + slowdown / 100);
+  const secondHalfPaceSecPerMile = basePaceSecPerMile * (1 + effectiveSlowdown / 100);
   const secondHalfPaceSecPerUnit =
     unit === "km"
       ? secondHalfPaceSecPerMile / KM_PER_MILE
@@ -156,23 +189,30 @@ export default function PaceCalculator() {
   const avgPaceSecPerUnit =
     distanceMiles > 0 ? finishTimeSeconds / displayDistance : 0;
 
+  // ─── Aid station positions (evenly spaced) ────────────────────────────────
+
+  const stationPositions = useMemo(() => {
+    const count = parseInt(stationCount) || 0;
+    if (count <= 0 || distanceMiles <= 0) return [];
+    const spacing = distanceMiles / (count + 1);
+    const positions: number[] = [];
+    for (let i = 1; i <= count; i++) {
+      positions.push(spacing * i);
+    }
+    return positions;
+  }, [stationCount, distanceMiles]);
+
   // ─── Splits ─────────────────────────────────────────────────────────────────
 
   const splits = useMemo(() => {
     if (!distanceMiles || !basePaceSecPerMile) return [];
     const interval = splitsInterval(distanceMiles);
     const halfMile = distanceMiles / 2;
-    const rows: {
-      label: string;
-      mile: number;
-      paceSecPerUnit: number;
-      segmentSeconds: number;
-      cumulativeSeconds: number;
-      isSecondHalf: boolean;
-    }[] = [];
+    const rows: SplitRow[] = [];
 
     let cumulative = 0;
     let mile = interval;
+    let nextStationIdx = 0;
 
     while (mile <= distanceMiles + 0.01) {
       const effectiveMile = Math.min(mile, distanceMiles);
@@ -182,13 +222,10 @@ export default function PaceCalculator() {
       // Determine pace for this segment based on where we are relative to halfway
       let segmentSeconds = 0;
       if (prevMile >= halfMile) {
-        // Entirely in second half
         segmentSeconds = segmentMiles * secondHalfPaceSecPerMile;
       } else if (effectiveMile <= halfMile) {
-        // Entirely in first half
         segmentSeconds = segmentMiles * basePaceSecPerMile;
       } else {
-        // Straddles the halfway point
         const firstPart = halfMile - prevMile;
         const secondPart = effectiveMile - halfMile;
         segmentSeconds =
@@ -200,9 +237,9 @@ export default function PaceCalculator() {
 
       const segmentUnits = unit === "km" ? segmentMiles * KM_PER_MILE : segmentMiles;
       const paceSecPerUnit = segmentUnits > 0 ? segmentSeconds / segmentUnits : 0;
-      const cumulativeWithAid = cumulative + (effectiveMile / distanceMiles) * aidSeconds;
 
       rows.push({
+        type: "run",
         label:
           unit === "km"
             ? `${(effectiveMile * KM_PER_MILE).toFixed(1)} km`
@@ -210,23 +247,39 @@ export default function PaceCalculator() {
         mile: effectiveMile,
         paceSecPerUnit,
         segmentSeconds,
-        cumulativeSeconds: cumulativeWithAid,
+        cumulativeSeconds: cumulative,
         isSecondHalf: effectiveMile > halfMile,
       });
+
+      // Insert any aid stations that fall at or before this mile marker
+      while (
+        nextStationIdx < stationPositions.length &&
+        stationPositions[nextStationIdx] <= effectiveMile + 0.01
+      ) {
+        cumulative += perStationSeconds;
+        rows.push({
+          type: "aid",
+          label: `Aid ${nextStationIdx + 1}`,
+          mile: stationPositions[nextStationIdx],
+          stationSeconds: perStationSeconds,
+          cumulativeSeconds: cumulative,
+        });
+        nextStationIdx++;
+      }
 
       if (Math.abs(mile - distanceMiles) < 0.01) break;
       mile = Math.min(mile + interval, distanceMiles);
     }
 
     return rows;
-  }, [distanceMiles, basePaceSecPerMile, secondHalfPaceSecPerMile, aidSeconds, unit]);
+  }, [distanceMiles, basePaceSecPerMile, secondHalfPaceSecPerMile, unit, stationPositions, perStationSeconds]);
 
   // ─── Input helpers ───────────────────────────────────────────────────────────
 
   function clampSec(val: string, setter: (v: string) => void) {
     const n = parseInt(val);
     if (isNaN(n)) { setter(""); return; }
-    setter(String(Math.max(0, Math.min(59, n)).toString().padStart(2, "0")));
+    setter(Math.max(0, Math.min(59, n)).toString().padStart(2, "0"));
   }
 
   const hasResult = distanceMiles > 0 && basePaceSecPerMile > 0;
@@ -355,7 +408,9 @@ export default function PaceCalculator() {
                 <span className="text-sm text-gray ml-1">per {unitLabel}</span>
               </div>
               <p className="text-xs text-gray/60 mt-1">
-                Your first-half target pace. The slowdown factor will adjust your second half.
+                {slowdownEnabled
+                  ? "Your first-half target pace. The slowdown factor will adjust your second half."
+                  : "Your target pace for the entire race."}
               </p>
             </div>
           ) : (
@@ -407,34 +462,60 @@ export default function PaceCalculator() {
 
           {/* Slowdown Factor */}
           <div>
-            <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-dark">
                 Second-Half Slowdown
               </label>
-              <span
-                className={`text-sm font-bold ${
-                  slowdown === 0
-                    ? "text-green-600"
-                    : slowdown <= 20
-                    ? "text-primary"
-                    : slowdown <= 40
-                    ? "text-accent"
-                    : "text-red-500"
+              <button
+                type="button"
+                role="switch"
+                aria-checked={slowdownEnabled}
+                onClick={() => setSlowdownEnabled(!slowdownEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  slowdownEnabled ? "bg-primary" : "bg-gray-300"
                 }`}
               >
-                {slowdown}%
-              </span>
+                <span
+                  className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
+                    slowdownEnabled ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
             </div>
-            <input
-              type="range"
-              min="0"
-              max="60"
-              step="5"
-              value={slowdown}
-              onChange={(e) => setSlowdown(Number(e.target.value))}
-              className="w-full accent-primary"
-            />
-            <p className="text-xs text-gray mt-1">{slowdownLabel(slowdown)}</p>
+            {slowdownEnabled ? (
+              <>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-gray">Slowdown amount</span>
+                  <span
+                    className={`text-sm font-bold ${
+                      slowdown === 0
+                        ? "text-green-600"
+                        : slowdown <= 20
+                        ? "text-primary"
+                        : slowdown <= 40
+                        ? "text-accent"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {slowdown}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="60"
+                  step="5"
+                  value={slowdown}
+                  onChange={(e) => setSlowdown(Number(e.target.value))}
+                  className="w-full accent-primary"
+                />
+                <p className="text-xs text-gray mt-1">{slowdownLabel(slowdown)}</p>
+              </>
+            ) : (
+              <p className="text-xs text-gray">
+                Even splits — same pace throughout. Enable to model second-half fatigue.
+              </p>
+            )}
           </div>
 
           {/* Aid Stations */}
@@ -454,7 +535,7 @@ export default function PaceCalculator() {
                 />
                 <span className="text-sm text-gray">stops</span>
               </div>
-              <span className="text-gray text-sm">×</span>
+              <span className="text-gray text-sm">&times;</span>
               <div className="flex items-center gap-2">
                 <input
                   type="number"
@@ -493,7 +574,9 @@ export default function PaceCalculator() {
                       : formatPace(basePaceSecPerUnit)}
                   </p>
                   {mode === "time-to-pace" && (
-                    <p className="text-xs text-gray mt-1">per {unitLabel} (first half)</p>
+                    <p className="text-xs text-gray mt-1">
+                      per {unitLabel}{slowdownEnabled ? " (first half)" : ""}
+                    </p>
                   )}
                 </div>
 
@@ -518,16 +601,18 @@ export default function PaceCalculator() {
                   </p>
                 </div>
 
-                {/* Second half pace */}
-                <div className="bg-light rounded-xl p-4">
-                  <p className="text-xs font-medium text-gray uppercase tracking-wider mb-1">
-                    2nd Half Pace
-                  </p>
-                  <p className="font-headline text-2xl font-bold text-dark">
-                    {formatPace(secondHalfPaceSecPerUnit)}
-                  </p>
-                  <p className="text-xs text-gray">per {unitLabel}</p>
-                </div>
+                {/* Second half pace — only when slowdown is on */}
+                {slowdownEnabled && effectiveSlowdown > 0 && (
+                  <div className="bg-light rounded-xl p-4">
+                    <p className="text-xs font-medium text-gray uppercase tracking-wider mb-1">
+                      2nd Half Pace
+                    </p>
+                    <p className="font-headline text-2xl font-bold text-dark">
+                      {formatPace(secondHalfPaceSecPerUnit)}
+                    </p>
+                    <p className="text-xs text-gray">per {unitLabel}</p>
+                  </div>
+                )}
 
                 {/* Aid time */}
                 <div className="bg-light rounded-xl p-4">
@@ -540,8 +625,8 @@ export default function PaceCalculator() {
                 </div>
               </div>
 
-              {/* Pace breakdown bar */}
-              {slowdown > 0 && (
+              {/* Pace breakdown bar — only when slowdown is on */}
+              {slowdownEnabled && effectiveSlowdown > 0 && (
                 <div>
                   <p className="text-xs font-medium text-gray uppercase tracking-wider mb-2">
                     Pace Breakdown
@@ -551,7 +636,12 @@ export default function PaceCalculator() {
                       <div className="w-3 h-3 rounded-full bg-primary flex-shrink-0" />
                       <span className="text-xs text-gray w-24">First half</span>
                       <div className="flex-1 bg-primary/10 rounded-full h-2">
-                        <div className="bg-primary h-2 rounded-full" style={{ width: "100%" }} />
+                        <div
+                          className="bg-primary h-2 rounded-full"
+                          style={{
+                            width: `${(basePaceSecPerUnit / secondHalfPaceSecPerUnit) * 100}%`,
+                          }}
+                        />
                       </div>
                       <span className="text-xs font-medium text-dark w-16 text-right">
                         {formatPace(basePaceSecPerUnit)}/{unitLabel}
@@ -561,15 +651,7 @@ export default function PaceCalculator() {
                       <div className="w-3 h-3 rounded-full bg-accent flex-shrink-0" />
                       <span className="text-xs text-gray w-24">Second half</span>
                       <div className="flex-1 bg-accent/10 rounded-full h-2">
-                        <div
-                          className="bg-accent h-2 rounded-full"
-                          style={{
-                            width: `${Math.min(
-                              100,
-                              (secondHalfPaceSecPerUnit / basePaceSecPerUnit) * 100
-                            )}%`,
-                          }}
-                        />
+                        <div className="bg-accent h-2 rounded-full" style={{ width: "100%" }} />
                       </div>
                       <span className="text-xs font-medium text-dark w-16 text-right">
                         {formatPace(secondHalfPaceSecPerUnit)}/{unitLabel}
@@ -601,10 +683,18 @@ export default function PaceCalculator() {
                 <span className="w-2.5 h-2.5 rounded-full bg-primary inline-block" />
                 First half
               </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block" />
-                Second half
-              </span>
+              {slowdownEnabled && effectiveSlowdown > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block" />
+                  Second half
+                </span>
+              )}
+              {stationPositions.length > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+                  Aid station
+                </span>
+              )}
             </div>
           </div>
           <div className="border border-gray-100 rounded-xl overflow-hidden">
@@ -626,16 +716,53 @@ export default function PaceCalculator() {
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {splits.map((split, i) => {
-                    const prevCumulative = i > 0 ? splits[i - 1].cumulativeSeconds : 0;
+                    // Check if this run row is the first second-half row
+                    const prev = i > 0 ? splits[i - 1] : null;
                     const isHalfway =
-                      i > 0 && !splits[i - 1].isSecondHalf && split.isSecondHalf;
-                    const maxCumulative = splits[splits.length - 1].cumulativeSeconds;
-                    const progressPct = (split.cumulativeSeconds / maxCumulative) * 100;
+                      split.type === "run" &&
+                      split.isSecondHalf &&
+                      i > 0 &&
+                      (prev?.type === "aid" ||
+                        (prev?.type === "run" && !prev.isSecondHalf));
+
+                    const lastSplit = splits[splits.length - 1];
+                    const maxCumulative = lastSplit.cumulativeSeconds;
+                    const progressPct =
+                      maxCumulative > 0
+                        ? (split.cumulativeSeconds / maxCumulative) * 100
+                        : 0;
+
+                    if (split.type === "aid") {
+                      return (
+                        <tr key={`aid-${split.label}`} className="bg-emerald-50/60">
+                          <td className="px-4 py-2.5 font-medium">
+                            <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+                              {split.label}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2.5 text-right font-mono text-emerald-700 text-xs">
+                            {formatDuration(split.stationSeconds)} stop
+                          </td>
+                          <td className="px-4 py-2.5 text-right font-mono text-emerald-700">
+                            {formatTime(split.cumulativeSeconds)}
+                          </td>
+                          <td className="px-4 py-2.5 hidden sm:table-cell">
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-emerald-400"
+                                style={{ width: `${progressPct}%` }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    }
 
                     return (
-                      <>
-                        {isHalfway && (
-                          <tr key={`halfway-${i}`} className="bg-primary/5">
+                      <Fragment key={split.label}>
+                        {isHalfway && slowdownEnabled && effectiveSlowdown > 0 && (
+                          <tr className="bg-primary/5">
                             <td
                               colSpan={4}
                               className="px-4 py-2 text-xs font-semibold text-primary text-center"
@@ -645,20 +772,23 @@ export default function PaceCalculator() {
                           </tr>
                         )}
                         <tr
-                          key={split.label}
                           className={`hover:bg-light/60 transition-colors ${
-                            split.isSecondHalf ? "bg-orange-50/30" : ""
+                            split.isSecondHalf && slowdownEnabled ? "bg-orange-50/30" : ""
                           }`}
                         >
                           <td className="px-4 py-3 font-medium text-dark">
                             <span
                               className={`inline-flex items-center gap-1.5 ${
-                                split.isSecondHalf ? "text-accent" : "text-primary"
+                                split.isSecondHalf && slowdownEnabled
+                                  ? "text-accent"
+                                  : "text-primary"
                               }`}
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                                  split.isSecondHalf ? "bg-accent" : "bg-primary"
+                                  split.isSecondHalf && slowdownEnabled
+                                    ? "bg-accent"
+                                    : "bg-primary"
                                 }`}
                               />
                               {split.label}
@@ -674,23 +804,27 @@ export default function PaceCalculator() {
                             <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full transition-all ${
-                                  split.isSecondHalf ? "bg-accent" : "bg-primary"
+                                  split.isSecondHalf && slowdownEnabled
+                                    ? "bg-accent"
+                                    : "bg-primary"
                                 }`}
                                 style={{ width: `${progressPct}%` }}
                               />
                             </div>
                           </td>
                         </tr>
-                      </>
+                      </Fragment>
                     );
                   })}
                 </tbody>
               </table>
             </div>
           </div>
-          <p className="text-xs text-gray/60 mt-2">
-            Aid station time is distributed proportionally across the race.
-          </p>
+          {stationPositions.length > 0 && (
+            <p className="text-xs text-gray/60 mt-2">
+              Aid stations are evenly spaced across the course.
+            </p>
+          )}
         </div>
       )}
     </div>
