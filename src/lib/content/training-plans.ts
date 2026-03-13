@@ -2,6 +2,18 @@ import { TrainingPlan } from "@/types/content";
 
 export const trainingPlans: TrainingPlan[] = [
   {
+    id: "ultra-training-plans",
+    title: "Ultra Training Plans",
+    subtitle: "50K to 100 miles — beginner through advanced",
+    slug: "plans",
+    description:
+      "Comprehensive training plans for every ultra distance and experience level. Includes interactive distance selector, week-by-week schedules, sample workouts, training zones guide, nutrition strategy, pacing calculator, and more.",
+    weeks: 36,
+    level: "intermediate",
+    distance: "50K–100M",
+    image: "/images/training/ultra-plans.jpg",
+  },
+  {
     id: "first-50k",
     title: "Your First 50K",
     subtitle: "From marathon runner to ultramarathoner in 16 weeks",

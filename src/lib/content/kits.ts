@@ -52,6 +52,18 @@ export const kits: GearKit[] = [
     ],
     totalEstimate: "$500-650",
   },
+  {
+    id: "race-day-kit",
+    name: "Ultra Marathon Race Day Kit",
+    slug: "race-day-kit",
+    description:
+      "The complete race day checklist across 6 categories — on-body gear, hydration pack, nutrition, drop bag, crew support, and recovery. Everything from the gun to the finish.",
+    distance: "All",
+    image: "/images/kits/race-day-kit.jpg",
+    itemIds: [],
+    totalEstimate: "$800-1,200",
+    href: "/gear/race-day-kit",
+  },
 ];
 
 export function getKitBySlug(slug: string) {

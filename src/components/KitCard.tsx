@@ -8,7 +8,7 @@ interface KitCardProps {
 export default function KitCard({ kit }: KitCardProps) {
   return (
     <Link
-      href={`/gear/kits#${kit.slug}`}
+      href={kit.href ?? `/gear/kits#${kit.slug}`}
       className="block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:border-primary/20 transition-all"
     >
       <div className="aspect-[16/9] bg-light flex items-center justify-center">

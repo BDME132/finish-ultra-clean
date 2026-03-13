@@ -11,6 +11,17 @@ export const metadata: Metadata = {
 
 const categories = [
   {
+    title: "Race Day Kit",
+    description: "The complete 6-category race day checklist — on-body, hydration, nutrition, drop bag, crew, and recovery.",
+    href: "/gear/race-day-kit",
+    badge: "New",
+    icon: (
+      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+      </svg>
+    ),
+  },
+  {
     title: "Curated Kits",
     description: "Pre-built gear bundles for specific distances. Everything you need, nothing you don't.",
     href: "/gear/kits",
@@ -90,9 +101,16 @@ export default function GearPage() {
                   <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-5 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                     {cat.icon}
                   </div>
-                  <h2 className="font-headline text-xl font-bold text-dark mb-2">
-                    {cat.title}
-                  </h2>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h2 className="font-headline text-xl font-bold text-dark">
+                      {cat.title}
+                    </h2>
+                    {"badge" in cat && cat.badge && (
+                      <span className="text-xs font-bold text-white bg-accent px-2 py-0.5 rounded-full">
+                        {cat.badge}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-gray text-sm leading-relaxed">
                     {cat.description}
                   </p>

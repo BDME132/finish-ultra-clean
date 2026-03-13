@@ -19,6 +19,7 @@ export interface GearKit {
   image: string;
   itemIds: string[];
   totalEstimate: string;
+  href?: string;
 }
 
 export interface TrainingPlan {
