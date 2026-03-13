@@ -3,6 +3,7 @@ import { openai } from "@ai-sdk/openai";
 import { NextRequest } from "next/server";
 import { checkChatRateLimit, peekChatRateLimit } from "@/lib/chat-rate-limit";
 import { getSupabase } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase/server";
 
 async function resolveSubscription(req: NextRequest): Promise<boolean> {
   const subscriberEmail = req.cookies.get("chat_subscribed")?.value;
@@ -24,9 +25,31 @@ function getIP(req: NextRequest): string {
   );
 }
 
+async function getAuthUser() {
+  try {
+    const supabase = await createSupabaseServer();
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  } catch {
+    return null;
+  }
+}
+
 /** GET /api/chat — returns remaining message count without incrementing */
 export async function GET(req: NextRequest) {
   const ip = getIP(req);
+  const user = await getAuthUser();
+
+  if (user) {
+    const rateLimit = await peekChatRateLimit(ip, true, user.id);
+    return Response.json({
+      remaining: rateLimit.remaining,
+      resetAt: rateLimit.resetAt,
+      requiresSignup: false,
+      allowed: rateLimit.allowed,
+    });
+  }
+
   const isSubscribed = await resolveSubscription(req);
   const rateLimit = await peekChatRateLimit(ip, isSubscribed);
 
@@ -41,8 +64,15 @@ export async function GET(req: NextRequest) {
 /** POST /api/chat — send a chat message */
 export async function POST(req: NextRequest) {
   const ip = getIP(req);
-  const isSubscribed = await resolveSubscription(req);
-  const rateLimit = await checkChatRateLimit(ip, isSubscribed);
+  const user = await getAuthUser();
+
+  let rateLimit;
+  if (user) {
+    rateLimit = await checkChatRateLimit(ip, true, user.id);
+  } else {
+    const isSubscribed = await resolveSubscription(req);
+    rateLimit = await checkChatRateLimit(ip, isSubscribed);
+  }
 
   if (!rateLimit.allowed) {
     return Response.json(

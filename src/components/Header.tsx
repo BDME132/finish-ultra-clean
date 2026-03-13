@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { usePheidi } from "./PheidiProvider";
+import { useAuth } from "./AuthProvider";
 
 const navLinks = [
   { href: "/start-here", label: "Start Here" },
@@ -98,6 +99,7 @@ export default function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { openPheidi } = usePheidi();
+  const { user, isLoading: authLoading } = useAuth();
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -199,6 +201,26 @@ export default function Header() {
                 </span>
               </span>
             </button>
+
+            {/* Auth button */}
+            {!authLoading && (
+              user ? (
+                <Link
+                  href="/account"
+                  className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
+                  title="Account"
+                >
+                  {(user.user_metadata?.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-dark hover:text-primary transition-colors"
+                >
+                  Log in
+                </Link>
+              )
+            )}
           </nav>
 
           {/* Mobile menu toggle */}
@@ -296,6 +318,27 @@ export default function Header() {
               >
                 Pheidi
               </button>
+
+              {/* Auth button (mobile) */}
+              {!authLoading && (
+                user ? (
+                  <Link
+                    href="/account"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
+                  >
+                    Account
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
+                  >
+                    Log in
+                  </Link>
+                )
+              )}
             </div>
           </nav>
         )}

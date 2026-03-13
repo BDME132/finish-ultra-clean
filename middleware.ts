@@ -1,25 +1,41 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from "next/server";
+import { createSupabaseMiddleware } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  // Allow the auth endpoint through without a cookie (it's the login endpoint)
-  if (request.nextUrl.pathname === '/api/admin/auth') {
-    return NextResponse.next()
+  const { supabase, response } = createSupabaseMiddleware(request);
+
+  // Refresh the auth session on every request (standard @supabase/ssr pattern).
+  // This keeps the session alive by exchanging expired JWTs for fresh ones.
+  await supabase.auth.getUser();
+
+  // --- Admin route protection (existing logic) ---
+  if (request.nextUrl.pathname === "/api/admin/auth") {
+    return response;
   }
 
-  // Check for admin session cookie on admin routes
-  const adminSession = request.cookies.get('admin_session')?.value
+  if (
+    request.nextUrl.pathname.startsWith("/admin") ||
+    request.nextUrl.pathname.startsWith("/api/admin")
+  ) {
+    const adminSession = request.cookies.get("admin_session")?.value;
 
-  if (!adminSession) {
-    // Allow the request to continue - the admin layout will show password form
-    // But for API routes, we need to return 401
-    if (request.nextUrl.pathname.startsWith('/api/admin')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!adminSession && request.nextUrl.pathname.startsWith("/api/admin")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
 
-  return NextResponse.next()
+  // --- Protected routes (require login) ---
+  const { data: { user } } = await supabase.auth.getUser();
+  if (request.nextUrl.pathname.startsWith("/account") && !user) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return response;
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
-}
+  matcher: [
+    // Match all routes except static files and images
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+  ],
+};
