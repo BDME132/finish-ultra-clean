@@ -11,6 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function TrainingPage() {
+  const featuredPlan = trainingPlans.find((p) => p.slug === "plans");
+  const otherPlans = trainingPlans.filter((p) => p.slug !== "plans");
+
   return (
     <>
       <Header />
@@ -28,8 +31,25 @@ export default function TrainingPage() {
 
         <section className="py-16">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Featured card */}
+            <div className="max-w-2xl mx-auto mb-10">
+              {featuredPlan && (
+                <TrainingPlanCard plan={featuredPlan} variant="featured" />
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 mb-10">
+              <div className="flex-1 h-px bg-gray-200" />
+              <span className="text-xs font-medium text-gray uppercase tracking-wider">
+                Or explore a specific plan
+              </span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+
+            {/* Other plan cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {trainingPlans.map((plan) => (
+              {otherPlans.map((plan) => (
                 <TrainingPlanCard key={plan.id} plan={plan} />
               ))}
             </div>
