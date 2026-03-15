@@ -173,24 +173,21 @@ export default function GearKitsPage() {
       />
       <main>
 
-        {/* ─── Hero ─────────────────────────────────────────────────────────── */}
-        <section className="bg-gradient-to-b from-dark to-gray-800 py-16 sm:py-20">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 text-white text-sm font-medium px-4 py-2 rounded-full mb-6">
-              <span>🎯</span> Personalized Gear Recommendations
+        {/* ─── Hero + Kit Builder ───────────────────────────────────────────── */}
+        <section className="bg-gradient-to-b from-dark to-gray-800 py-12 sm:py-16">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 bg-white/10 text-white text-sm font-medium px-4 py-2 rounded-full mb-5">
+                <span>🎯</span> Personalized Gear Recommendations
+              </div>
+              <h1 className="font-headline text-4xl sm:text-5xl font-bold text-white mb-4">
+                Build Your Custom Gear Kit
+              </h1>
+              <p className="text-gray-300 max-w-xl mx-auto">
+                Answer 10 questions. Get a complete, personalized gear kit with packing lists, drop bag plans, and a testing timeline.
+              </p>
             </div>
-            <h1 className="font-headline text-4xl sm:text-5xl font-bold text-white mb-6">
-              Build Your Custom Gear Kit
-            </h1>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-8">
-              Answer 10 questions about your race, body, and preferences. Get a complete gear kit
-              with specific product picks, packing lists, drop bag plans, and a testing timeline.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
-              <span>✓ 10 categories covered</span>
-              <span>✓ 3 budget tiers</span>
-              <span>✓ Packing checklist included</span>
-            </div>
+            <KitBuilder />
           </div>
         </section>
 
@@ -222,22 +219,6 @@ export default function GearKitsPage() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* ─── Kit Builder ─────────────────────────────────────────────────── */}
-        <section className="py-16">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <h2 className="font-headline text-3xl font-bold text-dark mb-3">
-                Build Your Kit
-              </h2>
-              <p className="text-gray max-w-xl mx-auto">
-                10 questions. Takes about 2 minutes. Your answers change every recommendation — two runners
-                doing the same race get different kits.
-              </p>
-            </div>
-            <KitBuilder />
           </div>
         </section>
 
