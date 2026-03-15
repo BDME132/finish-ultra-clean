@@ -58,7 +58,7 @@ export default function DistanceCard({
         <span className="text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full">
           {durationRange}
         </span>
-        <span className="text-xs text-gray">3 plan tiers</span>
+        <span className="text-xs text-gray">Personalized plan</span>
       </div>
 
       {/* Week 1 preview */}

@@ -85,7 +85,7 @@ const categories: {
           race: "Western States 100",
           runner: "Verified 100-mile finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { rei: "#", amazon: "https://amzn.to/4broufc", warehouse: "#" },
       },
       {
         name: "Mafate Speed 4",
