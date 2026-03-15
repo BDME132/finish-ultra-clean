@@ -27,7 +27,7 @@ export default function RaceDayKitPage() {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
       { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-      { "@type": "ListItem", position: 3, name: "Curated Kits", item: "https://finishultra.com/gear/kits" },
+      { "@type": "ListItem", position: 3, name: "Custom Kits", item: "https://finishultra.com/gear/kits" },
       { "@type": "ListItem", position: 4, name: "Race Day Kit", item: "https://finishultra.com/gear/race-day-kit" },
     ],
   };
@@ -233,7 +233,7 @@ export default function RaceDayKitPage() {
                 href="/gear/kits"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"
               >
-                View All Curated Kits
+                Build My Custom Kit
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
