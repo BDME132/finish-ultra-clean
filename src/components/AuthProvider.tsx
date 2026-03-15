@@ -33,10 +33,18 @@ export default function AuthProvider({
 
   useEffect(() => {
     const supabase = createSupabaseBrowser();
+    if (!supabase) {
+      setIsLoading(false);
+      return;
+    }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      setIsLoading(false);
+    }).catch(() => {
+      setSession(null);
+      setUser(null);
       setIsLoading(false);
     });
 
@@ -52,6 +60,7 @@ export default function AuthProvider({
 
   async function signOut() {
     const supabase = createSupabaseBrowser();
+    if (!supabase) return;
     await supabase.auth.signOut();
   }
 

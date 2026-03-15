@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
-import { createSupabaseBrowser } from "@/lib/supabase/client";
+import { createSupabaseBrowser, hasSupabaseBrowserEnv } from "@/lib/supabase/client";
 
 interface Profile {
   display_name: string | null;
@@ -17,8 +17,13 @@ export default function AccountSettings() {
   const [displayName, setDisplayName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const isSupabaseConfigured = hasSupabaseBrowserEnv();
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      return;
+    }
+
     if (!isLoading && !user) {
       router.replace("/login");
       return;
@@ -26,6 +31,8 @@ export default function AccountSettings() {
 
     if (user) {
       const supabase = createSupabaseBrowser();
+      if (!supabase) return;
+
       supabase
         .from("profiles")
         .select("display_name, is_newsletter_subscriber")
@@ -38,14 +45,16 @@ export default function AccountSettings() {
           }
         });
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, isSupabaseConfigured]);
 
   async function handleSave() {
     if (!user) return;
+    const supabase = createSupabaseBrowser();
+    if (!supabase) return;
+
     setSaving(true);
     setSaved(false);
 
-    const supabase = createSupabaseBrowser();
     await supabase
       .from("profiles")
       .update({
@@ -62,6 +71,19 @@ export default function AccountSettings() {
   async function handleSignOut() {
     await signOut();
     router.replace("/");
+  }
+
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
+        <h2 className="font-headline text-xl font-bold text-dark mb-2">
+          Account unavailable
+        </h2>
+        <p className="text-gray text-sm leading-relaxed">
+          Add the Supabase environment variables to <code className="font-mono text-dark">.env.local</code> to enable account features.
+        </p>
+      </div>
+    );
   }
 
   if (isLoading || !user) {

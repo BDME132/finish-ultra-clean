@@ -63,16 +63,26 @@ export default function AboutPage() {
               <p>
                 We only recommend products we&apos;d actually use. If we haven&apos;t tested it or don&apos;t believe in it, it&apos;s not on this site.
               </p>
+              <p>
+                For the full details, read our{" "}
+                <Link href="/affiliate-disclosure" className="text-primary font-medium hover:underline">
+                  affiliate disclosure
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy-policy" className="text-primary font-medium hover:underline">
+                  privacy policy
+                </Link>.
+              </p>
             </div>
 
             <div className="mt-12 text-center">
               <p className="text-gray mb-4">Questions? Suggestions? Just want to say hi?</p>
-              <a
-                href="mailto:hello@finishultra.com"
+              <Link
+                href="/contact"
                 className="text-primary font-medium hover:underline"
               >
-                hello@finishultra.com
-              </a>
+                Visit the contact page
+              </Link>
               <div className="mt-6">
                 <Link
                   href="/start-here"

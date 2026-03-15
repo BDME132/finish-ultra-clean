@@ -828,12 +828,24 @@ const AFFILIATE_RESOURCES = [
 ];
 
 // ─── Distance Descriptions ───────────────────────────────────────────────────
-const DISTANCE_INFO: Record<Distance, { tagline: string; durationRange: string }> = {
-  "50K": { tagline: "The gateway ultra. 31 miles of proving you can.", durationRange: "16 weeks" },
-  "50M": { tagline: "The real deal. 50 miles through the unknown.", durationRange: "20 weeks" },
-  "100K": { tagline: "62 miles. Where mental strength matters most.", durationRange: "24 weeks" },
-  "100M": { tagline: "The ultimate test. 100 miles, one finish line.", durationRange: "28–36 weeks" },
+const DISTANCE_INFO: Record<Distance, { tagline: string; typicalRunner: string; durationRange: string; week1Miles: string; week1KeyWorkout: string; popular?: boolean }> = {
+  "50K": { tagline: "The gateway ultra. 31 miles of proving you can.", typicalRunner: "Most first-timers start here", durationRange: "16 weeks", week1Miles: "~26 mi", week1KeyWorkout: "10 mi long run", popular: true },
+  "50M": { tagline: "The real deal. 50 miles through the unknown.", typicalRunner: "For runners who've done a 50K and want more", durationRange: "20 weeks", week1Miles: "~33 mi", week1KeyWorkout: "12 mi long run" },
+  "100K": { tagline: "62 miles. Where mental strength matters most.", typicalRunner: "Experienced ultra runners ready to go long", durationRange: "24 weeks", week1Miles: "~34 mi", week1KeyWorkout: "13 mi long run" },
+  "100M": { tagline: "The ultimate test. 100 miles, one finish line.", typicalRunner: "For those who've conquered shorter ultras", durationRange: "28–36 weeks", week1Miles: "~37 mi", week1KeyWorkout: "14 mi long run" },
 };
+
+// ─── Level Profiles ──────────────────────────────────────────────────────────
+const LEVEL_PROFILES: Record<Level, string> = {
+  beginner: "You've finished a half marathon or marathon and run 3\u20134 days/week. New to ultra distances.",
+  intermediate: "You've finished at least one ultra or have a strong marathon background with 12+ months of structured training.",
+  advanced: "Multiple ultra finishes under your belt. Comfortable at high mileage and looking for a competitive edge.",
+};
+
+// ─── Runner Profile Types ────────────────────────────────────────────────────
+type PriorRace = "none" | "half" | "marathon" | "50k" | "50m+";
+type Goal = "finish" | "time";
+type Terrain = "trail" | "road" | "mixed";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const phaseColor: Record<string, string> = {
@@ -867,6 +879,14 @@ export default function PlansClient() {
   const [targetHours, setTargetHours] = useState("");
   const [targetMins, setTargetMins] = useState("");
 
+  // Runner profile form (Step 2)
+  const [raceDate, setRaceDate] = useState("");
+  const [weeklyMileage, setWeeklyMileage] = useState("");
+  const [daysPerWeek, setDaysPerWeek] = useState("");
+  const [priorRace, setPriorRace] = useState<PriorRace | "">("");
+  const [goal, setGoal] = useState<Goal | "">("");
+  const [terrain, setTerrain] = useState<Terrain | "">("");
+
   const wizardRef = useRef<HTMLDivElement>(null);
 
   const plan = PLANS[activeDistance][activeLevel];
@@ -874,16 +894,67 @@ export default function PlansClient() {
   const levels: Level[] = ["beginner", "intermediate", "advanced"];
   const levelLabel: Record<Level, string> = { beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" };
 
-  // Readiness calculator
-  const readinessResult = () => {
+  // Smart recommendation engine — combines all profile inputs
+  const getRecommendation = (): { level: Level; reason: string } | null => {
     const miles = parseFloat(longestRun);
+    const weekly = parseFloat(weeklyMileage);
     if (!miles || isNaN(miles)) return null;
-    if (miles < 10) return { verdict: "Not Quite Ready", color: "text-red-600", rec: "Start with our Base Building Plan to build up to 15+ miles before beginning a distance-specific program.", level: null };
-    if (miles < 14) return { verdict: "Base Building", color: "text-yellow-700", rec: "You're close. Follow the Base Building plan for 8–10 weeks, then re-assess for a 50K Beginner plan.", level: "beginner" as Level };
-    if (miles < 20) return { verdict: "50K Beginner", color: "text-green-700", rec: "You have the base for the 50K Beginner plan. Start in week 1 and don't skip the cutback weeks.", level: "beginner" as Level };
-    if (miles < 26) return { verdict: "50K Intermediate or 50M Beginner", color: "text-primary", rec: "Strong base. Choose the 50K Intermediate plan for a competitive debut, or the 50M Beginner if you want to go long.", level: "intermediate" as Level };
-    return { verdict: "50M+ Ready", color: "text-primary font-bold", rec: "You're prepared for advanced training. Select your target distance and the Intermediate or Advanced plan tier.", level: "advanced" as Level };
+
+    // Score-based system: higher score = higher level
+    let score = 0;
+
+    // Longest run (primary signal)
+    if (miles >= 26) score += 3;
+    else if (miles >= 20) score += 2;
+    else if (miles >= 14) score += 1;
+    else score -= 1;
+
+    // Weekly mileage
+    if (weekly && !isNaN(weekly)) {
+      if (weekly >= 50) score += 2;
+      else if (weekly >= 35) score += 1;
+      else if (weekly < 25) score -= 1;
+    }
+
+    // Prior race experience
+    if (priorRace === "50m+") score += 3;
+    else if (priorRace === "50k") score += 2;
+    else if (priorRace === "marathon") score += 1;
+
+    // Days per week available
+    if (daysPerWeek === "6+") score += 1;
+    else if (daysPerWeek === "3") score -= 1;
+
+    // Goal
+    if (goal === "time") score += 1;
+
+    // Map score to level
+    let recLevel: Level;
+    let reason: string;
+
+    if (score <= 0) {
+      recLevel = "beginner";
+      reason = "Based on your current fitness, start with the Beginner plan to build a solid foundation safely.";
+    } else if (score <= 3) {
+      recLevel = "beginner";
+      reason = "Your running base is solid for a Beginner plan. You'll build volume progressively without overreaching.";
+    } else if (score <= 5) {
+      recLevel = "intermediate";
+      reason = "Your experience and weekly mileage support Intermediate training. Expect higher volume and more structured workouts.";
+    } else {
+      recLevel = "advanced";
+      reason = "Your background indicates you're ready for Advanced training. This plan will push your limits with competitive pacing.";
+    }
+
+    return { level: recLevel, reason };
   };
+
+  const recommendation = getRecommendation();
+
+  // Weeks until race (for Step 3 countdown)
+  const weeksUntilRace = raceDate
+    ? Math.max(0, Math.ceil((new Date(raceDate).getTime() - Date.now()) / (7 * 24 * 60 * 60 * 1000)))
+    : null;
 
   // Pacing calculator
   const pacingResult = () => {
@@ -901,7 +972,6 @@ export default function PlansClient() {
     };
   };
 
-  const readiness = readinessResult();
   const pacing = pacingResult();
 
   const goToStep = (step: number) => {
@@ -952,7 +1022,11 @@ export default function PlansClient() {
                   key={d}
                   distance={d}
                   tagline={DISTANCE_INFO[d].tagline}
+                  typicalRunner={DISTANCE_INFO[d].typicalRunner}
                   durationRange={DISTANCE_INFO[d].durationRange}
+                  week1Miles={DISTANCE_INFO[d].week1Miles}
+                  week1KeyWorkout={DISTANCE_INFO[d].week1KeyWorkout}
+                  popular={DISTANCE_INFO[d].popular}
                   selected={activeDistance === d}
                   onClick={() => setActiveDistance(d)}
                 />
@@ -979,49 +1053,175 @@ export default function PlansClient() {
         <section className="py-14 bg-white">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
-              <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark mb-2">Assess your readiness</h2>
-              <p className="text-gray text-sm">Use the calculator below, or pick the level that matches your experience.</p>
+              <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark mb-2">Tell us about yourself</h2>
+              <p className="text-gray text-sm">We&apos;ll recommend the right plan level for your {activeDistance}.</p>
             </div>
 
-            {/* Readiness calculator */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-10">
-              <h3 className="font-headline text-lg font-bold text-dark mb-1">Readiness Check</h3>
-              <p className="text-sm text-gray mb-5">Enter your longest run in the last 4 weeks to see which level fits.</p>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-dark mb-2">Longest run (miles)</label>
-                <input
-                  type="number"
-                  value={longestRun}
-                  onChange={(e) => setLongestRun(e.target.value)}
-                  placeholder="e.g. 16"
-                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                />
+            {/* Runner profile form */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
+              <h3 className="font-headline text-lg font-bold text-dark mb-5">Your running profile</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* Longest run */}
+                <div>
+                  <label className="block text-sm font-medium text-dark mb-2">Longest run in last 4 weeks (miles)</label>
+                  <input
+                    type="number"
+                    value={longestRun}
+                    onChange={(e) => setLongestRun(e.target.value)}
+                    placeholder="e.g. 16"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+
+                {/* Current weekly mileage */}
+                <div>
+                  <label className="block text-sm font-medium text-dark mb-2">Current weekly mileage</label>
+                  <input
+                    type="number"
+                    value={weeklyMileage}
+                    onChange={(e) => setWeeklyMileage(e.target.value)}
+                    placeholder="e.g. 30"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+
+                {/* Days per week */}
+                <div>
+                  <label className="block text-sm font-medium text-dark mb-2">Days/week available to train</label>
+                  <div className="flex gap-2">
+                    {(["3", "4", "5", "6+"] as const).map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => setDaysPerWeek(d)}
+                        className={`flex-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                          daysPerWeek === d
+                            ? "bg-primary text-white"
+                            : "border border-gray-200 text-dark hover:border-primary/40"
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Prior race experience */}
+                <div>
+                  <label className="block text-sm font-medium text-dark mb-2">Longest prior race</label>
+                  <select
+                    value={priorRace}
+                    onChange={(e) => setPriorRace(e.target.value as PriorRace)}
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-white"
+                  >
+                    <option value="">Select...</option>
+                    <option value="none">No races yet</option>
+                    <option value="half">5K to Half Marathon</option>
+                    <option value="marathon">Marathon</option>
+                    <option value="50k">50K</option>
+                    <option value="50m+">50 Miles or longer</option>
+                  </select>
+                </div>
+
+                {/* Race date */}
+                <div>
+                  <label className="block text-sm font-medium text-dark mb-2">Race date (optional)</label>
+                  <input
+                    type="date"
+                    value={raceDate}
+                    onChange={(e) => setRaceDate(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+
+                {/* Terrain */}
+                <div>
+                  <label className="block text-sm font-medium text-dark mb-2">Terrain access</label>
+                  <div className="flex gap-2">
+                    {([["trail", "Trail"], ["road", "Road"], ["mixed", "Mixed"]] as const).map(([val, label]) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => setTerrain(val)}
+                        className={`flex-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                          terrain === val
+                            ? "bg-primary text-white"
+                            : "border border-gray-200 text-dark hover:border-primary/40"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
-              {readiness && (
-                <div className="bg-light rounded-xl p-4">
-                  <div className={`font-headline font-bold text-lg mb-2 ${readiness.color}`}>{readiness.verdict}</div>
-                  <p className="text-sm text-gray leading-relaxed mb-3">{readiness.rec}</p>
-                  {readiness.level && (
+
+              {/* Primary goal - full width */}
+              <div className="mt-5">
+                <label className="block text-sm font-medium text-dark mb-2">Primary goal</label>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setGoal("finish")}
+                    className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all text-left ${
+                      goal === "finish"
+                        ? "bg-primary text-white"
+                        : "border border-gray-200 text-dark hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="font-semibold">Just finish</div>
+                    <div className={`text-xs mt-0.5 ${goal === "finish" ? "text-white/70" : "text-gray"}`}>Cross the finish line healthy and smiling</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGoal("time")}
+                    className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all text-left ${
+                      goal === "time"
+                        ? "bg-primary text-white"
+                        : "border border-gray-200 text-dark hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="font-semibold">Beat a time goal</div>
+                    <div className={`text-xs mt-0.5 ${goal === "time" ? "text-white/70" : "text-gray"}`}>Train with specific pacing and performance targets</div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Recommendation banner */}
+            {recommendation && (
+              <div className="bg-primary/5 border border-primary/20 rounded-xl p-5 mb-8">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="font-headline font-bold text-dark mb-1">
+                      We recommend: {activeDistance} {levelLabel[recommendation.level]}
+                    </div>
+                    <p className="text-sm text-gray leading-relaxed mb-2">{recommendation.reason}</p>
                     <button
                       onClick={() => {
-                        setActiveLevel(readiness.level!);
+                        setActiveLevel(recommendation.level);
                         setActiveSampleWeek(0);
                       }}
                       className="text-sm font-semibold text-primary hover:underline"
                     >
                       Use this recommendation
                     </button>
-                  )}
+                  </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Level cards */}
             <h3 className="font-headline text-lg font-bold text-dark mb-4">Select your level</h3>
             <div className="space-y-4 mb-10">
               {levels.map((l) => {
                 const p = PLANS[activeDistance][l];
-                const isRecommended = readiness?.level === l;
+                const isRecommended = recommendation?.level === l;
                 return (
                   <button
                     key={l}
@@ -1039,18 +1239,20 @@ export default function PlansClient() {
                         </svg>
                       </div>
                     )}
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3 mb-1">
                       <span className="font-headline text-lg font-bold text-dark">{levelLabel[l]}</span>
                       {isRecommended && (
                         <span className="text-xs font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full">
-                          Recommended for you
+                          {recommendation ? "Matches your profile" : "Recommended for you"}
                         </span>
                       )}
                     </div>
+                    <p className="text-sm text-gray mb-3">{LEVEL_PROFILES[l]}</p>
                     <div className="flex flex-wrap gap-4 text-xs text-gray mb-3">
                       <span>{p.duration} weeks</span>
                       <span>{p.weeklyRange}</span>
                       <span>{p.runsPerWeek} runs/week</span>
+                      <span className="font-medium text-dark">Peak long run: {p.peakMileage}</span>
                     </div>
                     <ul className="space-y-1">
                       {p.prerequisites.map((pr, i) => (
@@ -1105,9 +1307,17 @@ export default function PlansClient() {
                   <span className="bg-white/20 text-white text-sm font-semibold px-3 py-1 rounded-full">{activeDistance}</span>
                   <span className="bg-white/20 text-white text-sm font-semibold px-3 py-1 rounded-full capitalize">{levelLabel[activeLevel]}</span>
                   <span className="bg-white/20 text-white text-sm px-3 py-1 rounded-full">{plan.duration} Weeks</span>
+                  {weeksUntilRace !== null && (
+                    <span className="bg-accent/90 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                      {weeksUntilRace} weeks to race day
+                    </span>
+                  )}
                 </div>
                 <h3 className="font-headline text-2xl sm:text-3xl font-bold text-white mb-1">{activeDistance} {levelLabel[activeLevel]} Plan</h3>
-                <p className="text-white/80 text-sm">{plan.runsPerWeek} runs/week · {plan.weeklyRange} · Peak: {plan.peakMileage}</p>
+                <p className="text-white/80 text-sm">
+                  {plan.runsPerWeek} runs/week · {plan.weeklyRange} · Peak: {plan.peakMileage}
+                  {terrain && terrain !== "mixed" && <> · {terrain === "trail" ? "Trail-focused" : "Road-focused"}</>}
+                </p>
               </div>
 
               <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
