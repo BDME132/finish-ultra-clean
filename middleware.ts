@@ -4,6 +4,10 @@ import { createSupabaseMiddleware } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { supabase, response } = createSupabaseMiddleware(request);
 
+  if (!supabase) {
+    return response;
+  }
+
   // Refresh the auth session on every request (standard @supabase/ssr pattern).
   // This keeps the session alive by exchanging expired JWTs for fresh ones.
   await supabase.auth.getUser();

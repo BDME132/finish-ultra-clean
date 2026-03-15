@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createSupabaseBrowser } from "@/lib/supabase/client";
+import { createSupabaseBrowser, hasSupabaseBrowserEnv } from "@/lib/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 
 export default function LoginForm() {
@@ -14,6 +14,7 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
+  const isSupabaseConfigured = hasSupabaseBrowserEnv();
 
   // If already logged in, redirect to account
   useEffect(() => {
@@ -22,18 +23,29 @@ export default function LoginForm() {
 
   // Show error from callback
   useEffect(() => {
+    if (searchParams.get("error") === "supabase_not_configured") {
+      setStatus("error");
+      setErrorMsg("Sign-in is unavailable until Supabase environment variables are added.");
+      return;
+    }
+
     if (searchParams.get("error")) {
       setStatus("error");
       setErrorMsg("Something went wrong. Please try again.");
     }
   }, [searchParams]);
 
-  const supabase = createSupabaseBrowser();
-
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault();
     setStatus("loading");
     setErrorMsg("");
+
+    const supabase = createSupabaseBrowser();
+    if (!supabase) {
+      setStatus("error");
+      setErrorMsg("Sign-in is unavailable until Supabase environment variables are added.");
+      return;
+    }
 
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim().toLowerCase(),
@@ -51,6 +63,13 @@ export default function LoginForm() {
   }
 
   async function handleGoogle() {
+    const supabase = createSupabaseBrowser();
+    if (!supabase) {
+      setStatus("error");
+      setErrorMsg("Sign-in is unavailable until Supabase environment variables are added.");
+      return;
+    }
+
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -94,6 +113,21 @@ export default function LoginForm() {
         >
           Use a different email
         </button>
+      </div>
+    );
+  }
+
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+        <h1 className="font-headline text-2xl font-bold text-dark mb-2">
+          Sign-in not configured
+        </h1>
+        <p className="text-sm text-gray leading-relaxed">
+          Add <code className="font-mono text-dark">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
+          <code className="font-mono text-dark">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to{" "}
+          <code className="font-mono text-dark">.env.local</code> to enable authentication.
+        </p>
       </div>
     );
   }
