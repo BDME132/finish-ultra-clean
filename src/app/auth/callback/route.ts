@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServer } from "@/lib/supabase/server";
+import { createSupabaseServer, hasSupabaseServerEnv } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
+
+  if (!hasSupabaseServerEnv()) {
+    return NextResponse.redirect(
+      new URL("/login?error=supabase_not_configured", request.url)
+    );
+  }
 
   if (code) {
     const supabase = await createSupabaseServer();
