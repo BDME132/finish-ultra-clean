@@ -1,21 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-type Answers = {
-  distance: string;
-  terrain: string;
-  temp: string;
-  night: string;
-  experience: string;
-  budget: string;
-  sweat: string;
-  stomach: string;
-  feetWidth: string;
-  priority: string;
-};
+import Link from "next/link";
+import { useAuth } from "@/components/AuthProvider";
+import { saveKit, getMyKit } from "@/lib/supabase/kits";
+import type { Answers, KitSummary } from "@/types/gear";
 
 type RetailerLink = { url: string; price: number };
 
@@ -778,10 +767,13 @@ function ProductCard({
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function KitBuilder() {
+  const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<Answers>>({});
   const [kit, setKit] = useState<Kit | null>(null);
   const [activeTab, setActiveTab] = useState<"gear" | "packing" | "dropbag" | "timeline">("gear");
+  const [savedKitData, setSavedKitData] = useState<{ answers: Answers } | null>(null);
+  const [kitSaveState, setKitSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [purchased, setPurchasedRaw] = useState<Set<string>>(() => {
     if (typeof window === "undefined") return new Set<string>();
     try {
@@ -800,6 +792,14 @@ export default function KitBuilder() {
       localStorage.setItem("finishultra_kit_purchased", JSON.stringify([...purchased]));
     } catch { /* storage full or unavailable */ }
   }, [purchased]);
+
+  // Load saved kit answers from Supabase when user is logged in
+  useEffect(() => {
+    if (!user) return;
+    getMyKit(user.id).then((data) => {
+      if (data) setSavedKitData({ answers: data.answers });
+    });
+  }, [user]);
 
   function setPurchased(updater: (prev: Set<string>) => Set<string>) {
     setPurchasedRaw(updater);
@@ -835,6 +835,26 @@ export default function KitBuilder() {
     });
   }
 
+  function restoreKit(savedAnswers: Answers) {
+    setAnswers(savedAnswers);
+    setKit(buildKit(savedAnswers));
+    setSavedKitData(null);
+  }
+
+  async function handleSaveKit() {
+    if (!user || !kit) return;
+    setKitSaveState("saving");
+    const summary: KitSummary = {
+      title: kit.title,
+      subtitle: kit.subtitle,
+      totalItems: kit.items.length,
+      categories: [...new Set(kit.items.map((i) => i.category))],
+      totalCost: kit.items.reduce((sum, i) => sum + i.price, 0),
+    };
+    const ok = await saveKit(user.id, answers as Answers, summary);
+    setKitSaveState(ok ? "saved" : "error");
+  }
+
   const totalCost = kit ? kit.items.reduce((sum, i) => sum + i.price, 0) : 0;
   const purchasedCost = kit
     ? kit.items.filter((i) => purchased.has(`${i.category}::${i.product}`)).reduce((sum, i) => sum + i.price, 0)
@@ -866,6 +886,30 @@ export default function KitBuilder() {
       {!kit ? (
         /* ── QUIZ ─────────────────────────────────────────────────── */
         <div className="p-6 sm:p-8">
+          {/* Restore saved kit banner */}
+          {step === 0 && savedKitData && (
+            <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-6 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-dark">You have a saved kit</p>
+                <p className="text-xs text-gray mt-0.5">Restore it or start fresh with new answers.</p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={() => restoreKit(savedKitData.answers)}
+                  className="px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Restore
+                </button>
+                <button
+                  onClick={() => setSavedKitData(null)}
+                  className="px-3 py-1.5 text-xs font-medium text-gray hover:text-dark transition-colors"
+                >
+                  Start fresh
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-2 mb-5">
             {sectionSteps.map((s) => (
               <div
@@ -920,9 +964,31 @@ export default function KitBuilder() {
               <h3 className="font-headline text-xl font-bold text-dark">{kit.title}</h3>
               <p className="text-sm text-gray mt-1">{kit.subtitle}</p>
             </div>
-            <button onClick={restart} className="text-sm text-primary hover:underline font-medium shrink-0">
-              Rebuild →
-            </button>
+            <div className="flex items-center gap-3 shrink-0">
+              {/* Save kit button */}
+              {user ? (
+                kitSaveState === "saved" ? (
+                  <Link href="/race-hq" className="text-sm text-green-700 font-medium hover:underline">
+                    Saved to Race HQ →
+                  </Link>
+                ) : (
+                  <button
+                    onClick={handleSaveKit}
+                    disabled={kitSaveState === "saving"}
+                    className="text-sm font-medium text-primary hover:underline disabled:opacity-50"
+                  >
+                    {kitSaveState === "saving" ? "Saving..." : kitSaveState === "error" ? "Try again" : "Save kit"}
+                  </button>
+                )
+              ) : (
+                <Link href="/login?redirect=/gear/kits" className="text-sm text-gray hover:text-primary transition-colors">
+                  Log in to save
+                </Link>
+              )}
+              <button onClick={restart} className="text-sm text-primary hover:underline font-medium">
+                Rebuild →
+              </button>
+            </div>
           </div>
 
           {/* Budget tiers */}
