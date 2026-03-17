@@ -205,13 +205,25 @@ export default function Header() {
             {/* Auth button */}
             {!authLoading && (
               user ? (
-                <Link
-                  href="/account"
-                  className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
-                  title="Account"
-                >
-                  {(user.user_metadata?.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
-                </Link>
+                <>
+                  <Link
+                    href="/race-hq"
+                    className={`text-sm font-medium transition-colors ${
+                      pathname?.startsWith("/race-hq")
+                        ? "text-primary"
+                        : "text-dark hover:text-primary"
+                    }`}
+                  >
+                    Race HQ
+                  </Link>
+                  <Link
+                    href="/account"
+                    className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
+                    title="Account"
+                  >
+                    {(user.user_metadata?.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
+                  </Link>
+                </>
               ) : (
                 <Link
                   href="/login"
@@ -322,13 +334,26 @@ export default function Header() {
               {/* Auth button (mobile) */}
               {!authLoading && (
                 user ? (
-                  <Link
-                    href="/account"
-                    onClick={() => setMobileOpen(false)}
-                    className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
-                  >
-                    Account
-                  </Link>
+                  <>
+                    <Link
+                      href="/race-hq"
+                      onClick={() => setMobileOpen(false)}
+                      className={`text-sm font-medium px-3 py-2 border rounded-md text-center transition-colors ${
+                        pathname?.startsWith("/race-hq")
+                          ? "border-primary text-primary bg-primary/5"
+                          : "border-gray-200 text-dark hover:text-primary"
+                      }`}
+                    >
+                      Race HQ
+                    </Link>
+                    <Link
+                      href="/account"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
+                    >
+                      Account
+                    </Link>
+                  </>
                 ) : (
                   <Link
                     href="/login"
