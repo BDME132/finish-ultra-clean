@@ -7,7 +7,10 @@ import { useAuth } from "@/components/AuthProvider";
 import WizardStepper from "@/components/training/WizardStepper";
 import DistanceCard from "@/components/training/DistanceCard";
 import PlanTabs, { type PlanTab } from "@/components/training/PlanTabs";
-import { savePlan, getDefaultGearItems, getDefaultNutritionProducts, getDefaultRaceDayChecklist } from "@/lib/training-types";
+import { getDefaultGearItems, getDefaultNutritionProducts, getDefaultRaceDayChecklist, getDefaultRaceCountdown } from "@/lib/training-types";
+import { saveNewPlan } from "@/lib/training-sync";
+import { getTimelineAssessment, generateDynamicPlan, calculateMilestones } from "@/lib/plan-generator";
+import type { DynamicWeek, Milestone, TimelineAssessment } from "@/lib/plan-generator";
 import type { SavedPlan, SavedWeek, SavedWorkoutDay } from "@/lib/training-types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -1522,6 +1525,8 @@ function generateFullSchedule(distance: Distance, level: Level): PlanDay[][] {
 }
 
 export default function PlansClient() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [activeDistance, setActiveDistance] = useState<Distance>("50K");
   const [activeLevel, setActiveLevel] = useState<Level>("beginner");
@@ -1630,6 +1635,104 @@ export default function PlansClient() {
   const weeksUntilRace = raceDate
     ? Math.max(0, Math.ceil((new Date(raceDate).getTime() - Date.now()) / (7 * 24 * 60 * 60 * 1000)))
     : null;
+
+  // Timeline assessment
+  const timelineAssessment: TimelineAssessment | null = weeksUntilRace !== null ? getTimelineAssessment(weeksUntilRace, activeDistance) : null;
+
+  // Dynamic plan generation
+  const dynamicPlan: DynamicWeek[] | null = (weeksUntilRace && weeksUntilRace > 0 && raceDate && timelineAssessment && timelineAssessment.status !== "past")
+    ? generateDynamicPlan(weeksUntilRace, activeDistance, effectiveLevel, parseFloat(weeklyMileage) || 0, raceDate, timelineAssessment)
+    : null;
+
+  const milestones: Milestone[] | null = (weeksUntilRace && raceDate && timelineAssessment && timelineAssessment.status !== "past")
+    ? calculateMilestones(weeksUntilRace, raceDate, activeDistance, timelineAssessment)
+    : null;
+
+  // Full schedule for weekly navigator
+  const fullSchedule = dynamicPlan
+    ? dynamicPlan.map((w) => w.days)
+    : plan2.sampleWeeks.map((sw) => sw.days);
+
+  const getWeekMileage = (days: { distance: string }[]) => {
+    const total = days.reduce((sum, d) => {
+      const miles = parseFloat(d.distance) || 0;
+      return sum + miles;
+    }, 0);
+    return total > 0 ? `${total} mi` : "Recovery";
+  };
+
+  const getWeekPhase = (weekIdx: number) => {
+    if (dynamicPlan && dynamicPlan[weekIdx]) return dynamicPlan[weekIdx].phase;
+    const duration = plan2.duration;
+    const pct = weekIdx / duration;
+    if (pct < 0.25) return "Base";
+    if (pct < 0.6) return "Build";
+    if (pct < 0.85) return "Peak";
+    return "Taper";
+  };
+
+  // Save plan and navigate to dashboard
+  const [planSaved, setPlanSaved] = useState(false);
+  const [showAccountPrompt, setShowAccountPrompt] = useState(false);
+
+  const doSavePlan = async () => {
+    if (!dynamicPlan || !raceDate || !weeksUntilRace) return;
+
+    const savedWeeks: SavedWeek[] = dynamicPlan.map((w) => ({
+      weekNumber: w.weekNumber,
+      weeksToRace: w.weeksToRace,
+      startDate: w.startDate,
+      endDate: w.endDate,
+      phase: w.phase,
+      totalMiles: w.totalMiles,
+      longRun: w.longRun,
+      b2b: w.b2b,
+      isRecovery: w.isRecovery,
+      days: w.days.map((d): SavedWorkoutDay => ({
+        day: d.day,
+        workout: d.workout,
+        distance: d.distance,
+        effort: d.effort,
+        notes: d.notes,
+      })),
+      goals: w.goals,
+    }));
+
+    const plan: SavedPlan = {
+      raceDate,
+      raceName: `My ${activeDistance} Ultra`,
+      distance: activeDistance,
+      level: effectiveLevel,
+      weeksTotal: weeksUntilRace,
+      currentWeeklyMiles: parseFloat(weeklyMileage) || 0,
+      generatedAt: new Date().toISOString(),
+      weeks: savedWeeks,
+      completedWorkouts: {},
+      gearItems: getDefaultGearItems(activeDistance),
+      nutritionProducts: getDefaultNutritionProducts(),
+      raceDayChecklist: getDefaultRaceDayChecklist(),
+      raceCountdown: getDefaultRaceCountdown(),
+      runnerProfile: {},
+      dailyTasks: [],
+    };
+
+    await saveNewPlan(plan, user ?? null);
+    setPlanSaved(true);
+    setTimeout(() => router.push("/training/dashboard"), 600);
+  };
+
+  const handleSavePlan = () => {
+    if (!user) {
+      setShowAccountPrompt(true);
+      return;
+    }
+    doSavePlan();
+  };
+
+  const handleSaveAsGuest = () => {
+    setShowAccountPrompt(false);
+    doSavePlan();
+  };
 
   // Pacing calculator
   const pacingResult = () => {
@@ -2314,10 +2417,70 @@ export default function PlansClient() {
               </div>
             )}
 
+            {/* Timeline Assessment Warning */}
+            {timelineAssessment && (timelineAssessment.status === "insufficient" || timelineAssessment.status === "tight" || timelineAssessment.status === "past") && (
+              <div className={`my-6 rounded-2xl border p-6 ${timelineAssessment.color}`}>
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">{timelineAssessment.icon}</span>
+                  <div>
+                    <h3 className="font-headline text-lg font-bold mb-1">{timelineAssessment.title}</h3>
+                    <p className="text-sm mb-3">{timelineAssessment.message}</p>
+                    {timelineAssessment.requirements && (
+                      <div className="mb-3">
+                        <p className="text-xs font-semibold uppercase tracking-wider mb-2">Requirements to proceed:</p>
+                        <ul className="space-y-1">
+                          {timelineAssessment.requirements.map((r, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm">
+                              <span className="mt-0.5 flex-shrink-0">✓</span>{r}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {timelineAssessment.status === "insufficient" && (
+                      <div className="flex flex-wrap gap-3 mt-3">
+                        <Link href="/training/plans" className="px-4 py-2 bg-white/80 rounded-lg text-sm font-medium hover:bg-white transition-colors">
+                          Find a Later Race
+                        </Link>
+                        <button
+                          onClick={() => setAcknowledgedRisk(true)}
+                          className="px-4 py-2 bg-white/40 rounded-lg text-sm font-medium hover:bg-white/60 transition-colors"
+                        >
+                          I Understand the Risks
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Timeline: Good/Excellent status */}
+            {timelineAssessment && (timelineAssessment.status === "good" || timelineAssessment.status === "excellent") && (
+              <div className={`my-6 rounded-2xl border p-6 ${timelineAssessment.color}`}>
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">{timelineAssessment.icon}</span>
+                  <div>
+                    <h3 className="font-headline text-lg font-bold mb-1">{timelineAssessment.title}</h3>
+                    <p className="text-sm">{timelineAssessment.message}</p>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {timelineAssessment.phases.map((p) => (
+                        <span key={p.name} className="text-xs bg-white/60 px-2.5 py-1 rounded-full font-medium">
+                          {p.name}: {p.weeks}w
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Save Plan CTA */}
             {dynamicPlan && dynamicPlan.length > 0 && (
               <div className="my-10 bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-8 text-center text-white">
-                <h3 className="font-headline text-2xl font-bold mb-2">Ready to Start Training?</h3>
+                <h3 className="font-headline text-2xl font-bold mb-2">
+                  {user ? "Your Custom Ultra Plan is Ready!" : "Your Custom Ultra Plan is Ready!"}
+                </h3>
                 <p className="text-white/80 mb-6 max-w-lg mx-auto">
                   Save this plan to your Training Dashboard to track daily workouts, manage gear, test nutrition, and count down to race day.
                 </p>
@@ -2330,8 +2493,59 @@ export default function PlansClient() {
                       : "bg-white text-primary hover:bg-light shadow-lg hover:shadow-xl"
                   }`}
                 >
-                  {planSaved ? "✓ Plan Saved — Redirecting..." : "Save Plan & Go to Dashboard →"}
+                  {planSaved ? "✓ Plan Saved — Redirecting..." : user ? "Save Plan & Go to Dashboard →" : "Save Plan →"}
                 </button>
+                {!user && (
+                  <p className="text-white/50 text-xs mt-3">
+                    Create a free account to sync across devices and never lose your progress.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Account Save Prompt Modal */}
+            {showAccountPrompt && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="absolute inset-0 bg-black/50" onClick={() => setShowAccountPrompt(false)} />
+                <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+                  <div className="text-center mb-6">
+                    <div className="text-4xl mb-3">✅</div>
+                    <h3 className="font-headline text-2xl font-bold text-dark mb-2">Your Custom Ultra Plan is Ready!</h3>
+                    <p className="text-sm text-gray">Save this plan to track your progress?</p>
+                  </div>
+
+                  <Link
+                    href="/login"
+                    className="block w-full px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors text-center mb-3"
+                  >
+                    Create Free Account
+                  </Link>
+
+                  <button
+                    onClick={handleSaveAsGuest}
+                    className="block w-full px-6 py-3 bg-light text-dark font-medium rounded-xl hover:bg-gray-200 transition-colors text-center border border-gray-200 mb-6"
+                  >
+                    Continue as Guest
+                  </button>
+
+                  <div className="bg-light rounded-xl p-4">
+                    <p className="font-semibold text-dark text-sm mb-3">Benefits of saving:</p>
+                    <ul className="space-y-2 text-sm text-gray">
+                      {[
+                        "Daily to-do checklist",
+                        "Track completed workouts",
+                        "Gear purchase tracking",
+                        "Nutrition testing log",
+                        "Progress analytics",
+                        "Sync across devices",
+                      ].map((b) => (
+                        <li key={b} className="flex items-center gap-2">
+                          <span className="text-green-500">✓</span>{b}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
             )}
 

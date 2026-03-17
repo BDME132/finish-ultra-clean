@@ -1,16 +1,24 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import {
   SavedPlan,
   CompletedWorkout,
   GearTrackingItem,
   NutritionProduct,
+  DailyTask,
+  PostRaceReport,
+  RaceDayChecklistItem,
+  RunnerProfile,
   loadSavedPlan,
   savePlan,
+  generateDailyTasks,
   PLAN_STORAGE_KEY,
 } from "@/lib/training-types";
+import { useAuth } from "@/components/AuthProvider";
+import { loadPlan, persistPlan, deletePlanData } from "@/lib/training-sync";
+import { calculateFuelingStrategy, FuelingStrategy } from "@/lib/plan-generator";
 
 type Tab = "today" | "week" | "progress" | "gear" | "nutrition" | "raceday";
 
@@ -35,7 +43,12 @@ function formatDateFull(d: Date): string {
   return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 }
 
+function todayDateStr(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
 export default function DashboardClient() {
+  const { user } = useAuth();
   const [plan, setPlan] = useState<SavedPlan | null>(null);
   const [tab, setTab] = useState<Tab>("today");
   const [loaded, setLoaded] = useState(false);
@@ -59,22 +72,67 @@ export default function DashboardClient() {
   const [nutritionRating, setNutritionRating] = useState(0);
   const [nutritionRaceUse, setNutritionRaceUse] = useState<"yes" | "maybe" | "no" | "">("");
 
+  // Post-race report state
+  const [postRaceForm, setPostRaceForm] = useState<PostRaceReport>({});
+
+  // Nutrition fueling form
+  const [fuelingWeight, setFuelingWeight] = useState("");
+  const [fuelingSweatRate, setFuelingSweatRate] = useState<"light" | "moderate" | "heavy">("moderate");
+  const [fuelingSensitivity, setFuelingSensitivity] = useState<"iron" | "average" | "sensitive">("average");
+
   const isFirstRender = useRef(true);
+  const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Debounced persist to Supabase
+  const debouncedPersist = useCallback(
+    (updatedPlan: SavedPlan) => {
+      if (persistTimerRef.current) clearTimeout(persistTimerRef.current);
+      persistTimerRef.current = setTimeout(() => {
+        persistPlan(updatedPlan, user);
+      }, 800);
+    },
+    [user],
+  );
+
+  // Load plan from Supabase/localStorage
   useEffect(() => {
-    const saved = loadSavedPlan();
-    setPlan(saved);
-    setLoaded(true);
-  }, []);
+    let cancelled = false;
+    async function load() {
+      const saved = await loadPlan(user);
+      if (!cancelled) {
+        setPlan(saved);
+        if (saved?.runnerProfile) {
+          setFuelingWeight(String(saved.runnerProfile.weightLbs ?? ""));
+          setFuelingSweatRate(saved.runnerProfile.sweatRate ?? "moderate");
+          setFuelingSensitivity(saved.runnerProfile.stomachSensitivity ?? "average");
+        }
+        if (saved?.postRaceReport) {
+          setPostRaceForm(saved.postRaceReport);
+        }
+        setLoaded(true);
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
-  // Save to localStorage whenever plan changes (skip first render)
+  // Persist whenever plan changes (skip first render)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-    if (plan) savePlan(plan);
-  }, [plan]);
+    if (plan) debouncedPersist(plan);
+  }, [plan, debouncedPersist]);
+
+  // Cleanup debounce timer
+  useEffect(() => {
+    return () => {
+      if (persistTimerRef.current) clearTimeout(persistTimerRef.current);
+    };
+  }, []);
 
   if (!loaded) return null;
 
@@ -104,13 +162,13 @@ export default function DashboardClient() {
   // ─── Computed values ──────────────────────────────────────────────────────
   const today = new Date();
   const raceDate = new Date(plan.raceDate);
-  const daysUntilRace = Math.max(0, Math.ceil((raceDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
-  const weeksUntilRace = Math.ceil(daysUntilRace / 7);
+  const daysUntilRace = Math.ceil((raceDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const daysUntilRaceClamped = Math.max(0, daysUntilRace);
+  const weeksUntilRace = Math.ceil(daysUntilRaceClamped / 7);
+  const raceIsPast = daysUntilRace <= 0;
 
   // Find current week
   const currentWeekIndex = plan.weeks.findIndex((w) => {
-    // Parse startDate like "May 27" — need to construct full date
-    // The weeks have weeksToRace, so use that
     return w.weeksToRace === weeksUntilRace;
   });
   const currentWeek = currentWeekIndex >= 0 ? plan.weeks[currentWeekIndex] : plan.weeks[0];
@@ -157,6 +215,170 @@ export default function DashboardClient() {
 
   // Overall readiness
   const overallReadiness = Math.round(trainingReadiness * 0.5 + gearReadiness * 0.25 + nutritionReadiness * 0.25);
+
+  // ─── Daily tasks ────────────────────────────────────────────────────────
+  const dateStr = todayDateStr();
+  const dailyTasks: DailyTask[] = (() => {
+    const existing = plan.dailyTasks ?? [];
+    // If tasks exist for today, use them; otherwise generate fresh
+    if (existing.length > 0 && existing[0]?.date === dateStr) {
+      return existing;
+    }
+    return generateDailyTasks(plan, today, todayWorkout, currentWeekNum);
+  })();
+
+  // Sync generated tasks into plan if they changed
+  if (
+    !plan.dailyTasks ||
+    plan.dailyTasks.length === 0 ||
+    (plan.dailyTasks[0] && plan.dailyTasks[0].date !== dateStr)
+  ) {
+    // Use a microtask to avoid setting state during render
+    queueMicrotask(() => {
+      setPlan((prev) => {
+        if (!prev) return prev;
+        if (prev.dailyTasks && prev.dailyTasks.length > 0 && prev.dailyTasks[0]?.date === dateStr) return prev;
+        return { ...prev, dailyTasks: generateDailyTasks(prev, today, todayWorkout, currentWeekNum) };
+      });
+    });
+  }
+
+  function toggleDailyTask(taskId: string) {
+    if (!plan) return;
+    const updated = (plan.dailyTasks ?? []).map((t) =>
+      t.id === taskId ? { ...t, checked: !t.checked } : t,
+    );
+    setPlan({ ...plan, dailyTasks: updated });
+  }
+
+  // ─── Enhanced progress analytics ───────────────────────────────────────
+  // Feeling distribution
+  const feelingDistribution: Record<string, number> = {};
+  Object.values(plan.completedWorkouts).forEach((w) => {
+    feelingDistribution[w.feeling] = (feelingDistribution[w.feeling] || 0) + 1;
+  });
+
+  // Weekly mileage data for bar chart
+  const weeklyMileageData = plan.weeks.slice(0, currentWeekNum + 1).map((w) => {
+    const actual = w.days.reduce((s, _, i) => {
+      const cw = plan.completedWorkouts[`w${w.weekNumber}-d${i}`];
+      return s + (cw?.actualMiles ?? 0);
+    }, 0);
+    return { weekNum: w.weekNumber, target: w.totalMiles, actual, phase: w.phase, isCurrent: w.weekNumber === currentWeekNum };
+  });
+  const maxMileage = Math.max(1, ...weeklyMileageData.map((w) => Math.max(w.target, w.actual)));
+
+  // Consistency streak
+  const consistencyStreak = (() => {
+    let streak = 0;
+    // Walk backwards through weeks and days
+    for (let wi = currentWeekNum; wi >= 1; wi--) {
+      const week = plan.weeks.find((w) => w.weekNumber === wi);
+      if (!week) break;
+      const workoutDays = week.days
+        .map((d, i) => ({ d, i }))
+        .filter(({ d }) => d.workout !== "Rest");
+      let weekAllDone = true;
+      for (const { i } of workoutDays) {
+        if (!plan.completedWorkouts[`w${wi}-d${i}`]) {
+          weekAllDone = false;
+          break;
+        }
+      }
+      if (weekAllDone && workoutDays.length > 0) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  })();
+
+  // Upcoming milestones
+  const upcomingMilestones: { label: string; weeksAway: number }[] = [];
+  const totalMilesTarget = plan.weeks.reduce((s, w) => s + w.totalMiles, 0);
+  const milesPercent = totalMilesTarget > 0 ? (totalMilesLogged / totalMilesTarget) * 100 : 0;
+  if (milesPercent < 25) upcomingMilestones.push({ label: "25% of total miles", weeksAway: Math.ceil((totalMilesTarget * 0.25 - totalMilesLogged) / (currentWeek?.totalMiles || 30)) });
+  if (milesPercent < 50) upcomingMilestones.push({ label: "50% of total miles", weeksAway: Math.ceil((totalMilesTarget * 0.5 - totalMilesLogged) / (currentWeek?.totalMiles || 30)) });
+  if (milesPercent < 75) upcomingMilestones.push({ label: "75% of total miles", weeksAway: Math.ceil((totalMilesTarget * 0.75 - totalMilesLogged) / (currentWeek?.totalMiles || 30)) });
+  if (longestRun < 20) upcomingMilestones.push({ label: "First 20-mile run", weeksAway: 0 });
+  if (totalWorkoutsCompleted < 50) upcomingMilestones.push({ label: "50 workouts completed", weeksAway: 0 });
+  if (totalWorkoutsCompleted < 100) upcomingMilestones.push({ label: "100 workouts completed", weeksAway: 0 });
+
+  // ─── Fueling strategy ──────────────────────────────────────────────────
+  const fuelingStrategy: FuelingStrategy | null = (() => {
+    const w = parseFloat(fuelingWeight);
+    if (!w || w < 80 || w > 400) return null;
+    const dist = plan.distance as "50K" | "50M" | "100K" | "100M";
+    if (!["50K", "50M", "100K", "100M"].includes(dist)) return null;
+    return calculateFuelingStrategy(dist, w, fuelingSweatRate, fuelingSensitivity);
+  })();
+
+  function saveFuelingProfile() {
+    if (!plan) return;
+    const profile: RunnerProfile = {
+      weightLbs: parseFloat(fuelingWeight) || undefined,
+      sweatRate: fuelingSweatRate,
+      stomachSensitivity: fuelingSensitivity,
+      caffeineUser: plan.runnerProfile?.caffeineUser,
+    };
+    setPlan({ ...plan, runnerProfile: profile });
+  }
+
+  // ─── Race countdown checklist helpers ──────────────────────────────────
+  function toggleCountdownItem(listKey: keyof NonNullable<SavedPlan["raceCountdown"]>, id: string) {
+    if (!plan || !plan.raceCountdown) return;
+    const list = plan.raceCountdown[listKey] as RaceDayChecklistItem[];
+    const updated = list.map((item) =>
+      item.id === id ? { ...item, checked: !item.checked } : item,
+    );
+    setPlan({
+      ...plan,
+      raceCountdown: { ...plan.raceCountdown, [listKey]: updated },
+    });
+  }
+
+  function renderCountdownChecklist(
+    title: string,
+    icon: string,
+    items: RaceDayChecklistItem[],
+    listKey: keyof NonNullable<SavedPlan["raceCountdown"]>,
+  ) {
+    return (
+      <div key={listKey}>
+        <h3 className="font-headline font-bold text-dark text-sm uppercase tracking-wider mb-3">
+          {icon} {title}
+        </h3>
+        <div className="space-y-2">
+          {items.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => toggleCountdownItem(listKey, item.id)}
+              className={`w-full flex items-center gap-3 bg-white rounded-xl border p-4 text-left transition-all ${
+                item.checked ? "border-green-200 bg-green-50/50" : "border-gray-100 hover:border-primary/30"
+              }`}
+            >
+              <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                item.checked ? "bg-green-500 border-green-500 text-white" : "border-gray-300"
+              }`}>
+                {item.checked && <span className="text-xs">✓</span>}
+              </div>
+              <span className={`text-sm ${item.checked ? "text-green-700 line-through" : "text-dark"}`}>
+                {item.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Post-race report ──────────────────────────────────────────────────
+  function savePostRaceReport() {
+    if (!plan) return;
+    const report: PostRaceReport = { ...postRaceForm, completedAt: new Date().toISOString() };
+    setPlan({ ...plan, postRaceReport: report });
+  }
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
   function openWorkoutLog(weekNum: number, dayIndex: number) {
@@ -267,9 +489,7 @@ export default function DashboardClient() {
   }
 
   function deletePlan() {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(PLAN_STORAGE_KEY);
-    }
+    deletePlanData(user);
     setPlan(null);
   }
 
@@ -297,8 +517,8 @@ export default function DashboardClient() {
             </div>
             <div className="flex items-center gap-6">
               <div className="text-center">
-                <div className="font-headline text-3xl font-bold text-accent">{daysUntilRace}</div>
-                <div className="text-xs text-white/50">days to go</div>
+                <div className="font-headline text-3xl font-bold text-accent">{daysUntilRaceClamped}</div>
+                <div className="text-xs text-white/50">{raceIsPast ? "days ago" : "days to go"}</div>
               </div>
               <div className="text-center">
                 <div className="font-headline text-3xl font-bold text-white">{weeksUntilRace}</div>
@@ -442,36 +662,47 @@ export default function DashboardClient() {
               </div>
             </div>
 
-            {/* Today's tasks */}
+            {/* Interactive Daily Tasks */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h3 className="font-headline font-bold text-dark text-sm uppercase tracking-wider mb-4">Today&apos;s Tasks</h3>
-              <div className="space-y-3">
-                {/* Gear tasks */}
-                {plan.gearItems
-                  .filter((g) => !g.purchased && g.neededByWeek <= currentWeekNum + 2)
-                  .slice(0, 2)
-                  .map((g) => (
-                    <div key={g.id} className="flex items-center gap-3 text-sm">
-                      <span className="text-orange-500">🎒</span>
-                      <span className="text-gray">Order: {g.productName}</span>
-                      <span className="text-xs text-orange-500 font-medium ml-auto">Need by Week {g.neededByWeek}</span>
-                    </div>
-                  ))}
-                {/* Recovery tasks */}
-                <div className="flex items-center gap-3 text-sm">
-                  <span className="text-blue-500">💧</span>
-                  <span className="text-gray">Drink 80+ oz water today</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <span className="text-purple-500">😴</span>
-                  <span className="text-gray">Sleep 8+ hours tonight</span>
-                </div>
-                {todayWorkout?.workout !== "Rest" && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <span className="text-green-500">🥛</span>
-                    <span className="text-gray">Recovery protein within 30 min of run</span>
-                  </div>
-                )}
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-headline font-bold text-dark text-sm uppercase tracking-wider">Today&apos;s Tasks</h3>
+                <span className="text-xs text-gray">
+                  {dailyTasks.filter((t) => t.checked).length}/{dailyTasks.length} done
+                </span>
+              </div>
+              <div className="space-y-2">
+                {dailyTasks.map((task) => {
+                  const catIcon =
+                    task.category === "training" ? "🏃" :
+                    task.category === "recovery" ? "💧" :
+                    task.category === "gear" ? "🎒" :
+                    task.category === "nutrition" ? "⚡" : "✓";
+                  const catColor =
+                    task.category === "training" ? "text-primary" :
+                    task.category === "recovery" ? "text-blue-500" :
+                    task.category === "gear" ? "text-orange-500" :
+                    "text-green-500";
+                  return (
+                    <button
+                      key={task.id}
+                      onClick={() => toggleDailyTask(task.id)}
+                      className={`w-full flex items-center gap-3 rounded-xl border p-3 text-left transition-all ${
+                        task.checked ? "border-green-200 bg-green-50/50" : "border-gray-100 hover:border-primary/30 bg-white"
+                      }`}
+                    >
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                        task.checked ? "bg-green-500 border-green-500 text-white" : "border-gray-300"
+                      }`}>
+                        {task.checked && <span className="text-[10px]">✓</span>}
+                      </div>
+                      <span className={`${catColor} flex-shrink-0`}>{catIcon}</span>
+                      <span className={`text-sm ${task.checked ? "text-green-700 line-through" : "text-dark"}`}>
+                        {task.label}
+                      </span>
+                      <span className="text-[10px] text-gray ml-auto capitalize">{task.category}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -600,6 +831,19 @@ export default function DashboardClient() {
               ))}
             </div>
 
+            {/* Consistency streak */}
+            {consistencyStreak > 0 && (
+              <div className="bg-accent/10 border border-accent/20 rounded-2xl p-5 flex items-center gap-4">
+                <div className="text-4xl">🔥</div>
+                <div>
+                  <div className="font-headline text-2xl font-bold text-dark">{consistencyStreak} Week Streak</div>
+                  <p className="text-sm text-gray">
+                    You&apos;ve completed all workouts for {consistencyStreak} consecutive week{consistencyStreak !== 1 ? "s" : ""}!
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Readiness breakdown */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 className="font-headline font-bold text-dark mb-4">Readiness Breakdown</h3>
@@ -622,9 +866,89 @@ export default function DashboardClient() {
               </div>
             </div>
 
-            {/* Weekly mileage chart (text-based) */}
+            {/* Weekly mileage bar chart */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 className="font-headline font-bold text-dark mb-4">Weekly Mileage</h3>
+              <div className="space-y-2">
+                {weeklyMileageData.map((w) => (
+                  <div key={w.weekNum} className={`flex items-center gap-3 ${w.isCurrent ? "bg-primary/5 rounded-lg p-2 -mx-2" : ""}`}>
+                    <div className="w-12 text-xs font-bold text-dark flex-shrink-0">W{w.weekNum}</div>
+                    <div className="flex-1 relative">
+                      {/* Target bar (background) */}
+                      <div className="h-6 bg-gray-100 rounded-md relative overflow-hidden">
+                        <div
+                          className="absolute inset-y-0 left-0 bg-gray-200 rounded-md"
+                          style={{ width: `${(w.target / maxMileage) * 100}%` }}
+                        />
+                        {/* Actual bar (foreground) */}
+                        <div
+                          className={`absolute inset-y-0 left-0 rounded-md transition-all duration-300 ${
+                            w.actual >= w.target * 0.9 ? "bg-green-500" : w.actual > 0 ? "bg-primary" : ""
+                          }`}
+                          style={{ width: `${(w.actual / maxMileage) * 100}%` }}
+                        />
+                        <div className="absolute inset-0 flex items-center px-2">
+                          <span className="text-[10px] font-medium text-dark/70 relative z-10">
+                            {w.actual > 0 ? `${w.actual.toFixed(0)}/${w.target}mi` : `${w.target}mi target`}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-16 text-right">
+                      <span className="text-[10px] text-gray">{w.phase}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Feeling distribution */}
+            {Object.keys(feelingDistribution).length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 className="font-headline font-bold text-dark mb-4">How You&apos;ve Been Feeling</h3>
+                <div className="grid grid-cols-5 gap-3">
+                  {FEELING_OPTIONS.map((f) => {
+                    const count = feelingDistribution[f.value] || 0;
+                    const total = Object.values(feelingDistribution).reduce((s, v) => s + v, 0);
+                    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                    return (
+                      <div key={f.value} className="text-center">
+                        <div className="text-2xl mb-1">{f.emoji}</div>
+                        <div className="font-headline text-lg font-bold text-dark">{count}</div>
+                        <div className="text-[10px] text-gray">{pct}%</div>
+                        <div className="text-[10px] text-gray font-medium">{f.label}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Upcoming milestones */}
+            {upcomingMilestones.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 className="font-headline font-bold text-dark mb-4">Upcoming Milestones</h3>
+                <div className="space-y-3">
+                  {upcomingMilestones.slice(0, 5).map((m, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center text-accent text-sm flex-shrink-0">
+                        🎯
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-dark">{m.label}</p>
+                        {m.weeksAway > 0 && (
+                          <p className="text-[10px] text-gray">~{m.weeksAway} week{m.weeksAway !== 1 ? "s" : ""} away</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Weekly mileage table (original) */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h3 className="font-headline font-bold text-dark mb-4">Weekly Mileage Table</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -817,6 +1141,146 @@ export default function DashboardClient() {
               <span className="text-sm text-gray">{nutritionTested}/{plan.nutritionProducts.length} tested</span>
             </div>
 
+            {/* Fueling Strategy Section */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-green-600 to-green-700 p-5">
+                <h3 className="font-headline text-lg font-bold text-white">Race Day Fueling Strategy</h3>
+                <p className="text-white/60 text-sm mt-1">Calculate your personalized nutrition targets</p>
+              </div>
+              <div className="p-5 space-y-4">
+                {/* Input form */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-dark mb-1">Body Weight (lbs)</label>
+                    <input
+                      type="number"
+                      value={fuelingWeight}
+                      onChange={(e) => setFuelingWeight(e.target.value)}
+                      placeholder="e.g. 160"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-dark mb-1">Sweat Rate</label>
+                    <select
+                      value={fuelingSweatRate}
+                      onChange={(e) => setFuelingSweatRate(e.target.value as "light" | "moderate" | "heavy")}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                    >
+                      <option value="light">Light sweater</option>
+                      <option value="moderate">Moderate sweater</option>
+                      <option value="heavy">Heavy sweater</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-dark mb-1">Stomach Sensitivity</label>
+                    <select
+                      value={fuelingSensitivity}
+                      onChange={(e) => setFuelingSensitivity(e.target.value as "iron" | "average" | "sensitive")}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                    >
+                      <option value="iron">Iron stomach</option>
+                      <option value="average">Average</option>
+                      <option value="sensitive">Sensitive</option>
+                    </select>
+                  </div>
+                </div>
+                <button
+                  onClick={saveFuelingProfile}
+                  className="px-4 py-2 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Save Profile & Calculate
+                </button>
+
+                {/* Fueling results */}
+                {fuelingStrategy && (
+                  <div className="space-y-4 pt-4 border-t border-gray-100">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="bg-green-50 rounded-xl p-3 text-center">
+                        <div className="font-headline text-xl font-bold text-green-800">{fuelingStrategy.hourlyCalories}</div>
+                        <div className="text-[10px] text-green-600 font-medium">cal/hour</div>
+                      </div>
+                      <div className="bg-blue-50 rounded-xl p-3 text-center">
+                        <div className="font-headline text-xl font-bold text-blue-800">{fuelingStrategy.hourlyFluids}oz</div>
+                        <div className="text-[10px] text-blue-600 font-medium">fluid/hour</div>
+                      </div>
+                      <div className="bg-orange-50 rounded-xl p-3 text-center">
+                        <div className="font-headline text-xl font-bold text-orange-800">{fuelingStrategy.hourlySodium}mg</div>
+                        <div className="text-[10px] text-orange-600 font-medium">sodium/hour</div>
+                      </div>
+                      <div className="bg-purple-50 rounded-xl p-3 text-center">
+                        <div className="font-headline text-xl font-bold text-purple-800">{fuelingStrategy.hourlyCarbs}g</div>
+                        <div className="text-[10px] text-purple-600 font-medium">carbs/hour</div>
+                      </div>
+                    </div>
+
+                    {/* Total race needs */}
+                    <div className="bg-light rounded-xl p-4">
+                      <h4 className="font-headline font-bold text-dark text-sm mb-2">
+                        Total Race Needs (~{fuelingStrategy.estimatedHours} hours)
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
+                        <div><span className="text-gray">Calories:</span> <span className="font-bold text-dark">{fuelingStrategy.totalCalories.toLocaleString()}</span></div>
+                        <div><span className="text-gray">Fluids:</span> <span className="font-bold text-dark">{fuelingStrategy.totalFluids}oz</span></div>
+                        <div><span className="text-gray">Sodium:</span> <span className="font-bold text-dark">{fuelingStrategy.totalSodium.toLocaleString()}mg</span></div>
+                        <div><span className="text-gray">Carbs:</span> <span className="font-bold text-dark">{fuelingStrategy.totalCarbs}g</span></div>
+                      </div>
+                    </div>
+
+                    {/* Hourly schedule */}
+                    <div>
+                      <h4 className="font-headline font-bold text-dark text-sm mb-2">Hourly Fueling Schedule</h4>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-gray-100">
+                              <th className="text-left py-2 px-2 text-xs font-semibold text-dark">Hour</th>
+                              <th className="text-left py-2 px-2 text-xs font-semibold text-dark">Miles</th>
+                              <th className="text-left py-2 px-2 text-xs font-semibold text-dark">Cal</th>
+                              <th className="text-left py-2 px-2 text-xs font-semibold text-dark">Fluids</th>
+                              <th className="text-left py-2 px-2 text-xs font-semibold text-dark">Notes</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {fuelingStrategy.hourlySchedule.map((row) => (
+                              <tr key={row.hour} className="border-b border-gray-50">
+                                <td className="py-2 px-2 font-bold text-dark">{row.hour}</td>
+                                <td className="py-2 px-2 text-gray">{row.miles}</td>
+                                <td className="py-2 px-2 text-dark">{row.calories}</td>
+                                <td className="py-2 px-2 text-dark">{row.fluids}</td>
+                                <td className="py-2 px-2 text-gray text-xs">{row.notes}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Drop bag suggestions */}
+                    {fuelingStrategy.dropBags.length > 0 && (
+                      <div>
+                        <h4 className="font-headline font-bold text-dark text-sm mb-2">Drop Bag Suggestions</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {fuelingStrategy.dropBags.map((bag, i) => (
+                            <div key={i} className="bg-light rounded-xl p-4 border border-gray-100">
+                              <h5 className="font-headline font-bold text-dark text-sm mb-2">📦 {bag.location}</h5>
+                              <ul className="space-y-1">
+                                {bag.items.map((item, j) => (
+                                  <li key={j} className="text-xs text-gray flex items-start gap-1.5">
+                                    <span className="text-primary flex-shrink-0">·</span>{item}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Products */}
             <div className="space-y-3">
               {plan.nutritionProducts.map((product) => (
@@ -950,56 +1414,283 @@ export default function DashboardClient() {
         {/* ─── RACE DAY TAB ──────────────────────────────────────────── */}
         {tab === "raceday" && (
           <div className="space-y-6">
-            <h2 className="font-headline text-2xl font-bold text-dark">Race Day Checklist</h2>
-            <p className="text-sm text-gray">
-              {plan.raceDayChecklist.filter((i) => i.checked).length}/{plan.raceDayChecklist.length} items checked
-            </p>
+            <h2 className="font-headline text-2xl font-bold text-dark">
+              {raceIsPast ? "Post-Race Report" : "Race Day Countdown"}
+            </h2>
 
-            {/* Group by category */}
-            {Array.from(new Set(plan.raceDayChecklist.map((i) => i.category))).map((category) => {
-              const items = plan.raceDayChecklist.filter((i) => i.category === category);
-              return (
-                <div key={category}>
-                  <h3 className="font-headline font-bold text-dark text-sm uppercase tracking-wider mb-3">
-                    {category === "Night Before" ? "🌙" : category === "Race Morning" ? "🌅" : "🏁"} {category}
-                  </h3>
-                  <div className="space-y-2">
-                    {items.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => toggleRaceDayItem(item.id)}
-                        className={`w-full flex items-center gap-3 bg-white rounded-xl border p-4 text-left transition-all ${
-                          item.checked ? "border-green-200 bg-green-50/50" : "border-gray-100 hover:border-primary/30"
-                        }`}
-                      >
-                        <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                          item.checked ? "bg-green-500 border-green-500 text-white" : "border-gray-300"
-                        }`}>
-                          {item.checked && <span className="text-xs">✓</span>}
-                        </div>
-                        <span className={`text-sm ${item.checked ? "text-green-700 line-through" : "text-dark"}`}>
-                          {item.label}
-                        </span>
-                      </button>
-                    ))}
+            {/* Post-Race Report (race date has passed) */}
+            {raceIsPast && (
+              <div className="space-y-6">
+                {plan.postRaceReport?.completedAt ? (
+                  /* Show saved report */
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">🏅</span>
+                      <div>
+                        <h3 className="font-headline text-xl font-bold text-dark">
+                          {plan.postRaceReport.dnf ? "DNF" : `Finished: ${plan.postRaceReport.finishTime || "N/A"}`}
+                        </h3>
+                        {plan.postRaceReport.placing && (
+                          <p className="text-sm text-gray">Overall: {plan.postRaceReport.placing}{plan.postRaceReport.ageGroupPlacing ? ` · AG: ${plan.postRaceReport.ageGroupPlacing}` : ""}</p>
+                        )}
+                      </div>
+                    </div>
+                    {plan.postRaceReport.overallFeeling && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-dark">Overall feeling:</span>
+                        <span className="text-sm text-gray capitalize">{plan.postRaceReport.overallFeeling}</span>
+                      </div>
+                    )}
+                    {plan.postRaceReport.wentWell && (
+                      <div>
+                        <h4 className="text-sm font-bold text-green-700 mb-1">What went well</h4>
+                        <p className="text-sm text-gray">{plan.postRaceReport.wentWell}</p>
+                      </div>
+                    )}
+                    {plan.postRaceReport.improvements && (
+                      <div>
+                        <h4 className="text-sm font-bold text-orange-700 mb-1">What could improve</h4>
+                        <p className="text-sm text-gray">{plan.postRaceReport.improvements}</p>
+                      </div>
+                    )}
+                    {plan.postRaceReport.wouldChange && (
+                      <div>
+                        <h4 className="text-sm font-bold text-blue-700 mb-1">What I would change</h4>
+                        <p className="text-sm text-gray">{plan.postRaceReport.wouldChange}</p>
+                      </div>
+                    )}
+                    {plan.postRaceReport.nutritionNotes && (
+                      <div>
+                        <h4 className="text-sm font-bold text-purple-700 mb-1">Nutrition notes</h4>
+                        <p className="text-sm text-gray">{plan.postRaceReport.nutritionNotes}</p>
+                      </div>
+                    )}
+                    {plan.postRaceReport.gearNotes && (
+                      <div>
+                        <h4 className="text-sm font-bold text-dark mb-1">Gear notes</h4>
+                        <p className="text-sm text-gray">{plan.postRaceReport.gearNotes}</p>
+                      </div>
+                    )}
                   </div>
-                </div>
-              );
-            })}
-
-            {/* Race day motivation */}
-            {daysUntilRace <= 7 && (
-              <div className="bg-accent/10 border border-accent/20 rounded-2xl p-6 text-center">
-                <div className="text-4xl mb-3">🏁</div>
-                <h3 className="font-headline text-xl font-bold text-dark mb-2">
-                  {daysUntilRace === 0 ? "RACE DAY!" : `${daysUntilRace} Day${daysUntilRace !== 1 ? "s" : ""} to Race Day!`}
-                </h3>
-                <p className="text-sm text-gray max-w-md mx-auto">
-                  {daysUntilRace === 0
-                    ? "Trust your training. Control your pace. Enjoy every mile. YOU'VE GOT THIS!"
-                    : "You've put in the work. Trust the process and stay focused on your preparation."}
-                </p>
+                ) : (
+                  /* Post-race report form */
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+                    <p className="text-sm text-gray">Congratulations on completing (or attempting) your race! Record your results and reflections.</p>
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-2 text-sm text-dark">
+                        <input
+                          type="checkbox"
+                          checked={postRaceForm.dnf ?? false}
+                          onChange={(e) => setPostRaceForm({ ...postRaceForm, dnf: e.target.checked })}
+                          className="rounded border-gray-300"
+                        />
+                        DNF (Did Not Finish)
+                      </label>
+                    </div>
+                    {!postRaceForm.dnf && (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-xs font-medium text-dark mb-1">Finish Time</label>
+                          <input
+                            type="text"
+                            value={postRaceForm.finishTime ?? ""}
+                            onChange={(e) => setPostRaceForm({ ...postRaceForm, finishTime: e.target.value })}
+                            placeholder="e.g. 12:34:56"
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-dark mb-1">Overall Placing</label>
+                          <input
+                            type="text"
+                            value={postRaceForm.placing ?? ""}
+                            onChange={(e) => setPostRaceForm({ ...postRaceForm, placing: e.target.value })}
+                            placeholder="e.g. 42/200"
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-dark mb-1">Age Group Placing</label>
+                          <input
+                            type="text"
+                            value={postRaceForm.ageGroupPlacing ?? ""}
+                            onChange={(e) => setPostRaceForm({ ...postRaceForm, ageGroupPlacing: e.target.value })}
+                            placeholder="e.g. 5/30"
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <label className="block text-xs font-medium text-dark mb-1">Overall Feeling</label>
+                      <div className="flex gap-2">
+                        {(["amazing", "good", "tough", "brutal"] as const).map((f) => (
+                          <button
+                            key={f}
+                            onClick={() => setPostRaceForm({ ...postRaceForm, overallFeeling: f })}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${
+                              postRaceForm.overallFeeling === f ? "bg-primary text-white" : "bg-light border border-gray-200 text-dark"
+                            }`}
+                          >
+                            {f}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-dark mb-1">What went well?</label>
+                      <textarea
+                        value={postRaceForm.wentWell ?? ""}
+                        onChange={(e) => setPostRaceForm({ ...postRaceForm, wentWell: e.target.value })}
+                        placeholder="Pacing, nutrition, gear, mental game..."
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary resize-none"
+                        rows={2}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-dark mb-1">What could improve?</label>
+                      <textarea
+                        value={postRaceForm.improvements ?? ""}
+                        onChange={(e) => setPostRaceForm({ ...postRaceForm, improvements: e.target.value })}
+                        placeholder="Areas that need work for next time..."
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary resize-none"
+                        rows={2}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-dark mb-1">What would you change?</label>
+                      <textarea
+                        value={postRaceForm.wouldChange ?? ""}
+                        onChange={(e) => setPostRaceForm({ ...postRaceForm, wouldChange: e.target.value })}
+                        placeholder="Training, race strategy, gear choices..."
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary resize-none"
+                        rows={2}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-dark mb-1">Nutrition Notes</label>
+                        <textarea
+                          value={postRaceForm.nutritionNotes ?? ""}
+                          onChange={(e) => setPostRaceForm({ ...postRaceForm, nutritionNotes: e.target.value })}
+                          placeholder="What worked, what didn't..."
+                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary resize-none"
+                          rows={2}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-dark mb-1">Gear Notes</label>
+                        <textarea
+                          value={postRaceForm.gearNotes ?? ""}
+                          onChange={(e) => setPostRaceForm({ ...postRaceForm, gearNotes: e.target.value })}
+                          placeholder="Any issues, things that worked great..."
+                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary resize-none"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={savePostRaceReport}
+                      className="px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors"
+                    >
+                      Save Race Report
+                    </button>
+                  </div>
+                )}
               </div>
+            )}
+
+            {/* Pre-race: Phase-appropriate checklists */}
+            {!raceIsPast && (
+              <>
+                <p className="text-sm text-gray">
+                  {daysUntilRace} day{daysUntilRace !== 1 ? "s" : ""} until race day
+                </p>
+
+                {/* Race Day (0-1 days) - combined Night Before + Race Morning + Start Line */}
+                {daysUntilRace <= 1 && plan.raceCountdown && (
+                  <div className="space-y-6">
+                    {renderCountdownChecklist("Night Before", "🌙", plan.raceCountdown.nightBefore, "nightBefore")}
+                    {renderCountdownChecklist("Race Morning", "🌅", plan.raceCountdown.raceMorning, "raceMorning")}
+                    {renderCountdownChecklist("Start Line", "🏁", plan.raceCountdown.startLine, "startLine")}
+                  </div>
+                )}
+
+                {/* Race Week (1-7 days) */}
+                {daysUntilRace > 1 && daysUntilRace <= 7 && plan.raceCountdown && (
+                  <div className="space-y-6">
+                    {renderCountdownChecklist("Race Week", "📅", plan.raceCountdown.raceWeek, "raceWeek")}
+                  </div>
+                )}
+
+                {/* 2 Weeks Out (7-14 days) */}
+                {daysUntilRace > 7 && daysUntilRace <= 14 && plan.raceCountdown && (
+                  <div className="space-y-6">
+                    {renderCountdownChecklist("2 Weeks Out", "📋", plan.raceCountdown.twoWeeksOut, "twoWeeksOut")}
+                  </div>
+                )}
+
+                {/* 4 Weeks Out (14-28 days) */}
+                {daysUntilRace > 14 && daysUntilRace <= 28 && plan.raceCountdown && (
+                  <div className="space-y-6">
+                    {renderCountdownChecklist("4 Weeks Out", "📦", plan.raceCountdown.fourWeeksOut, "fourWeeksOut")}
+                  </div>
+                )}
+
+                {/* 28+ days - show original race day checklist */}
+                {daysUntilRace > 28 && (
+                  <>
+                    <p className="text-sm text-gray">
+                      {plan.raceDayChecklist.filter((i) => i.checked).length}/{plan.raceDayChecklist.length} items checked
+                    </p>
+                    {Array.from(new Set(plan.raceDayChecklist.map((i) => i.category))).map((category) => {
+                      const items = plan.raceDayChecklist.filter((i) => i.category === category);
+                      return (
+                        <div key={category}>
+                          <h3 className="font-headline font-bold text-dark text-sm uppercase tracking-wider mb-3">
+                            {category === "Night Before" ? "🌙" : category === "Race Morning" ? "🌅" : "🏁"} {category}
+                          </h3>
+                          <div className="space-y-2">
+                            {items.map((item) => (
+                              <button
+                                key={item.id}
+                                onClick={() => toggleRaceDayItem(item.id)}
+                                className={`w-full flex items-center gap-3 bg-white rounded-xl border p-4 text-left transition-all ${
+                                  item.checked ? "border-green-200 bg-green-50/50" : "border-gray-100 hover:border-primary/30"
+                                }`}
+                              >
+                                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                                  item.checked ? "bg-green-500 border-green-500 text-white" : "border-gray-300"
+                                }`}>
+                                  {item.checked && <span className="text-xs">✓</span>}
+                                </div>
+                                <span className={`text-sm ${item.checked ? "text-green-700 line-through" : "text-dark"}`}>
+                                  {item.label}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+
+                {/* Race day motivation */}
+                {daysUntilRace <= 7 && (
+                  <div className="bg-accent/10 border border-accent/20 rounded-2xl p-6 text-center">
+                    <div className="text-4xl mb-3">🏁</div>
+                    <h3 className="font-headline text-xl font-bold text-dark mb-2">
+                      {daysUntilRace === 0 ? "RACE DAY!" : `${daysUntilRace} Day${daysUntilRace !== 1 ? "s" : ""} to Race Day!`}
+                    </h3>
+                    <p className="text-sm text-gray max-w-md mx-auto">
+                      {daysUntilRace === 0
+                        ? "Trust your training. Control your pace. Enjoy every mile. YOU'VE GOT THIS!"
+                        : "You've put in the work. Trust the process and stay focused on your preparation."}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
