@@ -2,13 +2,16 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
+import { useAuth } from "@/components/AuthProvider";
 import WizardStepper from "@/components/training/WizardStepper";
 import DistanceCard from "@/components/training/DistanceCard";
 import PlanTabs, { type PlanTab } from "@/components/training/PlanTabs";
+import { savePlan, getDefaultGearItems, getDefaultNutritionProducts, getDefaultRaceDayChecklist } from "@/lib/training-types";
+import type { SavedPlan, SavedWeek, SavedWorkoutDay } from "@/lib/training-types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Distance = "50K" | "50M" | "100K" | "100M";
-type Level = "beginner" | "intermediate" | "advanced";
+type Level = "foundation" | "beginner" | "intermediate" | "advanced" | "competitive";
 
 interface PlanDay {
   day: string;
@@ -49,6 +52,66 @@ type AllPlans = Record<Distance, Record<Level, PlanDetail>>;
 // ─── Plan Data ────────────────────────────────────────────────────────────────
 const PLANS: AllPlans = {
   "50K": {
+    foundation: {
+      duration: 20,
+      prerequisites: ["Can run 3 miles continuously", "Running 10–15 miles/week for 3+ months", "Completed at least a 5K or 10K"],
+      weeklyRange: "15–35 miles",
+      peakMileage: "30–35 miles",
+      runsPerWeek: "3–4",
+      keyWorkouts: ["Easy conversational runs (Zone 1–2)", "Weekly long run with walk breaks allowed", "Optional short mid-week run", "Strength/mobility work 2×/week"],
+      highlights: ["Run/walk strategy built in from day one", "Progressive long run to 20 miles", "Cutback week every 3rd week", "20-week ramp for safe adaptation"],
+      sampleWeeks: [
+        {
+          label: "Week 1 — Getting Started",
+          context: "Easy entry. Run/walk is fine. Build the habit.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "Full rest or gentle walk" },
+            { day: "Tue", workout: "Easy run/walk", distance: "2 miles", effort: "Zone 1–2", notes: "Run 3 min / walk 1 min repeats" },
+            { day: "Wed", workout: "Strength & mobility", distance: "—", effort: "—", notes: "20 min bodyweight circuit" },
+            { day: "Thu", workout: "Easy run", distance: "2.5 miles", effort: "Zone 2", notes: "All conversational" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run/walk", distance: "5 miles", effort: "Zone 1–2", notes: "Walk the hills, run the flats" },
+            { day: "Sun", workout: "Rest or walk", distance: "—", effort: "Zone 1", notes: "30 min walk if you feel good" },
+          ],
+        },
+        {
+          label: "Week 10 — Building Confidence",
+          context: "Mileage growing. Finding your rhythm.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Strength & mobility", distance: "—", effort: "—", notes: "Core and hip circuit" },
+            { day: "Thu", workout: "Easy run", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "12 miles", effort: "Zone 2", notes: "Walk breaks every 3 miles OK" },
+            { day: "Sun", workout: "Rest or walk", distance: "—", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 17 — Peak Week",
+          context: "Biggest effort. You've come a long way.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Easy run + strength", distance: "4 miles", effort: "Zone 2", notes: "Light strength after" },
+            { day: "Thu", workout: "Easy run", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "Prep for big weekend" },
+            { day: "Sat", workout: "Long run", distance: "20 miles", effort: "Zone 2", notes: "Practice race nutrition. Walk breaks as needed." },
+            { day: "Sun", workout: "Rest", distance: "—", effort: "—", notes: "Recovery is training" },
+          ],
+        },
+      ],
+      longRunProgression: [
+        { week: 1, longRun: "5 mi", b2b: "—", total: "5 mi", phase: "Base" },
+        { week: 4, longRun: "8 mi", b2b: "—", total: "8 mi", phase: "Base" },
+        { week: 7, longRun: "10 mi", b2b: "—", total: "10 mi", phase: "Base" },
+        { week: 10, longRun: "12 mi", b2b: "—", total: "12 mi", phase: "Build" },
+        { week: 13, longRun: "16 mi", b2b: "—", total: "16 mi", phase: "Build" },
+        { week: 17, longRun: "20 mi", b2b: "—", total: "20 mi", phase: "Peak" },
+        { week: 19, longRun: "10 mi", b2b: "—", total: "10 mi", phase: "Taper" },
+        { week: 20, longRun: "50K Race!", b2b: "—", total: "31 mi", phase: "Race" },
+      ],
+    },
     beginner: {
       duration: 16,
       prerequisites: ["Marathon finish or equivalent fitness", "Comfortable running 25–30 miles/week", "6+ months of consistent running"],
@@ -229,8 +292,128 @@ const PLANS: AllPlans = {
         { week: 16, longRun: "50K Race!", b2b: "—", total: "31 mi", phase: "Race" },
       ],
     },
+    competitive: {
+      duration: 16,
+      prerequisites: ["Multiple 50K finishes with competitive results", "55+ miles/week consistently", "Sub-5:00 50K or equivalent race pacing"],
+      weeklyRange: "55–80 miles",
+      peakMileage: "75–80 miles",
+      runsPerWeek: "6–7",
+      keyWorkouts: ["VO2 max intervals 2×/week", "Tempo runs with negative splits", "Long runs with extended race-pace segments", "Hill power repeats", "Double-day training in build phase"],
+      highlights: ["Peak long run 30 miles with 12+ at race pace", "Sub-5:00 or podium 50K pacing strategy", "4 double-day training weeks", "3 full race simulations with splits analysis"],
+      sampleWeeks: [
+        {
+          label: "Week 1 — Base Phase",
+          context: "High volume, controlled intensity. Build the engine.",
+          days: [
+            { day: "Mon", workout: "Easy recovery", distance: "7 miles", effort: "Zone 1", notes: "" },
+            { day: "Tue", workout: "AM intervals + PM easy", distance: "8 mi + 4 mi", effort: "Zone 4–5 / Zone 1", notes: "6 × 1000m @ 5K pace" },
+            { day: "Wed", workout: "Easy run + strength", distance: "9 miles", effort: "Zone 2", notes: "Full strength circuit" },
+            { day: "Thu", workout: "Tempo run", distance: "10 miles (7 at tempo)", effort: "Zone 3–4", notes: "Negative split the tempo" },
+            { day: "Fri", workout: "Easy run", distance: "6 miles", effort: "Zone 2", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "20 miles", effort: "Zone 2–3", notes: "Last 6 at marathon effort" },
+            { day: "Sun", workout: "Back-to-back", distance: "12 miles", effort: "Zone 1–2", notes: "" },
+          ],
+        },
+        {
+          label: "Week 8 — Build Phase",
+          context: "Race-specific intensity. Every workout has purpose.",
+          days: [
+            { day: "Mon", workout: "Easy recovery", distance: "6 miles", effort: "Zone 1", notes: "" },
+            { day: "Tue", workout: "VO2 max intervals", distance: "10 miles", effort: "Zone 5", notes: "8 × 800m @ 3K effort" },
+            { day: "Wed", workout: "Easy run + strength", distance: "9 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Tempo + hills", distance: "11 miles", effort: "Zone 3–4", notes: "5 mi tempo, 4 × 600m hills" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "26 miles", effort: "Zone 2–3", notes: "Last 10 at goal 50K pace" },
+            { day: "Sun", workout: "Back-to-back", distance: "14 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 13 — Peak Week",
+          context: "Maximum load. Full race simulation with splits.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "VO2 max intervals", distance: "10 miles", effort: "Zone 5", notes: "10 × 600m @ mile effort" },
+            { day: "Wed", workout: "Easy run", distance: "8 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Race-pace tempo", distance: "12 miles (8 at race pace)", effort: "Zone 3", notes: "Practice race nutrition" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Race simulation", distance: "30 miles", effort: "Race effort", notes: "Full setup. Track splits. Last 12 at goal pace." },
+            { day: "Sun", workout: "Back-to-back", distance: "14 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+      ],
+      longRunProgression: [
+        { week: 1, longRun: "20 mi", b2b: "12 mi", total: "32 mi", phase: "Base" },
+        { week: 3, longRun: "22 mi", b2b: "12 mi", total: "34 mi", phase: "Base" },
+        { week: 5, longRun: "24 mi", b2b: "14 mi", total: "38 mi", phase: "Build" },
+        { week: 8, longRun: "26 mi", b2b: "14 mi", total: "40 mi", phase: "Build" },
+        { week: 10, longRun: "28 mi", b2b: "14 mi", total: "42 mi", phase: "Build" },
+        { week: 13, longRun: "30 mi", b2b: "14 mi", total: "44 mi", phase: "Peak" },
+        { week: 15, longRun: "16 mi", b2b: "—", total: "16 mi", phase: "Taper" },
+        { week: 16, longRun: "50K Race!", b2b: "—", total: "31 mi", phase: "Race" },
+      ],
+    },
   },
   "50M": {
+    foundation: {
+      duration: 24,
+      prerequisites: ["Completed a 50K or marathon", "Running 15–25 miles/week for 3+ months", "Comfortable running 10+ miles"],
+      weeklyRange: "20–40 miles",
+      peakMileage: "35–40 miles",
+      runsPerWeek: "3–4",
+      keyWorkouts: ["Easy conversational runs", "Weekly long run building gradually", "Walk breaks on long runs encouraged", "Strength/mobility 2×/week"],
+      highlights: ["Run/walk strategy for the full 50 miles", "Progressive long run to 24 miles", "Cutback every 3rd week", "24-week gradual buildup"],
+      sampleWeeks: [
+        {
+          label: "Week 1 — Starting Out",
+          context: "24 weeks ahead. Patience is the plan.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "3 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Strength & mobility", distance: "—", effort: "—", notes: "Core and hip work" },
+            { day: "Thu", workout: "Easy run", distance: "3 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run/walk", distance: "7 miles", effort: "Zone 1–2", notes: "Walk the hills" },
+            { day: "Sun", workout: "Rest or walk", distance: "—", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 12 — Building Phase",
+          context: "Long runs growing. Finding your rhythm.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Strength & mobility", distance: "—", effort: "—", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "16 miles", effort: "Zone 2", notes: "Practice eating every 30 min" },
+            { day: "Sun", workout: "Easy walk/run", distance: "3 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 20 — Peak Week",
+          context: "Biggest long run. You're ready for this.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Easy run + strength", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "24 miles", effort: "Zone 2", notes: "Full nutrition practice. Walk breaks OK." },
+            { day: "Sun", workout: "Rest", distance: "—", effort: "—", notes: "" },
+          ],
+        },
+      ],
+      longRunProgression: [
+        { week: 1, longRun: "7 mi", b2b: "—", total: "7 mi", phase: "Base" },
+        { week: 5, longRun: "10 mi", b2b: "—", total: "10 mi", phase: "Base" },
+        { week: 9, longRun: "14 mi", b2b: "—", total: "14 mi", phase: "Build" },
+        { week: 12, longRun: "16 mi", b2b: "—", total: "16 mi", phase: "Build" },
+        { week: 16, longRun: "20 mi", b2b: "—", total: "20 mi", phase: "Build" },
+        { week: 20, longRun: "24 mi", b2b: "—", total: "24 mi", phase: "Peak" },
+        { week: 22, longRun: "12 mi", b2b: "—", total: "12 mi", phase: "Taper" },
+        { week: 24, longRun: "50M Race!", b2b: "—", total: "50 mi", phase: "Race" },
+      ],
+    },
     beginner: {
       duration: 20,
       prerequisites: ["50K finish", "Comfortable at 30–40 miles/week", "12+ months of running experience"],
@@ -409,8 +592,127 @@ const PLANS: AllPlans = {
         { week: 20, longRun: "50M Race!", b2b: "—", total: "50 mi", phase: "Race" },
       ],
     },
+    competitive: {
+      duration: 20,
+      prerequisites: ["Multiple 50M finishes or competitive 100K", "60+ miles/week consistently", "Sub-10:00 50M or equivalent pacing"],
+      weeklyRange: "65–95 miles",
+      peakMileage: "90–95 miles",
+      runsPerWeek: "6–7",
+      keyWorkouts: ["VO2 max intervals 2×/week", "Race-pace long run finishes (12+ miles)", "Back-to-back totaling 50+ miles", "Hill power repeats", "Double-day training in build/peak phases"],
+      highlights: ["Peak long run 40 miles with race-pace sections", "Sub-10 or podium 50M strategy", "5 double-day training weeks", "4 full race simulations"],
+      sampleWeeks: [
+        {
+          label: "Week 1 — Base Phase",
+          context: "High baseline. Control and discipline.",
+          days: [
+            { day: "Mon", workout: "Easy recovery", distance: "7 miles", effort: "Zone 1", notes: "" },
+            { day: "Tue", workout: "Intervals", distance: "10 miles", effort: "Zone 4–5", notes: "8 × 1000m @ 5K pace" },
+            { day: "Wed", workout: "Easy run + strength", distance: "10 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Tempo run", distance: "10 miles (7 at tempo)", effort: "Zone 3–4", notes: "" },
+            { day: "Fri", workout: "Easy run", distance: "6 miles", effort: "Zone 2", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "22 miles", effort: "Zone 2", notes: "Last 6 at marathon effort" },
+            { day: "Sun", workout: "Back-to-back", distance: "12 miles", effort: "Zone 1–2", notes: "" },
+          ],
+        },
+        {
+          label: "Week 12 — Build Phase",
+          context: "Volume and intensity peak together. Stay disciplined.",
+          days: [
+            { day: "Mon", workout: "Easy recovery", distance: "7 miles", effort: "Zone 1", notes: "" },
+            { day: "Tue", workout: "VO2 max intervals", distance: "11 miles", effort: "Zone 5", notes: "8 × 800m @ 3K effort" },
+            { day: "Wed", workout: "AM easy + PM easy", distance: "8 mi + 5 mi", effort: "Zone 1–2", notes: "Two-a-day" },
+            { day: "Thu", workout: "Tempo + hills", distance: "12 miles", effort: "Zone 3–4", notes: "5 mi tempo, 4 × 800m hills" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Race simulation", distance: "36 miles", effort: "Zone 2–3", notes: "Last 12 at goal pace. Full nutrition." },
+            { day: "Sun", workout: "Back-to-back", distance: "16 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 16 — Peak Week",
+          context: "Maximum load. Full simulation.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "VO2 max intervals", distance: "11 miles", effort: "Zone 5", notes: "10 × 600m" },
+            { day: "Wed", workout: "Easy run", distance: "9 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Race-pace tempo", distance: "12 miles (9 at race pace)", effort: "Zone 3", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Full simulation", distance: "40 miles", effort: "Race effort", notes: "Full crew. Night section. Track every split." },
+            { day: "Sun", workout: "Back-to-back", distance: "16 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+      ],
+      longRunProgression: [
+        { week: 1, longRun: "22 mi", b2b: "12 mi", total: "34 mi", phase: "Base" },
+        { week: 5, longRun: "26 mi", b2b: "14 mi", total: "40 mi", phase: "Base" },
+        { week: 8, longRun: "30 mi", b2b: "14 mi", total: "44 mi", phase: "Build" },
+        { week: 12, longRun: "36 mi", b2b: "16 mi", total: "52 mi", phase: "Build" },
+        { week: 16, longRun: "40 mi", b2b: "16 mi", total: "56 mi", phase: "Peak" },
+        { week: 18, longRun: "18 mi", b2b: "—", total: "18 mi", phase: "Taper" },
+        { week: 20, longRun: "50M Race!", b2b: "—", total: "50 mi", phase: "Race" },
+      ],
+    },
   },
   "100K": {
+    foundation: {
+      duration: 28,
+      prerequisites: ["Completed a 50K", "Running 20–30 miles/week for 3+ months", "Comfortable with runs of 12+ miles"],
+      weeklyRange: "20–45 miles",
+      peakMileage: "40–45 miles",
+      runsPerWeek: "3–4",
+      keyWorkouts: ["Easy conversational runs", "Weekly long run building to 26 miles", "Walk breaks on long runs encouraged", "Strength/mobility 2×/week"],
+      highlights: ["Run/walk strategy for 62 miles", "Progressive long run to 26 miles", "Cutback every 3rd week", "Night running introduction from week 18"],
+      sampleWeeks: [
+        {
+          label: "Week 1 — Foundation",
+          context: "28 weeks. Slow and steady wins this one.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Strength & mobility", distance: "—", effort: "—", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "3 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run/walk", distance: "8 miles", effort: "Zone 1–2", notes: "Walk the hills" },
+            { day: "Sun", workout: "Rest or walk", distance: "—", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 14 — Build Phase",
+          context: "Getting comfortable with longer efforts.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Easy run + strength", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "18 miles", effort: "Zone 2", notes: "Practice nutrition" },
+            { day: "Sun", workout: "Easy walk", distance: "—", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 23 — Peak Week",
+          context: "Biggest long run. Full rehearsal.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "6 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Easy run + strength", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "26 miles", effort: "Zone 2", notes: "Full race nutrition. Night section if possible." },
+            { day: "Sun", workout: "Rest", distance: "—", effort: "—", notes: "" },
+          ],
+        },
+      ],
+      longRunProgression: [
+        { week: 1, longRun: "8 mi", b2b: "—", total: "8 mi", phase: "Base" },
+        { week: 5, longRun: "12 mi", b2b: "—", total: "12 mi", phase: "Base" },
+        { week: 9, longRun: "14 mi", b2b: "—", total: "14 mi", phase: "Base" },
+        { week: 14, longRun: "18 mi", b2b: "—", total: "18 mi", phase: "Build" },
+        { week: 18, longRun: "22 mi", b2b: "—", total: "22 mi", phase: "Build" },
+        { week: 23, longRun: "26 mi", b2b: "—", total: "26 mi", phase: "Peak" },
+        { week: 26, longRun: "14 mi", b2b: "—", total: "14 mi", phase: "Taper" },
+        { week: 28, longRun: "100K Race!", b2b: "—", total: "62 mi", phase: "Race" },
+      ],
+    },
     beginner: {
       duration: 24,
       prerequisites: ["50M finish or strong 50K finish", "Comfortable at 35–45 miles/week", "18+ months of consistent running"],
@@ -591,8 +893,129 @@ const PLANS: AllPlans = {
         { week: 24, longRun: "100K Race!", b2b: "—", total: "62 mi", phase: "Race" },
       ],
     },
+    competitive: {
+      duration: 24,
+      prerequisites: ["Multiple 100K finishes or competitive 100M background", "65+ miles/week consistently", "Sub-12:00 100K or equivalent"],
+      weeklyRange: "70–100 miles",
+      peakMileage: "95–100 miles",
+      runsPerWeek: "6–7",
+      keyWorkouts: ["VO2 max intervals 2×/week", "Long runs to 40 miles with extended race-pace sections", "Back-to-back totaling 55+ miles", "Double-day training weeks", "Night and altitude protocols"],
+      highlights: ["Peak long run 40 miles", "Sub-12 or podium 100K strategy", "6 double-day training weeks", "4 full race simulations"],
+      sampleWeeks: [
+        {
+          label: "Week 1 — Base Phase",
+          context: "High baseline. Aerobic engine first.",
+          days: [
+            { day: "Mon", workout: "Easy recovery", distance: "8 miles", effort: "Zone 1", notes: "" },
+            { day: "Tue", workout: "Intervals", distance: "11 miles", effort: "Zone 4–5", notes: "8 × 1000m" },
+            { day: "Wed", workout: "Easy run + strength", distance: "10 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Tempo run", distance: "10 miles (7 at tempo)", effort: "Zone 3–4", notes: "" },
+            { day: "Fri", workout: "Easy run", distance: "6 miles", effort: "Zone 2", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "22 miles", effort: "Zone 2", notes: "" },
+            { day: "Sun", workout: "Back-to-back", distance: "14 miles", effort: "Zone 1–2", notes: "" },
+          ],
+        },
+        {
+          label: "Week 14 — Build Phase",
+          context: "Volume and intensity both high.",
+          days: [
+            { day: "Mon", workout: "Easy recovery", distance: "7 miles", effort: "Zone 1", notes: "" },
+            { day: "Tue", workout: "VO2 max intervals", distance: "12 miles", effort: "Zone 5", notes: "10 × 800m" },
+            { day: "Wed", workout: "AM easy + PM easy", distance: "8 mi + 5 mi", effort: "Zone 1–2", notes: "Two-a-day" },
+            { day: "Thu", workout: "Tempo + hills", distance: "12 miles", effort: "Zone 3–4", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Race simulation", distance: "38 miles", effort: "Race effort", notes: "Night section. Full crew." },
+            { day: "Sun", workout: "Back-to-back", distance: "18 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 20 — Peak Week",
+          context: "Maximum load. Everything rehearsed.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "VO2 max intervals", distance: "12 miles", effort: "Zone 5", notes: "8 × 1000m" },
+            { day: "Wed", workout: "Easy run", distance: "9 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Race-pace tempo", distance: "12 miles (9 at race pace)", effort: "Zone 3", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Full simulation", distance: "40 miles", effort: "Race effort", notes: "Full crew. Pacers. Night. Track everything." },
+            { day: "Sun", workout: "Back-to-back", distance: "18 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+      ],
+      longRunProgression: [
+        { week: 1, longRun: "22 mi", b2b: "14 mi", total: "36 mi", phase: "Base" },
+        { week: 5, longRun: "26 mi", b2b: "14 mi", total: "40 mi", phase: "Base" },
+        { week: 10, longRun: "32 mi", b2b: "16 mi", total: "48 mi", phase: "Build" },
+        { week: 14, longRun: "38 mi", b2b: "18 mi", total: "56 mi", phase: "Build" },
+        { week: 18, longRun: "40 mi", b2b: "18 mi", total: "58 mi", phase: "Peak" },
+        { week: 20, longRun: "30 mi", b2b: "14 mi", total: "44 mi", phase: "Sharpen" },
+        { week: 22, longRun: "16 mi", b2b: "—", total: "16 mi", phase: "Taper" },
+        { week: 24, longRun: "100K Race!", b2b: "—", total: "62 mi", phase: "Race" },
+      ],
+    },
   },
   "100M": {
+    foundation: {
+      duration: 32,
+      prerequisites: ["Completed a 50M or 100K", "Running 20–30 miles/week for 6+ months", "Comfortable with runs of 14+ miles"],
+      weeklyRange: "25–50 miles",
+      peakMileage: "45–50 miles",
+      runsPerWeek: "3–4",
+      keyWorkouts: ["Easy conversational runs", "Weekly long run building to 28 miles", "Walk breaks encouraged on all long runs", "Night running practice from week 20", "Strength/mobility 2×/week"],
+      highlights: ["Run/walk strategy for 100 miles", "Progressive long run to 28 miles", "Cutback every 3rd week", "32-week gradual buildup"],
+      sampleWeeks: [
+        {
+          label: "Week 1 — Starting the Journey",
+          context: "32 weeks. The longest build, for the longest day.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Strength & mobility", distance: "—", effort: "—", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run/walk", distance: "8 miles", effort: "Zone 1–2", notes: "" },
+            { day: "Sun", workout: "Rest or walk", distance: "—", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 18 — Build Phase",
+          context: "Long runs getting real. Stay patient.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Easy run + strength", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "20 miles", effort: "Zone 2", notes: "Practice night running last hour" },
+            { day: "Sun", workout: "Easy walk", distance: "—", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 26 — Peak Week",
+          context: "Biggest effort. Full simulation.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy run", distance: "6 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Easy run + strength", distance: "4 miles", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "5 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "Prep gear and nutrition" },
+            { day: "Sat", workout: "Race simulation", distance: "28 miles", effort: "Zone 2", notes: "Full crew, nutrition, night section" },
+            { day: "Sun", workout: "Rest", distance: "—", effort: "—", notes: "" },
+          ],
+        },
+      ],
+      longRunProgression: [
+        { week: 1, longRun: "8 mi", b2b: "—", total: "8 mi", phase: "Base" },
+        { week: 6, longRun: "12 mi", b2b: "—", total: "12 mi", phase: "Base" },
+        { week: 10, longRun: "16 mi", b2b: "—", total: "16 mi", phase: "Build" },
+        { week: 14, longRun: "18 mi", b2b: "—", total: "18 mi", phase: "Build" },
+        { week: 18, longRun: "20 mi", b2b: "—", total: "20 mi", phase: "Build" },
+        { week: 22, longRun: "24 mi", b2b: "—", total: "24 mi", phase: "Build" },
+        { week: 26, longRun: "28 mi", b2b: "—", total: "28 mi", phase: "Peak" },
+        { week: 29, longRun: "14 mi", b2b: "—", total: "14 mi", phase: "Taper" },
+        { week: 32, longRun: "100M Race!", b2b: "—", total: "100 mi", phase: "Race" },
+      ],
+    },
     beginner: {
       duration: 28,
       prerequisites: ["100K finish or strong 50M finish", "Comfortable at 40–50 miles/week", "2+ years of ultra running"],
@@ -773,6 +1196,66 @@ const PLANS: AllPlans = {
         { week: 36, longRun: "100M Race!", b2b: "—", total: "100 mi", phase: "Race" },
       ],
     },
+    competitive: {
+      duration: 36,
+      prerequisites: ["Multiple 100M finishes or top-quarter 100K results", "70+ miles/week consistently", "Sub-24 100M or equivalent competitive pacing"],
+      weeklyRange: "80–120 miles",
+      peakMileage: "115–120 miles",
+      runsPerWeek: "6–7",
+      keyWorkouts: ["VO2 max intervals", "Race-pace long runs (15+ miles at goal pace)", "Back-to-back 55+ total miles", "6+ double-day training weeks", "Night running and altitude/heat protocols"],
+      highlights: ["Peak long run 45 miles", "Sub-24 or top-10 100M strategy", "8 double-day training weeks", "5 full race simulations with crew and pacers"],
+      sampleWeeks: [
+        {
+          label: "Week 1 — Base Phase",
+          context: "36-week plan. Build the machine.",
+          days: [
+            { day: "Mon", workout: "Easy recovery", distance: "8 miles", effort: "Zone 1", notes: "" },
+            { day: "Tue", workout: "Intervals", distance: "12 miles", effort: "Zone 4–5", notes: "8 × 1000m" },
+            { day: "Wed", workout: "AM easy + PM strength", distance: "10 mi + strength", effort: "Zone 2", notes: "" },
+            { day: "Thu", workout: "Tempo run", distance: "12 miles (8 at tempo)", effort: "Zone 3–4", notes: "" },
+            { day: "Fri", workout: "Easy run", distance: "7 miles", effort: "Zone 2", notes: "" },
+            { day: "Sat", workout: "Long run", distance: "26 miles", effort: "Zone 2", notes: "Technical terrain" },
+            { day: "Sun", workout: "Back-to-back", distance: "16 miles", effort: "Zone 1–2", notes: "" },
+          ],
+        },
+        {
+          label: "Week 22 — Peak Phase",
+          context: "Maximum load. Full race simulation.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "VO2 max intervals", distance: "12 miles", effort: "Zone 5", notes: "10 × 800m" },
+            { day: "Wed", workout: "AM easy + PM easy", distance: "10 mi + 6 mi", effort: "Zone 1–2", notes: "Two-a-day" },
+            { day: "Thu", workout: "Tempo + long hills", distance: "14 miles", effort: "Zone 3–4", notes: "4 × 1-mile hills" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Full simulation", distance: "45 miles", effort: "Race effort", notes: "Full crew, pacers, night, aid stations" },
+            { day: "Sun", workout: "Back-to-back", distance: "18 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+        {
+          label: "Week 34 — Taper",
+          context: "The work is done. Recover and sharpen.",
+          days: [
+            { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Tue", workout: "Easy + strides", distance: "8 miles", effort: "Zone 2", notes: "" },
+            { day: "Wed", workout: "Sharpener", distance: "8 miles (3 × mile)", effort: "Zone 3", notes: "" },
+            { day: "Thu", workout: "Easy run", distance: "6 miles", effort: "Zone 2", notes: "" },
+            { day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: "" },
+            { day: "Sat", workout: "Easy long run", distance: "18 miles", effort: "Zone 2", notes: "" },
+            { day: "Sun", workout: "Easy run", distance: "8 miles", effort: "Zone 1", notes: "" },
+          ],
+        },
+      ],
+      longRunProgression: [
+        { week: 1, longRun: "26 mi", b2b: "16 mi", total: "42 mi", phase: "Base" },
+        { week: 6, longRun: "18 mi", b2b: "—", total: "18 mi", phase: "Cutback" },
+        { week: 11, longRun: "34 mi", b2b: "18 mi", total: "52 mi", phase: "Build" },
+        { week: 16, longRun: "40 mi", b2b: "18 mi", total: "58 mi", phase: "Build" },
+        { week: 22, longRun: "45 mi", b2b: "18 mi", total: "63 mi", phase: "Peak" },
+        { week: 28, longRun: "32 mi", b2b: "16 mi", total: "48 mi", phase: "Sharpen" },
+        { week: 33, longRun: "18 mi", b2b: "—", total: "18 mi", phase: "Taper" },
+        { week: 36, longRun: "100M Race!", b2b: "—", total: "100 mi", phase: "Race" },
+      ],
+    },
   },
 };
 
@@ -835,13 +1318,6 @@ const DISTANCE_INFO: Record<Distance, { tagline: string; typicalRunner: string; 
   "100M": { tagline: "The ultimate test. 100 miles, one finish line.", typicalRunner: "For those who've conquered shorter ultras", durationRange: "28–36 weeks", week1Miles: "~37 mi", week1KeyWorkout: "14 mi long run" },
 };
 
-// ─── Level Profiles ──────────────────────────────────────────────────────────
-const LEVEL_PROFILES: Record<Level, string> = {
-  beginner: "You've finished a half marathon or marathon and run 3\u20134 days/week. New to ultra distances.",
-  intermediate: "You've finished at least one ultra or have a strong marathon background with 12+ months of structured training.",
-  advanced: "Multiple ultra finishes under your belt. Comfortable at high mileage and looking for a competitive edge.",
-};
-
 // ─── Runner Profile Types ────────────────────────────────────────────────────
 type PriorRace = "none" | "half" | "marathon" | "50k" | "50m+";
 type Goal = "finish" | "time";
@@ -866,12 +1342,569 @@ const effortColor = (effort: string) => {
   return "text-gray";
 };
 
+// ─── Dynamic Plan Generation ──────────────────────────────────────────────────
+const DISTANCE_MILES: Record<Distance, number> = { "50K": 31, "50M": 50, "100K": 62, "100M": 100 };
+
+const MIN_WEEKS: Record<Distance, number> = { "50K": 8, "50M": 12, "100K": 16, "100M": 20 };
+const REC_WEEKS: Record<Distance, number> = { "50K": 16, "50M": 20, "100K": 24, "100M": 28 };
+
+const PEAK_LONG_RUN: Record<Distance, number> = { "50K": 22, "50M": 30, "100K": 35, "100M": 40 };
+
+type TimelineStatus = "excellent" | "good" | "tight" | "insufficient" | "past";
+
+interface TimelineAssessment {
+  status: TimelineStatus;
+  color: string;
+  icon: string;
+  title: string;
+  message: string;
+  requirements?: string[];
+  phases: { name: string; weeks: number }[];
+}
+
+interface DynamicWeek {
+  weekNumber: number;
+  weeksToRace: number;
+  startDate: string;
+  endDate: string;
+  phase: string;
+  totalMiles: number;
+  longRun: number;
+  b2b: number;
+  isRecovery: boolean;
+  days: PlanDay[];
+  goals: string[];
+}
+
+interface Milestone {
+  week: number;
+  date: string;
+  label: string;
+  icon: string;
+}
+
+function getTimelineAssessment(weeks: number, distance: Distance): TimelineAssessment {
+  const min = MIN_WEEKS[distance];
+  const rec = REC_WEEKS[distance];
+
+  if (weeks <= 0) {
+    return {
+      status: "past", color: "bg-red-50 border-red-200 text-red-800", icon: "🛑",
+      title: "Race Date Has Passed",
+      message: "This race date is in the past. Please select a future date.",
+      phases: [],
+    };
+  }
+
+  if (weeks < min) {
+    const taperW = Math.max(1, Math.round(weeks * 0.15));
+    const buildW = Math.max(1, weeks - taperW);
+    return {
+      status: "insufficient", color: "bg-red-50 border-red-200 text-red-800", icon: "🛑",
+      title: "Insufficient Preparation Time",
+      message: `${weeks} weeks is not enough to safely prepare for a ${distance}. You need a minimum of ${min} weeks with a strong base.`,
+      requirements: [
+        `Currently running ${distance === "50K" ? "30" : distance === "50M" ? "40" : "50"}+ miles/week`,
+        "Recent long run of 15+ miles",
+        "No current injuries",
+      ],
+      phases: [
+        { name: "Quick Build", weeks: buildW },
+        { name: "Taper", weeks: taperW },
+      ],
+    };
+  }
+
+  if (weeks < rec) {
+    const baseW = Math.round(weeks * 0.2);
+    const buildW = Math.round(weeks * 0.45);
+    const peakW = Math.round(weeks * 0.15);
+    const taperW = weeks - baseW - buildW - peakW;
+    return {
+      status: "tight", color: "bg-yellow-50 border-yellow-200 text-yellow-800", icon: "⚠️",
+      title: "Compressed Timeline — Proceed with Caution",
+      message: `${weeks} weeks is less than the recommended ${rec} weeks for a ${distance}, but achievable with a strong existing base.`,
+      requirements: [
+        `Currently running ${distance === "50K" ? "25" : distance === "50M" ? "35" : "45"}+ miles/week`,
+        `Recent long run of ${distance === "50K" ? "10" : "15"}+ miles`,
+        "No current injuries",
+        "Previous race experience helpful",
+      ],
+      phases: [
+        { name: "Base", weeks: baseW },
+        { name: "Build", weeks: buildW },
+        { name: "Peak", weeks: peakW },
+        { name: "Taper", weeks: taperW },
+      ],
+    };
+  }
+
+  if (weeks <= rec + 10) {
+    const baseW = Math.round(weeks * 0.25);
+    const buildW = Math.round(weeks * 0.40);
+    const peakW = Math.round(weeks * 0.15);
+    const taperW = weeks - baseW - buildW - peakW;
+    return {
+      status: "good", color: "bg-green-50 border-green-200 text-green-800", icon: "✅",
+      title: "Ideal Training Timeline",
+      message: `${weeks} weeks gives you proper time to build safely for your ${distance}. Your plan includes gradual progression, recovery weeks, and adequate taper.`,
+      phases: [
+        { name: "Base", weeks: baseW },
+        { name: "Build", weeks: buildW },
+        { name: "Peak", weeks: peakW },
+        { name: "Taper", weeks: taperW },
+      ],
+    };
+  }
+
+  const baseW = Math.round(weeks * 0.25);
+  const build1W = Math.round(weeks * 0.25);
+  const build2W = Math.round(weeks * 0.25);
+  const peakW = Math.round(weeks * 0.10);
+  const taperW = weeks - baseW - build1W - build2W - peakW;
+  return {
+    status: "excellent", color: "bg-blue-50 border-blue-200 text-blue-800", icon: "🌟",
+    title: "Excellent Preparation Time",
+    message: `${weeks} weeks gives you plenty of time for multiple training cycles, recovery, and experimentation. Consider adding a tune-up race at the halfway point.`,
+    phases: [
+      { name: "Foundation", weeks: baseW },
+      { name: "Build Cycle 1", weeks: build1W },
+      { name: "Build Cycle 2", weeks: build2W },
+      { name: "Peak", weeks: peakW },
+      { name: "Taper", weeks: taperW },
+    ],
+  };
+}
+
+function getPhaseForWeek(weekNum: number, totalWeeks: number, assessment: TimelineAssessment): string {
+  let accumulated = 0;
+  for (const phase of assessment.phases) {
+    accumulated += phase.weeks;
+    if (weekNum <= accumulated) return phase.name;
+  }
+  return assessment.phases[assessment.phases.length - 1]?.name ?? "Build";
+}
+
+function generateDynamicPlan(
+  totalWeeks: number,
+  distance: Distance,
+  level: Level,
+  currentMileage: number,
+  raceDateStr: string,
+  assessment: TimelineAssessment,
+): DynamicWeek[] {
+  const raceDate = new Date(raceDateStr);
+  const distMiles = DISTANCE_MILES[distance];
+  const peakLong = PEAK_LONG_RUN[distance];
+
+  // Level multipliers
+  const levelMult = level === "beginner" ? 1.0 : level === "intermediate" ? 1.2 : 1.4;
+
+  // Calculate peak weekly mileage
+  const basePeakMult = totalWeeks < 12 ? 1.2 : totalWeeks < 20 ? 1.5 : 2.0;
+  const peakWeeklyMiles = Math.min(Math.round(distMiles * basePeakMult * (levelMult * 0.8)), 120);
+
+  // Starting mileage
+  const startMiles = currentMileage > 0 ? Math.max(currentMileage, 20) : (level === "beginner" ? 25 : level === "intermediate" ? 40 : 55);
+
+  const weeks: DynamicWeek[] = [];
+
+  for (let w = 1; w <= totalWeeks; w++) {
+    const weeksToRace = totalWeeks - w + 1;
+    const phase = getPhaseForWeek(w, totalWeeks, assessment);
+
+    // Week start/end dates
+    const weekStart = new Date(raceDate);
+    weekStart.setDate(weekStart.getDate() - weeksToRace * 7);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
+    // Is this a recovery week? Every 4th week during build
+    const isRecovery = (phase === "Build" || phase === "Build Cycle 1" || phase === "Build Cycle 2") && w % 4 === 0;
+
+    // Calculate total miles for this week
+    const progressFraction = w / totalWeeks;
+    let totalMiles: number;
+
+    if (phase === "Taper") {
+      const taperWeek = w - (totalWeeks - assessment.phases[assessment.phases.length - 1].weeks);
+      const taperTotal = assessment.phases[assessment.phases.length - 1].weeks;
+      const taperFraction = taperWeek / taperTotal;
+      totalMiles = Math.round(peakWeeklyMiles * (0.7 - taperFraction * 0.45));
+    } else if (phase === "Peak") {
+      totalMiles = peakWeeklyMiles;
+    } else if (isRecovery) {
+      const buildMiles = startMiles + (peakWeeklyMiles - startMiles) * progressFraction;
+      totalMiles = Math.round(buildMiles * 0.7);
+    } else {
+      totalMiles = Math.round(startMiles + (peakWeeklyMiles - startMiles) * Math.min(progressFraction * 1.1, 1));
+    }
+
+    totalMiles = Math.max(totalMiles, 15);
+
+    // Long run = ~35-40% of weekly miles
+    let longRun = Math.round(totalMiles * 0.35);
+    // Cap long run by peak for distance
+    const longRunCap = phase === "Taper" ? Math.round(peakLong * 0.6) : peakLong;
+    longRun = Math.min(longRun, longRunCap);
+    if (isRecovery) longRun = Math.round(longRun * 0.7);
+    longRun = Math.max(longRun, 8);
+
+    // Back-to-back (50M+ only, after base phase)
+    const hasB2B = distMiles >= 50 && !phase.includes("Foundation") && phase !== "Taper" && !isRecovery;
+    const b2b = hasB2B ? Math.round(longRun * 0.45) : 0;
+
+    // Generate daily workouts
+    const remainingMiles = totalMiles - longRun - b2b;
+    const days = generateWeekDays(remainingMiles, longRun, b2b, phase, isRecovery, level, w);
+
+    // Goals
+    const goals = generateWeekGoals(w, totalWeeks, phase, isRecovery, distance, longRun);
+
+    weeks.push({
+      weekNumber: w,
+      weeksToRace,
+      startDate: formatDate(weekStart),
+      endDate: formatDate(weekEnd),
+      phase,
+      totalMiles,
+      longRun,
+      b2b,
+      isRecovery,
+      days,
+      goals,
+    });
+  }
+
+  return weeks;
+}
+
+function formatDate(d: Date): string {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function generateWeekDays(
+  remainingMiles: number,
+  longRun: number,
+  b2b: number,
+  phase: string,
+  isRecovery: boolean,
+  level: Level,
+  weekNum: number,
+): PlanDay[] {
+  const isTaper = phase === "Taper";
+  const isBuild = phase.includes("Build") || phase === "Peak";
+  const hasQuality = !isRecovery && !isTaper && isBuild && weekNum > 2;
+
+  // Distribute remaining miles across weekdays
+  const easyPerRun = Math.max(3, Math.round(remainingMiles / (level === "beginner" ? 3 : 4)));
+
+  const days: PlanDay[] = [
+    { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: isRecovery ? "Recovery week — rest fully" : "Sleep and fuel" },
+  ];
+
+  if (hasQuality && level !== "beginner") {
+    // Quality workout — tempo or intervals
+    const qualityMiles = Math.min(easyPerRun + 2, Math.round(remainingMiles * 0.35));
+    const tempoMiles = Math.round(qualityMiles * 0.5);
+    days.push({
+      day: "Tue",
+      workout: weekNum % 2 === 0 ? "Tempo run" : "Hill repeats",
+      distance: `${qualityMiles} mi${weekNum % 2 === 0 ? ` (${tempoMiles} at tempo)` : ""}`,
+      effort: "Zone 3–4",
+      notes: weekNum % 2 === 0 ? `Warm up, ${tempoMiles} mi at threshold, cool down` : `6×200m hills + ${qualityMiles - 2} mi easy`,
+    });
+    days.push({ day: "Wed", workout: "Easy run", distance: `${easyPerRun} mi`, effort: "Zone 2", notes: "" });
+  } else {
+    days.push({ day: "Tue", workout: "Easy run", distance: `${easyPerRun} mi`, effort: "Zone 2", notes: isTaper ? "Short and easy — trust the taper" : "" });
+    days.push({ day: "Wed", workout: isRecovery ? "Easy run" : "Easy run + strength", distance: `${easyPerRun} mi`, effort: "Zone 2", notes: isRecovery ? "" : "20-min core/hip work after" });
+  }
+
+  days.push({ day: "Thu", workout: "Easy run", distance: `${Math.max(3, easyPerRun - 1)} mi`, effort: "Zone 2", notes: "" });
+  days.push({ day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: isTaper ? "Rest — you've earned this" : "" });
+  days.push({
+    day: "Sat",
+    workout: phase === "Peak" ? "Race simulation" : "Long run",
+    distance: `${longRun} mi`,
+    effort: "Zone 2",
+    notes: phase === "Peak" ? "Full vest, race nutrition, race kit" : longRun >= 15 ? "Practice nutrition every 45 min" : "Time on feet — no pace goals",
+  });
+
+  if (b2b > 0) {
+    days.push({ day: "Sun", workout: "Back-to-back", distance: `${b2b} mi`, effort: "Zone 1–2", notes: "Run on tired legs — this is the point" });
+  } else {
+    days.push({ day: "Sun", workout: isTaper ? "Rest" : "Recovery run or rest", distance: isTaper ? "—" : `${Math.max(3, Math.round(easyPerRun * 0.6))} mi`, effort: isTaper ? "—" : "Zone 1", notes: "" });
+  }
+
+  return days;
+}
+
+function generateWeekGoals(w: number, total: number, phase: string, isRecovery: boolean, distance: Distance, longRun: number): string[] {
+  const goals: string[] = [];
+  if (isRecovery) {
+    goals.push("Recovery week — keep everything easy");
+    goals.push("Address any niggles or soreness");
+    goals.push("Focus on sleep and nutrition");
+    return goals;
+  }
+  if (phase === "Taper") {
+    goals.push("Trust the training — fitness is banked");
+    if (total - w <= 1) { goals.push("Final gear check"); goals.push("Carb load today and tomorrow"); }
+    else { goals.push("Maintain sharpness with easy running"); goals.push("Perfect sleep and nutrition"); }
+    return goals;
+  }
+  if (phase.includes("Base") || phase === "Foundation") {
+    goals.push("All runs at conversational pace");
+    if (w <= 3) goals.push("Test race shoes on long runs");
+    goals.push("Build aerobic base consistently");
+  }
+  if (phase.includes("Build")) {
+    if (longRun >= 15) goals.push("Practice race nutrition on long run");
+    if (longRun >= 20) goals.push("Run long run in full race vest");
+    goals.push("Increase volume gradually — listen to your body");
+  }
+  if (phase === "Peak") {
+    goals.push("PEAK WEEK — highest mileage of the plan");
+    goals.push("Full race simulation (gear, nutrition, pacing)");
+    if (DISTANCE_MILES[distance] >= 62) goals.push("Include night section if race has one");
+  }
+  // Gear milestones
+  if (total - w === 8) goals.push("Break in race shoes by this week");
+  if (total - w === 4) goals.push("Finalize race nutrition — no changes after this");
+  if (total - w === 2) goals.push("No new gear from this point forward");
+  return goals;
+}
+
+function calculateMilestones(totalWeeks: number, raceDateStr: string, distance: Distance, assessment: TimelineAssessment): Milestone[] {
+  const raceDate = new Date(raceDateStr);
+  const milestones: Milestone[] = [];
+
+  const dateForWeek = (weeksOut: number) => {
+    const d = new Date(raceDate);
+    d.setDate(d.getDate() - weeksOut * 7);
+    return formatDate(d);
+  };
+
+  // Phase milestones
+  let accumulated = 0;
+  for (const phase of assessment.phases) {
+    milestones.push({
+      week: accumulated + 1,
+      date: dateForWeek(totalWeeks - accumulated),
+      label: `${phase.name} phase begins`,
+      icon: phase.name === "Taper" ? "📉" : phase.name === "Peak" ? "🔥" : "📈",
+    });
+    accumulated += phase.weeks;
+  }
+
+  // Key long run milestones
+  const firstBigLong = Math.ceil(totalWeeks * 0.35);
+  if (firstBigLong > 0 && firstBigLong < totalWeeks) {
+    milestones.push({ week: firstBigLong, date: dateForWeek(totalWeeks - firstBigLong), label: "First 20+ mile long run", icon: "🏃" });
+  }
+
+  // Gear milestones
+  if (totalWeeks > 8) {
+    milestones.push({ week: totalWeeks - 8, date: dateForWeek(8), label: "Break in race shoes by now", icon: "👟" });
+  }
+  if (totalWeeks > 6) {
+    milestones.push({ week: totalWeeks - 6, date: dateForWeek(6), label: "Finalize vest fit under load", icon: "🎒" });
+  }
+  if (totalWeeks > 4) {
+    milestones.push({ week: totalWeeks - 4, date: dateForWeek(4), label: "Lock in race nutrition", icon: "⚡" });
+  }
+  milestones.push({ week: totalWeeks - 2, date: dateForWeek(2), label: "No new gear after this", icon: "🚫" });
+  milestones.push({ week: totalWeeks, date: formatDate(raceDate), label: "RACE DAY!", icon: "🏁" });
+
+  // Sort by week
+  milestones.sort((a, b) => a.week - b.week);
+  return milestones;
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
+// ─── Full Schedule Generator ─────────────────────────────────────────────────
+function generateFullSchedule(distance: Distance, level: Level): PlanDay[][] {
+  const plan = PLANS[distance][level];
+  const dur = plan.duration;
+  const prog = plan.longRunProgression;
+  const runsPerWeek = parseInt(plan.runsPerWeek) || 4;
+
+  // Parse weekly range min/max
+  const rangeMatch = plan.weeklyRange.match(/(\d+)\D+(\d+)/);
+  const weeklyMin = rangeMatch ? parseInt(rangeMatch[1]) : 20;
+  const weeklyMax = rangeMatch ? parseInt(rangeMatch[2]) : 50;
+
+  // Interpolate long run distance for a given week from progression checkpoints
+  const interpolateLongRun = (week: number): number => {
+    // Filter out the race week from interpolation
+    const checkpoints = prog.filter((p) => !p.longRun.includes("Race"));
+    if (checkpoints.length === 0) return 10;
+
+    // Before first checkpoint
+    if (week <= checkpoints[0].week) {
+      const m = parseFloat(checkpoints[0].longRun);
+      return isNaN(m) ? 10 : m;
+    }
+    // After last checkpoint
+    if (week >= checkpoints[checkpoints.length - 1].week) {
+      const m = parseFloat(checkpoints[checkpoints.length - 1].longRun);
+      return isNaN(m) ? 10 : m;
+    }
+    // Find bracketing checkpoints and interpolate
+    for (let i = 0; i < checkpoints.length - 1; i++) {
+      if (week >= checkpoints[i].week && week <= checkpoints[i + 1].week) {
+        const w1 = checkpoints[i].week;
+        const w2 = checkpoints[i + 1].week;
+        const m1 = parseFloat(checkpoints[i].longRun) || 10;
+        const m2 = parseFloat(checkpoints[i + 1].longRun) || 10;
+        const t = (week - w1) / (w2 - w1);
+        return Math.round(m1 + (m2 - m1) * t);
+      }
+    }
+    return 10;
+  };
+
+  // Get phase for a given week
+  const getPhase = (week: number): string => {
+    const pct = week / dur;
+    if (week === dur) return "Race";
+    if (pct <= 0.3) return "Base";
+    if (pct <= 0.6) return "Build";
+    if (pct <= 0.85) return "Peak";
+    return "Taper";
+  };
+
+  const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const weeks: PlanDay[][] = [];
+
+  for (let w = 1; w <= dur; w++) {
+    const phase = getPhase(w);
+    const pct = w / dur;
+    const isRaceWeek = w === dur;
+    const isCutback = !isRaceWeek && w % 4 === 0;
+
+    // Calculate target weekly mileage
+    let targetMileage: number;
+    if (isRaceWeek) {
+      targetMileage = Math.round(weeklyMin * 0.4);
+    } else if (phase === "Taper") {
+      targetMileage = Math.round(weeklyMin * 0.7 + (weeklyMax - weeklyMin) * 0.2);
+    } else {
+      const buildProgress = Math.min(pct / 0.85, 1);
+      targetMileage = Math.round(weeklyMin + (weeklyMax - weeklyMin) * buildProgress);
+    }
+    if (isCutback) targetMileage = Math.round(targetMileage * 0.7);
+
+    const longRunDist = isRaceWeek ? 0 : interpolateLongRun(w);
+    if (isCutback) {
+      // Cutback: reduce long run
+    }
+
+    // Determine if there's a B2B run
+    const hasB2B = runsPerWeek >= 5 && !isRaceWeek && phase !== "Taper" && level !== "foundation";
+    const b2bDist = hasB2B ? Math.round(longRunDist * 0.45) : 0;
+
+    // Remaining mileage for midweek
+    const remainMiles = Math.max(0, targetMileage - longRunDist - b2bDist);
+    const midweekRuns = Math.max(1, runsPerWeek - (isRaceWeek ? 0 : 1) - (hasB2B ? 1 : 0));
+
+    // Quality session placement
+    const hasQuality = phase !== "Base" || w > Math.round(dur * 0.15);
+    const qualityDist = hasQuality ? Math.round(remainMiles / midweekRuns * 1.2) : 0;
+    const easyDist = midweekRuns > 1 ? Math.round((remainMiles - qualityDist) / Math.max(1, midweekRuns - 1)) : remainMiles;
+
+    // Build each day
+    const days: PlanDay[] = DAYS.map((dayName, di) => {
+      // RACE WEEK
+      if (isRaceWeek) {
+        if (dayName === "Sat") return { day: dayName, workout: `${distance} Race!`, distance: distance === "50K" ? "31 mi" : distance === "50M" ? "50 mi" : distance === "100K" ? "62 mi" : "100 mi", effort: "Race effort", notes: "You've got this." };
+        if (dayName === "Mon") return { day: dayName, workout: "Rest", distance: "—", effort: "—", notes: "" };
+        if (dayName === "Fri") return { day: dayName, workout: "Rest", distance: "—", effort: "—", notes: "Sleep and prep" };
+        if (dayName === "Tue") return { day: dayName, workout: "Easy + strides", distance: `${Math.max(3, Math.round(easyDist * 0.7))} miles`, effort: "Zone 2", notes: "4 × 100m strides" };
+        if (dayName === "Wed") return { day: dayName, workout: "Shakeout", distance: `${Math.max(2, Math.round(easyDist * 0.5))} miles`, effort: "Zone 1–2", notes: "Very easy" };
+        if (dayName === "Thu") return { day: dayName, workout: "Rest or walk", distance: "—", effort: "Zone 1", notes: "Stay loose" };
+        return { day: dayName, workout: "Rest", distance: "—", effort: "—", notes: "" };
+      }
+
+      // Mon: Rest
+      if (di === 0) {
+        if (runsPerWeek >= 6 && phase !== "Taper" && level === "competitive") {
+          return { day: dayName, workout: "Easy recovery", distance: `${Math.max(4, Math.round(easyDist * 0.7))} miles`, effort: "Zone 1", notes: "" };
+        }
+        return { day: dayName, workout: "Rest", distance: "—", effort: "—", notes: phase === "Taper" ? "Recovery is training" : "" };
+      }
+
+      // Sat: Long run
+      if (di === 5) {
+        const lr = isCutback ? Math.round(longRunDist * 0.7) : longRunDist;
+        let notes = "";
+        let effort = "Zone 2";
+        if (phase === "Peak" && !isCutback) { notes = "Full race nutrition practice"; effort = "Zone 2"; }
+        if (phase === "Build" && !isCutback && w > dur * 0.4) { notes = "Practice gel every 45 min"; }
+        if (level === "competitive" && phase !== "Base" && phase !== "Taper" && !isCutback) {
+          const rpMiles = Math.round(lr * 0.3);
+          notes = `Last ${rpMiles} miles at race pace`;
+          effort = "Zone 2–3";
+        }
+        const workout = phase === "Peak" && !isCutback && w === Math.round(dur * 0.75) ? "Race simulation" : "Long run";
+        return { day: dayName, workout, distance: `${lr} miles`, effort, notes };
+      }
+
+      // Sun: B2B or rest
+      if (di === 6) {
+        if (hasB2B) {
+          const bd = isCutback ? Math.round(b2bDist * 0.7) : b2bDist;
+          return { day: dayName, workout: "Back-to-back", distance: `${bd} miles`, effort: "Zone 1–2", notes: isCutback ? "Easy" : "Run on tired legs" };
+        }
+        if (level === "foundation") return { day: dayName, workout: "Rest or walk", distance: "—", effort: "Zone 1", notes: "" };
+        return { day: dayName, workout: "Recovery run or rest", distance: runsPerWeek >= 4 ? `${Math.max(3, Math.round(easyDist * 0.5))} miles` : "—", effort: "Zone 1", notes: "" };
+      }
+
+      // Fri: usually rest
+      if (di === 4) {
+        if (runsPerWeek >= 6 && level !== "foundation") {
+          return { day: dayName, workout: "Easy run", distance: `${Math.max(3, Math.round(easyDist * 0.7))} miles`, effort: "Zone 2", notes: "" };
+        }
+        return { day: dayName, workout: "Rest", distance: "—", effort: "—", notes: "" };
+      }
+
+      // Wed: Quality session (tempo/hills/intervals)
+      if (di === 2 && hasQuality && !isCutback) {
+        if (phase === "Peak" && (level === "advanced" || level === "competitive")) {
+          const tempMiles = Math.round(qualityDist * 0.6);
+          return { day: dayName, workout: "VO2 max intervals", distance: `${qualityDist} miles`, effort: "Zone 4–5", notes: `${Math.min(10, Math.round(tempMiles / 0.5))} × 800m` };
+        }
+        if (phase === "Build" || phase === "Peak") {
+          const tempMiles = Math.round(qualityDist * 0.5);
+          return { day: dayName, workout: "Tempo run", distance: `${qualityDist} miles (${tempMiles} at tempo)`, effort: "Zone 3–4", notes: "" };
+        }
+        return { day: dayName, workout: "Easy run + strides", distance: `${qualityDist || easyDist} miles`, effort: "Zone 2", notes: "6 × 100m strides" };
+      }
+
+      // Thu: Secondary quality or easy + strength
+      if (di === 3) {
+        if (phase === "Build" && hasQuality && !isCutback && (level === "intermediate" || level === "advanced" || level === "competitive")) {
+          return { day: dayName, workout: "Hill repeats", distance: `${easyDist} miles`, effort: "Zone 3", notes: `${Math.min(8, Math.max(4, Math.round(w / 3)))} × 200m hills` };
+        }
+        return { day: dayName, workout: "Easy run + strength", distance: `${easyDist} miles`, effort: "Zone 2", notes: "Core and hip work after" };
+      }
+
+      // Tue: Easy run
+      return { day: dayName, workout: "Easy run", distance: `${easyDist} miles`, effort: "Zone 2", notes: "" };
+    });
+
+    weeks.push(days);
+  }
+
+  return weeks;
+}
+
 export default function PlansClient() {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [activeDistance, setActiveDistance] = useState<Distance>("50K");
   const [activeLevel, setActiveLevel] = useState<Level>("beginner");
-  const [activeSampleWeek, setActiveSampleWeek] = useState(0);
+  const [activeWeek, setActiveWeek] = useState(0);
   const [planTab, setPlanTab] = useState<PlanTab>("schedule");
 
   // Calculator state
@@ -889,10 +1922,8 @@ export default function PlansClient() {
 
   const wizardRef = useRef<HTMLDivElement>(null);
 
-  const plan = PLANS[activeDistance][activeLevel];
   const distances: Distance[] = ["50K", "50M", "100K", "100M"];
-  const levels: Level[] = ["beginner", "intermediate", "advanced"];
-  const levelLabel: Record<Level, string> = { beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" };
+  const levelLabel: Record<Level, string> = { foundation: "Foundation", beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced", competitive: "Competitive" };
 
   // Smart recommendation engine — combines all profile inputs
   const getRecommendation = (): { level: Level; reason: string } | null => {
@@ -904,46 +1935,56 @@ export default function PlansClient() {
     let score = 0;
 
     // Longest run (primary signal)
-    if (miles >= 26) score += 3;
+    if (miles >= 30) score += 4;
+    else if (miles >= 26) score += 3;
     else if (miles >= 20) score += 2;
     else if (miles >= 14) score += 1;
-    else score -= 1;
+    else if (miles >= 8) score += 0;
+    else score -= 2;
 
     // Weekly mileage
     if (weekly && !isNaN(weekly)) {
-      if (weekly >= 50) score += 2;
+      if (weekly >= 60) score += 3;
+      else if (weekly >= 50) score += 2;
       else if (weekly >= 35) score += 1;
-      else if (weekly < 25) score -= 1;
+      else if (weekly >= 20) score += 0;
+      else score -= 1;
     }
 
     // Prior race experience
-    if (priorRace === "50m+") score += 3;
+    if (priorRace === "50m+") score += 4;
     else if (priorRace === "50k") score += 2;
     else if (priorRace === "marathon") score += 1;
+    else if (priorRace === "half") score += 0;
+    else if (priorRace === "none") score -= 1;
 
     // Days per week available
-    if (daysPerWeek === "6+") score += 1;
+    if (daysPerWeek === "6+") score += 2;
+    else if (daysPerWeek === "5") score += 1;
     else if (daysPerWeek === "3") score -= 1;
 
     // Goal
-    if (goal === "time") score += 1;
+    if (goal === "time") score += 2;
 
-    // Map score to level
+    // Map score to level (5 tiers)
     let recLevel: Level;
     let reason: string;
 
     if (score <= 0) {
-      recLevel = "beginner";
-      reason = "Based on your current fitness, start with the Beginner plan to build a solid foundation safely.";
+      recLevel = "foundation";
+      reason = "We've designed a gentle, gradual plan that builds your base with walk breaks and extra recovery time.";
     } else if (score <= 3) {
       recLevel = "beginner";
       reason = "Your running base is solid for a Beginner plan. You'll build volume progressively without overreaching.";
-    } else if (score <= 5) {
+    } else if (score <= 6) {
       recLevel = "intermediate";
-      reason = "Your experience and weekly mileage support Intermediate training. Expect higher volume and more structured workouts.";
-    } else {
+      reason = "Your experience and weekly mileage support Intermediate training with structured workouts and higher volume.";
+    } else if (score <= 10) {
       recLevel = "advanced";
-      reason = "Your background indicates you're ready for Advanced training. This plan will push your limits with competitive pacing.";
+      reason = "Your background supports Advanced training with race-specific intensity, doubles, and competitive pacing.";
+    } else {
+      recLevel = "competitive";
+      reason = "Your high mileage, race experience, and time goals qualify you for our most demanding plan with VO2 max work and race-pace segments.";
     }
 
     return { level: recLevel, reason };
@@ -955,6 +1996,65 @@ export default function PlansClient() {
   const weeksUntilRace = raceDate
     ? Math.max(0, Math.ceil((new Date(raceDate).getTime() - Date.now()) / (7 * 24 * 60 * 60 * 1000)))
     : null;
+
+  // Timeline assessment
+  const timelineAssessment = weeksUntilRace !== null ? getTimelineAssessment(weeksUntilRace, activeDistance) : null;
+
+  // Dynamic plan generation (memoized via useMemo pattern — regenerates when inputs change)
+  const dynamicPlan = (weeksUntilRace && weeksUntilRace > 0 && raceDate && timelineAssessment && timelineAssessment.status !== "past")
+    ? generateDynamicPlan(weeksUntilRace, activeDistance, activeLevel, parseFloat(weeklyMileage) || 0, raceDate, timelineAssessment)
+    : null;
+
+  const milestones = (weeksUntilRace && raceDate && timelineAssessment && timelineAssessment.status !== "past")
+    ? calculateMilestones(weeksUntilRace, raceDate, activeDistance, timelineAssessment)
+    : null;
+
+  // Save plan to localStorage and navigate to dashboard
+  const router = useRouter();
+  const [planSaved, setPlanSaved] = useState(false);
+
+  const handleSavePlan = () => {
+    if (!dynamicPlan || !raceDate || !weeksUntilRace) return;
+
+    const savedWeeks: SavedWeek[] = dynamicPlan.map((w) => ({
+      weekNumber: w.weekNumber,
+      weeksToRace: w.weeksToRace,
+      startDate: w.startDate,
+      endDate: w.endDate,
+      phase: w.phase,
+      totalMiles: w.totalMiles,
+      longRun: w.longRun,
+      b2b: w.b2b,
+      isRecovery: w.isRecovery,
+      days: w.days.map((d): SavedWorkoutDay => ({
+        day: d.day,
+        workout: d.workout,
+        distance: d.distance,
+        effort: d.effort,
+        notes: d.notes,
+      })),
+      goals: w.goals,
+    }));
+
+    const plan: SavedPlan = {
+      raceDate,
+      raceName: `My ${activeDistance} Ultra`,
+      distance: activeDistance,
+      level: activeLevel,
+      weeksTotal: weeksUntilRace,
+      currentWeeklyMiles: parseFloat(weeklyMileage) || 0,
+      generatedAt: new Date().toISOString(),
+      weeks: savedWeeks,
+      completedWorkouts: {},
+      gearItems: getDefaultGearItems(activeDistance),
+      nutritionProducts: getDefaultNutritionProducts(),
+      raceDayChecklist: getDefaultRaceDayChecklist(),
+    };
+
+    savePlan(plan);
+    setPlanSaved(true);
+    setTimeout(() => router.push("/training/dashboard"), 600);
+  };
 
   // Pacing calculator
   const pacingResult = () => {
@@ -976,7 +2076,7 @@ export default function PlansClient() {
 
   const goToStep = (step: number) => {
     setCurrentStep(step);
-    if (step < 3) setActiveSampleWeek(0);
+    if (step < 3) setActiveWeek(0);
     setTimeout(() => wizardRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
   };
 
@@ -1134,6 +2234,69 @@ export default function PlansClient() {
                   />
                 </div>
 
+                {/* Timeline feedback — inline after date */}
+                {weeksUntilRace !== null && timelineAssessment && (
+                  <div className="sm:col-span-2">
+                    <div className={`rounded-xl border p-4 ${timelineAssessment.color}`}>
+                      <div className="flex items-start gap-3">
+                        <span className="text-xl flex-shrink-0">{timelineAssessment.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-1 flex-wrap">
+                            <span className="font-headline font-bold text-sm">{timelineAssessment.title}</span>
+                            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/50">
+                              {weeksUntilRace} weeks ({Math.round(weeksUntilRace * 7)} days)
+                            </span>
+                          </div>
+                          <p className="text-sm leading-relaxed mb-3">{timelineAssessment.message}</p>
+
+                          {/* Phase breakdown */}
+                          {timelineAssessment.phases.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {timelineAssessment.phases.map((p) => (
+                                <span key={p.name} className="text-xs font-medium bg-white/60 px-2.5 py-1 rounded-full">
+                                  {p.name}: {p.weeks}w
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Requirements for tight/insufficient */}
+                          {timelineAssessment.requirements && (
+                            <div className="mt-2">
+                              <p className="text-xs font-semibold mb-1.5">Requirements to proceed:</p>
+                              <ul className="space-y-1">
+                                {timelineAssessment.requirements.map((req, i) => (
+                                  <li key={i} className="text-xs flex items-start gap-1.5">
+                                    <span className="flex-shrink-0 mt-0.5">☐</span>{req}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Insufficient warning buttons */}
+                          {timelineAssessment.status === "insufficient" && !acknowledgedRisk && (
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              <button
+                                type="button"
+                                onClick={() => setAcknowledgedRisk(true)}
+                                className="text-xs font-medium px-3 py-1.5 rounded-lg bg-white/70 hover:bg-white transition-colors"
+                              >
+                                I understand the risks — continue
+                              </button>
+                            </div>
+                          )}
+                          {timelineAssessment.status === "insufficient" && acknowledgedRisk && (
+                            <p className="text-xs font-medium mt-2 opacity-80">
+                              ⚠️ Proceeding with compressed plan. Higher injury risk — listen to your body.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Terrain */}
                 <div>
                   <label className="block text-sm font-medium text-dark mb-2">Terrain access</label>
@@ -1185,6 +2348,49 @@ export default function PlansClient() {
                     <div className={`text-xs mt-0.5 ${goal === "time" ? "text-white/70" : "text-gray"}`}>Train with specific pacing and performance targets</div>
                   </button>
                 </div>
+
+                {/* Time goal input — revealed when "Beat a time goal" is selected */}
+                {goal === "time" && (
+                  <div className="mt-4 bg-light rounded-xl p-4 border border-gray-100">
+                    <label className="block text-sm font-medium text-dark mb-3">What&apos;s your target finish time for {activeDistance}?</label>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <div className="relative">
+                          <input
+                            type="number"
+                            min="0"
+                            value={targetHours}
+                            onChange={(e) => setTargetHours(e.target.value)}
+                            placeholder="0"
+                            className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark text-center text-lg font-bold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray font-medium">hours</span>
+                        </div>
+                      </div>
+                      <span className="text-xl font-bold text-gray">:</span>
+                      <div className="flex-1">
+                        <div className="relative">
+                          <input
+                            type="number"
+                            min="0"
+                            max="59"
+                            value={targetMins}
+                            onChange={(e) => setTargetMins(e.target.value)}
+                            placeholder="00"
+                            className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark text-center text-lg font-bold focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray font-medium">min</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray mt-2">
+                      {activeDistance === "50K" && "Average 50K finish: 6\u20138 hours"}
+                      {activeDistance === "50M" && "Average 50M finish: 10\u201314 hours"}
+                      {activeDistance === "100K" && "Average 100K finish: 14\u201320 hours"}
+                      {activeDistance === "100M" && "Average 100M finish: 24\u201330 hours"}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1199,72 +2405,21 @@ export default function PlansClient() {
                   </div>
                   <div>
                     <div className="font-headline font-bold text-dark mb-1">
-                      We recommend: {activeDistance} {levelLabel[recommendation.level]}
+                      Your personalized plan is ready
                     </div>
-                    <p className="text-sm text-gray leading-relaxed mb-2">{recommendation.reason}</p>
-                    <button
-                      onClick={() => {
-                        setActiveLevel(recommendation.level);
-                        setActiveSampleWeek(0);
-                      }}
-                      className="text-sm font-semibold text-primary hover:underline"
-                    >
-                      Use this recommendation
-                    </button>
+                    <p className="text-sm text-gray leading-relaxed">
+                      {recommendation.reason}
+                    </p>
+                    <div className="flex flex-wrap gap-3 mt-3 text-xs text-gray">
+                      <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full">{plan2.duration} weeks</span>
+                      <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full">{plan2.weeklyRange}</span>
+                      <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full">{plan2.runsPerWeek} runs/week</span>
+                      <span className="bg-white border border-gray-200 px-2.5 py-1 rounded-full font-medium text-dark">Peak: {plan2.peakMileage}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
-
-            {/* Level cards */}
-            <h3 className="font-headline text-lg font-bold text-dark mb-4">Select your level</h3>
-            <div className="space-y-4 mb-10">
-              {levels.map((l) => {
-                const p = PLANS[activeDistance][l];
-                const isRecommended = recommendation?.level === l;
-                return (
-                  <button
-                    key={l}
-                    onClick={() => { setActiveLevel(l); setActiveSampleWeek(0); }}
-                    className={`relative w-full text-left rounded-xl p-5 transition-all ${
-                      activeLevel === l
-                        ? "border-2 border-primary bg-primary/5 shadow-md"
-                        : "border border-gray-200 bg-white hover:border-primary/40 hover:shadow-sm"
-                    }`}
-                  >
-                    {activeLevel === l && (
-                      <div className="absolute top-4 right-4 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-3 mb-1">
-                      <span className="font-headline text-lg font-bold text-dark">{levelLabel[l]}</span>
-                      {isRecommended && (
-                        <span className="text-xs font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full">
-                          {recommendation ? "Matches your profile" : "Recommended for you"}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray mb-3">{LEVEL_PROFILES[l]}</p>
-                    <div className="flex flex-wrap gap-4 text-xs text-gray mb-3">
-                      <span>{p.duration} weeks</span>
-                      <span>{p.weeklyRange}</span>
-                      <span>{p.runsPerWeek} runs/week</span>
-                      <span className="font-medium text-dark">Peak long run: {p.peakMileage}</span>
-                    </div>
-                    <ul className="space-y-1">
-                      {p.prerequisites.map((pr, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray">
-                          <span className="text-green-500 mt-0.5 flex-shrink-0">&#10003;</span>{pr}
-                        </li>
-                      ))}
-                    </ul>
-                  </button>
-                );
-              })}
-            </div>
 
             {/* Navigation */}
             <div className="flex justify-center gap-4">
@@ -1276,11 +2431,21 @@ export default function PlansClient() {
               </button>
               <button
                 onClick={() => goToStep(3)}
-                className="px-8 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors"
+                disabled={!recommendation}
+                className={`px-8 py-3 font-semibold rounded-xl transition-colors ${
+                  recommendation
+                    ? "bg-primary text-white hover:bg-primary-dark"
+                    : "bg-gray-200 text-gray cursor-not-allowed"
+                }`}
               >
                 See Your Plan
               </button>
             </div>
+            {!recommendation && (
+              <p className="text-xs text-gray text-center mt-3">
+                Fill in your longest run to unlock your personalized plan.
+              </p>
+            )}
           </div>
         </section>
       )}
@@ -1293,7 +2458,7 @@ export default function PlansClient() {
             {/* Navigation links */}
             <div className="flex justify-between items-center mb-6">
               <button onClick={() => goToStep(2)} className="text-sm text-primary hover:underline font-medium">
-                &#8592; Back to Level Selection
+                &#8592; Edit Profile
               </button>
               <button onClick={() => goToStep(1)} className="text-sm text-gray hover:text-dark font-medium">
                 Start Over
@@ -1305,26 +2470,35 @@ export default function PlansClient() {
               <div className="bg-gradient-to-r from-primary to-primary-dark p-6 sm:p-8">
                 <div className="flex flex-wrap gap-3 mb-3">
                   <span className="bg-white/20 text-white text-sm font-semibold px-3 py-1 rounded-full">{activeDistance}</span>
-                  <span className="bg-white/20 text-white text-sm font-semibold px-3 py-1 rounded-full capitalize">{levelLabel[activeLevel]}</span>
-                  <span className="bg-white/20 text-white text-sm px-3 py-1 rounded-full">{plan.duration} Weeks</span>
+                  <span className="bg-white/20 text-white text-sm px-3 py-1 rounded-full">{plan2.duration} Weeks</span>
                   {weeksUntilRace !== null && (
                     <span className="bg-accent/90 text-white text-sm font-semibold px-3 py-1 rounded-full">
-                      {weeksUntilRace} weeks to race day
+                      {weeksUntilRace} weeks to race day ({Math.round(weeksUntilRace * 7)} days)
+                    </span>
+                  )}
+                  {raceDate && (
+                    <span className="bg-white/20 text-white text-sm px-3 py-1 rounded-full">
+                      Race: {new Date(raceDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </span>
                   )}
                 </div>
-                <h3 className="font-headline text-2xl sm:text-3xl font-bold text-white mb-1">{activeDistance} {levelLabel[activeLevel]} Plan</h3>
-                <p className="text-white/80 text-sm">
-                  {plan.runsPerWeek} runs/week · {plan.weeklyRange} · Peak: {plan.peakMileage}
-                  {terrain && terrain !== "mixed" && <> · {terrain === "trail" ? "Trail-focused" : "Road-focused"}</>}
-                </p>
+                <h3 className="font-headline text-2xl sm:text-3xl font-bold text-white mb-1">
+                  {userName ? `${userName}\u2019s` : "Your"} {activeDistance} Training Plan
+                </h3>
+                <div className="flex items-center gap-3">
+                  <p className="text-white/80 text-sm">
+                    {plan2.runsPerWeek} runs/week · {plan2.weeklyRange} · Peak: {plan2.peakMileage}
+                    {terrain && terrain !== "mixed" && <> · {terrain === "trail" ? "Trail-focused" : "Road-focused"}</>}
+                  </p>
+                  <span className="text-white/50 text-xs bg-white/10 px-2 py-0.5 rounded-full">{levelLabel[effectiveLevel]}</span>
+                </div>
               </div>
 
               <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                   <h4 className="font-headline font-bold text-dark mb-3 text-sm uppercase tracking-wider">Prerequisites</h4>
                   <ul className="space-y-2">
-                    {plan.prerequisites.map((p, i) => (
+                    {plan2.prerequisites.map((p, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-gray">
                         <span className="text-green-500 mt-0.5 flex-shrink-0">&#10003;</span>{p}
                       </li>
@@ -1334,7 +2508,7 @@ export default function PlansClient() {
                 <div>
                   <h4 className="font-headline font-bold text-dark mb-3 text-sm uppercase tracking-wider">Key Workouts</h4>
                   <ul className="space-y-2">
-                    {plan.keyWorkouts.map((w, i) => (
+                    {plan2.keyWorkouts.map((w, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-gray">
                         <span className="text-primary mt-0.5 flex-shrink-0">&rarr;</span>{w}
                       </li>
@@ -1344,7 +2518,7 @@ export default function PlansClient() {
                 <div>
                   <h4 className="font-headline font-bold text-dark mb-3 text-sm uppercase tracking-wider">Plan Highlights</h4>
                   <ul className="space-y-2">
-                    {plan.highlights.map((h, i) => (
+                    {plan2.highlights.map((h, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-gray">
                         <span className="text-accent mt-0.5 flex-shrink-0">&#9733;</span>{h}
                       </li>
@@ -1353,6 +2527,238 @@ export default function PlansClient() {
                 </div>
               </div>
             </div>
+
+            {/* ── Dynamic Week-by-Week Plan ───────────────────────────── */}
+            {dynamicPlan && dynamicPlan.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-10">
+                <div className="bg-gradient-to-r from-accent to-orange-600 p-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">📅</span>
+                    <h3 className="font-headline text-xl sm:text-2xl font-bold text-white">
+                      Your {weeksUntilRace}-Week Dynamic Plan
+                    </h3>
+                  </div>
+                  <p className="text-white/80 text-sm">
+                    Customized for your race on {new Date(raceDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · {activeDistance} {levelLabel[activeLevel]}
+                  </p>
+                </div>
+
+                {/* Plan stats */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-light border-b border-gray-100">
+                  <div className="text-center">
+                    <div className="font-headline text-2xl font-bold text-accent">{weeksUntilRace}</div>
+                    <div className="text-xs text-gray">Total Weeks</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-headline text-2xl font-bold text-accent">
+                      {Math.max(...dynamicPlan.map(w => w.totalMiles))}
+                    </div>
+                    <div className="text-xs text-gray">Peak Miles/Week</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-headline text-2xl font-bold text-accent">
+                      {Math.max(...dynamicPlan.map(w => w.longRun))}
+                    </div>
+                    <div className="text-xs text-gray">Peak Long Run (mi)</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-headline text-2xl font-bold text-accent">
+                      {dynamicPlan.reduce((s, w) => s + w.totalMiles, 0)}
+                    </div>
+                    <div className="text-xs text-gray">Total Miles</div>
+                  </div>
+                </div>
+
+                {/* View toggle: Overview / Weekly */}
+                <div className="flex items-center gap-2 p-4 border-b border-gray-100 overflow-x-auto">
+                  <button
+                    onClick={() => setDynamicPlanWeek(0)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
+                      dynamicPlanWeek === 0 ? "bg-accent text-white" : "bg-light text-gray hover:text-dark"
+                    }`}
+                  >
+                    Overview
+                  </button>
+                  {dynamicPlan.map((w) => (
+                    <button
+                      key={w.weekNumber}
+                      onClick={() => setDynamicPlanWeek(w.weekNumber)}
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
+                        dynamicPlanWeek === w.weekNumber
+                          ? "bg-accent text-white"
+                          : w.isRecovery
+                          ? "bg-green-50 text-green-700 hover:bg-green-100"
+                          : "bg-light text-gray hover:text-dark"
+                      }`}
+                    >
+                      W{w.weekNumber}
+                    </button>
+                  ))}
+                </div>
+
+                {/* OVERVIEW mode */}
+                {dynamicPlanWeek === 0 && (
+                  <div className="p-5">
+                    {/* Milestones */}
+                    {milestones && milestones.length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="font-headline font-bold text-dark mb-3 text-sm uppercase tracking-wider">Key Milestones</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {milestones.map((m, i) => (
+                            <div key={i} className="flex items-center gap-3 bg-light rounded-lg px-3 py-2 text-sm">
+                              <span className="text-base flex-shrink-0">{m.icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <span className="font-medium text-dark">{m.label}</span>
+                              </div>
+                              <span className="text-xs text-gray flex-shrink-0">
+                                Week {m.week} · {m.date}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Weekly mileage overview table */}
+                    <h4 className="font-headline font-bold text-dark mb-3 text-sm uppercase tracking-wider">Week-by-Week Mileage</h4>
+                    <div className="overflow-x-auto rounded-xl border border-gray-100">
+                      <table className="w-full text-sm">
+                        <thead className="bg-light">
+                          <tr>
+                            {["Week", "Dates", "Phase", "Miles", "Long Run", "B2B", ""].map((h) => (
+                              <th key={h} className="text-left py-2.5 px-3 font-headline font-semibold text-dark text-xs uppercase tracking-wider">{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {dynamicPlan.map((w) => (
+                            <tr
+                              key={w.weekNumber}
+                              className={`border-b border-gray-50 hover:bg-light/40 cursor-pointer ${w.isRecovery ? "bg-green-50/50" : ""}`}
+                              onClick={() => setDynamicPlanWeek(w.weekNumber)}
+                            >
+                              <td className="py-2.5 px-3 font-bold text-dark">{w.weekNumber}</td>
+                              <td className="py-2.5 px-3 text-gray text-xs">{w.startDate} – {w.endDate}</td>
+                              <td className="py-2.5 px-3">
+                                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${phaseColor[w.phase] || "bg-gray-100 text-gray-700"}`}>
+                                  {w.phase}{w.isRecovery ? " (Recovery)" : ""}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-3 font-medium text-dark">{w.totalMiles}</td>
+                              <td className="py-2.5 px-3 text-dark">{w.longRun} mi</td>
+                              <td className="py-2.5 px-3 text-gray">{w.b2b > 0 ? `${w.b2b} mi` : "—"}</td>
+                              <td className="py-2.5 px-3">
+                                <span className="text-xs text-primary font-medium">View →</span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* WEEKLY DETAIL mode */}
+                {dynamicPlanWeek > 0 && dynamicPlan[dynamicPlanWeek - 1] && (() => {
+                  const w = dynamicPlan[dynamicPlanWeek - 1];
+                  return (
+                    <div className="p-5">
+                      {/* Week nav */}
+                      <div className="flex items-center justify-between mb-4">
+                        <button
+                          onClick={() => setDynamicPlanWeek(Math.max(0, dynamicPlanWeek - 1))}
+                          className="text-sm text-primary hover:underline font-medium"
+                        >
+                          ← {dynamicPlanWeek === 1 ? "Overview" : `Week ${dynamicPlanWeek - 1}`}
+                        </button>
+                        {dynamicPlanWeek < dynamicPlan.length && (
+                          <button
+                            onClick={() => setDynamicPlanWeek(dynamicPlanWeek + 1)}
+                            className="text-sm text-primary hover:underline font-medium"
+                          >
+                            Week {dynamicPlanWeek + 1} →
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Week header */}
+                      <div className="bg-light rounded-xl p-4 mb-4">
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                          <span className="font-headline text-lg font-bold text-dark">
+                            Week {w.weekNumber} — {w.phase}{w.isRecovery ? " (Recovery)" : ""}
+                          </span>
+                          <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${phaseColor[w.phase] || "bg-gray-100 text-gray-700"}`}>
+                            {w.weeksToRace} weeks to race
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray">
+                          {w.startDate} – {w.endDate} · Total: {w.totalMiles} miles
+                        </p>
+                      </div>
+
+                      {/* Daily schedule */}
+                      <div className="overflow-x-auto rounded-xl border border-gray-100 mb-4">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-gray-100 bg-light/50">
+                              {["Day", "Workout", "Distance", "Effort", "Notes"].map((h) => (
+                                <th key={h} className="text-left py-2.5 px-3 font-headline font-semibold text-dark text-xs uppercase tracking-wider">{h}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {w.days.map((d, i) => (
+                              <tr key={i} className="border-b border-gray-50 hover:bg-light/40">
+                                <td className="py-2.5 px-3 font-bold text-dark">{d.day}</td>
+                                <td className="py-2.5 px-3 text-dark">{d.workout}</td>
+                                <td className="py-2.5 px-3 font-medium text-dark">{d.distance}</td>
+                                <td className={`py-2.5 px-3 text-xs font-medium ${effortColor(d.effort)}`}>{d.effort}</td>
+                                <td className="py-2.5 px-3 text-gray">{d.notes}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Weekly goals */}
+                      {w.goals.length > 0 && (
+                        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
+                          <h4 className="font-headline font-semibold text-dark text-sm mb-2">Weekly Goals</h4>
+                          <ul className="space-y-1.5">
+                            {w.goals.map((g, i) => (
+                              <li key={i} className="flex items-start gap-2 text-sm text-gray">
+                                <span className="text-primary flex-shrink-0 mt-0.5">✓</span>{g}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
+            {/* Save Plan CTA */}
+            {dynamicPlan && dynamicPlan.length > 0 && (
+              <div className="my-10 bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-8 text-center text-white">
+                <h3 className="font-headline text-2xl font-bold mb-2">Ready to Start Training?</h3>
+                <p className="text-white/80 mb-6 max-w-lg mx-auto">
+                  Save this plan to your Training Dashboard to track daily workouts, manage gear, test nutrition, and count down to race day.
+                </p>
+                <button
+                  onClick={handleSavePlan}
+                  disabled={planSaved}
+                  className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${
+                    planSaved
+                      ? "bg-green-400 text-white cursor-default"
+                      : "bg-white text-primary hover:bg-light shadow-lg hover:shadow-xl"
+                  }`}
+                >
+                  {planSaved ? "✓ Plan Saved — Redirecting..." : "Save Plan & Go to Dashboard →"}
+                </button>
+              </div>
+            )}
 
             {/* Tab bar */}
             <PlanTabs activeTab={planTab} onTabChange={setPlanTab} />
@@ -1365,10 +2771,10 @@ export default function PlansClient() {
                   <h3 className="font-headline text-xl font-bold text-dark mb-4">Training Phases</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {[
-                      { phase: "Base Building", weeks: `Weeks 1–${Math.round(plan.duration * 0.3)}`, desc: "Aerobic development. All easy running.", color: "bg-blue-50 border-blue-200 text-blue-800" },
-                      { phase: "Build Phase", weeks: `Weeks ${Math.round(plan.duration * 0.3) + 1}–${Math.round(plan.duration * 0.6)}`, desc: "Increasing mileage and introducing intensity.", color: "bg-yellow-50 border-yellow-200 text-yellow-800" },
-                      { phase: "Peak Phase", weeks: `Weeks ${Math.round(plan.duration * 0.6) + 1}–${Math.round(plan.duration * 0.85)}`, desc: "Highest volume. Race simulations.", color: "bg-orange-50 border-orange-200 text-orange-800" },
-                      { phase: "Taper", weeks: `Final ${plan.duration - Math.round(plan.duration * 0.85)} weeks`, desc: "Volume drops. Intensity maintained. Rest.", color: "bg-green-50 border-green-200 text-green-800" },
+                      { phase: "Base Building", weeks: `Weeks 1\u2013${Math.round(plan2.duration * 0.3)}`, desc: "Aerobic development. All easy running.", color: "bg-blue-50 border-blue-200 text-blue-800" },
+                      { phase: "Build Phase", weeks: `Weeks ${Math.round(plan2.duration * 0.3) + 1}\u2013${Math.round(plan2.duration * 0.6)}`, desc: "Increasing mileage and introducing intensity.", color: "bg-yellow-50 border-yellow-200 text-yellow-800" },
+                      { phase: "Peak Phase", weeks: `Weeks ${Math.round(plan2.duration * 0.6) + 1}\u2013${Math.round(plan2.duration * 0.85)}`, desc: "Highest volume. Race simulations.", color: "bg-orange-50 border-orange-200 text-orange-800" },
+                      { phase: "Taper", weeks: `Final ${plan2.duration - Math.round(plan2.duration * 0.85)} weeks`, desc: "Volume drops. Intensity maintained. Rest.", color: "bg-green-50 border-green-200 text-green-800" },
                     ].map((p) => (
                       <div key={p.phase} className={`rounded-xl border p-4 ${p.color}`}>
                         <div className="font-headline font-bold text-sm mb-1">{p.phase}</div>
@@ -1379,47 +2785,82 @@ export default function PlansClient() {
                   </div>
                 </div>
 
-                {/* Sample weekly schedules */}
+                {/* Full weekly schedule */}
                 <div>
+                  {/* Week navigator */}
                   <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                    <h3 className="font-headline text-xl font-bold text-dark">Sample Weekly Schedules</h3>
-                    <div className="flex gap-2">
-                      {plan.sampleWeeks.map((w, i) => (
-                        <button key={i} onClick={() => setActiveSampleWeek(i)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeSampleWeek === i ? "bg-primary text-white" : "bg-white border border-gray-200 text-dark hover:border-primary/40"}`}>
-                          {w.label.split("—")[0].trim()}
-                        </button>
-                      ))}
+                    <h3 className="font-headline text-xl font-bold text-dark">Weekly Schedule</h3>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setActiveWeek(Math.max(0, activeWeek - 1))}
+                        disabled={activeWeek === 0}
+                        className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
+                          activeWeek === 0 ? "bg-gray-100 text-gray cursor-not-allowed" : "bg-white border border-gray-200 text-dark hover:border-primary/40"
+                        }`}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                      </button>
+                      <select
+                        value={activeWeek}
+                        onChange={(e) => setActiveWeek(parseInt(e.target.value))}
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-dark bg-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                      >
+                        {fullSchedule.map((_, i) => (
+                          <option key={i} value={i}>Week {i + 1} of {plan2.duration}</option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => setActiveWeek(Math.min(fullSchedule.length - 1, activeWeek + 1))}
+                        disabled={activeWeek === fullSchedule.length - 1}
+                        className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
+                          activeWeek === fullSchedule.length - 1 ? "bg-gray-100 text-gray cursor-not-allowed" : "bg-white border border-gray-200 text-dark hover:border-primary/40"
+                        }`}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                      </button>
                     </div>
                   </div>
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div className="p-5 border-b border-gray-100 bg-light">
-                      <div className="font-headline font-bold text-dark">{plan.sampleWeeks[activeSampleWeek].label}</div>
-                      <div className="text-sm text-gray mt-1">{plan.sampleWeeks[activeSampleWeek].context}</div>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-gray-100 bg-light/50">
-                            {["Day", "Workout", "Distance", "Effort", "Notes"].map((h) => (
-                              <th key={h} className="text-left py-3 px-4 font-headline font-semibold text-dark text-xs uppercase tracking-wider">{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {plan.sampleWeeks[activeSampleWeek].days.map((d, i) => (
-                            <tr key={i} className="border-b border-gray-50 hover:bg-light/40">
-                              <td className="py-3 px-4 font-bold text-dark">{d.day}</td>
-                              <td className="py-3 px-4 text-dark">{d.workout}</td>
-                              <td className="py-3 px-4 font-medium text-dark">{d.distance}</td>
-                              <td className={`py-3 px-4 text-xs font-medium ${effortColor(d.effort)}`}>{d.effort}</td>
-                              <td className="py-3 px-4 text-gray">{d.notes}</td>
+
+                  {fullSchedule[activeWeek] && (
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                      <div className="p-5 border-b border-gray-100 bg-light flex items-center justify-between flex-wrap gap-2">
+                        <div>
+                          <div className="font-headline font-bold text-dark">Week {activeWeek + 1}</div>
+                          <div className="text-sm text-gray mt-0.5">Total: {getWeekMileage(fullSchedule[activeWeek])}</div>
+                        </div>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                          phaseColor[getWeekPhase(activeWeek).replace(" Phase", "").replace(" Week", "")] || "bg-gray-100 text-gray-700"
+                        }`}>
+                          {getWeekPhase(activeWeek)}
+                        </span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-gray-100 bg-light/50">
+                              {["Day", "Workout", "Distance", "Effort", "Notes"].map((h) => (
+                                <th key={h} className="text-left py-3 px-4 font-headline font-semibold text-dark text-xs uppercase tracking-wider">{h}</th>
+                              ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {fullSchedule[activeWeek].map((d, i) => {
+                              const isLongRun = d.workout.includes("Long run") || d.workout.includes("Race simulation") || d.workout.includes("Race!");
+                              return (
+                                <tr key={i} className={`border-b border-gray-50 hover:bg-light/40 ${isLongRun ? "bg-primary/[0.03]" : ""}`}>
+                                  <td className="py-3 px-4 font-bold text-dark">{d.day}</td>
+                                  <td className="py-3 px-4 text-dark">{d.workout}</td>
+                                  <td className="py-3 px-4 font-medium text-dark">{d.distance}</td>
+                                  <td className={`py-3 px-4 text-xs font-medium ${effortColor(d.effort)}`}>{d.effort}</td>
+                                  <td className="py-3 px-4 text-gray">{d.notes}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1438,7 +2879,7 @@ export default function PlansClient() {
                       </tr>
                     </thead>
                     <tbody>
-                      {plan.longRunProgression.map((row, i) => (
+                      {plan2.longRunProgression.map((row, i) => (
                         <tr key={i} className="border-b border-gray-50 hover:bg-light/40">
                           <td className="py-3 px-4 font-bold text-dark">{row.week}</td>
                           <td className="py-3 px-4 font-medium text-dark">{row.longRun}</td>

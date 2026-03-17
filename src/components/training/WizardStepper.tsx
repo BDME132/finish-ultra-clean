@@ -7,7 +7,7 @@ interface WizardStepperProps {
 
 const STEPS = [
   { number: 1, label: "Choose Distance" },
-  { number: 2, label: "Assess Your Level" },
+  { number: 2, label: "Your Profile" },
   { number: 3, label: "Your Plan" },
 ];
 
