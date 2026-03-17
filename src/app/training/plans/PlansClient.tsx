@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import WizardStepper from "@/components/training/WizardStepper";
@@ -1498,14 +1499,16 @@ function generateDynamicPlan(
   const peakLong = PEAK_LONG_RUN[distance];
 
   // Level multipliers
-  const levelMult = level === "beginner" ? 1.0 : level === "intermediate" ? 1.2 : 1.4;
+  const levelMultMap: Record<Level, number> = { foundation: 0.85, beginner: 1.0, intermediate: 1.2, advanced: 1.4, competitive: 1.6 };
+  const levelMult = levelMultMap[level];
 
   // Calculate peak weekly mileage
   const basePeakMult = totalWeeks < 12 ? 1.2 : totalWeeks < 20 ? 1.5 : 2.0;
   const peakWeeklyMiles = Math.min(Math.round(distMiles * basePeakMult * (levelMult * 0.8)), 120);
 
   // Starting mileage
-  const startMiles = currentMileage > 0 ? Math.max(currentMileage, 20) : (level === "beginner" ? 25 : level === "intermediate" ? 40 : 55);
+  const startMilesMap: Record<Level, number> = { foundation: 15, beginner: 25, intermediate: 40, advanced: 55, competitive: 65 };
+  const startMiles = currentMileage > 0 ? Math.max(currentMileage, 20) : startMilesMap[level];
 
   const weeks: DynamicWeek[] = [];
 
@@ -1901,6 +1904,7 @@ function generateFullSchedule(distance: Distance, level: Level): PlanDay[][] {
 
 export default function PlansClient() {
   const { user } = useAuth();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [activeDistance, setActiveDistance] = useState<Distance>("50K");
   const [activeLevel, setActiveLevel] = useState<Level>("beginner");
@@ -1919,6 +1923,12 @@ export default function PlansClient() {
   const [priorRace, setPriorRace] = useState<PriorRace | "">("");
   const [goal, setGoal] = useState<Goal | "">("");
   const [terrain, setTerrain] = useState<Terrain | "">("");
+
+  // Dynamic plan state
+  const [showDynamicPlan, setShowDynamicPlan] = useState(false);
+  const [dynamicPlanWeek, setDynamicPlanWeek] = useState(0);
+  const [acknowledgedRisk, setAcknowledgedRisk] = useState(false);
+  const [activeSampleWeek, setActiveSampleWeek] = useState(0);
 
   const wizardRef = useRef<HTMLDivElement>(null);
 
@@ -1992,6 +2002,13 @@ export default function PlansClient() {
 
   const recommendation = getRecommendation();
 
+  // Effective level (recommendation overrides manual selection)
+  const effectiveLevel = recommendation?.level ?? activeLevel;
+  const plan2 = PLANS[activeDistance][effectiveLevel];
+
+  // User display name
+  const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "";
+
   // Weeks until race (for Step 3 countdown)
   const weeksUntilRace = raceDate
     ? Math.max(0, Math.ceil((new Date(raceDate).getTime() - Date.now()) / (7 * 24 * 60 * 60 * 1000)))
@@ -2009,8 +2026,30 @@ export default function PlansClient() {
     ? calculateMilestones(weeksUntilRace, raceDate, activeDistance, timelineAssessment)
     : null;
 
+  // Full schedule for weekly navigator (derived from dynamic plan or sample weeks)
+  const fullSchedule: PlanDay[][] = dynamicPlan
+    ? dynamicPlan.map((w) => w.days)
+    : plan2.sampleWeeks.map((sw) => sw.days);
+
+  const getWeekMileage = (days: PlanDay[]) => {
+    const total = days.reduce((sum, d) => {
+      const miles = parseFloat(d.distance) || 0;
+      return sum + miles;
+    }, 0);
+    return total > 0 ? `${total} mi` : "Recovery";
+  };
+
+  const getWeekPhase = (weekIdx: number) => {
+    if (dynamicPlan && dynamicPlan[weekIdx]) return dynamicPlan[weekIdx].phase;
+    const duration = plan2.duration;
+    const pct = weekIdx / duration;
+    if (pct < 0.25) return "Base";
+    if (pct < 0.6) return "Build";
+    if (pct < 0.85) return "Peak";
+    return "Taper";
+  };
+
   // Save plan to localStorage and navigate to dashboard
-  const router = useRouter();
   const [planSaved, setPlanSaved] = useState(false);
 
   const handleSavePlan = () => {
