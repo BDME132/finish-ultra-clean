@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import WizardStepper from "@/components/training/WizardStepper";
 import DistanceCard from "@/components/training/DistanceCard";
 import PlanTabs, { type PlanTab } from "@/components/training/PlanTabs";
+import { savePlan, getDefaultGearItems, getDefaultNutritionProducts, getDefaultRaceDayChecklist } from "@/lib/training-types";
+import type { SavedPlan, SavedWeek, SavedWorkoutDay } from "@/lib/training-types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Distance = "50K" | "50M" | "100K" | "100M";
@@ -866,6 +869,385 @@ const effortColor = (effort: string) => {
   return "text-gray";
 };
 
+// ─── Dynamic Plan Generation ──────────────────────────────────────────────────
+const DISTANCE_MILES: Record<Distance, number> = { "50K": 31, "50M": 50, "100K": 62, "100M": 100 };
+
+const MIN_WEEKS: Record<Distance, number> = { "50K": 8, "50M": 12, "100K": 16, "100M": 20 };
+const REC_WEEKS: Record<Distance, number> = { "50K": 16, "50M": 20, "100K": 24, "100M": 28 };
+
+const PEAK_LONG_RUN: Record<Distance, number> = { "50K": 22, "50M": 30, "100K": 35, "100M": 40 };
+
+type TimelineStatus = "excellent" | "good" | "tight" | "insufficient" | "past";
+
+interface TimelineAssessment {
+  status: TimelineStatus;
+  color: string;
+  icon: string;
+  title: string;
+  message: string;
+  requirements?: string[];
+  phases: { name: string; weeks: number }[];
+}
+
+interface DynamicWeek {
+  weekNumber: number;
+  weeksToRace: number;
+  startDate: string;
+  endDate: string;
+  phase: string;
+  totalMiles: number;
+  longRun: number;
+  b2b: number;
+  isRecovery: boolean;
+  days: PlanDay[];
+  goals: string[];
+}
+
+interface Milestone {
+  week: number;
+  date: string;
+  label: string;
+  icon: string;
+}
+
+function getTimelineAssessment(weeks: number, distance: Distance): TimelineAssessment {
+  const min = MIN_WEEKS[distance];
+  const rec = REC_WEEKS[distance];
+
+  if (weeks <= 0) {
+    return {
+      status: "past", color: "bg-red-50 border-red-200 text-red-800", icon: "🛑",
+      title: "Race Date Has Passed",
+      message: "This race date is in the past. Please select a future date.",
+      phases: [],
+    };
+  }
+
+  if (weeks < min) {
+    const taperW = Math.max(1, Math.round(weeks * 0.15));
+    const buildW = Math.max(1, weeks - taperW);
+    return {
+      status: "insufficient", color: "bg-red-50 border-red-200 text-red-800", icon: "🛑",
+      title: "Insufficient Preparation Time",
+      message: `${weeks} weeks is not enough to safely prepare for a ${distance}. You need a minimum of ${min} weeks with a strong base.`,
+      requirements: [
+        `Currently running ${distance === "50K" ? "30" : distance === "50M" ? "40" : "50"}+ miles/week`,
+        "Recent long run of 15+ miles",
+        "No current injuries",
+      ],
+      phases: [
+        { name: "Quick Build", weeks: buildW },
+        { name: "Taper", weeks: taperW },
+      ],
+    };
+  }
+
+  if (weeks < rec) {
+    const baseW = Math.round(weeks * 0.2);
+    const buildW = Math.round(weeks * 0.45);
+    const peakW = Math.round(weeks * 0.15);
+    const taperW = weeks - baseW - buildW - peakW;
+    return {
+      status: "tight", color: "bg-yellow-50 border-yellow-200 text-yellow-800", icon: "⚠️",
+      title: "Compressed Timeline — Proceed with Caution",
+      message: `${weeks} weeks is less than the recommended ${rec} weeks for a ${distance}, but achievable with a strong existing base.`,
+      requirements: [
+        `Currently running ${distance === "50K" ? "25" : distance === "50M" ? "35" : "45"}+ miles/week`,
+        `Recent long run of ${distance === "50K" ? "10" : "15"}+ miles`,
+        "No current injuries",
+        "Previous race experience helpful",
+      ],
+      phases: [
+        { name: "Base", weeks: baseW },
+        { name: "Build", weeks: buildW },
+        { name: "Peak", weeks: peakW },
+        { name: "Taper", weeks: taperW },
+      ],
+    };
+  }
+
+  if (weeks <= rec + 10) {
+    const baseW = Math.round(weeks * 0.25);
+    const buildW = Math.round(weeks * 0.40);
+    const peakW = Math.round(weeks * 0.15);
+    const taperW = weeks - baseW - buildW - peakW;
+    return {
+      status: "good", color: "bg-green-50 border-green-200 text-green-800", icon: "✅",
+      title: "Ideal Training Timeline",
+      message: `${weeks} weeks gives you proper time to build safely for your ${distance}. Your plan includes gradual progression, recovery weeks, and adequate taper.`,
+      phases: [
+        { name: "Base", weeks: baseW },
+        { name: "Build", weeks: buildW },
+        { name: "Peak", weeks: peakW },
+        { name: "Taper", weeks: taperW },
+      ],
+    };
+  }
+
+  const baseW = Math.round(weeks * 0.25);
+  const build1W = Math.round(weeks * 0.25);
+  const build2W = Math.round(weeks * 0.25);
+  const peakW = Math.round(weeks * 0.10);
+  const taperW = weeks - baseW - build1W - build2W - peakW;
+  return {
+    status: "excellent", color: "bg-blue-50 border-blue-200 text-blue-800", icon: "🌟",
+    title: "Excellent Preparation Time",
+    message: `${weeks} weeks gives you plenty of time for multiple training cycles, recovery, and experimentation. Consider adding a tune-up race at the halfway point.`,
+    phases: [
+      { name: "Foundation", weeks: baseW },
+      { name: "Build Cycle 1", weeks: build1W },
+      { name: "Build Cycle 2", weeks: build2W },
+      { name: "Peak", weeks: peakW },
+      { name: "Taper", weeks: taperW },
+    ],
+  };
+}
+
+function getPhaseForWeek(weekNum: number, totalWeeks: number, assessment: TimelineAssessment): string {
+  let accumulated = 0;
+  for (const phase of assessment.phases) {
+    accumulated += phase.weeks;
+    if (weekNum <= accumulated) return phase.name;
+  }
+  return assessment.phases[assessment.phases.length - 1]?.name ?? "Build";
+}
+
+function generateDynamicPlan(
+  totalWeeks: number,
+  distance: Distance,
+  level: Level,
+  currentMileage: number,
+  raceDateStr: string,
+  assessment: TimelineAssessment,
+): DynamicWeek[] {
+  const raceDate = new Date(raceDateStr);
+  const distMiles = DISTANCE_MILES[distance];
+  const peakLong = PEAK_LONG_RUN[distance];
+
+  // Level multipliers
+  const levelMult = level === "beginner" ? 1.0 : level === "intermediate" ? 1.2 : 1.4;
+
+  // Calculate peak weekly mileage
+  const basePeakMult = totalWeeks < 12 ? 1.2 : totalWeeks < 20 ? 1.5 : 2.0;
+  const peakWeeklyMiles = Math.min(Math.round(distMiles * basePeakMult * (levelMult * 0.8)), 120);
+
+  // Starting mileage
+  const startMiles = currentMileage > 0 ? Math.max(currentMileage, 20) : (level === "beginner" ? 25 : level === "intermediate" ? 40 : 55);
+
+  const weeks: DynamicWeek[] = [];
+
+  for (let w = 1; w <= totalWeeks; w++) {
+    const weeksToRace = totalWeeks - w + 1;
+    const phase = getPhaseForWeek(w, totalWeeks, assessment);
+
+    // Week start/end dates
+    const weekStart = new Date(raceDate);
+    weekStart.setDate(weekStart.getDate() - weeksToRace * 7);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
+    // Is this a recovery week? Every 4th week during build
+    const isRecovery = (phase === "Build" || phase === "Build Cycle 1" || phase === "Build Cycle 2") && w % 4 === 0;
+
+    // Calculate total miles for this week
+    const progressFraction = w / totalWeeks;
+    let totalMiles: number;
+
+    if (phase === "Taper") {
+      const taperWeek = w - (totalWeeks - assessment.phases[assessment.phases.length - 1].weeks);
+      const taperTotal = assessment.phases[assessment.phases.length - 1].weeks;
+      const taperFraction = taperWeek / taperTotal;
+      totalMiles = Math.round(peakWeeklyMiles * (0.7 - taperFraction * 0.45));
+    } else if (phase === "Peak") {
+      totalMiles = peakWeeklyMiles;
+    } else if (isRecovery) {
+      const buildMiles = startMiles + (peakWeeklyMiles - startMiles) * progressFraction;
+      totalMiles = Math.round(buildMiles * 0.7);
+    } else {
+      totalMiles = Math.round(startMiles + (peakWeeklyMiles - startMiles) * Math.min(progressFraction * 1.1, 1));
+    }
+
+    totalMiles = Math.max(totalMiles, 15);
+
+    // Long run = ~35-40% of weekly miles
+    let longRun = Math.round(totalMiles * 0.35);
+    // Cap long run by peak for distance
+    const longRunCap = phase === "Taper" ? Math.round(peakLong * 0.6) : peakLong;
+    longRun = Math.min(longRun, longRunCap);
+    if (isRecovery) longRun = Math.round(longRun * 0.7);
+    longRun = Math.max(longRun, 8);
+
+    // Back-to-back (50M+ only, after base phase)
+    const hasB2B = distMiles >= 50 && !phase.includes("Foundation") && phase !== "Taper" && !isRecovery;
+    const b2b = hasB2B ? Math.round(longRun * 0.45) : 0;
+
+    // Generate daily workouts
+    const remainingMiles = totalMiles - longRun - b2b;
+    const days = generateWeekDays(remainingMiles, longRun, b2b, phase, isRecovery, level, w);
+
+    // Goals
+    const goals = generateWeekGoals(w, totalWeeks, phase, isRecovery, distance, longRun);
+
+    weeks.push({
+      weekNumber: w,
+      weeksToRace,
+      startDate: formatDate(weekStart),
+      endDate: formatDate(weekEnd),
+      phase,
+      totalMiles,
+      longRun,
+      b2b,
+      isRecovery,
+      days,
+      goals,
+    });
+  }
+
+  return weeks;
+}
+
+function formatDate(d: Date): string {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function generateWeekDays(
+  remainingMiles: number,
+  longRun: number,
+  b2b: number,
+  phase: string,
+  isRecovery: boolean,
+  level: Level,
+  weekNum: number,
+): PlanDay[] {
+  const isTaper = phase === "Taper";
+  const isBuild = phase.includes("Build") || phase === "Peak";
+  const hasQuality = !isRecovery && !isTaper && isBuild && weekNum > 2;
+
+  // Distribute remaining miles across weekdays
+  const easyPerRun = Math.max(3, Math.round(remainingMiles / (level === "beginner" ? 3 : 4)));
+
+  const days: PlanDay[] = [
+    { day: "Mon", workout: "Rest", distance: "—", effort: "—", notes: isRecovery ? "Recovery week — rest fully" : "Sleep and fuel" },
+  ];
+
+  if (hasQuality && level !== "beginner") {
+    // Quality workout — tempo or intervals
+    const qualityMiles = Math.min(easyPerRun + 2, Math.round(remainingMiles * 0.35));
+    const tempoMiles = Math.round(qualityMiles * 0.5);
+    days.push({
+      day: "Tue",
+      workout: weekNum % 2 === 0 ? "Tempo run" : "Hill repeats",
+      distance: `${qualityMiles} mi${weekNum % 2 === 0 ? ` (${tempoMiles} at tempo)` : ""}`,
+      effort: "Zone 3–4",
+      notes: weekNum % 2 === 0 ? `Warm up, ${tempoMiles} mi at threshold, cool down` : `6×200m hills + ${qualityMiles - 2} mi easy`,
+    });
+    days.push({ day: "Wed", workout: "Easy run", distance: `${easyPerRun} mi`, effort: "Zone 2", notes: "" });
+  } else {
+    days.push({ day: "Tue", workout: "Easy run", distance: `${easyPerRun} mi`, effort: "Zone 2", notes: isTaper ? "Short and easy — trust the taper" : "" });
+    days.push({ day: "Wed", workout: isRecovery ? "Easy run" : "Easy run + strength", distance: `${easyPerRun} mi`, effort: "Zone 2", notes: isRecovery ? "" : "20-min core/hip work after" });
+  }
+
+  days.push({ day: "Thu", workout: "Easy run", distance: `${Math.max(3, easyPerRun - 1)} mi`, effort: "Zone 2", notes: "" });
+  days.push({ day: "Fri", workout: "Rest", distance: "—", effort: "—", notes: isTaper ? "Rest — you've earned this" : "" });
+  days.push({
+    day: "Sat",
+    workout: phase === "Peak" ? "Race simulation" : "Long run",
+    distance: `${longRun} mi`,
+    effort: "Zone 2",
+    notes: phase === "Peak" ? "Full vest, race nutrition, race kit" : longRun >= 15 ? "Practice nutrition every 45 min" : "Time on feet — no pace goals",
+  });
+
+  if (b2b > 0) {
+    days.push({ day: "Sun", workout: "Back-to-back", distance: `${b2b} mi`, effort: "Zone 1–2", notes: "Run on tired legs — this is the point" });
+  } else {
+    days.push({ day: "Sun", workout: isTaper ? "Rest" : "Recovery run or rest", distance: isTaper ? "—" : `${Math.max(3, Math.round(easyPerRun * 0.6))} mi`, effort: isTaper ? "—" : "Zone 1", notes: "" });
+  }
+
+  return days;
+}
+
+function generateWeekGoals(w: number, total: number, phase: string, isRecovery: boolean, distance: Distance, longRun: number): string[] {
+  const goals: string[] = [];
+  if (isRecovery) {
+    goals.push("Recovery week — keep everything easy");
+    goals.push("Address any niggles or soreness");
+    goals.push("Focus on sleep and nutrition");
+    return goals;
+  }
+  if (phase === "Taper") {
+    goals.push("Trust the training — fitness is banked");
+    if (total - w <= 1) { goals.push("Final gear check"); goals.push("Carb load today and tomorrow"); }
+    else { goals.push("Maintain sharpness with easy running"); goals.push("Perfect sleep and nutrition"); }
+    return goals;
+  }
+  if (phase.includes("Base") || phase === "Foundation") {
+    goals.push("All runs at conversational pace");
+    if (w <= 3) goals.push("Test race shoes on long runs");
+    goals.push("Build aerobic base consistently");
+  }
+  if (phase.includes("Build")) {
+    if (longRun >= 15) goals.push("Practice race nutrition on long run");
+    if (longRun >= 20) goals.push("Run long run in full race vest");
+    goals.push("Increase volume gradually — listen to your body");
+  }
+  if (phase === "Peak") {
+    goals.push("PEAK WEEK — highest mileage of the plan");
+    goals.push("Full race simulation (gear, nutrition, pacing)");
+    if (DISTANCE_MILES[distance] >= 62) goals.push("Include night section if race has one");
+  }
+  // Gear milestones
+  if (total - w === 8) goals.push("Break in race shoes by this week");
+  if (total - w === 4) goals.push("Finalize race nutrition — no changes after this");
+  if (total - w === 2) goals.push("No new gear from this point forward");
+  return goals;
+}
+
+function calculateMilestones(totalWeeks: number, raceDateStr: string, distance: Distance, assessment: TimelineAssessment): Milestone[] {
+  const raceDate = new Date(raceDateStr);
+  const milestones: Milestone[] = [];
+
+  const dateForWeek = (weeksOut: number) => {
+    const d = new Date(raceDate);
+    d.setDate(d.getDate() - weeksOut * 7);
+    return formatDate(d);
+  };
+
+  // Phase milestones
+  let accumulated = 0;
+  for (const phase of assessment.phases) {
+    milestones.push({
+      week: accumulated + 1,
+      date: dateForWeek(totalWeeks - accumulated),
+      label: `${phase.name} phase begins`,
+      icon: phase.name === "Taper" ? "📉" : phase.name === "Peak" ? "🔥" : "📈",
+    });
+    accumulated += phase.weeks;
+  }
+
+  // Key long run milestones
+  const firstBigLong = Math.ceil(totalWeeks * 0.35);
+  if (firstBigLong > 0 && firstBigLong < totalWeeks) {
+    milestones.push({ week: firstBigLong, date: dateForWeek(totalWeeks - firstBigLong), label: "First 20+ mile long run", icon: "🏃" });
+  }
+
+  // Gear milestones
+  if (totalWeeks > 8) {
+    milestones.push({ week: totalWeeks - 8, date: dateForWeek(8), label: "Break in race shoes by now", icon: "👟" });
+  }
+  if (totalWeeks > 6) {
+    milestones.push({ week: totalWeeks - 6, date: dateForWeek(6), label: "Finalize vest fit under load", icon: "🎒" });
+  }
+  if (totalWeeks > 4) {
+    milestones.push({ week: totalWeeks - 4, date: dateForWeek(4), label: "Lock in race nutrition", icon: "⚡" });
+  }
+  milestones.push({ week: totalWeeks - 2, date: dateForWeek(2), label: "No new gear after this", icon: "🚫" });
+  milestones.push({ week: totalWeeks, date: formatDate(raceDate), label: "RACE DAY!", icon: "🏁" });
+
+  // Sort by week
+  milestones.sort((a, b) => a.week - b.week);
+  return milestones;
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function PlansClient() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -951,10 +1333,74 @@ export default function PlansClient() {
 
   const recommendation = getRecommendation();
 
+  // Dynamic plan state
+  const [showDynamicPlan, setShowDynamicPlan] = useState(false);
+  const [dynamicPlanWeek, setDynamicPlanWeek] = useState(0); // 0 = overview
+  const [acknowledgedRisk, setAcknowledgedRisk] = useState(false);
+
   // Weeks until race (for Step 3 countdown)
   const weeksUntilRace = raceDate
     ? Math.max(0, Math.ceil((new Date(raceDate).getTime() - Date.now()) / (7 * 24 * 60 * 60 * 1000)))
     : null;
+
+  // Timeline assessment
+  const timelineAssessment = weeksUntilRace !== null ? getTimelineAssessment(weeksUntilRace, activeDistance) : null;
+
+  // Dynamic plan generation (memoized via useMemo pattern — regenerates when inputs change)
+  const dynamicPlan = (weeksUntilRace && weeksUntilRace > 0 && raceDate && timelineAssessment && timelineAssessment.status !== "past")
+    ? generateDynamicPlan(weeksUntilRace, activeDistance, activeLevel, parseFloat(weeklyMileage) || 0, raceDate, timelineAssessment)
+    : null;
+
+  const milestones = (weeksUntilRace && raceDate && timelineAssessment && timelineAssessment.status !== "past")
+    ? calculateMilestones(weeksUntilRace, raceDate, activeDistance, timelineAssessment)
+    : null;
+
+  // Save plan to localStorage and navigate to dashboard
+  const router = useRouter();
+  const [planSaved, setPlanSaved] = useState(false);
+
+  const handleSavePlan = () => {
+    if (!dynamicPlan || !raceDate || !weeksUntilRace) return;
+
+    const savedWeeks: SavedWeek[] = dynamicPlan.map((w) => ({
+      weekNumber: w.weekNumber,
+      weeksToRace: w.weeksToRace,
+      startDate: w.startDate,
+      endDate: w.endDate,
+      phase: w.phase,
+      totalMiles: w.totalMiles,
+      longRun: w.longRun,
+      b2b: w.b2b,
+      isRecovery: w.isRecovery,
+      days: w.days.map((d): SavedWorkoutDay => ({
+        day: d.day,
+        workout: d.workout,
+        distance: d.distance,
+        effort: d.effort,
+        notes: d.notes,
+      })),
+      goals: w.goals,
+    }));
+
+    const plan: SavedPlan = {
+      raceDate,
+      raceName: `My ${activeDistance} Ultra`,
+      distance: activeDistance,
+      level: activeLevel,
+      weeksTotal: weeksUntilRace,
+      currentWeeklyMiles: parseFloat(weeklyMileage) || 0,
+      generatedAt: new Date().toISOString(),
+      weeks: savedWeeks,
+      completedWorkouts: {},
+      gearItems: getDefaultGearItems(activeDistance),
+      nutritionProducts: getDefaultNutritionProducts(),
+      raceDayChecklist: getDefaultRaceDayChecklist(),
+    };
+
+    savePlan(plan);
+    setPlanSaved(true);
+    setTimeout(() => router.push("/training/dashboard"), 600);
+  };
 
   // Pacing calculator
   const pacingResult = () => {
@@ -1134,6 +1580,69 @@ export default function PlansClient() {
                   />
                 </div>
 
+                {/* Timeline feedback — inline after date */}
+                {weeksUntilRace !== null && timelineAssessment && (
+                  <div className="sm:col-span-2">
+                    <div className={`rounded-xl border p-4 ${timelineAssessment.color}`}>
+                      <div className="flex items-start gap-3">
+                        <span className="text-xl flex-shrink-0">{timelineAssessment.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-1 flex-wrap">
+                            <span className="font-headline font-bold text-sm">{timelineAssessment.title}</span>
+                            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/50">
+                              {weeksUntilRace} weeks ({Math.round(weeksUntilRace * 7)} days)
+                            </span>
+                          </div>
+                          <p className="text-sm leading-relaxed mb-3">{timelineAssessment.message}</p>
+
+                          {/* Phase breakdown */}
+                          {timelineAssessment.phases.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {timelineAssessment.phases.map((p) => (
+                                <span key={p.name} className="text-xs font-medium bg-white/60 px-2.5 py-1 rounded-full">
+                                  {p.name}: {p.weeks}w
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Requirements for tight/insufficient */}
+                          {timelineAssessment.requirements && (
+                            <div className="mt-2">
+                              <p className="text-xs font-semibold mb-1.5">Requirements to proceed:</p>
+                              <ul className="space-y-1">
+                                {timelineAssessment.requirements.map((req, i) => (
+                                  <li key={i} className="text-xs flex items-start gap-1.5">
+                                    <span className="flex-shrink-0 mt-0.5">☐</span>{req}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Insufficient warning buttons */}
+                          {timelineAssessment.status === "insufficient" && !acknowledgedRisk && (
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              <button
+                                type="button"
+                                onClick={() => setAcknowledgedRisk(true)}
+                                className="text-xs font-medium px-3 py-1.5 rounded-lg bg-white/70 hover:bg-white transition-colors"
+                              >
+                                I understand the risks — continue
+                              </button>
+                            </div>
+                          )}
+                          {timelineAssessment.status === "insufficient" && acknowledgedRisk && (
+                            <p className="text-xs font-medium mt-2 opacity-80">
+                              ⚠️ Proceeding with compressed plan. Higher injury risk — listen to your body.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Terrain */}
                 <div>
                   <label className="block text-sm font-medium text-dark mb-2">Terrain access</label>
@@ -1309,7 +1818,12 @@ export default function PlansClient() {
                   <span className="bg-white/20 text-white text-sm px-3 py-1 rounded-full">{plan.duration} Weeks</span>
                   {weeksUntilRace !== null && (
                     <span className="bg-accent/90 text-white text-sm font-semibold px-3 py-1 rounded-full">
-                      {weeksUntilRace} weeks to race day
+                      {weeksUntilRace} weeks to race day ({Math.round(weeksUntilRace * 7)} days)
+                    </span>
+                  )}
+                  {raceDate && (
+                    <span className="bg-white/20 text-white text-sm px-3 py-1 rounded-full">
+                      Race: {new Date(raceDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </span>
                   )}
                 </div>
@@ -1353,6 +1867,238 @@ export default function PlansClient() {
                 </div>
               </div>
             </div>
+
+            {/* ── Dynamic Week-by-Week Plan ───────────────────────────── */}
+            {dynamicPlan && dynamicPlan.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-10">
+                <div className="bg-gradient-to-r from-accent to-orange-600 p-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">📅</span>
+                    <h3 className="font-headline text-xl sm:text-2xl font-bold text-white">
+                      Your {weeksUntilRace}-Week Dynamic Plan
+                    </h3>
+                  </div>
+                  <p className="text-white/80 text-sm">
+                    Customized for your race on {new Date(raceDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · {activeDistance} {levelLabel[activeLevel]}
+                  </p>
+                </div>
+
+                {/* Plan stats */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-light border-b border-gray-100">
+                  <div className="text-center">
+                    <div className="font-headline text-2xl font-bold text-accent">{weeksUntilRace}</div>
+                    <div className="text-xs text-gray">Total Weeks</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-headline text-2xl font-bold text-accent">
+                      {Math.max(...dynamicPlan.map(w => w.totalMiles))}
+                    </div>
+                    <div className="text-xs text-gray">Peak Miles/Week</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-headline text-2xl font-bold text-accent">
+                      {Math.max(...dynamicPlan.map(w => w.longRun))}
+                    </div>
+                    <div className="text-xs text-gray">Peak Long Run (mi)</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-headline text-2xl font-bold text-accent">
+                      {dynamicPlan.reduce((s, w) => s + w.totalMiles, 0)}
+                    </div>
+                    <div className="text-xs text-gray">Total Miles</div>
+                  </div>
+                </div>
+
+                {/* View toggle: Overview / Weekly */}
+                <div className="flex items-center gap-2 p-4 border-b border-gray-100 overflow-x-auto">
+                  <button
+                    onClick={() => setDynamicPlanWeek(0)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
+                      dynamicPlanWeek === 0 ? "bg-accent text-white" : "bg-light text-gray hover:text-dark"
+                    }`}
+                  >
+                    Overview
+                  </button>
+                  {dynamicPlan.map((w) => (
+                    <button
+                      key={w.weekNumber}
+                      onClick={() => setDynamicPlanWeek(w.weekNumber)}
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex-shrink-0 ${
+                        dynamicPlanWeek === w.weekNumber
+                          ? "bg-accent text-white"
+                          : w.isRecovery
+                          ? "bg-green-50 text-green-700 hover:bg-green-100"
+                          : "bg-light text-gray hover:text-dark"
+                      }`}
+                    >
+                      W{w.weekNumber}
+                    </button>
+                  ))}
+                </div>
+
+                {/* OVERVIEW mode */}
+                {dynamicPlanWeek === 0 && (
+                  <div className="p-5">
+                    {/* Milestones */}
+                    {milestones && milestones.length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="font-headline font-bold text-dark mb-3 text-sm uppercase tracking-wider">Key Milestones</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {milestones.map((m, i) => (
+                            <div key={i} className="flex items-center gap-3 bg-light rounded-lg px-3 py-2 text-sm">
+                              <span className="text-base flex-shrink-0">{m.icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <span className="font-medium text-dark">{m.label}</span>
+                              </div>
+                              <span className="text-xs text-gray flex-shrink-0">
+                                Week {m.week} · {m.date}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Weekly mileage overview table */}
+                    <h4 className="font-headline font-bold text-dark mb-3 text-sm uppercase tracking-wider">Week-by-Week Mileage</h4>
+                    <div className="overflow-x-auto rounded-xl border border-gray-100">
+                      <table className="w-full text-sm">
+                        <thead className="bg-light">
+                          <tr>
+                            {["Week", "Dates", "Phase", "Miles", "Long Run", "B2B", ""].map((h) => (
+                              <th key={h} className="text-left py-2.5 px-3 font-headline font-semibold text-dark text-xs uppercase tracking-wider">{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {dynamicPlan.map((w) => (
+                            <tr
+                              key={w.weekNumber}
+                              className={`border-b border-gray-50 hover:bg-light/40 cursor-pointer ${w.isRecovery ? "bg-green-50/50" : ""}`}
+                              onClick={() => setDynamicPlanWeek(w.weekNumber)}
+                            >
+                              <td className="py-2.5 px-3 font-bold text-dark">{w.weekNumber}</td>
+                              <td className="py-2.5 px-3 text-gray text-xs">{w.startDate} – {w.endDate}</td>
+                              <td className="py-2.5 px-3">
+                                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${phaseColor[w.phase] || "bg-gray-100 text-gray-700"}`}>
+                                  {w.phase}{w.isRecovery ? " (Recovery)" : ""}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-3 font-medium text-dark">{w.totalMiles}</td>
+                              <td className="py-2.5 px-3 text-dark">{w.longRun} mi</td>
+                              <td className="py-2.5 px-3 text-gray">{w.b2b > 0 ? `${w.b2b} mi` : "—"}</td>
+                              <td className="py-2.5 px-3">
+                                <span className="text-xs text-primary font-medium">View →</span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* WEEKLY DETAIL mode */}
+                {dynamicPlanWeek > 0 && dynamicPlan[dynamicPlanWeek - 1] && (() => {
+                  const w = dynamicPlan[dynamicPlanWeek - 1];
+                  return (
+                    <div className="p-5">
+                      {/* Week nav */}
+                      <div className="flex items-center justify-between mb-4">
+                        <button
+                          onClick={() => setDynamicPlanWeek(Math.max(0, dynamicPlanWeek - 1))}
+                          className="text-sm text-primary hover:underline font-medium"
+                        >
+                          ← {dynamicPlanWeek === 1 ? "Overview" : `Week ${dynamicPlanWeek - 1}`}
+                        </button>
+                        {dynamicPlanWeek < dynamicPlan.length && (
+                          <button
+                            onClick={() => setDynamicPlanWeek(dynamicPlanWeek + 1)}
+                            className="text-sm text-primary hover:underline font-medium"
+                          >
+                            Week {dynamicPlanWeek + 1} →
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Week header */}
+                      <div className="bg-light rounded-xl p-4 mb-4">
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                          <span className="font-headline text-lg font-bold text-dark">
+                            Week {w.weekNumber} — {w.phase}{w.isRecovery ? " (Recovery)" : ""}
+                          </span>
+                          <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${phaseColor[w.phase] || "bg-gray-100 text-gray-700"}`}>
+                            {w.weeksToRace} weeks to race
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray">
+                          {w.startDate} – {w.endDate} · Total: {w.totalMiles} miles
+                        </p>
+                      </div>
+
+                      {/* Daily schedule */}
+                      <div className="overflow-x-auto rounded-xl border border-gray-100 mb-4">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-gray-100 bg-light/50">
+                              {["Day", "Workout", "Distance", "Effort", "Notes"].map((h) => (
+                                <th key={h} className="text-left py-2.5 px-3 font-headline font-semibold text-dark text-xs uppercase tracking-wider">{h}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {w.days.map((d, i) => (
+                              <tr key={i} className="border-b border-gray-50 hover:bg-light/40">
+                                <td className="py-2.5 px-3 font-bold text-dark">{d.day}</td>
+                                <td className="py-2.5 px-3 text-dark">{d.workout}</td>
+                                <td className="py-2.5 px-3 font-medium text-dark">{d.distance}</td>
+                                <td className={`py-2.5 px-3 text-xs font-medium ${effortColor(d.effort)}`}>{d.effort}</td>
+                                <td className="py-2.5 px-3 text-gray">{d.notes}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Weekly goals */}
+                      {w.goals.length > 0 && (
+                        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
+                          <h4 className="font-headline font-semibold text-dark text-sm mb-2">Weekly Goals</h4>
+                          <ul className="space-y-1.5">
+                            {w.goals.map((g, i) => (
+                              <li key={i} className="flex items-start gap-2 text-sm text-gray">
+                                <span className="text-primary flex-shrink-0 mt-0.5">✓</span>{g}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
+            {/* Save Plan CTA */}
+            {dynamicPlan && dynamicPlan.length > 0 && (
+              <div className="my-10 bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-8 text-center text-white">
+                <h3 className="font-headline text-2xl font-bold mb-2">Ready to Start Training?</h3>
+                <p className="text-white/80 mb-6 max-w-lg mx-auto">
+                  Save this plan to your Training Dashboard to track daily workouts, manage gear, test nutrition, and count down to race day.
+                </p>
+                <button
+                  onClick={handleSavePlan}
+                  disabled={planSaved}
+                  className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${
+                    planSaved
+                      ? "bg-green-400 text-white cursor-default"
+                      : "bg-white text-primary hover:bg-light shadow-lg hover:shadow-xl"
+                  }`}
+                >
+                  {planSaved ? "✓ Plan Saved — Redirecting..." : "Save Plan & Go to Dashboard →"}
+                </button>
+              </div>
+            )}
 
             {/* Tab bar */}
             <PlanTabs activeTab={planTab} onTabChange={setPlanTab} />

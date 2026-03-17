@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TrainingPlanCard from "@/components/TrainingPlanCard";
@@ -23,9 +24,18 @@ export default function TrainingPage() {
             <h1 className="font-headline text-4xl sm:text-5xl font-bold text-dark mb-6">
               Free Training Plans
             </h1>
-            <p className="text-lg text-gray max-w-2xl mx-auto">
+            <p className="text-lg text-gray max-w-2xl mx-auto mb-6">
               Structured plans built for beginners. No complicated periodization, no jargon — just a clear path from where you are to the finish line.
             </p>
+            <Link
+              href="/training/dashboard"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white font-bold rounded-xl hover:bg-orange-600 transition-colors shadow-md"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Open Training Dashboard
+            </Link>
           </div>
         </section>
 
