@@ -52,6 +52,44 @@ Recommendation engine: combine all inputs (not just longest run) to suggest the 
 
 ---
 
+## Phase 2.5 — Enhanced Personalization ✅
+
+### 2.5.1 ✅ Expand to 5 training levels
+**Files:** `src/app/training/plans/PlansClient.tsx`
+- Added Foundation (below Beginner) and Competitive (above Advanced) levels
+- 8 new plan configs (Foundation + Competitive × 4 distances) with full data
+- Updated scoring thresholds: Foundation (score ≤ 0), Beginner (1–3), Intermediate (4–6), Advanced (7–10), Competitive (11+)
+
+### 2.5.2 ✅ Auto-assign level from questionnaire
+**Files:** `src/app/training/plans/PlansClient.tsx`, `src/components/training/WizardStepper.tsx`, `src/components/training/DistanceCard.tsx`
+- Removed manual level selection cards entirely
+- Recommendation engine auto-assigns level based on profile inputs
+- Plan title shows "[User's name]'s [Distance] Training Plan" (or "Your" if not logged in)
+- Level shown as subtle badge, not prominently
+- "See Your Plan" button gated on filling out longest run
+- WizardStepper Step 2 label changed to "Your Profile"
+- DistanceCard "3 plan tiers" text changed to "Personalized plan"
+
+### 2.5.3 ✅ Complete day-by-day schedule generator
+**Files:** `src/app/training/plans/PlansClient.tsx`
+- `generateFullSchedule(distance, level)` produces every day of every week
+- Interpolates long run distances from checkpoint data
+- Calculates weekly mileage with taper reduction
+- Distributes workouts by phase (Base/Build/Peak/Taper)
+- Assigns quality sessions (tempo, hills, intervals) based on phase and level
+- Week navigator with arrows and dropdown replaces 3 sample week buttons
+- Phase label and weekly mileage total shown per week
+- Long run row highlighted
+
+### 2.5.4 ✅ Time goal input in questionnaire
+**Files:** `src/app/training/plans/PlansClient.tsx`
+- Inline hours/minutes input revealed when "Beat a time goal" is selected
+- Styled consistently with other form inputs
+- Shows contextual average finish times per distance
+- Values pass through to pacing calculator
+
+---
+
 ## Phase 3 — Save Plans to Account
 
 ### 3.1 ☐ Supabase database table for saved training plans
