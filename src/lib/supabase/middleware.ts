@@ -1,8 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
+import { hasSupabaseServerEnv } from "./server";
 
 export function createSupabaseMiddleware(request: NextRequest) {
   let response = NextResponse.next({ request });
+
+  if (!hasSupabaseServerEnv()) {
+    return { supabase: null, response };
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

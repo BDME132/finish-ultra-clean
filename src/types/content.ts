@@ -41,9 +41,23 @@ export interface BlogPost {
   excerpt: string;
   body: string;
   category: string;
+  tags: string[];
   publishedAt: string;
+  updatedAt?: string;
   image: string;
   readTime: string;
+  featured?: boolean;
+  affiliateProducts?: BlogAffiliateProduct[];
+  relatedSlugs?: string[];
+  faq?: { question: string; answer: string }[];
+}
+
+export interface BlogAffiliateProduct {
+  name: string;
+  brand: string;
+  price: string;
+  url: string;
+  why: string;
 }
 
 export interface GlossaryTerm {
