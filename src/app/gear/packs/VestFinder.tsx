@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PersonStanding, Package, Droplets, Target } from "lucide-react";
 
 const VESTS = [
   // ── Race Vests (5-8L) ──────────────────────────────────────────────────────
@@ -230,11 +231,11 @@ const VESTS = [
   },
 ];
 
-const QUESTIONS = [
+const QUESTIONS: { id: string; question: string; icon: React.ReactNode; options: { label: string; value: string }[] }[] = [
   {
     id: "distance",
     question: "What's your race distance?",
-    icon: "🏃",
+    icon: <PersonStanding className="w-5 h-5 text-primary" />,
     options: [
       { label: "50K", value: "50k" },
       { label: "50 Miles", value: "50m" },
@@ -246,7 +247,7 @@ const QUESTIONS = [
   {
     id: "capacity",
     question: "How much capacity do you need?",
-    icon: "🎒",
+    icon: <Package className="w-5 h-5 text-primary" />,
     options: [
       { label: "Under 5L — minimalist racing", value: "under5" },
       { label: "5–8L — standard ultra", value: "5to8" },
@@ -257,7 +258,7 @@ const QUESTIONS = [
   {
     id: "hydration",
     question: "How do you prefer to hydrate?",
-    icon: "💧",
+    icon: <Droplets className="w-5 h-5 text-primary" />,
     options: [
       { label: "Soft flasks in front pockets", value: "flasks" },
       { label: "Bladder / reservoir in back", value: "bladder" },
@@ -267,7 +268,7 @@ const QUESTIONS = [
   {
     id: "priority",
     question: "What's your top priority?",
-    icon: "🎯",
+    icon: <Target className="w-5 h-5 text-primary" />,
     options: [
       { label: "Minimal bounce / stays put", value: "bounce" },
       { label: "Maximum storage capacity", value: "capacity" },
@@ -364,8 +365,9 @@ export default function VestFinder() {
           <p className="text-sm text-gray font-medium mb-2">
             Question {step + 1} of {QUESTIONS.length}
           </p>
-          <h3 className="font-headline text-2xl font-bold text-dark mb-6">
-            {currentQ.icon} {currentQ.question}
+          <h3 className="font-headline text-2xl font-bold text-dark mb-6 flex items-center gap-2">
+            {currentQ.icon}
+            <span>{currentQ.question}</span>
           </h3>
 
           <div className="grid gap-3 sm:grid-cols-2">

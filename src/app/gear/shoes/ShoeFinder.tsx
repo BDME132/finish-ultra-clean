@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PersonStanding, Mountain, Target, Calendar } from "lucide-react";
 
 const SHOES = [
   {
@@ -230,11 +231,11 @@ const SHOES = [
   },
 ];
 
-const QUESTIONS = [
+const QUESTIONS: { id: string; question: string; icon: React.ReactNode; options: { label: string; value: string }[] }[] = [
   {
     id: "distance",
     question: "What's your race distance?",
-    icon: "🏃",
+    icon: <PersonStanding className="w-5 h-5 text-primary" />,
     options: [
       { label: "50K", value: "50k" },
       { label: "50 Miles", value: "50m" },
@@ -245,7 +246,7 @@ const QUESTIONS = [
   {
     id: "terrain",
     question: "What's your primary terrain?",
-    icon: "⛰️",
+    icon: <Mountain className="w-5 h-5 text-primary" />,
     options: [
       { label: "Technical trails (rocks, roots)", value: "technical" },
       { label: "Smooth / groomed trails", value: "smooth" },
@@ -257,7 +258,7 @@ const QUESTIONS = [
   {
     id: "priority",
     question: "What's your top priority?",
-    icon: "🎯",
+    icon: <Target className="w-5 h-5 text-primary" />,
     options: [
       { label: "Maximum cushioning", value: "cushion" },
       { label: "Lightweight and fast", value: "light" },
@@ -269,7 +270,7 @@ const QUESTIONS = [
   {
     id: "volume",
     question: "Weekly training volume?",
-    icon: "📅",
+    icon: <Calendar className="w-5 h-5 text-primary" />,
     options: [
       { label: "Under 40 miles", value: "low" },
       { label: "40–60 miles", value: "medium" },
@@ -362,8 +363,9 @@ export default function ShoeFinder() {
           <p className="text-sm text-gray font-medium mb-2">
             Question {step + 1} of {QUESTIONS.length}
           </p>
-          <h3 className="font-headline text-2xl font-bold text-dark mb-6">
-            {currentQ.icon} {currentQ.question}
+          <h3 className="font-headline text-2xl font-bold text-dark mb-6 flex items-center gap-2">
+            {currentQ.icon}
+            <span>{currentQ.question}</span>
           </h3>
 
           <div className="grid gap-3 sm:grid-cols-2">

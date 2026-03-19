@@ -1,7 +1,13 @@
+import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NutritionCalculator from "./NutritionCalculator";
+import {
+  Droplets, Candy, Coffee, Zap, Banana, Apple, Wheat, Beef,
+  AlertTriangle, Smile, Frown, Sun, Calendar, Salad, PersonStanding,
+  RefreshCcw,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ultra Marathon Nutrition & Fueling Strategy | FinishUltra",
@@ -42,7 +48,7 @@ type NutritionProduct = {
 const productCategories: {
   id: string;
   title: string;
-  icon: string;
+  icon: React.ReactNode;
   subtitle: string;
   color: string;
   badgeColor: string;
@@ -52,7 +58,7 @@ const productCategories: {
   {
     id: "gels",
     title: "Energy Gels",
-    icon: "💧",
+    icon: <Droplets className="w-6 h-6 text-primary" />,
     subtitle: "The backbone of ultra marathon fueling",
     color: "from-orange-50 to-white",
     badgeColor: "bg-orange-100 text-orange-800",
@@ -157,7 +163,7 @@ const productCategories: {
   {
     id: "chews",
     title: "Energy Chews & Waffles",
-    icon: "🍬",
+    icon: <Candy className="w-6 h-6 text-primary" />,
     subtitle: "When gels get old, chewables keep you going",
     color: "from-yellow-50 to-white",
     badgeColor: "bg-yellow-100 text-yellow-800",
@@ -245,7 +251,7 @@ const productCategories: {
   {
     id: "hydration",
     title: "Hydration & Drink Mixes",
-    icon: "🥤",
+    icon: <Coffee className="w-6 h-6 text-primary" />,
     subtitle: "Your liquid calorie and electrolyte foundation",
     color: "from-cyan-50 to-white",
     badgeColor: "bg-cyan-100 text-cyan-800",
@@ -333,7 +339,7 @@ const productCategories: {
   {
     id: "electrolytes",
     title: "Electrolyte Supplements",
-    icon: "⚡",
+    icon: <Zap className="w-6 h-6 text-primary" />,
     subtitle: "Prevent cramps, hyponatremia, and performance decline",
     color: "from-green-50 to-white",
     badgeColor: "bg-green-100 text-green-800",
@@ -402,7 +408,7 @@ const productCategories: {
   {
     id: "realfood",
     title: "Real Food Options",
-    icon: "🍌",
+    icon: <Banana className="w-6 h-6 text-primary" />,
     subtitle: "When gels fail, real food saves your race",
     color: "from-lime-50 to-white",
     badgeColor: "bg-lime-100 text-lime-800",
@@ -490,7 +496,7 @@ const productCategories: {
   {
     id: "caffeine",
     title: "Caffeine Products",
-    icon: "☕",
+    icon: <Coffee className="w-6 h-6 text-primary" />,
     subtitle: "Your night running secret weapon",
     color: "from-purple-50 to-white",
     badgeColor: "bg-purple-100 text-purple-800",
@@ -564,7 +570,7 @@ function ProductCard({ product, categoryColor }: { product: NutritionProduct; ca
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col">
       <div className="bg-gray-50 py-6 flex items-center justify-center border-b border-gray-100">
         <div className="text-center">
-          <div className="text-3xl mb-1">🥤</div>
+          <div className="mb-1"><Coffee className="w-8 h-8 text-gray" /></div>
           <p className="text-xs text-gray">{product.brand}</p>
         </div>
       </div>
@@ -673,7 +679,7 @@ export default function NutritionPage() {
               still DNF at mile 60 because your gut shut down.
             </p>
             <div className="inline-flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-3 text-sm font-medium">
-              <span className="text-lg">⚠️</span>
+              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
               Studies show <strong>30–50% of ultra marathon DNFs are nutrition-related.</strong> Get this right.
             </div>
             {/* Nav pills */}
@@ -718,7 +724,7 @@ export default function NutritionPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {[
                 {
-                  icon: "🌾",
+                  icon: <Wheat className="w-6 h-6 text-primary" />,
                   title: "Carbohydrates",
                   subtitle: "Primary fuel source",
                   points: [
@@ -730,7 +736,7 @@ export default function NutritionPage() {
                   ],
                 },
                 {
-                  icon: "💧",
+                  icon: <Droplets className="w-6 h-6 text-primary" />,
                   title: "Hydration & Electrolytes",
                   subtitle: "More critical than calories",
                   points: [
@@ -742,7 +748,7 @@ export default function NutritionPage() {
                   ],
                 },
                 {
-                  icon: "🥩",
+                  icon: <Beef className="w-6 h-6 text-primary" />,
                   title: "Protein & Fat",
                   subtitle: "Supporting roles",
                   points: [
@@ -755,7 +761,7 @@ export default function NutritionPage() {
                 },
               ].map((block) => (
                 <div key={block.title} className="bg-white/5 rounded-xl p-6 border border-white/10">
-                  <div className="text-3xl mb-3">{block.icon}</div>
+                  <div className="mb-3">{block.icon}</div>
                   <h3 className="font-headline font-bold text-white text-xl mb-1">{block.title}</h3>
                   <p className="text-primary text-sm font-medium mb-4">{block.subtitle}</p>
                   <ul className="space-y-2">
@@ -780,8 +786,8 @@ export default function NutritionPage() {
           >
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="mb-10">
-                <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full mb-3 ${cat.badgeColor}`}>
-                  {cat.icon} {cat.title}
+                <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full mb-3 ${cat.badgeColor}`}>
+                  {cat.icon}{cat.title}
                 </span>
                 <h2 className="font-headline text-3xl sm:text-4xl font-bold text-dark mb-2">{cat.title}</h2>
                 <p className="text-accent font-semibold text-sm mb-3">{cat.subtitle}</p>
@@ -925,49 +931,49 @@ export default function NutritionPage() {
               {[
                 {
                   problem: "Bonking (Energy Crash)",
-                  icon: "💥",
+                  icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
                   causes: ["Insufficient calorie intake", "Started fueling too late", "Went out too fast"],
                   prevention: ["Start fueling within first 30 minutes", "Set a timer — every 20–25 minutes", "Never skip an aid station"],
                   recovery: ["Immediate 200+ calorie boost (gel + drink)", "Slow down significantly while refueling", "Walk if needed — you can recover from a bonk"],
                 },
                 {
                   problem: "Nausea & GI Distress",
-                  icon: "🤢",
+                  icon: <Frown className="w-6 h-6 text-red-500" />,
                   causes: ["Too much too fast", "Dehydration or overheating", "Products not trained with"],
                   prevention: ["Test ALL products in training", "Small, frequent intake vs. large boluses", "Dilute your drink mix more than you think"],
                   recovery: ["Switch to bland foods (pretzels, bread, potato)", "Ginger (ale, tea, chews)", "Coca-Cola often works miraculously — try it"],
                 },
                 {
                   problem: "Hyponatremia (Low Sodium)",
-                  icon: "🫠",
+                  icon: <Smile className="w-6 h-6 text-orange-500" />,
                   causes: ["Drinking too much plain water", "Insufficient sodium intake", "Heavy sweater ignoring electrolytes"],
                   prevention: ["Never drink just water for extended periods", "300–700mg sodium per hour minimum", "Weigh yourself before/after long training runs"],
                   recovery: ["Increase sodium immediately (broth, pretzels, SaltStick)", "Temporarily reduce fluid intake", "Seek medical attention if confused or severely swollen"],
                 },
                 {
                   problem: "Flavor Fatigue",
-                  icon: "😩",
+                  icon: <Frown className="w-6 h-6 text-red-500" />,
                   causes: ["Too many sweet products", "Same flavor for hours", "Loss of appetite from fatigue"],
                   prevention: ["Pack both sweet AND savory options", "Rotate flavors — at least 4 different tastes", "Include real food from mile 30+ onward"],
                   recovery: ["Switch immediately to savory: broth, pretzels, chips, pickle juice", "Try water instead of sweet drink", "Cold soda (Sprite, Coke) can reset your palate"],
                 },
                 {
                   problem: "Dehydration",
-                  icon: "🏜️",
+                  icon: <Sun className="w-6 h-6 text-orange-500" />,
                   causes: ["Insufficient fluid intake", "Ignoring heat and sweat rate", "Over-relying on thirst sensation"],
                   prevention: ["Drink 16–24oz per hour minimum", "Monitor urine color (pale yellow target)", "Pre-hydrate the days before your race"],
                   recovery: ["Gradual rehydration with electrolytes — not just water", "Ice chips if feeling nauseous", "Slow down at aid station for a full refill"],
                 },
                 {
                   problem: "Cramping",
-                  icon: "⚡",
+                  icon: <Zap className="w-6 h-6 text-accent" />,
                   causes: ["Electrolyte depletion (especially sodium)", "Dehydration", "Going out too hard, too early"],
                   prevention: ["Consistent sodium intake throughout the race", "Don't ignore cramp warnings (twitching)", "Pickle juice works — pack it in a small flask"],
                   recovery: ["Immediate electrolyte boost (SaltStick, LMNT, pickle juice)", "Slow pace — let blood flow restore", "Stretch if stopped, but don't force a severe cramp"],
                 },
               ].map((m) => (
                 <div key={m.problem} className="bg-white/5 rounded-xl p-5 border border-white/10">
-                  <div className="text-2xl mb-2">{m.icon}</div>
+                  <div className="mb-2">{m.icon}</div>
                   <h3 className="font-headline font-bold text-white text-lg mb-4">{m.problem}</h3>
                   <div className="space-y-3">
                     <div>
@@ -979,7 +985,7 @@ export default function NutritionPage() {
                     <div>
                       <p className="text-xs font-bold text-green-400 mb-1">Prevention</p>
                       <ul className="space-y-0.5">
-                        {m.prevention.map((p) => <li key={p} className="text-xs text-gray-400 flex gap-1"><span className="text-green-400">✓</span>{p}</li>)}
+                        {m.prevention.map((p) => <li key={p} className="text-xs text-gray-400 flex gap-1"><span className="text-green-400">+</span>{p}</li>)}
                       </ul>
                     </div>
                     <div>
@@ -1009,37 +1015,37 @@ export default function NutritionPage() {
               {[
                 {
                   day: "7 Days Out",
-                  icon: "📅",
+                  icon: <Calendar className="w-6 h-6 text-primary" />,
                   color: "bg-gray-50 border-gray-200",
                   items: ["Normal eating — don't change anything dramatic", "Begin hydration focus (extra 16oz/day)", "Cut alcohol completely", "Reduce fiber slightly", "Avoid new or exotic foods"],
                 },
                 {
                   day: "5 Days Out",
-                  icon: "🌾",
+                  icon: <Wheat className="w-6 h-6 text-primary" />,
                   color: "bg-blue-50 border-blue-200",
                   items: ["Carb loading begins: 70–80% of calories from carbs", "Target 8–10g carbs per kg body weight", "Reduce fat to make room for carbs", "Focus: pasta, rice, bread, oatmeal, potatoes", "Hydration with electrolytes"],
                 },
                 {
                   day: "3 Days Out",
-                  icon: "🥗",
+                  icon: <Salad className="w-6 h-6 text-primary" />,
                   color: "bg-green-50 border-green-200",
                   items: ["Continue carb loading", "Cut fiber foods: no beans, cruciferous vegetables", "Simple, familiar foods only", "Hydrate with electrolytes every meal", "Avoid excessive fruit (fiber + fructose)"],
                 },
                 {
                   day: "Day Before",
-                  icon: "🍝",
+                  icon: <Apple className="w-6 h-6 text-primary" />,
                   color: "bg-orange-50 border-orange-200",
                   items: ["Normal-sized meals — don't stuff yourself", "Biggest meal at lunch, not dinner", "Light, familiar dinner (pasta, rice)", "Hydrate throughout the day", "Early bedtime — sleep > perfect nutrition"],
                 },
                 {
                   day: "Race Morning",
-                  icon: "🏃",
+                  icon: <PersonStanding className="w-6 h-6 text-primary" />,
                   color: "bg-red-50 border-red-200",
                   items: ["3–4 hrs before: 400–800 cal (bagel + PB + banana)", "Same breakfast you&apos;ve practiced — NO experiments", "Sip electrolyte drink up to start", "Last gel: 15–30 min before gun", "Stop large solids 2 hrs before start"],
                 },
               ].map((day) => (
                 <div key={day.day} className={`rounded-xl border p-5 ${day.color}`}>
-                  <div className="text-2xl mb-2">{day.icon}</div>
+                  <div className="mb-2">{day.icon}</div>
                   <p className="font-headline font-bold text-dark text-sm mb-3">{day.day}</p>
                   <ul className="space-y-1.5">
                     {day.items.map((item) => (
@@ -1067,7 +1073,7 @@ export default function NutritionPage() {
                   <p className="font-semibold text-dark mb-3 text-sm">What Most Aid Stations Offer</p>
                   <div className="grid grid-cols-2 gap-1 text-xs text-gray">
                     {["Water + electrolyte drink", "Coca-Cola / Ginger Ale", "Chips, pretzels, crackers", "Candy, gummies, M&Ms", "PB&J sandwiches", "Bananas, oranges", "Boiled potatoes with salt", "Quesadillas (major races)", "Broth (night sections)", "Coffee (100M races)"].map((item) => (
-                      <div key={item} className="flex gap-1"><span className="text-green-500">✓</span>{item}</div>
+                      <div key={item} className="flex gap-1"><span className="text-green-500">→</span>{item}</div>
                     ))}
                   </div>
                 </div>
@@ -1123,7 +1129,7 @@ export default function NutritionPage() {
                       </div>
                     ))}
                   </div>
-                  <p className="text-xs text-red-500 mt-3 font-medium">⚠ Don&apos;t start too early — save it for when you need it. Test all caffeine products in training.</p>
+                  <p className="text-xs text-red-500 mt-3 font-medium">Warning: Don&apos;t start too early — save it for when you need it. Test all caffeine products in training.</p>
                 </div>
               </div>
             </div>

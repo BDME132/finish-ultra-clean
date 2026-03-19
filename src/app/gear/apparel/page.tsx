@@ -1,7 +1,13 @@
+import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ApparelFinder from "./ApparelFinder";
+import {
+  Shirt, PersonStanding, Layers, CloudRain, Footprints, Shield,
+  Sun, Cloud, Snowflake, Mountain, Scissors, Flame, Droplets, Leaf,
+  Wind, RefreshCcw, ClipboardList, Sparkles, Zap, Circle,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ultra Marathon Apparel & Running Clothing Guide | FinishUltra",
@@ -40,7 +46,7 @@ type ApparelProduct = {
 const categories: {
   id: string;
   title: string;
-  icon: string;
+  icon: React.ReactNode;
   subtitle: string;
   color: string;
   badgeColor: string;
@@ -50,7 +56,7 @@ const categories: {
   {
     id: "tops",
     title: "Base Layers — Tops",
-    icon: "👕",
+    icon: <Shirt className="w-6 h-6 text-primary" />,
     subtitle: "Your first line of defense against sweat, sun, and cold",
     color: "from-blue-50 to-white",
     badgeColor: "bg-blue-100 text-blue-800",
@@ -145,7 +151,7 @@ const categories: {
   {
     id: "shorts",
     title: "Shorts & Bottoms",
-    icon: "🩳",
+    icon: <PersonStanding className="w-6 h-6 text-primary" />,
     subtitle: "Chafe prevention and pocket access define your race",
     color: "from-green-50 to-white",
     badgeColor: "bg-green-100 text-green-800",
@@ -242,7 +248,7 @@ const categories: {
   {
     id: "insulation",
     title: "Insulation & Mid Layers",
-    icon: "🧥",
+    icon: <Layers className="w-6 h-6 text-primary" />,
     subtitle: "Packable warmth that earns its space in your vest",
     color: "from-orange-50 to-white",
     badgeColor: "bg-orange-100 text-orange-800",
@@ -321,7 +327,7 @@ const categories: {
   {
     id: "shells",
     title: "Rain & Wind Shells",
-    icon: "🌧️",
+    icon: <CloudRain className="w-6 h-6 text-primary" />,
     subtitle: "Mandatory gear that must perform when conditions turn",
     color: "from-gray-50 to-white",
     badgeColor: "bg-gray-200 text-gray-800",
@@ -418,7 +424,7 @@ const categories: {
   {
     id: "socks",
     title: "Socks",
-    icon: "🧦",
+    icon: <Footprints className="w-6 h-6 text-primary" />,
     subtitle: "The most important piece of apparel per dollar spent",
     color: "from-yellow-50 to-white",
     badgeColor: "bg-yellow-100 text-yellow-800",
@@ -510,7 +516,7 @@ const categories: {
   {
     id: "accessories",
     title: "Hats, Gloves & Accessories",
-    icon: "🧤",
+    icon: <Shield className="w-6 h-6 text-primary" />,
     subtitle: "Small items with outsized impact on comfort and safety",
     color: "from-purple-50 to-white",
     badgeColor: "bg-purple-100 text-purple-800",
@@ -635,7 +641,7 @@ const categories: {
   {
     id: "antichafe",
     title: "Anti-Chafe & Undergarments",
-    icon: "🛡️",
+    icon: <Shield className="w-6 h-6 text-primary" />,
     subtitle: "The unsexy products that save your race",
     color: "from-red-50 to-white",
     badgeColor: "bg-red-100 text-red-800",
@@ -717,7 +723,7 @@ function ApparelCard({ product, categoryColor }: { product: ApparelProduct; cate
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col">
       <div className="bg-gray-50 py-8 flex items-center justify-center border-b border-gray-100">
         <div className="text-center">
-          <div className="text-3xl mb-1">👕</div>
+          <div className="flex justify-center mb-1"><Shirt className="w-8 h-8 text-gray" /></div>
           <p className="text-xs text-gray">{product.brand}</p>
         </div>
       </div>
@@ -819,13 +825,13 @@ export default function ApparelPage() {
               The wrong insulation layer can cause hypothermia on a mountain at 2am. Get this right.
             </p>
             <div className="inline-flex items-center gap-3 bg-orange-50 border border-orange-200 text-orange-700 rounded-xl px-5 py-3 text-sm font-bold">
-              <span className="text-lg">⚡</span>
+              <Zap className="w-5 h-5 text-orange-600 flex-shrink-0" />
               The first rule of ultra apparel: <strong>cotton kills, synthetics and merino save.</strong>
             </div>
             <div className="flex flex-wrap justify-center gap-2 mt-8">
               {categories.map((c) => (
-                <a key={c.id} href={`#${c.id}`} className="text-sm px-4 py-1.5 rounded-full border border-gray-200 hover:border-primary hover:text-primary transition-colors text-gray font-medium">
-                  {c.icon} {c.title}
+                <a key={c.id} href={`#${c.id}`} className="inline-flex items-center gap-1.5 text-sm px-4 py-1.5 rounded-full border border-gray-200 hover:border-primary hover:text-primary transition-colors text-gray font-medium">
+                  {c.icon}{c.title}
                 </a>
               ))}
               <a href="#layering" className="text-sm px-4 py-1.5 rounded-full border border-gray-200 hover:border-primary hover:text-primary transition-colors text-gray font-medium">Layering Guide</a>
@@ -852,8 +858,8 @@ export default function ApparelPage() {
           <section key={cat.id} id={cat.id} className={`py-16 bg-gradient-to-b ${i % 2 === 0 ? cat.color : "from-white to-light"}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="mb-10">
-                <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full mb-3 ${cat.badgeColor}`}>
-                  {cat.icon} {cat.title}
+                <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full mb-3 ${cat.badgeColor}`}>
+                  {cat.icon}{cat.title}
                 </span>
                 <h2 className="font-headline text-3xl sm:text-4xl font-bold text-dark mb-2">{cat.title}</h2>
                 <p className="text-accent font-semibold text-sm mb-3">{cat.subtitle}</p>
@@ -882,7 +888,7 @@ export default function ApparelPage() {
               {[
                 {
                   temp: "Hot (75°F+)",
-                  icon: "☀️",
+                  icon: <Sun className="w-6 h-6 text-orange-400" />,
                   color: "border-orange-500/30",
                   layers: [
                     { layer: "Top", item: "Patagonia Capilene Cool Daily", note: "UPF 50+, Polygiene" },
@@ -896,7 +902,7 @@ export default function ApparelPage() {
                 },
                 {
                   temp: "Moderate (50–75°F)",
-                  icon: "🌤️",
+                  icon: <Cloud className="w-6 h-6 text-blue-400" />,
                   color: "border-blue-500/30",
                   layers: [
                     { layer: "Top", item: "OR Echo Long Sleeve", note: "Sun protection, thumbholes" },
@@ -910,7 +916,7 @@ export default function ApparelPage() {
                 },
                 {
                   temp: "Cool (35–50°F)",
-                  icon: "🌥️",
+                  icon: <Cloud className="w-6 h-6 text-cyan-400" />,
                   color: "border-cyan-500/30",
                   layers: [
                     { layer: "Base Top", item: "Smartwool Merino 150 LS", note: "Natural temp regulation" },
@@ -924,7 +930,7 @@ export default function ApparelPage() {
                 },
                 {
                   temp: "Cold (20–35°F)",
-                  icon: "❄️",
+                  icon: <Snowflake className="w-6 h-6 text-blue-300" />,
                   color: "border-blue-300/30",
                   layers: [
                     { layer: "Base Top", item: "Smartwool Merino 250 Crew", note: "Heavyweight warmth" },
@@ -938,7 +944,7 @@ export default function ApparelPage() {
                 },
                 {
                   temp: "Wet / Rainy",
-                  icon: "🌧️",
+                  icon: <CloudRain className="w-6 h-6 text-primary" />,
                   color: "border-gray-400/30",
                   layers: [
                     { layer: "Base", item: "Quick-dry synthetic (not merino)", note: "Dries faster when soaked" },
@@ -952,7 +958,7 @@ export default function ApparelPage() {
                 },
                 {
                   temp: "Mountain / Alpine",
-                  icon: "⛰️",
+                  icon: <Mountain className="w-6 h-6 text-purple-400" />,
                   color: "border-purple-500/30",
                   layers: [
                     { layer: "Base", item: "Smartwool Merino 150 LS", note: "Natural temp buffer" },
@@ -966,7 +972,7 @@ export default function ApparelPage() {
                 },
               ].map((scenario) => (
                 <div key={scenario.temp} className={`bg-white/5 rounded-xl p-5 border ${scenario.color}`}>
-                  <div className="text-2xl mb-2">{scenario.icon}</div>
+                  <div className="mb-2">{scenario.icon}</div>
                   <h3 className="font-headline font-bold text-white text-lg mb-1">{scenario.temp}</h3>
                   <p className="text-accent font-bold text-xs mb-4">{scenario.total} estimated</p>
                   <div className="space-y-2 mb-4">
@@ -999,7 +1005,7 @@ export default function ApparelPage() {
               {[
                 {
                   title: "Base Fabrics",
-                  icon: "🧵",
+                  icon: <Scissors className="w-6 h-6 text-primary" />,
                   items: [
                     { name: "Merino Wool", desc: "Temperature regulating, odor-resistant, naturally moisture-wicking. Slower to dry than synthetic. Best for multi-day events." },
                     { name: "Polyester", desc: "Fast-drying, durable, affordable. Retains odor over time. Nike Dri-FIT, Patagonia Capilene." },
@@ -1009,7 +1015,7 @@ export default function ApparelPage() {
                 },
                 {
                   title: "Insulation Tech",
-                  icon: "🔥",
+                  icon: <Flame className="w-6 h-6 text-orange-500" />,
                   items: [
                     { name: "Down (800+ fill)", desc: "Best warmth-to-weight ratio. Loses insulation when wet. Best for dry cold. Mountain Hardwear Ghost Whisperer." },
                     { name: "PrimaLoft / Coreloft", desc: "Synthetic insulation that works when wet. More durable than down. Patagonia Nano Puff, Arc'teryx Atom." },
@@ -1019,7 +1025,7 @@ export default function ApparelPage() {
                 },
                 {
                   title: "Weather Membranes",
-                  icon: "💧",
+                  icon: <Droplets className="w-6 h-6 text-blue-500" />,
                   items: [
                     { name: "Gore-Tex", desc: "Gold standard waterproof-breathable. Expensive, durable, widely trusted. Arc'teryx Beta LT." },
                     { name: "Gore-Tex Shakedry", desc: "Exposed membrane — lightest waterproof available. Delicate but remarkable. Arc'teryx Norvan SL." },
@@ -1029,7 +1035,7 @@ export default function ApparelPage() {
                 },
                 {
                   title: "Sustainability",
-                  icon: "🌱",
+                  icon: <Leaf className="w-6 h-6 text-green-500" />,
                   items: [
                     { name: "Bluesign Approved", desc: "Certification for safe, sustainable fabric production. Patagonia, Arc'teryx, Outdoor Research." },
                     { name: "Recycled Content", desc: "Patagonia's Capilene uses 100% recycled polyester. Performance identical to virgin synthetic." },
@@ -1039,7 +1045,7 @@ export default function ApparelPage() {
                 },
               ].map((block) => (
                 <div key={block.title} className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-                  <div className="text-2xl mb-3">{block.icon}</div>
+                  <div className="mb-3">{block.icon}</div>
                   <h3 className="font-headline font-bold text-dark text-lg mb-4">{block.title}</h3>
                   <div className="space-y-3">
                     {block.items.map((item) => (
@@ -1070,7 +1076,7 @@ export default function ApparelPage() {
                 {
                   distance: "50K",
                   time: "4–10 hrs",
-                  icon: "🟢",
+                  icon: <Circle className="w-6 h-6 text-green-500" />,
                   budget: "$200–500",
                   outfit: ["Single full outfit (weather-appropriate)", "1 layering option in vest", "Hat, sunglasses, buff"],
                   dropBag: ["No drop bags typically needed", "Extra sock pair if long course"],
@@ -1079,7 +1085,7 @@ export default function ApparelPage() {
                 {
                   distance: "50 Miles",
                   time: "7–14 hrs",
-                  icon: "🟡",
+                  icon: <Circle className="w-6 h-6 text-yellow-500" />,
                   budget: "$400–700",
                   outfit: ["Start outfit", "1-2 layering options in vest", "Full accessories kit"],
                   dropBag: ["Extra shirt", "1-2 extra sock pairs", "Warmer layer if evening finish", "Fresh hat"],
@@ -1088,7 +1094,7 @@ export default function ApparelPage() {
                 {
                   distance: "100K",
                   time: "10–20 hrs",
-                  icon: "🟠",
+                  icon: <Circle className="w-6 h-6 text-orange-500" />,
                   budget: "$600–1,000",
                   outfit: ["Day start outfit", "Night transition layer in vest", "2-3 layering options accessible"],
                   dropBag: ["Mid-race shirt change", "2-3 sock pairs", "Night running warm kit", "Emergency dry base layer"],
@@ -1097,7 +1103,7 @@ export default function ApparelPage() {
                 {
                   distance: "100 Miles",
                   time: "20–36 hrs",
-                  icon: "🔴",
+                  icon: <Circle className="w-6 h-6 text-red-500" />,
                   budget: "$800–1,500",
                   outfit: ["Multiple complete outfits", "Full layering system at all times", "Night gear must be accessible without stopping"],
                   dropBag: ["4-6 fresh sock pairs", "3-4 fresh shirts", "2 fresh shorts/tights", "Full night kit in 50-mile bag", "Rain gear at every bag"],
@@ -1106,7 +1112,7 @@ export default function ApparelPage() {
               ].map((d) => (
                 <div key={d.distance} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-lg">{d.icon}</span>
+                    <span>{d.icon}</span>
                     <div>
                       <p className="font-headline font-bold text-dark">{d.distance}</p>
                       <p className="text-xs text-gray">{d.time}</p>
@@ -1148,7 +1154,7 @@ export default function ApparelPage() {
               {[
                 {
                   title: "Washing Rules",
-                  icon: "🫧",
+                  icon: <Sparkles className="w-6 h-6 text-primary" />,
                   tips: [
                     "Cold water always — heat degrades technical fabrics",
                     "Gentle cycle — tumble damages DWR and stretchy fibers",
@@ -1160,7 +1166,7 @@ export default function ApparelPage() {
                 },
                 {
                   title: "Drying Rules",
-                  icon: "💨",
+                  icon: <Wind className="w-6 h-6 text-primary" />,
                   tips: [
                     "Air dry whenever possible — extends fabric life by years",
                     "No high heat in dryer — degrades elastic and synthetic fibers",
@@ -1172,7 +1178,7 @@ export default function ApparelPage() {
                 },
                 {
                   title: "DWR Maintenance",
-                  icon: "🌧️",
+                  icon: <CloudRain className="w-6 h-6 text-primary" />,
                   tips: [
                     "DWR (water-repellent coating) wears off with use and washing",
                     "Signs it's gone: jacket 'wets out' and feels heavy in rain",
@@ -1184,7 +1190,7 @@ export default function ApparelPage() {
                 },
                 {
                   title: "Merino Wool Care",
-                  icon: "🐑",
+                  icon: <Leaf className="w-6 h-6 text-green-500" />,
                   tips: [
                     "Wash less frequently — merino can be worn 3-5 times before washing",
                     "Use wool-specific detergent (Eucalan, Nikwax Wool Wash)",
@@ -1196,7 +1202,7 @@ export default function ApparelPage() {
                 },
                 {
                   title: "When to Replace",
-                  icon: "🔄",
+                  icon: <RefreshCcw className="w-6 h-6 text-primary" />,
                   tips: [
                     "Fabric has thinned noticeably (hold to light — transparency test)",
                     "Holes or tears that can't be repaired with seam tape",
@@ -1208,7 +1214,7 @@ export default function ApparelPage() {
                 },
                 {
                   title: "Warranties to Know",
-                  icon: "📋",
+                  icon: <ClipboardList className="w-6 h-6 text-primary" />,
                   tips: [
                     "Darn Tough: Unconditional lifetime warranty — replace any worn-out sock free",
                     "Patagonia: Ironclad Guarantee — repair, replace, or refund regardless of age",
@@ -1220,12 +1226,12 @@ export default function ApparelPage() {
                 },
               ].map((section) => (
                 <div key={section.title} className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                  <div className="text-2xl mb-3">{section.icon}</div>
+                  <div className="mb-3">{section.icon}</div>
                   <h3 className="font-headline font-bold text-dark text-lg mb-4">{section.title}</h3>
                   <ul className="space-y-2">
                     {section.tips.map((tip) => (
                       <li key={tip} className="text-sm text-gray flex gap-2">
-                        <span className="text-primary shrink-0 mt-0.5">✓</span>{tip}
+                        <span className="text-primary shrink-0 mt-0.5">→</span>{tip}
                       </li>
                     ))}
                   </ul>

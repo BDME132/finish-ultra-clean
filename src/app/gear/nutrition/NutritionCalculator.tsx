@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Coffee } from "lucide-react";
 
 type Inputs = {
   weight: string;
@@ -316,7 +317,7 @@ export default function NutritionCalculator() {
               {/* Caffeine schedule */}
               {results.caffeineSchedule.length > 0 && (
                 <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="font-semibold text-dark mb-3 text-sm">☕ Caffeine Timeline</p>
+                  <p className="font-semibold text-dark mb-3 text-sm flex items-center gap-1.5"><Coffee className="w-4 h-4" /> Caffeine Timeline</p>
                   <ul className="space-y-1.5">
                     {results.caffeineSchedule.map((s) => (
                       <li key={s} className="text-sm text-gray flex gap-2">

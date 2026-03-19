@@ -6,6 +6,7 @@ import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import BlogPostCard from "@/components/BlogPostCard";
 import { blogPosts, getPostBySlug, getRelatedPosts } from "@/lib/content/blog-posts";
+import { ShoppingCart } from "lucide-react";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -238,7 +239,7 @@ export default async function BlogPostPage({ params }: Props) {
             <section className="py-12 bg-light border-t border-b border-gray-100">
               <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="text-2xl">🛒</span>
+                  <ShoppingCart className="w-6 h-6 text-primary flex-shrink-0" />
                   <h2 className="font-headline text-xl font-bold text-dark">
                     Products Mentioned in This Article
                   </h2>

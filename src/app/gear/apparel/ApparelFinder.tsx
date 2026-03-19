@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PersonStanding, Thermometer, Mountain, Moon, Droplets } from "lucide-react";
 
 type Answers = {
   distance: string;
@@ -171,11 +172,11 @@ function buildOutfit(answers: Answers): Outfit {
   };
 }
 
-const QUESTIONS = [
+const QUESTIONS: { id: string; question: string; icon: React.ReactNode; options: { label: string; value: string }[] }[] = [
   {
     id: "distance",
     question: "What's your race distance?",
-    icon: "🏃",
+    icon: <PersonStanding className="w-5 h-5 text-primary" />,
     options: [
       { label: "50K", value: "50k" },
       { label: "50 Miles", value: "50m" },
@@ -186,7 +187,7 @@ const QUESTIONS = [
   {
     id: "temp",
     question: "Expected temperature range?",
-    icon: "🌡️",
+    icon: <Thermometer className="w-5 h-5 text-primary" />,
     options: [
       { label: "Hot — 75°F+ (desert, summer)", value: "hot" },
       { label: "Moderate — 50–75°F", value: "moderate" },
@@ -197,7 +198,7 @@ const QUESTIONS = [
   {
     id: "terrain",
     question: "Primary terrain?",
-    icon: "⛰️",
+    icon: <Mountain className="w-5 h-5 text-primary" />,
     options: [
       { label: "Mountain / alpine", value: "mountain" },
       { label: "Desert / open", value: "desert" },
@@ -208,7 +209,7 @@ const QUESTIONS = [
   {
     id: "night",
     question: "Will you be running at night?",
-    icon: "🌙",
+    icon: <Moon className="w-5 h-5 text-primary" />,
     options: [
       { label: "Yes — night sections required", value: "yes" },
       { label: "No — day finish expected", value: "no" },
@@ -217,7 +218,7 @@ const QUESTIONS = [
   {
     id: "sweater",
     question: "How much do you sweat?",
-    icon: "💧",
+    icon: <Droplets className="w-5 h-5 text-primary" />,
     options: [
       { label: "Light sweater", value: "light" },
       { label: "Moderate sweater", value: "moderate" },
@@ -284,8 +285,9 @@ export default function ApparelFinder() {
           <p className="text-sm text-gray font-medium mb-2">
             Question {step + 1} of {QUESTIONS.length}
           </p>
-          <h3 className="font-headline text-2xl font-bold text-dark mb-6">
-            {currentQ.icon} {currentQ.question}
+          <h3 className="font-headline text-2xl font-bold text-dark mb-6 flex items-center gap-2">
+            {currentQ.icon}
+            <span>{currentQ.question}</span>
           </h3>
 
           <div className="grid gap-3 sm:grid-cols-2">

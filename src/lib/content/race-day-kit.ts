@@ -19,7 +19,7 @@ export const raceDayCategories: RaceDayCategory[] = [
   {
     id: "on-body",
     title: "Essential On-Body Kit",
-    icon: "👟",
+    icon: "on-body",
     tip: "Everything you're wearing from the gun. Train in all of it before race day — zero surprises.",
     products: [
       {
@@ -105,7 +105,7 @@ export const raceDayCategories: RaceDayCategory[] = [
   {
     id: "hydration-pack",
     title: "Hydration Pack Essentials",
-    icon: "🎒",
+    icon: "hydration-pack",
     tip: "Pack only what you need for each segment between aid stations. Overpacking is as dangerous as underpacking — extra weight costs miles.",
     products: [
       {
@@ -191,7 +191,7 @@ export const raceDayCategories: RaceDayCategory[] = [
   {
     id: "nutrition",
     title: "Nutrition & Hydration",
-    icon: "⚡",
+    icon: "nutrition",
     tip: "Eat before you're hungry, drink before you're thirsty. Target 200-300 calories/hour and practice your exact race-day nutrition in training.",
     products: [
       {
@@ -277,7 +277,7 @@ export const raceDayCategories: RaceDayCategory[] = [
   {
     id: "drop-bag",
     title: "Drop Bag Essentials",
-    icon: "🎯",
+    icon: "drop-bag",
     tip: "Label every drop bag clearly. Pre-pack bags at home the night before so you're not rushing at packet pickup. Include a laminated list of contents inside each bag.",
     products: [
       {
@@ -374,7 +374,7 @@ export const raceDayCategories: RaceDayCategory[] = [
   {
     id: "crew-support",
     title: "Crew Support Kit",
-    icon: "🏕️",
+    icon: "crew-support",
     tip: "Your crew is racing too. Set them up with the tools to run an efficient aid station. A well-equipped crew can get you in and out in under 2 minutes.",
     products: [
       {
@@ -459,7 +459,7 @@ export const raceDayCategories: RaceDayCategory[] = [
   {
     id: "post-race",
     title: "Post-Race Recovery",
-    icon: "🏆",
+    icon: "post-race",
     tip: "Recovery starts the moment you cross the finish line. Change out of wet gear immediately, eat within 30 minutes, and elevate your legs. The first 2 hours post-race determine your recovery timeline.",
     products: [
       {

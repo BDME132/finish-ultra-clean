@@ -1,6 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  Home, Calendar, BarChart2, Package, Zap, Flag, Flame, Dumbbell,
+  Minus, Wind, AlertCircle, ClipboardList, CheckCircle, BedDouble,
+  Droplets, AlertTriangle, Circle, Moon, Sunrise, Medal, Star,
+} from "lucide-react";
 import Link from "next/link";
 import {
   SavedPlan,
@@ -22,21 +27,21 @@ import { calculateFuelingStrategy, FuelingStrategy } from "@/lib/plan-generator"
 
 type Tab = "today" | "week" | "progress" | "gear" | "nutrition" | "raceday";
 
-const TAB_LABELS: { id: Tab; label: string; icon: string }[] = [
-  { id: "today", label: "Today", icon: "🏠" },
-  { id: "week", label: "Week", icon: "📅" },
-  { id: "progress", label: "Progress", icon: "📊" },
-  { id: "gear", label: "Gear", icon: "🎒" },
-  { id: "nutrition", label: "Nutrition", icon: "⚡" },
-  { id: "raceday", label: "Race Day", icon: "🏁" },
+const TAB_LABELS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+  { id: "today", label: "Today", icon: <Home className="w-4 h-4" /> },
+  { id: "week", label: "Week", icon: <Calendar className="w-4 h-4" /> },
+  { id: "progress", label: "Progress", icon: <BarChart2 className="w-4 h-4" /> },
+  { id: "gear", label: "Gear", icon: <Package className="w-4 h-4" /> },
+  { id: "nutrition", label: "Nutrition", icon: <Zap className="w-4 h-4" /> },
+  { id: "raceday", label: "Race Day", icon: <Flag className="w-4 h-4" /> },
 ];
 
-const FEELING_OPTIONS: { value: CompletedWorkout["feeling"]; label: string; emoji: string }[] = [
-  { value: "great", label: "Great", emoji: "🔥" },
-  { value: "good", label: "Good", emoji: "💪" },
-  { value: "average", label: "Average", emoji: "😐" },
-  { value: "tired", label: "Tired", emoji: "😮‍💨" },
-  { value: "struggling", label: "Struggling", emoji: "😵" },
+const FEELING_OPTIONS: { value: CompletedWorkout["feeling"]; label: string; emoji: React.ReactNode }[] = [
+  { value: "great", label: "Great", emoji: <Flame className="w-5 h-5 text-orange-500" /> },
+  { value: "good", label: "Good", emoji: <Dumbbell className="w-5 h-5 text-blue-500" /> },
+  { value: "average", label: "Average", emoji: <Minus className="w-5 h-5 text-gray-400" /> },
+  { value: "tired", label: "Tired", emoji: <Wind className="w-5 h-5 text-gray-500" /> },
+  { value: "struggling", label: "Struggling", emoji: <AlertCircle className="w-5 h-5 text-red-500" /> },
 ];
 
 function formatDateFull(d: Date): string {
@@ -140,7 +145,7 @@ export default function DashboardClient() {
     return (
       <main className="py-20">
         <div className="max-w-2xl mx-auto px-4 text-center">
-          <div className="text-6xl mb-6">📋</div>
+          <div className="flex justify-center mb-6"><ClipboardList className="w-16 h-16 text-gray" /></div>
           <h1 className="font-headline text-3xl font-bold text-dark mb-4">No Training Plan Saved</h1>
           <p className="text-gray mb-8 leading-relaxed">
             Build a custom training plan first, then save it to unlock your personal dashboard with daily workouts, gear tracking, nutrition testing, and progress analytics.
@@ -340,14 +345,14 @@ export default function DashboardClient() {
 
   function renderCountdownChecklist(
     title: string,
-    icon: string,
+    icon: React.ReactNode,
     items: RaceDayChecklistItem[],
     listKey: keyof NonNullable<SavedPlan["raceCountdown"]>,
   ) {
     return (
       <div key={listKey}>
         <h3 className="font-headline font-bold text-dark text-sm uppercase tracking-wider mb-3">
-          {icon} {title}
+          <span className="flex items-center gap-2">{icon} {title}</span>
         </h3>
         <div className="space-y-2">
           {items.map((item) => (
@@ -361,7 +366,7 @@ export default function DashboardClient() {
               <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                 item.checked ? "bg-green-500 border-green-500 text-white" : "border-gray-300"
               }`}>
-                {item.checked && <span className="text-xs">✓</span>}
+                {item.checked && <CheckCircle className="w-3 h-3" />}
               </div>
               <span className={`text-sm ${item.checked ? "text-green-700 line-through" : "text-dark"}`}>
                 {item.label}
@@ -584,7 +589,7 @@ export default function DashboardClient() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-primary to-primary-dark p-5">
                 <div className="flex items-center gap-2 text-white/70 text-xs font-medium mb-2">
-                  <span>🏃</span>
+                  <PersonStanding className="w-4 h-4" />
                   <span>TODAY&apos;S WORKOUT</span>
                 </div>
                 <h3 className="font-headline text-xl font-bold text-white">
@@ -601,7 +606,7 @@ export default function DashboardClient() {
               <div className="p-5">
                 {todayCompleted ? (
                   <div className="flex items-center gap-3 bg-green-50 rounded-xl p-4 border border-green-100">
-                    <span className="text-2xl">✅</span>
+                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
                     <div>
                       <p className="font-semibold text-green-800 text-sm">Workout Complete!</p>
                       <p className="text-xs text-green-600">
@@ -613,7 +618,7 @@ export default function DashboardClient() {
                   </div>
                 ) : todayWorkout?.workout === "Rest" ? (
                   <div className="flex items-center gap-3 bg-blue-50 rounded-xl p-4 border border-blue-100">
-                    <span className="text-2xl">😴</span>
+                    <BedDouble className="w-6 h-6 text-blue-500 flex-shrink-0" />
                     <div>
                       <p className="font-semibold text-blue-800 text-sm">Rest Day</p>
                       <p className="text-xs text-blue-600">Recover, hydrate, sleep well. You&apos;ve earned it.</p>
@@ -673,10 +678,10 @@ export default function DashboardClient() {
               <div className="space-y-2">
                 {dailyTasks.map((task) => {
                   const catIcon =
-                    task.category === "training" ? "🏃" :
-                    task.category === "recovery" ? "💧" :
-                    task.category === "gear" ? "🎒" :
-                    task.category === "nutrition" ? "⚡" : "✓";
+                    task.category === "training" ? <PersonStanding className="w-4 h-4" /> :
+                    task.category === "recovery" ? <Droplets className="w-4 h-4" /> :
+                    task.category === "gear" ? <Package className="w-4 h-4" /> :
+                    task.category === "nutrition" ? <Zap className="w-4 h-4" /> : <Circle className="w-4 h-4" />;
                   const catColor =
                     task.category === "training" ? "text-primary" :
                     task.category === "recovery" ? "text-blue-500" :
@@ -693,7 +698,7 @@ export default function DashboardClient() {
                       <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                         task.checked ? "bg-green-500 border-green-500 text-white" : "border-gray-300"
                       }`}>
-                        {task.checked && <span className="text-[10px]">✓</span>}
+                        {task.checked && <CheckCircle className="w-3 h-3" />}
                       </div>
                       <span className={`${catColor} flex-shrink-0`}>{catIcon}</span>
                       <span className={`text-sm ${task.checked ? "text-green-700 line-through" : "text-dark"}`}>
@@ -713,7 +718,7 @@ export default function DashboardClient() {
                 <ul className="space-y-2">
                   {currentWeek.goals.map((g, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-gray">
-                      <span className="text-primary flex-shrink-0 mt-0.5">✓</span>{g}
+                      <span className="text-primary flex-shrink-0 mt-0.5">→</span>{g}
                     </li>
                   ))}
                 </ul>
@@ -752,11 +757,11 @@ export default function DashboardClient() {
                       {/* Status */}
                       <div className="flex-shrink-0">
                         {completed ? (
-                          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-lg">✓</div>
+                          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600"><CheckCircle className="w-5 h-5" /></div>
                         ) : isToday ? (
-                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary text-lg">●</div>
+                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary"><Circle className="w-5 h-5 fill-current" /></div>
                         ) : (
-                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray text-lg">○</div>
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray"><Circle className="w-5 h-5" /></div>
                         )}
                       </div>
 
@@ -793,7 +798,7 @@ export default function DashboardClient() {
                           onClick={() => markDayComplete(currentWeekNum, i)}
                           className="text-xs font-medium text-gray hover:text-primary flex-shrink-0"
                         >
-                          ✓
+                          Mark done
                         </button>
                       )}
                       {completed && (
@@ -834,7 +839,7 @@ export default function DashboardClient() {
             {/* Consistency streak */}
             {consistencyStreak > 0 && (
               <div className="bg-accent/10 border border-accent/20 rounded-2xl p-5 flex items-center gap-4">
-                <div className="text-4xl">🔥</div>
+                <Flame className="w-10 h-10 text-orange-500 flex-shrink-0" />
                 <div>
                   <div className="font-headline text-2xl font-bold text-dark">{consistencyStreak} Week Streak</div>
                   <p className="text-sm text-gray">
@@ -932,7 +937,7 @@ export default function DashboardClient() {
                   {upcomingMilestones.slice(0, 5).map((m, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center text-accent text-sm flex-shrink-0">
-                        🎯
+                        <Flag className="w-4 h-4" />
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium text-dark">{m.label}</p>
@@ -975,7 +980,7 @@ export default function DashboardClient() {
                             {isCurrent ? (
                               <span className="text-xs text-primary font-medium">In Progress</span>
                             ) : actual >= w.totalMiles * 0.9 ? (
-                              <span className="text-xs text-green-600 font-medium">✓ Complete</span>
+                              <span className="text-xs text-green-600 font-medium">Complete</span>
                             ) : actual > 0 ? (
                               <span className="text-xs text-yellow-600 font-medium">Partial</span>
                             ) : (
@@ -1014,7 +1019,7 @@ export default function DashboardClient() {
             {(["critical", "high", "standard"] as const).map((priority) => {
               const items = plan.gearItems.filter((g) => g.priority === priority);
               if (items.length === 0) return null;
-              const priorityLabel = priority === "critical" ? "🚨 Critical — Order Now" : priority === "high" ? "⚠️ High Priority" : "🔵 Standard Priority";
+              const priorityLabel = priority === "critical" ? "Critical — Order Now" : priority === "high" ? "High Priority" : "Standard Priority";
               return (
                 <div key={priority}>
                   <h3 className="font-headline font-bold text-dark text-sm mb-3">{priorityLabel}</h3>
@@ -1028,7 +1033,7 @@ export default function DashboardClient() {
                               item.purchased ? "bg-green-500 border-green-500 text-white" : "border-gray-300 hover:border-primary"
                             }`}
                           >
-                            {item.purchased && <span className="text-xs">✓</span>}
+                            {item.purchased && <CheckCircle className="w-3 h-3" />}
                           </button>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -1052,7 +1057,7 @@ export default function DashboardClient() {
                                     item.tested ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray hover:bg-primary/10 hover:text-primary"
                                   }`}
                                 >
-                                  {item.tested ? "✓ Tested" : "Mark Tested"}
+                                  {item.tested ? "Tested" : "Mark Tested"}
                                 </button>
                                 {item.breakInTarget > 0 && (
                                   <span className="text-xs text-gray">
@@ -1071,7 +1076,7 @@ export default function DashboardClient() {
                             {/* Testing notes */}
                             {item.testingNotes && editGearId !== item.id && (
                               <p className="text-xs text-gray mt-1 bg-light rounded-lg px-3 py-2">
-                                {item.rating > 0 && <span>{"⭐".repeat(item.rating)} </span>}
+                                {item.rating > 0 && <span>{"★".repeat(item.rating)} </span>}
                                 {item.testingNotes}
                               </p>
                             )}
@@ -1084,9 +1089,9 @@ export default function DashboardClient() {
                                     <button
                                       key={r}
                                       onClick={() => setGearRating(r)}
-                                      className={`text-lg ${r <= gearRating ? "opacity-100" : "opacity-30"}`}
+                                      className={`${r <= gearRating ? "opacity-100" : "opacity-30"}`}
                                     >
-                                      ⭐
+                                      <Star className="w-5 h-5 text-yellow-400" />
                                     </button>
                                   ))}
                                 </div>
@@ -1263,7 +1268,7 @@ export default function DashboardClient() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {fuelingStrategy.dropBags.map((bag, i) => (
                             <div key={i} className="bg-light rounded-xl p-4 border border-gray-100">
-                              <h5 className="font-headline font-bold text-dark text-sm mb-2">📦 {bag.location}</h5>
+                              <h5 className="font-headline font-bold text-dark text-sm mb-2 flex items-center gap-1.5"><Package className="w-4 h-4 text-primary" /> {bag.location}</h5>
                               <ul className="space-y-1">
                                 {bag.items.map((item, j) => (
                                   <li key={j} className="text-xs text-gray flex items-start gap-1.5">
@@ -1292,7 +1297,7 @@ export default function DashboardClient() {
                         product.purchased ? "bg-green-500 border-green-500 text-white" : "border-gray-300 hover:border-primary"
                       }`}
                     >
-                      {product.purchased && <span className="text-xs">✓</span>}
+                      {product.purchased && <CheckCircle className="w-3 h-3" />}
                     </button>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -1309,7 +1314,7 @@ export default function DashboardClient() {
                         <div className="flex items-center gap-3 mt-2">
                           {product.tested ? (
                             <span className="text-xs font-medium bg-green-100 text-green-700 px-2.5 py-1 rounded-full">
-                              ✓ Tested · {"⭐".repeat(product.stomachRating || 0)}
+                              Tested · {"★".repeat(product.stomachRating || 0)}
                               {product.wouldUseInRace === "yes" && " · Race approved"}
                             </span>
                           ) : (
@@ -1343,9 +1348,9 @@ export default function DashboardClient() {
                                 <button
                                   key={r}
                                   onClick={() => setNutritionRating(r)}
-                                  className={`text-lg ${r <= nutritionRating ? "opacity-100" : "opacity-30"}`}
+                                  className={`${r <= nutritionRating ? "opacity-100" : "opacity-30"}`}
                                 >
-                                  ⭐
+                                  <Star className="w-5 h-5 text-yellow-400" />
                                 </button>
                               ))}
                               <span className="text-xs text-gray ml-2 self-center">
@@ -1400,9 +1405,9 @@ export default function DashboardClient() {
                 <div className="space-y-2">
                   {plan.nutritionProducts.filter((n) => n.wouldUseInRace === "yes").map((n) => (
                     <div key={n.id} className="flex items-center gap-2 text-sm text-green-700">
-                      <span>✅</span>
+                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
                       <span className="font-medium">{n.brand} {n.productName}</span>
-                      <span className="text-xs text-green-600 ml-auto">{"⭐".repeat(n.stomachRating)}</span>
+                      <span className="text-xs text-green-600 ml-auto">{"★".repeat(n.stomachRating)}</span>
                     </div>
                   ))}
                 </div>
@@ -1425,7 +1430,7 @@ export default function DashboardClient() {
                   /* Show saved report */
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
                     <div className="flex items-center gap-3">
-                      <span className="text-3xl">🏅</span>
+                      <Medal className="w-8 h-8 text-accent flex-shrink-0" />
                       <div>
                         <h3 className="font-headline text-xl font-bold text-dark">
                           {plan.postRaceReport.dnf ? "DNF" : `Finished: ${plan.postRaceReport.finishTime || "N/A"}`}
@@ -1610,30 +1615,30 @@ export default function DashboardClient() {
                 {/* Race Day (0-1 days) - combined Night Before + Race Morning + Start Line */}
                 {daysUntilRace <= 1 && plan.raceCountdown && (
                   <div className="space-y-6">
-                    {renderCountdownChecklist("Night Before", "🌙", plan.raceCountdown.nightBefore, "nightBefore")}
-                    {renderCountdownChecklist("Race Morning", "🌅", plan.raceCountdown.raceMorning, "raceMorning")}
-                    {renderCountdownChecklist("Start Line", "🏁", plan.raceCountdown.startLine, "startLine")}
+                    {renderCountdownChecklist("Night Before", <Moon className="w-4 h-4" />, plan.raceCountdown.nightBefore, "nightBefore")}
+                    {renderCountdownChecklist("Race Morning", <Sunrise className="w-4 h-4" />, plan.raceCountdown.raceMorning, "raceMorning")}
+                    {renderCountdownChecklist("Start Line", <Flag className="w-4 h-4" />, plan.raceCountdown.startLine, "startLine")}
                   </div>
                 )}
 
                 {/* Race Week (1-7 days) */}
                 {daysUntilRace > 1 && daysUntilRace <= 7 && plan.raceCountdown && (
                   <div className="space-y-6">
-                    {renderCountdownChecklist("Race Week", "📅", plan.raceCountdown.raceWeek, "raceWeek")}
+                    {renderCountdownChecklist("Race Week", <Calendar className="w-4 h-4" />, plan.raceCountdown.raceWeek, "raceWeek")}
                   </div>
                 )}
 
                 {/* 2 Weeks Out (7-14 days) */}
                 {daysUntilRace > 7 && daysUntilRace <= 14 && plan.raceCountdown && (
                   <div className="space-y-6">
-                    {renderCountdownChecklist("2 Weeks Out", "📋", plan.raceCountdown.twoWeeksOut, "twoWeeksOut")}
+                    {renderCountdownChecklist("2 Weeks Out", <ClipboardList className="w-4 h-4" />, plan.raceCountdown.twoWeeksOut, "twoWeeksOut")}
                   </div>
                 )}
 
                 {/* 4 Weeks Out (14-28 days) */}
                 {daysUntilRace > 14 && daysUntilRace <= 28 && plan.raceCountdown && (
                   <div className="space-y-6">
-                    {renderCountdownChecklist("4 Weeks Out", "📦", plan.raceCountdown.fourWeeksOut, "fourWeeksOut")}
+                    {renderCountdownChecklist("4 Weeks Out", <Package className="w-4 h-4" />, plan.raceCountdown.fourWeeksOut, "fourWeeksOut")}
                   </div>
                 )}
 
@@ -1648,7 +1653,7 @@ export default function DashboardClient() {
                       return (
                         <div key={category}>
                           <h3 className="font-headline font-bold text-dark text-sm uppercase tracking-wider mb-3">
-                            {category === "Night Before" ? "🌙" : category === "Race Morning" ? "🌅" : "🏁"} {category}
+                            {category === "Night Before" ? <Moon className="w-4 h-4" /> : category === "Race Morning" ? <Sunrise className="w-4 h-4" /> : <Flag className="w-4 h-4" />} {category}
                           </h3>
                           <div className="space-y-2">
                             {items.map((item) => (
@@ -1662,7 +1667,7 @@ export default function DashboardClient() {
                                 <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                                   item.checked ? "bg-green-500 border-green-500 text-white" : "border-gray-300"
                                 }`}>
-                                  {item.checked && <span className="text-xs">✓</span>}
+                                  {item.checked && <CheckCircle className="w-3 h-3" />}
                                 </div>
                                 <span className={`text-sm ${item.checked ? "text-green-700 line-through" : "text-dark"}`}>
                                   {item.label}
@@ -1679,7 +1684,7 @@ export default function DashboardClient() {
                 {/* Race day motivation */}
                 {daysUntilRace <= 7 && (
                   <div className="bg-accent/10 border border-accent/20 rounded-2xl p-6 text-center">
-                    <div className="text-4xl mb-3">🏁</div>
+                    <div className="flex justify-center mb-3"><Flag className="w-10 h-10 text-accent" /></div>
                     <h3 className="font-headline text-xl font-bold text-dark mb-2">
                       {daysUntilRace === 0 ? "RACE DAY!" : `${daysUntilRace} Day${daysUntilRace !== 1 ? "s" : ""} to Race Day!`}
                     </h3>
