@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Home, Calendar, BarChart2, Package, Zap, Flag, Flame, Dumbbell,
   Minus, Wind, AlertCircle, ClipboardList, CheckCircle, BedDouble,
-  Droplets, AlertTriangle, Circle, Moon, Sunrise, Medal, Star,
+  Droplets, AlertTriangle, Circle, Moon, Sunrise, Medal, Star, PersonStanding,
 } from "lucide-react";
 import Link from "next/link";
 import {

@@ -780,10 +780,10 @@ export default function ShoesPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
               {[
-                { icon: <Dumbbell className="w-5 h-5 text-primary" />, role: "Easy / Long Runs", rec: "Max cushion shoe", why: "Protect your legs on high-mileage days. Comfort over speed.", example: "Hoka Speedgoat 6", icon: "" },
-                { icon: <Zap className="w-5 h-5 text-accent" />, role: "Workouts / Tempos", rec: "Lightweight racer", why: "Responsive feel encourages proper form at faster paces.", example: "Salomon S/Lab Ultra 3", icon: "" },
-                { icon: <Mountain className="w-5 h-5 text-primary" />, role: "Technical Trail", rec: "Technical specialist", why: "Match grip to the terrain. Don't fight the trail.", example: "La Sportiva Bushido III", icon: "" },
-                { icon: <BedDouble className="w-5 h-5 text-blue-500" />, role: "Recovery Runs", rec: "Plush trainer", why: "Fresh midsole = fresh legs. Let yesterday's shoe recover too.", example: "Altra Olympus 5", icon: "" },
+                { icon: <Dumbbell className="w-5 h-5 text-primary" />, role: "Easy / Long Runs", rec: "Max cushion shoe", why: "Protect your legs on high-mileage days. Comfort over speed.", example: "Hoka Speedgoat 6" },
+                { icon: <Zap className="w-5 h-5 text-accent" />, role: "Workouts / Tempos", rec: "Lightweight racer", why: "Responsive feel encourages proper form at faster paces.", example: "Salomon S/Lab Ultra 3" },
+                { icon: <Mountain className="w-5 h-5 text-primary" />, role: "Technical Trail", rec: "Technical specialist", why: "Match grip to the terrain. Don't fight the trail.", example: "La Sportiva Bushido III" },
+                { icon: <BedDouble className="w-5 h-5 text-blue-500" />, role: "Recovery Runs", rec: "Plush trainer", why: "Fresh midsole = fresh legs. Let yesterday's shoe recover too.", example: "Altra Olympus 5" },
               ].map((slot) => (
                 <div key={slot.role} className="bg-gray-50 rounded-xl p-5 border border-gray-100">
                   <div className="text-2xl mb-2">{slot.icon}</div>
