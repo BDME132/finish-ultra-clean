@@ -8,6 +8,7 @@ import { getMyKit } from "@/lib/supabase/kits";
 import { hasSupabaseBrowserEnv } from "@/lib/supabase/client";
 import type { SavedPlan } from "@/lib/training-types";
 import type { KitSummary } from "@/types/gear";
+import { Flag, ClipboardList, Package } from "lucide-react";
 
 function weeksUntil(dateStr: string): number {
   return Math.ceil(
@@ -61,7 +62,7 @@ function PlanCard({ plan }: { plan: SavedPlan }) {
 
       {/* Race date */}
       <div className="flex items-center gap-2">
-        <span className="text-lg">🏁</span>
+        <Flag className="w-5 h-5 text-primary flex-shrink-0" />
         <div>
           <p className="text-xs text-gray">Race day</p>
           <p className="text-sm font-semibold text-dark">
@@ -105,8 +106,8 @@ function PlanCard({ plan }: { plan: SavedPlan }) {
 function EmptyPlanCard() {
   return (
     <div className="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-6 flex flex-col items-center justify-center text-center gap-4 min-h-[260px]">
-      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl">
-        📋
+      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+        <ClipboardList className="w-6 h-6 text-primary" />
       </div>
       <div>
         <h3 className="font-headline text-lg font-bold text-dark">No training plan yet</h3>
@@ -179,8 +180,8 @@ function KitCard({ kitSummary }: { kitSummary: KitSummary }) {
 function EmptyKitCard() {
   return (
     <div className="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-6 flex flex-col items-center justify-center text-center gap-4 min-h-[260px]">
-      <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-2xl">
-        🎒
+      <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+        <Package className="w-6 h-6 text-accent" />
       </div>
       <div>
         <h3 className="font-headline text-lg font-bold text-dark">No gear kit yet</h3>
