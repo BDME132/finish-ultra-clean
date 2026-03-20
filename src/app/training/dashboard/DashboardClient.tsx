@@ -18,6 +18,8 @@ import {
 } from "@/lib/training-types";
 import { useAuth } from "@/components/AuthProvider";
 import { loadPlan, persistPlan, deletePlanData } from "@/lib/training-sync";
+import { loadKits, deleteKit as deleteKitSync, updateKit as updateKitSync } from "@/lib/kit-sync";
+import type { SavedKit } from "@/lib/kit-types";
 import { calculateFuelingStrategy, FuelingStrategy } from "@/lib/plan-generator";
 
 type Tab = "today" | "week" | "progress" | "gear" | "nutrition" | "raceday";
@@ -80,6 +82,14 @@ export default function DashboardClient() {
   const [fuelingSweatRate, setFuelingSweatRate] = useState<"light" | "moderate" | "heavy">("moderate");
   const [fuelingSensitivity, setFuelingSensitivity] = useState<"iron" | "average" | "sensitive">("average");
 
+  // Saved kits
+  const [savedKits, setSavedKits] = useState<SavedKit[]>([]);
+  const [expandedKitId, setExpandedKitId] = useState<string | null>(null);
+  const [kitPurchaseModal, setKitPurchaseModal] = useState<{ kitId: string; itemIndex: number } | null>(null);
+  const [kitPurchaseRetailer, setKitPurchaseRetailer] = useState("");
+  const [kitPurchasePrice, setKitPurchasePrice] = useState("");
+  const [kitPurchaseDate, setKitPurchaseDate] = useState(() => new Date().toISOString().split("T")[0]);
+
   const isFirstRender = useRef(true);
   const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -133,6 +143,15 @@ export default function DashboardClient() {
       if (persistTimerRef.current) clearTimeout(persistTimerRef.current);
     };
   }, []);
+
+  // Load saved kits
+  useEffect(() => {
+    async function loadUserKits() {
+      const kits = await loadKits(user);
+      setSavedKits(kits);
+    }
+    loadUserKits();
+  }, [user]);
 
   if (!loaded) return null;
 
@@ -1005,6 +1024,211 @@ export default function DashboardClient() {
         {/* ─── GEAR TAB ──────────────────────────────────────────────── */}
         {tab === "gear" && (
           <div className="space-y-6">
+            {/* ─── SAVED CUSTOM KITS ─────────────────────────────────── */}
+            {savedKits.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-headline text-2xl font-bold text-dark">Your Saved Kits</h2>
+                  <Link href="/gear/kits" className="text-sm text-primary hover:underline font-medium">+ Build New Kit</Link>
+                </div>
+
+                {savedKits.map((savedKit) => {
+                  const isExpanded = expandedKitId === savedKit.kitId;
+                  const purchasedItems = savedKit.items.filter((i) => i.purchased);
+                  const kitProgressPct = savedKit.items.length > 0
+                    ? Math.round((purchasedItems.length / savedKit.items.length) * 100)
+                    : 0;
+                  const totalSpent = purchasedItems.reduce((s, i) => s + (i.actualPricePaid ?? i.price), 0);
+
+                  return (
+                    <div key={savedKit.kitId} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                      {/* Kit card header */}
+                      <button
+                        onClick={() => setExpandedKitId(isExpanded ? null : savedKit.kitId)}
+                        className="w-full p-5 text-left hover:bg-gray-50/50 transition-colors"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-lg">🎒</span>
+                              <h3 className="font-headline font-bold text-dark text-base truncate">{savedKit.kitTitle}</h3>
+                            </div>
+                            <p className="text-xs text-gray">{savedKit.items.length} items · ${savedKit.totalCost.toLocaleString()} total</p>
+                          </div>
+                          <div className="flex flex-col items-end gap-1 shrink-0">
+                            <span className="text-xs font-semibold text-dark">{purchasedItems.length}/{savedKit.items.length} purchased</span>
+                            <div className="w-24 bg-gray-200 rounded-full h-1.5">
+                              <div className="bg-green-500 h-1.5 rounded-full transition-all" style={{ width: `${kitProgressPct}%` }} />
+                            </div>
+                          </div>
+                        </div>
+                        {purchasedItems.length > 0 && (
+                          <div className="flex justify-between text-xs text-gray mt-2">
+                            <span className="text-green-700 font-medium">${totalSpent.toLocaleString()} spent</span>
+                            <span>${(savedKit.totalCost - totalSpent).toLocaleString()} remaining</span>
+                          </div>
+                        )}
+                      </button>
+
+                      {/* Expanded kit details */}
+                      {isExpanded && (
+                        <div className="border-t border-gray-100 p-5 space-y-4">
+                          {/* Kit items */}
+                          {savedKit.items.map((item, itemIndex) => (
+                            <div
+                              key={`${item.category}-${item.product}`}
+                              className={`rounded-xl border p-4 ${item.purchased ? "border-green-200 bg-green-50/50" : "border-gray-200"}`}
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <p className={`font-headline font-bold text-sm ${item.purchased ? "text-green-700" : "text-dark"}`}>
+                                    {item.brand} {item.product}
+                                  </p>
+                                  <p className="text-xs text-gray">{item.category} · ${item.price}</p>
+                                  {item.purchased && item.purchaseDate && (
+                                    <p className="text-xs text-green-600 mt-0.5">
+                                      Purchased {item.purchaseDate}{item.retailerPurchasedFrom ? ` at ${item.retailerPurchasedFrom}` : ""}
+                                    </p>
+                                  )}
+                                </div>
+                                {!item.purchased ? (
+                                  <button
+                                    onClick={() => {
+                                      setKitPurchaseModal({ kitId: savedKit.kitId, itemIndex });
+                                      setKitPurchasePrice(String(item.price));
+                                      setKitPurchaseRetailer("");
+                                      setKitPurchaseDate(new Date().toISOString().split("T")[0]);
+                                    }}
+                                    className="text-xs font-medium text-primary hover:underline shrink-0"
+                                  >
+                                    Mark Purchased
+                                  </button>
+                                ) : (
+                                  <span className="text-green-600 text-sm shrink-0">&#10003;</span>
+                                )}
+                              </div>
+
+                              {/* Purchase modal */}
+                              {kitPurchaseModal?.kitId === savedKit.kitId && kitPurchaseModal?.itemIndex === itemIndex && (
+                                <div className="mt-3 border-t border-gray-200 pt-3 space-y-3">
+                                  <p className="text-xs font-semibold text-dark">Log Purchase</p>
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                      <label className="block text-xs text-gray mb-1">Retailer</label>
+                                      <select
+                                        value={kitPurchaseRetailer}
+                                        onChange={(e) => setKitPurchaseRetailer(e.target.value)}
+                                        className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-dark focus:outline-none focus:border-primary"
+                                      >
+                                        <option value="">Select...</option>
+                                        <option value="REI">REI</option>
+                                        <option value="Amazon">Amazon</option>
+                                        <option value="Backcountry">Backcountry</option>
+                                        <option value="Running Warehouse">Running Warehouse</option>
+                                        <option value="Other">Other</option>
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs text-gray mb-1">Price Paid</label>
+                                      <input
+                                        type="number"
+                                        value={kitPurchasePrice}
+                                        onChange={(e) => setKitPurchasePrice(e.target.value)}
+                                        className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-dark focus:outline-none focus:border-primary"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-gray mb-1">Purchase Date</label>
+                                    <input
+                                      type="date"
+                                      value={kitPurchaseDate}
+                                      onChange={(e) => setKitPurchaseDate(e.target.value)}
+                                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-dark focus:outline-none focus:border-primary"
+                                    />
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={async () => {
+                                        const updatedKits = savedKits.map((k) => {
+                                          if (k.kitId !== savedKit.kitId) return k;
+                                          const updatedItems = [...k.items];
+                                          updatedItems[itemIndex] = {
+                                            ...updatedItems[itemIndex],
+                                            purchased: true,
+                                            purchaseDate: kitPurchaseDate,
+                                            retailerPurchasedFrom: kitPurchaseRetailer,
+                                            actualPricePaid: parseFloat(kitPurchasePrice) || updatedItems[itemIndex].price,
+                                          };
+                                          const purchasedItems = updatedItems.filter((i) => i.purchased);
+                                          return {
+                                            ...k,
+                                            items: updatedItems,
+                                            lastModified: new Date().toISOString(),
+                                            purchaseProgress: {
+                                              totalItems: updatedItems.length,
+                                              purchased: purchasedItems.length,
+                                              tested: updatedItems.filter((i) => i.tested).length,
+                                              totalSpent: purchasedItems.reduce((s, i) => s + (i.actualPricePaid ?? i.price), 0),
+                                            },
+                                          };
+                                        });
+                                        setSavedKits(updatedKits);
+                                        const updatedKit = updatedKits.find((k) => k.kitId === savedKit.kitId);
+                                        if (updatedKit) await updateKitSync(updatedKit, user);
+                                        setKitPurchaseModal(null);
+                                      }}
+                                      className="text-xs font-medium px-3 py-1.5 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                      Save Purchase
+                                    </button>
+                                    <button
+                                      onClick={() => setKitPurchaseModal(null)}
+                                      className="text-xs text-gray hover:text-dark"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+
+                          {/* Kit actions */}
+                          <div className="flex gap-3 pt-2">
+                            <Link href="/gear/kits" className="text-xs text-primary hover:underline font-medium">Edit Kit</Link>
+                            <button
+                              onClick={async () => {
+                                if (confirm("Delete this kit? This cannot be undone.")) {
+                                  await deleteKitSync(savedKit.kitId, user);
+                                  setSavedKits((prev) => prev.filter((k) => k.kitId !== savedKit.kitId));
+                                }
+                              }}
+                              className="text-xs text-red-500 hover:underline font-medium"
+                            >
+                              Delete Kit
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Build kit CTA if no saved kits */}
+            {savedKits.length === 0 && (
+              <div className="bg-accent/5 border border-accent/20 rounded-xl p-5 text-center">
+                <p className="text-lg mb-2">🎒</p>
+                <p className="font-headline font-bold text-dark text-sm mb-1">Build a Custom Gear Kit</p>
+                <p className="text-xs text-gray mb-3">Answer 10 questions and get a personalized gear list with purchase links and tracking.</p>
+                <Link href="/gear/kits" className="inline-flex items-center gap-1 px-4 py-2 bg-accent hover:bg-orange-600 text-white text-xs font-semibold rounded-lg transition-colors">
+                  Build Your Kit
+                </Link>
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <h2 className="font-headline text-2xl font-bold text-dark">Gear Checklist</h2>
               <span className="text-sm text-gray">{gearPurchased}/{plan.gearItems.length} purchased · {gearTested} tested</span>

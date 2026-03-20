@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import { saveNewKit, updateKit } from "@/lib/kit-sync";
+import { generateKitId } from "@/lib/kit-types";
+import type { SavedKit, SavedKitItem } from "@/lib/kit-types";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -778,10 +782,13 @@ function ProductCard({
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function KitBuilder() {
+  const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<Answers>>({});
   const [kit, setKit] = useState<Kit | null>(null);
   const [activeTab, setActiveTab] = useState<"gear" | "packing" | "dropbag" | "timeline">("gear");
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error" | "login-prompt">("idle");
+  const [savedKitId, setSavedKitId] = useState<string | null>(null);
   const [purchased, setPurchasedRaw] = useState<Set<string>>(() => {
     if (typeof window === "undefined") return new Set<string>();
     try {
@@ -833,6 +840,69 @@ export default function KitBuilder() {
       next.has(key) ? next.delete(key) : next.add(key);
       return next;
     });
+  }
+
+  async function handleSaveKit() {
+    if (!kit) return;
+
+    if (!user) {
+      setSaveState("login-prompt");
+      return;
+    }
+
+    setSaveState("saving");
+
+    try {
+      const kitId = savedKitId || generateKitId();
+      const kitItems: SavedKitItem[] = kit.items.map((item) => ({
+        ...item,
+        purchased: purchased.has(`${item.category}::${item.product}`),
+        tested: false,
+        testingNotes: [],
+        rating: 0,
+      }));
+
+      const purchasedItems = kitItems.filter((i) => i.purchased);
+      const totalCostVal = kit.items.reduce((sum, i) => sum + i.price, 0);
+
+      const savedKit: SavedKit = {
+        kitId,
+        createdAt: savedKitId ? new Date().toISOString() : new Date().toISOString(),
+        lastModified: new Date().toISOString(),
+        raceDetails: answers as SavedKit["raceDetails"],
+        kitTitle: kit.title,
+        kitSubtitle: kit.subtitle,
+        totalCost: totalCostVal,
+        budgetCost: Math.round(totalCostVal * 0.75),
+        premiumCost: Math.round(totalCostVal * 1.35),
+        items: kitItems,
+        packingChecklist: kit.packingChecklist,
+        dropBagEssentials: kit.dropBagEssentials,
+        testingTimeline: kit.testingTimeline,
+        purchaseProgress: {
+          totalItems: kitItems.length,
+          purchased: purchasedItems.length,
+          tested: 0,
+          totalSpent: purchasedItems.reduce((s, i) => s + i.price, 0),
+        },
+        status: "active",
+        notes: "",
+      };
+
+      if (savedKitId) {
+        await updateKit(savedKit, user);
+      } else {
+        await saveNewKit(savedKit, user);
+        setSavedKitId(kitId);
+      }
+
+      setSaveState("saved");
+      setTimeout(() => setSaveState("idle"), 4000);
+    } catch (error) {
+      console.error("Failed to save kit:", error);
+      setSaveState("error");
+      setTimeout(() => setSaveState("idle"), 3000);
+    }
   }
 
   const totalCost = kit ? kit.items.reduce((sum, i) => sum + i.price, 0) : 0;
@@ -923,6 +993,82 @@ export default function KitBuilder() {
             <button onClick={restart} className="text-sm text-primary hover:underline font-medium shrink-0">
               Rebuild →
             </button>
+          </div>
+
+          {/* Save Kit Button */}
+          <div className="mb-5">
+            {saveState === "login-prompt" ? (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                <p className="font-headline font-bold text-dark text-base mb-2">Create Account to Save Your Kit</p>
+                <div className="text-sm text-gray mb-3">
+                  <p className="mb-2">Your custom kit includes:</p>
+                  <ul className="space-y-1">
+                    <li>- {kit.items.length} personalized items</li>
+                    <li>- Total value: ${totalCost.toLocaleString()}</li>
+                    <li>- Purchase links and recommendations</li>
+                  </ul>
+                </div>
+                <p className="text-sm text-gray mb-4">Create a free account to save this kit permanently, track purchases, and access it from Race HQ.</p>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href="/auth/callback?next=/gear/kits"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-blue-700 text-white font-semibold text-sm rounded-lg transition-colors"
+                  >
+                    Create Free Account
+                  </a>
+                  <button
+                    onClick={() => setSaveState("idle")}
+                    className="px-5 py-2.5 border border-gray-300 text-dark text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Continue as Guest
+                  </button>
+                </div>
+              </div>
+            ) : saveState === "saved" ? (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">&#10003;</span>
+                  <div>
+                    <p className="font-semibold text-green-800 text-sm">Kit Saved Successfully!</p>
+                    <p className="text-xs text-green-700 mt-0.5">Your kit has been saved to Race HQ.</p>
+                  </div>
+                </div>
+                <a
+                  href="/training/dashboard"
+                  className="text-sm font-medium text-primary hover:underline shrink-0"
+                >
+                  View in Race HQ
+                </a>
+              </div>
+            ) : (
+              <button
+                onClick={handleSaveKit}
+                disabled={saveState === "saving"}
+                className={`w-full px-5 py-3.5 font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-2 ${
+                  saveState === "saving"
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : saveState === "error"
+                    ? "bg-red-100 text-red-700 border border-red-200"
+                    : "bg-accent hover:bg-orange-600 text-white hover:shadow-md"
+                }`}
+              >
+                {saveState === "saving" ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Saving Kit...
+                  </>
+                ) : saveState === "error" ? (
+                  "Failed to save — try again"
+                ) : savedKitId ? (
+                  <>Update Saved Kit</>
+                ) : (
+                  <>Save This Kit to Race HQ</>
+                )}
+              </button>
+            )}
           </div>
 
           {/* Budget tiers */}
