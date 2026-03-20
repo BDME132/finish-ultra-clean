@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { BlogPost } from "@/types/content";
+import { PersonStanding, Dumbbell, Package, Zap, Flag, FileText } from "lucide-react";
 
-const categoryIcons: Record<string, string> = {
-  "Getting Started": "🏃",
-  Training: "💪",
-  Gear: "🎒",
-  Nutrition: "⚡",
-  "Race Day": "🏁",
+const categoryIcons: Record<string, React.ReactNode> = {
+  "Getting Started": <PersonStanding className="w-8 h-8 text-primary" />,
+  Training: <Dumbbell className="w-8 h-8 text-primary" />,
+  Gear: <Package className="w-8 h-8 text-primary" />,
+  Nutrition: <Zap className="w-8 h-8 text-primary" />,
+  "Race Day": <Flag className="w-8 h-8 text-primary" />,
 };
 
 interface BlogPostCardProps {
@@ -21,7 +22,7 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
     >
       {/* Image placeholder */}
       <div className="aspect-[16/9] bg-gradient-to-br from-light to-gray-100 flex flex-col items-center justify-center relative overflow-hidden">
-        <span className="text-3xl mb-1">{categoryIcons[post.category] ?? "📝"}</span>
+        <span className="mb-1">{categoryIcons[post.category] ?? <FileText className="w-8 h-8 text-primary" />}</span>
         <span className="text-xs font-medium text-gray">{post.category}</span>
         {post.featured && (
           <span className="absolute top-3 right-3 text-[10px] font-bold text-white bg-accent px-2 py-0.5 rounded-full uppercase tracking-wider">

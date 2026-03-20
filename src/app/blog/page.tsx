@@ -5,6 +5,7 @@ import Link from "next/link";
 import BlogPostCard from "@/components/BlogPostCard";
 import BlogCategoryFilter from "@/components/BlogCategoryFilter";
 import { blogPosts, getFeaturedPosts } from "@/lib/content/blog-posts";
+import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ultra Marathon Blog — Guides, Gear Reviews & Race Reports | FinishUltra",
@@ -113,7 +114,7 @@ export default function BlogPage() {
         {/* Newsletter CTA */}
         <section className="bg-light py-12 sm:py-16 border-t border-gray-100">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="text-3xl mb-3">📬</div>
+            <div className="flex justify-center mb-3"><Mail className="w-8 h-8 text-primary" /></div>
             <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark mb-3">
               Get New Articles in Your Inbox
             </h2>

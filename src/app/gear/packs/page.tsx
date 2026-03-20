@@ -1,7 +1,13 @@
+import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VestFinder from "./VestFinder";
+import {
+  Package, Cloud, Moon, Sun, Snowflake, CloudRain, AlertTriangle,
+  Ruler, Tag, PersonStanding, Wrench, Shirt, RefreshCcw, MapPin, Scale,
+  CheckCircle,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ultra Marathon Hydration Packs & Running Vests Guide | FinishUltra",
@@ -606,7 +612,7 @@ function VestCard({ vest, categoryColor }: { vest: Vest; categoryColor: string }
       {/* Image placeholder */}
       <div className="bg-gray-50 aspect-[4/3] flex items-center justify-center border-b border-gray-100">
         <div className="text-center">
-          <div className="text-4xl mb-1">🎒</div>
+          <div className="mb-1"><Package className="w-10 h-10 text-gray" /></div>
           <p className="text-xs text-gray">
             {vest.brand} {vest.name}
           </p>
@@ -886,7 +892,7 @@ export default function PacksPage() {
                 {
                   distance: "50K",
                   capacity: "1–1.5L total",
-                  icon: "🌤️",
+                  icon: <Cloud className="w-6 h-6 text-blue-400" />,
                   setup: "2× 500ml front flasks",
                   aidStations: "Every 5–10 miles",
                   tips: [
@@ -899,7 +905,7 @@ export default function PacksPage() {
                 {
                   distance: "50 Miles",
                   capacity: "1.5–2L",
-                  icon: "⛅",
+                  icon: <Cloud className="w-6 h-6 text-blue-300" />,
                   setup: "2× 500ml flasks + optional 1L bladder",
                   aidStations: "Every 8–15 miles",
                   tips: [
@@ -912,7 +918,7 @@ export default function PacksPage() {
                 {
                   distance: "100K",
                   capacity: "2–2.5L",
-                  icon: "🌥️",
+                  icon: <Cloud className="w-6 h-6 text-cyan-400" />,
                   setup: "2× 500ml flasks + 1.5L bladder",
                   aidStations: "Every 10–20 miles",
                   tips: [
@@ -925,7 +931,7 @@ export default function PacksPage() {
                 {
                   distance: "100 Miles",
                   capacity: "2–3L",
-                  icon: "🌑",
+                  icon: <Moon className="w-6 h-6 text-gray-600" />,
                   setup: "2× 500ml flasks + 2L bladder or crew support",
                   aidStations: "Every 5–20 miles (varies)",
                   tips: [
@@ -940,7 +946,7 @@ export default function PacksPage() {
                   key={d.distance}
                   className="bg-white/5 rounded-xl p-5 border border-white/10"
                 >
-                  <div className="text-2xl mb-2">{d.icon}</div>
+                  <div className="mb-2">{d.icon}</div>
                   <p className="text-primary font-bold text-sm uppercase tracking-wide mb-1">
                     {d.distance}
                   </p>
@@ -977,7 +983,7 @@ export default function PacksPage() {
                       "Industry trend — most elites use flasks only",
                     ].map((item) => (
                       <li key={item} className="text-sm text-gray-300 flex gap-2">
-                        <span className="text-green-400 shrink-0">✓</span>
+                        <span className="text-green-400 shrink-0">+</span>
                         {item}
                       </li>
                     ))}
@@ -1021,7 +1027,7 @@ export default function PacksPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
                 {
-                  icon: "📦",
+                  icon: <Package className="w-6 h-6 text-primary" />,
                   title: "Pocket Systems",
                   items: [
                     {
@@ -1043,7 +1049,7 @@ export default function PacksPage() {
                   ],
                 },
                 {
-                  icon: "🔧",
+                  icon: <Wrench className="w-6 h-6 text-primary" />,
                   title: "Adjustment Systems",
                   items: [
                     {
@@ -1065,7 +1071,7 @@ export default function PacksPage() {
                   ],
                 },
                 {
-                  icon: "🥾",
+                  icon: <PersonStanding className="w-6 h-6 text-primary" />,
                   title: "Pole Carry Systems",
                   items: [
                     {
@@ -1087,7 +1093,7 @@ export default function PacksPage() {
                   ],
                 },
                 {
-                  icon: "🌬️",
+                  icon: <Cloud className="w-6 h-6 text-primary" />,
                   title: "Breathability",
                   items: [
                     {
@@ -1109,7 +1115,7 @@ export default function PacksPage() {
                   ],
                 },
                 {
-                  icon: "🌧️",
+                  icon: <CloudRain className="w-6 h-6 text-primary" />,
                   title: "Weather Protection",
                   items: [
                     {
@@ -1131,7 +1137,7 @@ export default function PacksPage() {
                   ],
                 },
                 {
-                  icon: "⚠️",
+                  icon: <AlertTriangle className="w-6 h-6 text-orange-500" />,
                   title: "Safety Features",
                   items: [
                     {
@@ -1157,7 +1163,7 @@ export default function PacksPage() {
                   key={block.title}
                   className="bg-gray-50 rounded-xl p-5 border border-gray-100"
                 >
-                  <div className="text-2xl mb-3">{block.icon}</div>
+                  <div className="mb-3">{block.icon}</div>
                   <h3 className="font-headline font-bold text-dark text-lg mb-4">{block.title}</h3>
                   <div className="space-y-3">
                     {block.items.map((item) => (
@@ -1189,7 +1195,7 @@ export default function PacksPage() {
               {[
                 {
                   title: "How to Measure",
-                  icon: "📏",
+                  icon: <Ruler className="w-6 h-6 text-primary" />,
                   tips: [
                     "Chest circumference: measure around the fullest part of your chest",
                     "Torso length: C7 vertebra (base of neck) to iliac crest (top of hip)",
@@ -1200,7 +1206,7 @@ export default function PacksPage() {
                 },
                 {
                   title: "Brand Sizing Notes",
-                  icon: "🏷️",
+                  icon: <Tag className="w-6 h-6 text-primary" />,
                   tips: [
                     "Salomon: runs very snug — size up if between sizes",
                     "Ultimate Direction: true to size, good range for broad builds",
@@ -1211,7 +1217,7 @@ export default function PacksPage() {
                 },
                 {
                   title: "Fit Testing",
-                  icon: "🏃",
+                  icon: <PersonStanding className="w-6 h-6 text-primary" />,
                   tips: [
                     "Always test with water in flasks — weight changes fit significantly",
                     "Fill to your expected race load and run 20+ minutes",
@@ -1222,7 +1228,7 @@ export default function PacksPage() {
                 },
                 {
                   title: "Common Fit Issues",
-                  icon: "🔧",
+                  icon: <Wrench className="w-6 h-6 text-primary" />,
                   tips: [
                     "Bouncing: tighten sternum straps + side compression + reduce weight",
                     "Chafing under arms: wrong size or wrong vest design for your build",
@@ -1233,7 +1239,7 @@ export default function PacksPage() {
                 },
                 {
                   title: "Layering Considerations",
-                  icon: "🧥",
+                  icon: <Shirt className="w-6 h-6 text-primary" />,
                   tips: [
                     "Winter races: order your vest with your thickest base layer in mind",
                     "Most runners order 1 size up for cold weather use with layers",
@@ -1244,7 +1250,7 @@ export default function PacksPage() {
                 },
                 {
                   title: "Break-In & Maintenance",
-                  icon: "🔄",
+                  icon: <RefreshCcw className="w-6 h-6 text-primary" />,
                   tips: [
                     "Run at least 3–5 training runs in your vest before race day",
                     "Mark optimal strap positions with a marker after dialing in",
@@ -1258,12 +1264,12 @@ export default function PacksPage() {
                   key={section.title}
                   className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
                 >
-                  <div className="text-2xl mb-3">{section.icon}</div>
+                  <div className="mb-3">{section.icon}</div>
                   <h3 className="font-headline font-bold text-dark text-lg mb-4">{section.title}</h3>
                   <ul className="space-y-2">
                     {section.tips.map((tip) => (
                       <li key={tip} className="text-sm text-gray flex gap-2">
-                        <span className="text-primary shrink-0 mt-0.5">✓</span>
+                        <span className="text-primary shrink-0 mt-0.5">→</span>
                         {tip}
                       </li>
                     ))}
@@ -1363,7 +1369,7 @@ export default function PacksPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h3 className="font-headline font-bold text-dark text-lg mb-4">📍 What Goes Where</h3>
+                <h3 className="font-headline font-bold text-dark text-lg mb-4">What Goes Where</h3>
                 <div className="space-y-3">
                   {[
                     { location: "Front flask pockets", items: "Water/electrolyte flasks only — keep accessible" },
@@ -1382,7 +1388,7 @@ export default function PacksPage() {
               </div>
 
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h3 className="font-headline font-bold text-dark text-lg mb-4">⚖️ Weight Distribution</h3>
+                <h3 className="font-headline font-bold text-dark text-lg mb-4">Weight Distribution</h3>
                 <ul className="space-y-2 text-sm text-gray">
                   {[
                     "Heavy items (water, food) as close to your back and center as possible",

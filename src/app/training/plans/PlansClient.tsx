@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { XCircle, AlertTriangle, CheckCircle, Star, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
@@ -1524,6 +1525,15 @@ function generateFullSchedule(distance: Distance, level: Level): PlanDay[][] {
   return weeks;
 }
 
+
+function TimelineIcon({ icon, className = "w-5 h-5 flex-shrink-0" }: { icon: string; className?: string }) {
+  if (icon === "stop") return <XCircle className={className} />;
+  if (icon === "warning") return <AlertTriangle className={className} />;
+  if (icon === "check") return <CheckCircle className={className} />;
+  if (icon === "star") return <Star className={className} />;
+  return <AlertTriangle className={className} />;
+}
+
 export default function PlansClient() {
   const { user } = useAuth();
   const router = useRouter();
@@ -1917,7 +1927,7 @@ export default function PlansClient() {
                   <div className="sm:col-span-2">
                     <div className={`rounded-xl border p-4 ${timelineAssessment.color}`}>
                       <div className="flex items-start gap-3">
-                        <span className="text-xl flex-shrink-0">{timelineAssessment.icon}</span>
+                        <TimelineIcon icon={timelineAssessment.icon} className="w-5 h-5 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-1 flex-wrap">
                             <span className="font-headline font-bold text-sm">{timelineAssessment.title}</span>
@@ -1945,7 +1955,7 @@ export default function PlansClient() {
                               <ul className="space-y-1">
                                 {timelineAssessment.requirements.map((req, i) => (
                                   <li key={i} className="text-xs flex items-start gap-1.5">
-                                    <span className="flex-shrink-0 mt-0.5">☐</span>{req}
+                                    <span className="flex-shrink-0 mt-0.5">-</span>{req}
                                   </li>
                                 ))}
                               </ul>
@@ -1966,7 +1976,7 @@ export default function PlansClient() {
                           )}
                           {timelineAssessment.status === "insufficient" && acknowledgedRisk && (
                             <p className="text-xs font-medium mt-2 opacity-80">
-                              ⚠️ Proceeding with compressed plan. Higher injury risk — listen to your body.
+                              Warning: Proceeding with compressed plan. Higher injury risk — listen to your body.
                             </p>
                           )}
                         </div>
@@ -2211,7 +2221,7 @@ export default function PlansClient() {
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-10">
                 <div className="bg-gradient-to-r from-accent to-orange-600 p-6">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">📅</span>
+                    <Calendar className="w-6 h-6 text-white" />
                     <h3 className="font-headline text-xl sm:text-2xl font-bold text-white">
                       Your {weeksUntilRace}-Week Dynamic Plan
                     </h3>
@@ -2405,7 +2415,7 @@ export default function PlansClient() {
                           <ul className="space-y-1.5">
                             {w.goals.map((g, i) => (
                               <li key={i} className="flex items-start gap-2 text-sm text-gray">
-                                <span className="text-primary flex-shrink-0 mt-0.5">✓</span>{g}
+                                <span className="text-primary flex-shrink-0 mt-0.5">→</span>{g}
                               </li>
                             ))}
                           </ul>
@@ -2421,7 +2431,7 @@ export default function PlansClient() {
             {timelineAssessment && (timelineAssessment.status === "insufficient" || timelineAssessment.status === "tight" || timelineAssessment.status === "past") && (
               <div className={`my-6 rounded-2xl border p-6 ${timelineAssessment.color}`}>
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl">{timelineAssessment.icon}</span>
+                  <TimelineIcon icon={timelineAssessment.icon} className="w-6 h-6 flex-shrink-0" />
                   <div>
                     <h3 className="font-headline text-lg font-bold mb-1">{timelineAssessment.title}</h3>
                     <p className="text-sm mb-3">{timelineAssessment.message}</p>
@@ -2431,7 +2441,7 @@ export default function PlansClient() {
                         <ul className="space-y-1">
                           {timelineAssessment.requirements.map((r, i) => (
                             <li key={i} className="flex items-start gap-2 text-sm">
-                              <span className="mt-0.5 flex-shrink-0">✓</span>{r}
+                              <span className="mt-0.5 flex-shrink-0">→</span>{r}
                             </li>
                           ))}
                         </ul>
@@ -2459,7 +2469,7 @@ export default function PlansClient() {
             {timelineAssessment && (timelineAssessment.status === "good" || timelineAssessment.status === "excellent") && (
               <div className={`my-6 rounded-2xl border p-6 ${timelineAssessment.color}`}>
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl">{timelineAssessment.icon}</span>
+                  <TimelineIcon icon={timelineAssessment.icon} className="w-6 h-6 flex-shrink-0" />
                   <div>
                     <h3 className="font-headline text-lg font-bold mb-1">{timelineAssessment.title}</h3>
                     <p className="text-sm">{timelineAssessment.message}</p>
@@ -2493,7 +2503,7 @@ export default function PlansClient() {
                       : "bg-white text-primary hover:bg-light shadow-lg hover:shadow-xl"
                   }`}
                 >
-                  {planSaved ? "✓ Plan Saved — Redirecting..." : user ? "Save Plan & Go to Dashboard →" : "Save Plan →"}
+                  {planSaved ? "Plan Saved — Redirecting..." : user ? "Save Plan & Go to Dashboard →" : "Save Plan →"}
                 </button>
                 {!user && (
                   <p className="text-white/50 text-xs mt-3">
@@ -2509,7 +2519,7 @@ export default function PlansClient() {
                 <div className="absolute inset-0 bg-black/50" onClick={() => setShowAccountPrompt(false)} />
                 <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
                   <div className="text-center mb-6">
-                    <div className="text-4xl mb-3">✅</div>
+                    <div className="flex justify-center mb-3"><CheckCircle className="w-10 h-10 text-green-500" /></div>
                     <h3 className="font-headline text-2xl font-bold text-dark mb-2">Your Custom Ultra Plan is Ready!</h3>
                     <p className="text-sm text-gray">Save this plan to track your progress?</p>
                   </div>
@@ -2540,7 +2550,7 @@ export default function PlansClient() {
                         "Sync across devices",
                       ].map((b) => (
                         <li key={b} className="flex items-center gap-2">
-                          <span className="text-green-500">✓</span>{b}
+                          <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />{b}
                         </li>
                       ))}
                     </ul>

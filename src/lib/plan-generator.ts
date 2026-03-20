@@ -56,7 +56,7 @@ export function getTimelineAssessment(weeks: number, distance: Distance): Timeli
 
   if (weeks <= 0) {
     return {
-      status: "past", color: "bg-red-50 border-red-200 text-red-800", icon: "🛑",
+      status: "past", color: "bg-red-50 border-red-200 text-red-800", icon: "stop",
       title: "Race Date Has Passed",
       message: "This race date is in the past. Please select a future date.",
       phases: [],
@@ -67,7 +67,7 @@ export function getTimelineAssessment(weeks: number, distance: Distance): Timeli
     const taperW = Math.max(1, Math.round(weeks * 0.15));
     const buildW = Math.max(1, weeks - taperW);
     return {
-      status: "insufficient", color: "bg-red-50 border-red-200 text-red-800", icon: "🛑",
+      status: "insufficient", color: "bg-red-50 border-red-200 text-red-800", icon: "stop",
       title: "Insufficient Preparation Time",
       message: `${weeks} weeks is not enough to safely prepare for a ${distance}. You need a minimum of ${min} weeks with a strong base.`,
       requirements: [
@@ -88,7 +88,7 @@ export function getTimelineAssessment(weeks: number, distance: Distance): Timeli
     const peakW = Math.round(weeks * 0.15);
     const taperW = weeks - baseW - buildW - peakW;
     return {
-      status: "tight", color: "bg-yellow-50 border-yellow-200 text-yellow-800", icon: "⚠️",
+      status: "tight", color: "bg-yellow-50 border-yellow-200 text-yellow-800", icon: "warning",
       title: "Compressed Timeline — Proceed with Caution",
       message: `${weeks} weeks is less than the recommended ${rec} weeks for a ${distance}, but achievable with a strong existing base.`,
       requirements: [
@@ -112,7 +112,7 @@ export function getTimelineAssessment(weeks: number, distance: Distance): Timeli
     const peakW = Math.round(weeks * 0.15);
     const taperW = weeks - baseW - buildW - peakW;
     return {
-      status: "good", color: "bg-green-50 border-green-200 text-green-800", icon: "✅",
+      status: "good", color: "bg-green-50 border-green-200 text-green-800", icon: "check",
       title: "Ideal Training Timeline",
       message: `${weeks} weeks gives you proper time to build safely for your ${distance}. Your plan includes gradual progression, recovery weeks, and adequate taper.`,
       phases: [
@@ -130,7 +130,7 @@ export function getTimelineAssessment(weeks: number, distance: Distance): Timeli
   const peakW = Math.round(weeks * 0.10);
   const taperW = weeks - baseW - build1W - build2W - peakW;
   return {
-    status: "excellent", color: "bg-blue-50 border-blue-200 text-blue-800", icon: "🌟",
+    status: "excellent", color: "bg-blue-50 border-blue-200 text-blue-800", icon: "star",
     title: "Excellent Preparation Time",
     message: `${weeks} weeks gives you plenty of time for multiple training cycles, recovery, and experimentation. Consider adding a tune-up race at the halfway point.`,
     phases: [
@@ -344,27 +344,27 @@ export function calculateMilestones(totalWeeks: number, raceDateStr: string, dis
       week: accumulated + 1,
       date: dateForWeek(totalWeeks - accumulated),
       label: `${phase.name} phase begins`,
-      icon: phase.name === "Taper" ? "📉" : phase.name === "Peak" ? "🔥" : "📈",
+      icon: phase.name === "Taper" ? "trendDown" : phase.name === "Peak" ? "flame" : "trendUp",
     });
     accumulated += phase.weeks;
   }
 
   const firstBigLong = Math.ceil(totalWeeks * 0.35);
   if (firstBigLong > 0 && firstBigLong < totalWeeks) {
-    milestones.push({ week: firstBigLong, date: dateForWeek(totalWeeks - firstBigLong), label: "First 20+ mile long run", icon: "🏃" });
+    milestones.push({ week: firstBigLong, date: dateForWeek(totalWeeks - firstBigLong), label: "First 20+ mile long run", icon: "run" });
   }
 
   if (totalWeeks > 8) {
-    milestones.push({ week: totalWeeks - 8, date: dateForWeek(8), label: "Break in race shoes by now", icon: "👟" });
+    milestones.push({ week: totalWeeks - 8, date: dateForWeek(8), label: "Break in race shoes by now", icon: "shoe" });
   }
   if (totalWeeks > 6) {
-    milestones.push({ week: totalWeeks - 6, date: dateForWeek(6), label: "Finalize vest fit under load", icon: "🎒" });
+    milestones.push({ week: totalWeeks - 6, date: dateForWeek(6), label: "Finalize vest fit under load", icon: "pack" });
   }
   if (totalWeeks > 4) {
-    milestones.push({ week: totalWeeks - 4, date: dateForWeek(4), label: "Lock in race nutrition", icon: "⚡" });
+    milestones.push({ week: totalWeeks - 4, date: dateForWeek(4), label: "Lock in race nutrition", icon: "zap" });
   }
-  milestones.push({ week: totalWeeks - 2, date: dateForWeek(2), label: "No new gear after this", icon: "🚫" });
-  milestones.push({ week: totalWeeks, date: formatDate(raceDate), label: "RACE DAY!", icon: "🏁" });
+  milestones.push({ week: totalWeeks - 2, date: dateForWeek(2), label: "No new gear after this", icon: "ban" });
+  milestones.push({ week: totalWeeks, date: formatDate(raceDate), label: "RACE DAY!", icon: "flag" });
 
   milestones.sort((a, b) => a.week - b.week);
   return milestones;

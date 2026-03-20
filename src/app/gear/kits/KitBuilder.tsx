@@ -5,6 +5,11 @@ import { useAuth } from "@/components/AuthProvider";
 import { saveNewKit, updateKit } from "@/lib/kit-sync";
 import { generateKitId } from "@/lib/kit-types";
 import type { SavedKit, SavedKitItem } from "@/lib/kit-types";
+import {
+  Flag, Mountain, Thermometer, Moon, Medal, DollarSign, Droplets,
+  Salad, Footprints, Target, Flashlight, Shirt, Package, Zap,
+  Shield, HardHat, Dumbbell, ShoppingCart, Lightbulb, CheckCircle,
+} from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -98,9 +103,9 @@ function makeLinks(searchTerm: string, basePrice: number, amazonDiscount = 0.97,
 
 // ─── Quiz questions ───────────────────────────────────────────────────────────
 
-const QUESTIONS = [
+const QUESTIONS: { id: string; section: string; question: string; icon: React.ReactNode; options: { label: string; value: string }[] }[] = [
   {
-    id: "distance", section: "Race Details", question: "What's your race distance?", icon: "🏁",
+    id: "distance", section: "Race Details", question: "What's your race distance?", icon: <Flag className="w-5 h-5 text-primary" />,
     options: [
       { label: "50K (~31 miles)", value: "50k" },
       { label: "50 Miles", value: "50m" },
@@ -109,7 +114,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "terrain", section: "Race Details", question: "Primary course terrain?", icon: "⛰️",
+    id: "terrain", section: "Race Details", question: "Primary course terrain?", icon: <Mountain className="w-5 h-5 text-primary" />,
     options: [
       { label: "Mountain / alpine (technical, rocky)", value: "mountain" },
       { label: "Desert / open (heat, flat to rolling)", value: "desert" },
@@ -118,7 +123,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "temp", section: "Race Details", question: "Expected race-day temperature?", icon: "🌡️",
+    id: "temp", section: "Race Details", question: "Expected race-day temperature?", icon: <Thermometer className="w-5 h-5 text-primary" />,
     options: [
       { label: "Hot — 75°F+ (sun, humidity, heat index)", value: "hot" },
       { label: "Moderate — 50–75°F (ideal conditions)", value: "moderate" },
@@ -127,14 +132,14 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "night", section: "Race Details", question: "Will you run through the night?", icon: "🌙",
+    id: "night", section: "Race Details", question: "Will you run through the night?", icon: <Moon className="w-5 h-5 text-primary" />,
     options: [
       { label: "Yes — night sections required", value: "yes" },
       { label: "No — day finish expected", value: "no" },
     ],
   },
   {
-    id: "experience", section: "Runner Profile", question: "How many ultras have you finished?", icon: "🏅",
+    id: "experience", section: "Runner Profile", question: "How many ultras have you finished?", icon: <Medal className="w-5 h-5 text-primary" />,
     options: [
       { label: "0 — this is my first ultra", value: "first" },
       { label: "1–3 — still learning the game", value: "beginner" },
@@ -143,7 +148,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "budget", section: "Runner Profile", question: "What's your total gear budget?", icon: "💰",
+    id: "budget", section: "Runner Profile", question: "What's your total gear budget?", icon: <DollarSign className="w-5 h-5 text-primary" />,
     options: [
       { label: "Under $400 — budget conscious", value: "budget" },
       { label: "$400–$800 — balanced value", value: "standard" },
@@ -152,7 +157,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "sweat", section: "Personal Factors", question: "How much do you sweat?", icon: "💧",
+    id: "sweat", section: "Personal Factors", question: "How much do you sweat?", icon: <Droplets className="w-5 h-5 text-primary" />,
     options: [
       { label: "Light — barely glistening", value: "light" },
       { label: "Moderate — noticeably wet", value: "moderate" },
@@ -160,7 +165,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "stomach", section: "Personal Factors", question: "How's your stomach during long efforts?", icon: "🫃",
+    id: "stomach", section: "Personal Factors", question: "How's your stomach during long efforts?", icon: <Salad className="w-5 h-5 text-primary" />,
     options: [
       { label: "Iron gut — I can eat anything while running", value: "iron" },
       { label: "Average — occasional nausea at mile 40+", value: "average" },
@@ -168,7 +173,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "feetWidth", section: "Personal Factors", question: "What's your foot width?", icon: "👟",
+    id: "feetWidth", section: "Personal Factors", question: "What's your foot width?", icon: <Footprints className="w-5 h-5 text-primary" />,
     options: [
       { label: "Narrow to standard (B–D width)", value: "standard" },
       { label: "Wide (2E width)", value: "wide" },
@@ -176,7 +181,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "priority", section: "Personal Factors", question: "What's your #1 gear priority?", icon: "🎯",
+    id: "priority", section: "Personal Factors", question: "What's your #1 gear priority?", icon: <Target className="w-5 h-5 text-primary" />,
     options: [
       { label: "Foot comfort — blisters ruined past races", value: "feet" },
       { label: "Nutrition — fueling is my weakness", value: "nutrition" },
@@ -558,19 +563,19 @@ function buildKit(answers: Answers): Kit {
   const totalCost = items.reduce((sum, i) => sum + i.price, 0);
 
   const packingChecklist = [
-    "✓ Headlamp (fully charged) + spare batteries/backup",
-    "✓ Rain jacket (even if forecast is clear)",
-    "✓ Emergency space blanket or bivvy",
-    "✓ Phone + portable charger (20,000mAh)",
-    "✓ Trekking poles (if race-legal and terrain warrants)",
-    "✓ Nutrition: enough for 1.5× the expected time between aid stations",
-    "✓ Soft flasks filled, pack fully loaded before start",
-    "✓ Anti-chafe applied: toes, thighs, underarms, nipples",
-    "✓ Race bib and timing chip secured",
-    "✓ Crew and pacer contact sheets printed",
-    ...(night === "yes" ? ["✓ Night gear in accessible front pocket (not buried in pack)"] : []),
-    ...(cold ? ["✓ Extra gloves and hat in pack for emergency"] : []),
-    ...(longRace ? ["✓ Drop bag labeled with crew point name and mile marker"] : []),
+    "Headlamp (fully charged) + spare batteries/backup",
+    "Rain jacket (even if forecast is clear)",
+    "Emergency space blanket or bivvy",
+    "Phone + portable charger (20,000mAh)",
+    "Trekking poles (if race-legal and terrain warrants)",
+    "Nutrition: enough for 1.5× the expected time between aid stations",
+    "Soft flasks filled, pack fully loaded before start",
+    "Anti-chafe applied: toes, thighs, underarms, nipples",
+    "Race bib and timing chip secured",
+    "Crew and pacer contact sheets printed",
+    ...(night === "yes" ? ["Night gear in accessible front pocket (not buried in pack)"] : []),
+    ...(cold ? ["Extra gloves and hat in pack for emergency"] : []),
+    ...(longRace ? ["Drop bag labeled with crew point name and mile marker"] : []),
   ];
 
   const dropBagEssentials = longRace
@@ -609,16 +614,28 @@ function buildKit(answers: Answers): Kit {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const CATEGORY_ICONS: Record<string, string> = {
-  "Footwear": "👟", "Footwear (Drop Bag)": "👟", "Hydration Pack": "🎒",
-  "Lighting — Headlamp": "🔦", "Lighting — Backup": "🔦",
-  "Base Layer — Top": "👕", "Insulation Layer": "🧥",
-  "Bottom — Tights": "🩱", "Bottom — Shorts": "🩳",
-  "Rain / Wind Shell": "🌧️", "Socks": "🧦",
-  "Foot Care": "🩹", "Foot Care Kit": "🩹",
-  "Nutrition — Gels": "⚡", "Nutrition — Real Food": "🍌",
-  "Electrolytes": "🧂", "Hydration Mix": "💧",
-  "Safety": "🛡️", "Head": "🧢", "Gloves": "🧤", "Recovery": "💪",
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  "Footwear": <Footprints className="w-5 h-5 text-primary" />,
+  "Footwear (Drop Bag)": <Footprints className="w-5 h-5 text-primary" />,
+  "Hydration Pack": <Package className="w-5 h-5 text-primary" />,
+  "Lighting — Headlamp": <Flashlight className="w-5 h-5 text-primary" />,
+  "Lighting — Backup": <Flashlight className="w-5 h-5 text-primary" />,
+  "Base Layer — Top": <Shirt className="w-5 h-5 text-primary" />,
+  "Insulation Layer": <Shirt className="w-5 h-5 text-primary" />,
+  "Bottom — Tights": <Shirt className="w-5 h-5 text-primary" />,
+  "Bottom — Shorts": <Shirt className="w-5 h-5 text-primary" />,
+  "Rain / Wind Shell": <Shirt className="w-5 h-5 text-primary" />,
+  "Socks": <Footprints className="w-5 h-5 text-primary" />,
+  "Foot Care": <Footprints className="w-5 h-5 text-primary" />,
+  "Foot Care Kit": <Footprints className="w-5 h-5 text-primary" />,
+  "Nutrition — Gels": <Zap className="w-5 h-5 text-primary" />,
+  "Nutrition — Real Food": <Salad className="w-5 h-5 text-primary" />,
+  "Electrolytes": <Droplets className="w-5 h-5 text-primary" />,
+  "Hydration Mix": <Droplets className="w-5 h-5 text-primary" />,
+  "Safety": <Shield className="w-5 h-5 text-primary" />,
+  "Head": <HardHat className="w-5 h-5 text-primary" />,
+  "Gloves": <Shield className="w-5 h-5 text-primary" />,
+  "Recovery": <Dumbbell className="w-5 h-5 text-primary" />,
 };
 
 const RETAILER_LABELS: Record<string, string> = {
@@ -656,8 +673,8 @@ function ProductCard({
         {/* Header row */}
         <div className="flex items-start gap-3 mb-3">
           {/* Image placeholder */}
-          <div className="w-16 h-16 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0 text-2xl">
-            {CATEGORY_ICONS[item.category] ?? "📦"}
+          <div className="w-16 h-16 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
+            {CATEGORY_ICONS[item.category] ?? <Package className="w-5 h-5 text-primary" />}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
@@ -673,11 +690,11 @@ function ProductCard({
                     onToggle();
                   }}
                   title={purchased ? "Mark as not purchased" : "Mark as purchased"}
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors text-xs ${
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
                     purchased ? "border-green-500 bg-green-500 text-white" : "border-gray-300 hover:border-primary"
                   }`}
                 >
-                  {purchased ? "✓" : ""}
+                  {purchased ? <CheckCircle className="w-3.5 h-3.5" /> : null}
                 </button>
               </div>
             </div>
@@ -722,7 +739,7 @@ function ProductCard({
                 onClick={() => trackEvent({ event: "product_click", product_name: `${item.brand} ${item.product}`, retailer: RETAILER_LABELS[primaryRetailer[0]], price: primaryRetailer[1].price, category: item.category, kit_type: kitType, position })}
                 className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary hover:bg-blue-700 text-white font-semibold text-sm rounded-lg transition-all hover:shadow-md"
               >
-                <span>🛒</span>
+                <ShoppingCart className="w-4 h-4" />
                 <span>Buy at {RETAILER_LABELS[primaryRetailer[0]]} — ${primaryRetailer[1].price}</span>
                 <span>→</span>
               </a>
@@ -754,7 +771,7 @@ function ProductCard({
                   className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 cursor-pointer"
                   onClick={() => trackEvent({ event: "price_comparison_viewed", product_name: `${item.brand} ${item.product}`, cheapest_retailer: RETAILER_LABELS[lowestRetailer[0]], savings })}
                 >
-                  <span className="text-sm">💡</span>
+                  <Lightbulb className="w-4 h-4 text-yellow-600 flex-shrink-0" />
                   <p className="text-xs text-dark font-medium">
                     Lowest price: {RETAILER_LABELS[lowestRetailer[0]]} — ${lowestRetailer[1].price}{" "}
                     <span className="text-green-700">(save ${savings})</span>
@@ -767,7 +784,7 @@ function ProductCard({
 
         {/* Purchased state */}
         {purchased && (
-          <div className="mt-2 text-center text-xs text-green-700 font-semibold">✅ Purchased</div>
+          <div className="mt-2 flex items-center justify-center gap-1 text-xs text-green-700 font-semibold"><CheckCircle className="w-3.5 h-3.5" /> Purchased</div>
         )}
       </div>
 
@@ -958,8 +975,9 @@ export default function KitBuilder() {
           </div>
 
           <p className="text-sm text-gray font-medium mb-2">Question {step + 1} of {QUESTIONS.length}</p>
-          <h3 className="font-headline text-2xl font-bold text-dark mb-6">
-            {currentQ.icon} {currentQ.question}
+          <h3 className="font-headline text-2xl font-bold text-dark mb-6 flex items-center gap-2">
+            {currentQ.icon}
+            <span>{currentQ.question}</span>
           </h3>
 
           <div className="grid gap-3 sm:grid-cols-2">
@@ -1115,7 +1133,8 @@ export default function KitBuilder() {
                   onClick={() => trackEvent({ event: "bulk_purchase_click", retailer: "REI", total_price: totalCost, kit_type: kit.title })}
                   className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary hover:bg-blue-700 text-white font-semibold text-sm rounded-lg transition-all hover:shadow-md"
                 >
-                  🛒 Shop Complete Kit at REI — ${totalCost.toLocaleString()} →
+                  <ShoppingCart className="w-4 h-4" />
+                  Shop Complete Kit at REI — ${totalCost.toLocaleString()}
                 </a>
                 <div className="grid grid-cols-2 gap-2">
                   <a
@@ -1168,7 +1187,7 @@ export default function KitBuilder() {
                 return Object.entries(groupedItems).map(([category, categoryItems]) => (
                   <div key={category}>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-lg">{CATEGORY_ICONS[category] ?? "📦"}</span>
+                      <span>{CATEGORY_ICONS[category] ?? <Package className="w-5 h-5 text-primary" />}</span>
                       <span className="text-sm font-bold text-dark uppercase tracking-wide">{category}</span>
                     </div>
                     <div className="space-y-3">
@@ -1214,7 +1233,10 @@ export default function KitBuilder() {
             <div className="space-y-2">
               <p className="text-sm text-gray mb-4">Go through this list the morning before your race. Missing items have DNF&apos;d more runners than bad fitness.</p>
               {kit.packingChecklist.map((item) => (
-                <div key={item} className="bg-gray-50 rounded-lg px-4 py-3 text-sm text-dark border border-gray-100">{item}</div>
+                <div key={item} className="flex items-start gap-3 bg-gray-50 rounded-lg px-4 py-3 border border-gray-100">
+                  <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-dark">{item}</span>
+                </div>
               ))}
             </div>
           )}

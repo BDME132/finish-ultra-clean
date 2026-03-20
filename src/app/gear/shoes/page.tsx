@@ -1,7 +1,13 @@
+import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShoeFinder from "./ShoeFinder";
+import {
+  Footprints, Circle, Settings, Ruler, ArrowLeftRight, RefreshCcw,
+  PersonStanding, Zap, Mountain, BedDouble, CheckCircle, Dumbbell,
+  Smile, Shield,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ultra Marathon Running Shoes Guide | FinishUltra",
@@ -505,7 +511,7 @@ function ShoeCard({ shoe, categoryColor }: { shoe: Shoe; categoryColor: string }
       {/* Image placeholder */}
       <div className="bg-gray-50 aspect-[4/3] flex items-center justify-center border-b border-gray-100">
         <div className="text-center">
-          <div className="text-4xl mb-1">👟</div>
+          <div className="mb-1"><Footprints className="w-10 h-10 text-gray" /></div>
           <p className="text-xs text-gray">{shoe.brand} {shoe.name}</p>
         </div>
       </div>
@@ -705,7 +711,7 @@ export default function ShoesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
-                  icon: "🟡",
+                  icon: <Circle className="w-5 h-5 text-yellow-500" />,
                   title: "Midsole Materials",
                   items: [
                     { name: "EVA", desc: "Traditional foam. Durable, consistent, affordable. Hoka ProFly is EVA-based." },
@@ -715,7 +721,7 @@ export default function ShoesPage() {
                   ],
                 },
                 {
-                  icon: "⚫",
+                  icon: <Circle className="w-5 h-5 text-gray-700" />,
                   title: "Outsole Rubber",
                   items: [
                     { name: "Vibram Megagrip", desc: "The gold standard. Sticky on wet rock. Used by Hoka, Topo, Inov-8." },
@@ -725,7 +731,7 @@ export default function ShoesPage() {
                   ],
                 },
                 {
-                  icon: "🔩",
+                  icon: <Settings className="w-5 h-5 text-gray-500" />,
                   title: "Plate Systems",
                   items: [
                     { name: "Carbon Fiber", desc: "Stiff, propulsive. Helps push-off efficiency. Great for uphills (Hoka Tecton X2)." },
@@ -735,7 +741,7 @@ export default function ShoesPage() {
                   ],
                 },
                 {
-                  icon: "📐",
+                  icon: <Ruler className="w-5 h-5 text-primary" />,
                   title: "Drop & Stack Height",
                   items: [
                     { name: "0mm (Zero Drop)", desc: "Heel and forefoot at same height. Promotes midfoot strike. Altra signature." },
@@ -746,7 +752,7 @@ export default function ShoesPage() {
                 },
               ].map((block) => (
                 <div key={block.title} className="bg-white/5 rounded-xl p-5 border border-white/10">
-                  <div className="text-2xl mb-3">{block.icon}</div>
+                  <div className="mb-3">{block.icon}</div>
                   <h3 className="font-headline font-bold text-white text-lg mb-4">{block.title}</h3>
                   <div className="space-y-3">
                     {block.items.map((item) => (
@@ -774,10 +780,10 @@ export default function ShoesPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
               {[
-                { role: "Easy / Long Runs", rec: "Max cushion shoe", why: "Protect your legs on high-mileage days. Comfort over speed.", example: "Hoka Speedgoat 6", icon: "😌" },
-                { role: "Workouts / Tempos", rec: "Lightweight racer", why: "Responsive feel encourages proper form at faster paces.", example: "Salomon S/Lab Ultra 3", icon: "⚡" },
-                { role: "Technical Trail", rec: "Technical specialist", why: "Match grip to the terrain. Don't fight the trail.", example: "La Sportiva Bushido III", icon: "🪨" },
-                { role: "Recovery Runs", rec: "Plush trainer", why: "Fresh midsole = fresh legs. Let yesterday's shoe recover too.", example: "Altra Olympus 5", icon: "🛌" },
+                { icon: <Dumbbell className="w-5 h-5 text-primary" />, role: "Easy / Long Runs", rec: "Max cushion shoe", why: "Protect your legs on high-mileage days. Comfort over speed.", example: "Hoka Speedgoat 6" },
+                { icon: <Zap className="w-5 h-5 text-accent" />, role: "Workouts / Tempos", rec: "Lightweight racer", why: "Responsive feel encourages proper form at faster paces.", example: "Salomon S/Lab Ultra 3" },
+                { icon: <Mountain className="w-5 h-5 text-primary" />, role: "Technical Trail", rec: "Technical specialist", why: "Match grip to the terrain. Don't fight the trail.", example: "La Sportiva Bushido III" },
+                { icon: <BedDouble className="w-5 h-5 text-blue-500" />, role: "Recovery Runs", rec: "Plush trainer", why: "Fresh midsole = fresh legs. Let yesterday's shoe recover too.", example: "Altra Olympus 5" },
               ].map((slot) => (
                 <div key={slot.role} className="bg-gray-50 rounded-xl p-5 border border-gray-100">
                   <div className="text-2xl mb-2">{slot.icon}</div>
@@ -834,7 +840,7 @@ export default function ShoesPage() {
               {[
                 {
                   title: "Sizing for Ultras",
-                  icon: "📏",
+                  icon: <Ruler className="w-5 h-5 text-primary" />,
                   tips: [
                     "Go up 0.5–1 full size for races over 50 miles",
                     "Feet swell up to a full size on long runs",
@@ -845,7 +851,7 @@ export default function ShoesPage() {
                 },
                 {
                   title: "Width Considerations",
-                  icon: "↔️",
+                  icon: <ArrowLeftRight className="w-5 h-5 text-primary" />,
                   tips: [
                     "Altra: naturally wide toe box in regular width",
                     "Salomon: runs narrow — size up or go wide",
@@ -856,7 +862,7 @@ export default function ShoesPage() {
                 },
                 {
                   title: "Break-In & Retirement",
-                  icon: "🔄",
+                  icon: <RefreshCcw className="w-5 h-5 text-primary" />,
                   tips: [
                     "Never race in brand new shoes",
                     "Allow 50–100 miles of break-in before a big race",
@@ -872,7 +878,7 @@ export default function ShoesPage() {
                   <ul className="space-y-2">
                     {section.tips.map((tip) => (
                       <li key={tip} className="text-sm text-gray flex gap-2">
-                        <span className="text-primary shrink-0 mt-0.5">✓</span>{tip}
+                        <span className="text-primary shrink-0 mt-0.5">→</span>{tip}
                       </li>
                     ))}
                   </ul>

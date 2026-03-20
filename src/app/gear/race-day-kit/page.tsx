@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { raceDayCategories, proTips } from "@/lib/content/race-day-kit";
+import { Footprints, Package, Zap, Target, Tent, Trophy, Lightbulb, Flag } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ultra Marathon Race Day Kits | FinishUltra",
@@ -11,13 +12,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/gear/race-day-kit" },
 };
 
-const categoryIcons: Record<string, string> = {
-  "on-body": "👟",
-  "hydration-pack": "🎒",
-  nutrition: "⚡",
-  "drop-bag": "🎯",
-  "crew-support": "🏕️",
-  "post-race": "🏆",
+const categoryIconComponents: Record<string, React.ReactNode> = {
+  "on-body": <Footprints className="w-6 h-6 text-accent" />,
+  "hydration-pack": <Package className="w-6 h-6 text-accent" />,
+  nutrition: <Zap className="w-6 h-6 text-accent" />,
+  "drop-bag": <Target className="w-6 h-6 text-accent" />,
+  "crew-support": <Tent className="w-6 h-6 text-accent" />,
+  "post-race": <Trophy className="w-6 h-6 text-accent" />,
 };
 
 export default function RaceDayKitPage() {
@@ -52,7 +53,7 @@ export default function RaceDayKitPage() {
           />
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <div className="inline-flex items-center gap-2 bg-accent/20 text-accent text-sm font-semibold px-4 py-2 rounded-full mb-6">
-              <span>⚡</span>
+              <Zap className="w-4 h-4" />
               <span>TrainingPeaks Verified Checklist</span>
             </div>
             <h1 className="font-headline text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
@@ -90,7 +91,7 @@ export default function RaceDayKitPage() {
                   href={`#${cat.id}`}
                   className="flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium text-gray hover:text-dark hover:bg-light transition-colors flex-shrink-0"
                 >
-                  <span>{cat.icon}</span>
+                  {categoryIconComponents[cat.id]}
                   <span>{cat.title}</span>
                 </a>
               ))}
@@ -98,7 +99,7 @@ export default function RaceDayKitPage() {
                 href="#pro-tips"
                 className="flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium text-accent hover:bg-accent/10 transition-colors flex-shrink-0 ml-auto"
               >
-                <span>💡</span>
+                <Lightbulb className="w-4 h-4" />
                 <span>Pro Tips</span>
               </a>
             </div>
@@ -116,8 +117,8 @@ export default function RaceDayKitPage() {
               {/* Section header */}
               <div className="mb-10">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">
-                    {category.icon}
+                  <div className="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    {categoryIconComponents[category.id] ?? null}
                   </div>
                   <div>
                     <div className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">
@@ -132,7 +133,7 @@ export default function RaceDayKitPage() {
                 {/* Pro tip callout */}
                 {category.tip && (
                   <div className="flex items-start gap-3 bg-accent/5 border border-accent/20 rounded-xl p-4 mt-6">
-                    <span className="text-xl flex-shrink-0 mt-0.5">💡</span>
+                    <Lightbulb className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-dark leading-relaxed">
                       <span className="font-semibold text-accent">Pro Tip: </span>
                       {category.tip}
@@ -150,7 +151,7 @@ export default function RaceDayKitPage() {
                   >
                     {/* Card image placeholder */}
                     <div className="aspect-[4/3] bg-gradient-to-br from-light to-gray-100 flex flex-col items-center justify-center relative overflow-hidden">
-                      <span className="text-4xl mb-2">{categoryIcons[category.id]}</span>
+                      <span className="mb-2">{categoryIconComponents[category.id] ?? null}</span>
                       <span className="text-xs font-medium text-gray">
                         {product.brand}
                       </span>
@@ -221,7 +222,7 @@ export default function RaceDayKitPage() {
         {/* CTA Banner */}
         <section className="bg-dark py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="text-4xl mb-4">🏁</div>
+            <div className="flex justify-center mb-4"><Flag className="w-10 h-10 text-accent" /></div>
             <h2 className="font-headline text-3xl sm:text-4xl font-bold text-white mb-4">
               Ready to Build Your Complete Kit?
             </h2>
@@ -252,7 +253,7 @@ export default function RaceDayKitPage() {
         <section id="pro-tips" className="py-16 sm:py-20 bg-light">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <div className="text-4xl mb-4">💡</div>
+              <div className="flex justify-center mb-4"><Lightbulb className="w-10 h-10 text-accent" /></div>
               <h2 className="font-headline text-3xl sm:text-4xl font-bold text-dark mb-3">
                 Race Day Pro Tips
               </h2>

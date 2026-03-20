@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import KitBuilder from "./KitBuilder";
+import { Target, DollarSign, ClipboardList, Package, Calendar, Microscope, Footprints, Flashlight, Shirt, Zap, Shield, Dumbbell } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Custom Gear Kit Builder | FinishUltra",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 type KitFeature = {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   desc: string;
 };
@@ -31,32 +32,32 @@ type ShowcaseKit = {
 
 const FEATURES: KitFeature[] = [
   {
-    icon: "🎯",
+    icon: <Target className="w-6 h-6 text-primary" />,
     title: "Race-Specific",
     desc: "Every recommendation is filtered by your exact distance and terrain — no generic lists.",
   },
   {
-    icon: "💰",
+    icon: <DollarSign className="w-6 h-6 text-primary" />,
     title: "Budget Tiers",
     desc: "See budget, standard, and premium builds for every kit. Pick the version that fits your wallet.",
   },
   {
-    icon: "📋",
+    icon: <ClipboardList className="w-6 h-6 text-primary" />,
     title: "Packing Checklist",
     desc: "A pre-race gear checklist built from your specific kit — never forget a critical item again.",
   },
   {
-    icon: "🎒",
+    icon: <Package className="w-6 h-6 text-primary" />,
     title: "Drop Bag Planner",
     desc: "Know exactly what goes in each drop bag and how to organize for fast transitions.",
   },
   {
-    icon: "📅",
+    icon: <Calendar className="w-6 h-6 text-primary" />,
     title: "Testing Timeline",
     desc: "A week-by-week plan to test your kit in training so nothing fails on race day.",
   },
   {
-    icon: "🔬",
+    icon: <Microscope className="w-6 h-6 text-primary" />,
     title: "Personalized Logic",
     desc: "Sweating heavily? Sensitive stomach? Wide feet? Your answers change the recommendations.",
   },
@@ -113,15 +114,15 @@ const SHOWCASE_KITS: ShowcaseKit[] = [
   },
 ];
 
-const CATEGORIES = [
-  { icon: "👟", name: "Footwear", desc: "Primary race shoe + optional drop bag swap", note: "Your most important gear decision" },
-  { icon: "🎒", name: "Hydration Pack", desc: "5L–12L vest matched to distance and course", note: "Carry capacity determines self-sufficiency" },
-  { icon: "🔦", name: "Lighting", desc: "Primary headlamp + mandatory backup", note: "Required for any race with night sections" },
-  { icon: "👕", name: "Clothing", desc: "Full layer system from base to shell", note: "Nothing new on race day — test everything" },
-  { icon: "🧦", name: "Foot Care", desc: "Race socks + anti-blister kit + toe socks option", note: "Blisters cause more DNFs than fitness" },
-  { icon: "⚡", name: "Nutrition", desc: "Gels, real food, drink mix, electrolytes", note: "GI failure is the #1 100-mile DNF cause" },
-  { icon: "🛡️", name: "Safety", desc: "Emergency bivvy, satellite tracker, first aid", note: "Mandatory gear varies by race — verify your list" },
-  { icon: "💪", name: "Recovery", desc: "Compression socks, foot care, post-race kit", note: "Starts when the race ends — have it at the finish" },
+const CATEGORIES: { icon: React.ReactNode; name: string; desc: string; note: string }[] = [
+  { icon: <Footprints className="w-6 h-6 text-primary" />, name: "Footwear", desc: "Primary race shoe + optional drop bag swap", note: "Your most important gear decision" },
+  { icon: <Package className="w-6 h-6 text-primary" />, name: "Hydration Pack", desc: "5L–12L vest matched to distance and course", note: "Carry capacity determines self-sufficiency" },
+  { icon: <Flashlight className="w-6 h-6 text-primary" />, name: "Lighting", desc: "Primary headlamp + mandatory backup", note: "Required for any race with night sections" },
+  { icon: <Shirt className="w-6 h-6 text-primary" />, name: "Clothing", desc: "Full layer system from base to shell", note: "Nothing new on race day — test everything" },
+  { icon: <Package className="w-6 h-6 text-primary" />, name: "Foot Care", desc: "Race socks + anti-blister kit + toe socks option", note: "Blisters cause more DNFs than fitness" },
+  { icon: <Zap className="w-6 h-6 text-primary" />, name: "Nutrition", desc: "Gels, real food, drink mix, electrolytes", note: "GI failure is the #1 100-mile DNF cause" },
+  { icon: <Shield className="w-6 h-6 text-primary" />, name: "Safety", desc: "Emergency bivvy, satellite tracker, first aid", note: "Mandatory gear varies by race — verify your list" },
+  { icon: <Dumbbell className="w-6 h-6 text-primary" />, name: "Recovery", desc: "Compression socks, foot care, post-race kit", note: "Starts when the race ends — have it at the finish" },
 ];
 
 const FAQS = [
@@ -178,7 +179,7 @@ export default function GearKitsPage() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-white/10 text-white text-sm font-medium px-4 py-2 rounded-full mb-5">
-                <span>🎯</span> Personalized Gear Recommendations
+                <Target className="w-4 h-4" /> Personalized Gear Recommendations
               </div>
               <h1 className="font-headline text-4xl sm:text-5xl font-bold text-white mb-4">
                 Build Your Custom Gear Kit
@@ -200,7 +201,7 @@ export default function GearKitsPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
               {CATEGORIES.map((cat) => (
                 <div key={cat.name} className="bg-white rounded-xl p-4 border border-gray-100 text-center">
-                  <div className="text-2xl mb-2">{cat.icon}</div>
+                  <div className="flex justify-center mb-2">{cat.icon}</div>
                   <p className="font-headline font-bold text-dark text-sm mb-1">{cat.name}</p>
                   <p className="text-xs text-gray leading-snug">{cat.desc}</p>
                   <p className="text-xs text-primary font-medium mt-2">{cat.note}</p>
@@ -211,7 +212,7 @@ export default function GearKitsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {FEATURES.map((f) => (
                 <div key={f.title} className="bg-white rounded-xl p-5 border border-gray-100 flex gap-4">
-                  <span className="text-2xl shrink-0">{f.icon}</span>
+                  <span className="shrink-0">{f.icon}</span>
                   <div>
                     <p className="font-headline font-bold text-dark text-sm mb-1">{f.title}</p>
                     <p className="text-xs text-gray leading-relaxed">{f.desc}</p>
