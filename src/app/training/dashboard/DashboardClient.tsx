@@ -5,7 +5,7 @@ import {
   Home, Calendar, BarChart2, Package, Zap, Flag, Flame, Dumbbell,
   Minus, Wind, AlertCircle, ClipboardList, CheckCircle, BedDouble,
   Droplets, AlertTriangle, Circle, Moon, Sunrise, Medal, Star, PersonStanding,
-  Pencil,
+  Pencil, CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -27,12 +27,14 @@ import { loadPlan, persistPlan, deletePlanData } from "@/lib/training-sync";
 import { loadKits, deleteKit as deleteKitSync, updateKit as updateKitSync } from "@/lib/kit-sync";
 import type { SavedKit } from "@/lib/kit-types";
 import { calculateFuelingStrategy, FuelingStrategy } from "@/lib/plan-generator";
+import CalendarTab from "./CalendarTab";
 
-type Tab = "today" | "week" | "progress" | "gear" | "nutrition" | "raceday";
+type Tab = "today" | "week" | "calendar" | "progress" | "gear" | "nutrition" | "raceday";
 
 const TAB_LABELS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "today", label: "Today", icon: <Home className="w-4 h-4" /> },
   { id: "week", label: "Week", icon: <Calendar className="w-4 h-4" /> },
+  { id: "calendar", label: "Calendar", icon: <CalendarDays className="w-4 h-4" /> },
   { id: "progress", label: "Progress", icon: <BarChart2 className="w-4 h-4" /> },
   { id: "gear", label: "Gear", icon: <Package className="w-4 h-4" /> },
   { id: "nutrition", label: "Nutrition", icon: <Zap className="w-4 h-4" /> },
@@ -898,6 +900,16 @@ export default function DashboardClient() {
               })}
             </div>
           </div>
+        )}
+
+        {/* ─── CALENDAR TAB ─────────────────────────────────────────── */}
+        {tab === "calendar" && (
+          <CalendarTab
+            plan={plan}
+            onEditWorkout={openEditWorkout}
+            onLogWorkout={openWorkoutLog}
+            onMarkComplete={markDayComplete}
+          />
         )}
 
         {/* ─── PROGRESS TAB ──────────────────────────────────────────── */}
