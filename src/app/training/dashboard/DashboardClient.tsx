@@ -5,6 +5,7 @@ import {
   Home, Calendar, BarChart2, Package, Zap, Flag, Flame, Dumbbell,
   Minus, Wind, AlertCircle, ClipboardList, CheckCircle, BedDouble,
   Droplets, AlertTriangle, Circle, Moon, Sunrise, Medal, Star, PersonStanding,
+  Pencil,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -78,6 +79,15 @@ export default function DashboardClient() {
   const [nutritionNotes, setNutritionNotes] = useState("");
   const [nutritionRating, setNutritionRating] = useState(0);
   const [nutritionRaceUse, setNutritionRaceUse] = useState<"yes" | "maybe" | "no" | "">("");
+
+  // Workout editing
+  const [editWorkoutOpen, setEditWorkoutOpen] = useState(false);
+  const [editWeek, setEditWeek] = useState(0);
+  const [editDayIndex, setEditDayIndex] = useState(0);
+  const [editWorkoutType, setEditWorkoutType] = useState("");
+  const [editDistance, setEditDistance] = useState("");
+  const [editEffort, setEditEffort] = useState("");
+  const [editNotes, setEditNotes] = useState("");
 
   // Post-race report state
   const [postRaceForm, setPostRaceForm] = useState<PostRaceReport>({});
@@ -402,6 +412,36 @@ export default function DashboardClient() {
     if (!plan) return;
     const report: PostRaceReport = { ...postRaceForm, completedAt: new Date().toISOString() };
     setPlan({ ...plan, postRaceReport: report });
+  }
+
+  // ─── Workout editing ───────────────────────────────────────────────────────
+  function openEditWorkout(weekNum: number, dayIndex: number) {
+    const week = plan!.weeks.find((w) => w.weekNumber === weekNum);
+    const workout = week?.days[dayIndex];
+    if (!workout) return;
+    setEditWeek(weekNum);
+    setEditDayIndex(dayIndex);
+    setEditWorkoutType(workout.workout);
+    setEditDistance(workout.distance);
+    setEditEffort(workout.effort);
+    setEditNotes(workout.notes);
+    setEditWorkoutOpen(true);
+  }
+
+  function saveEditWorkout() {
+    if (!plan) return;
+    const updatedWeeks = plan.weeks.map((w) => {
+      if (w.weekNumber !== editWeek) return w;
+      return {
+        ...w,
+        days: w.days.map((d, i) => {
+          if (i !== editDayIndex) return d;
+          return { ...d, workout: editWorkoutType, distance: editDistance, effort: editEffort, notes: editNotes };
+        }),
+      };
+    });
+    setPlan({ ...plan, weeks: updatedWeeks });
+    setEditWorkoutOpen(false);
   }
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
@@ -791,13 +831,21 @@ export default function DashboardClient() {
                           {isToday && <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">TODAY</span>}
                         </div>
                         <p className="text-sm text-dark">{day.workout}</p>
-                        {day.distance !== "—" && <p className="text-xs text-gray">{day.distance} &middot; {day.effort}</p>}
+                        {day.distance !== "\u2014" && <p className="text-xs text-gray">{day.distance} &middot; {day.effort}</p>}
+                        {day.notes && <p className="text-xs text-gray/70 mt-0.5 italic">{day.notes}</p>}
                         {completed && completed.notes && <p className="text-xs text-green-600 mt-1">&ldquo;{completed.notes}&rdquo;</p>}
                       </div>
 
                       {/* Actions */}
                       {!completed && day.workout !== "Rest" && (
                         <div className="flex gap-2 flex-shrink-0">
+                          <button
+                            onClick={() => openEditWorkout(currentWeekNum, i)}
+                            className="text-xs font-medium text-gray hover:text-primary"
+                            title="Edit workout"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
                           <button
                             onClick={() => markDayComplete(currentWeekNum, i)}
                             className="text-xs font-medium text-primary hover:underline"
@@ -813,17 +861,35 @@ export default function DashboardClient() {
                         </div>
                       )}
                       {!completed && day.workout === "Rest" && (
-                        <button
-                          onClick={() => markDayComplete(currentWeekNum, i)}
-                          className="text-xs font-medium text-gray hover:text-primary flex-shrink-0"
-                        >
-                          Mark done
-                        </button>
+                        <div className="flex gap-2 flex-shrink-0">
+                          <button
+                            onClick={() => openEditWorkout(currentWeekNum, i)}
+                            className="text-xs font-medium text-gray hover:text-primary"
+                            title="Edit workout"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => markDayComplete(currentWeekNum, i)}
+                            className="text-xs font-medium text-gray hover:text-primary"
+                          >
+                            Mark done
+                          </button>
+                        </div>
                       )}
                       {completed && (
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-xs font-medium text-green-600">{completed.actualMiles > 0 ? `${completed.actualMiles} mi` : "Done"}</p>
-                          <p className="text-[10px] text-gray capitalize">{completed.feeling}</p>
+                        <div className="text-right flex-shrink-0 flex items-center gap-2">
+                          <button
+                            onClick={() => openEditWorkout(currentWeekNum, i)}
+                            className="text-gray hover:text-primary"
+                            title="Edit planned workout"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <div>
+                            <p className="text-xs font-medium text-green-600">{completed.actualMiles > 0 ? `${completed.actualMiles} mi` : "Done"}</p>
+                            <p className="text-[10px] text-gray capitalize">{completed.feeling}</p>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1979,6 +2045,72 @@ export default function DashboardClient() {
                 </button>
                 <button
                   onClick={() => setLogOpen(false)}
+                  className="px-5 py-3 bg-light text-dark font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Edit Workout Modal ──────────────────────────────────────── */}
+      {editWorkoutOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setEditWorkoutOpen(false)} />
+          <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+            <h3 className="font-headline text-xl font-bold text-dark mb-4">Edit Workout</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-dark mb-2">Workout Type</label>
+                <input
+                  type="text"
+                  value={editWorkoutType}
+                  onChange={(e) => setEditWorkoutType(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary"
+                  placeholder="e.g. Easy run, Long run, Tempo run"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-dark mb-2">Distance</label>
+                <input
+                  type="text"
+                  value={editDistance}
+                  onChange={(e) => setEditDistance(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary"
+                  placeholder="e.g. 8 miles, 5K"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-dark mb-2">Effort</label>
+                <input
+                  type="text"
+                  value={editEffort}
+                  onChange={(e) => setEditEffort(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary"
+                  placeholder="e.g. Zone 2, Zone 3, Race pace"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-dark mb-2">Notes</label>
+                <textarea
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  placeholder="Workout instructions or personal notes..."
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary resize-none"
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={saveEditWorkout}
+                  className="flex-1 px-5 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => setEditWorkoutOpen(false)}
                   className="px-5 py-3 bg-light text-dark font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200"
                 >
                   Cancel
