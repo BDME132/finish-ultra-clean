@@ -150,7 +150,7 @@ export default function CalendarTab({ plan, onEditWorkout, onLogWorkout, onMarkC
   // Plan date range for navigation bounds
   const planRange = useMemo(() => {
     const raceDate = new Date(plan.raceDate + "T00:00:00");
-    const firstWeek = plan.weeks[plan.weeks.length - 1] ?? plan.weeks[0];
+    const firstWeek = plan.weeks[0];
     const start = new Date(raceDate);
     start.setDate(start.getDate() - (firstWeek?.weeksToRace ?? plan.weeksTotal) * 7);
     return { start, end: raceDate };
