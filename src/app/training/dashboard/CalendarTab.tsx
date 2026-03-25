@@ -41,6 +41,19 @@ const DAY_OFFSETS: Record<string, number> = {
   Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6,
 };
 
+// Workout intensity accent — a thin left border color to help scan the calendar
+function workoutAccent(workout: string): string {
+  const w = workout.toLowerCase();
+  if (w === "rest") return "border-l-gray-300";
+  if (w.includes("recovery") || w === "rest") return "border-l-gray-300";
+  if (w.includes("easy")) return "border-l-green-400";
+  if (w.includes("tempo")) return "border-l-yellow-500";
+  if (w.includes("hill")) return "border-l-orange-500";
+  if (w.includes("back-to-back")) return "border-l-red-400";
+  if (w.includes("long") || w.includes("race simulation")) return "border-l-red-500";
+  return "border-l-gray-300";
+}
+
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
 function dateKey(d: Date): string {
@@ -209,17 +222,35 @@ export default function CalendarTab({ plan, onEditWorkout, onLogWorkout, onMarkC
 
       {/* Calendar card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        {/* Phase legend */}
-        <div className="flex flex-wrap gap-4 px-4 sm:px-5 py-3 border-b border-gray-100 bg-light/50">
-          {planPhases.map((phase) => {
-            const colors = PHASE_COLORS[phase] || DEFAULT_PHASE;
-            return (
-              <div key={phase} className="flex items-center gap-1.5 text-xs text-gray font-medium">
-                <span className={`w-2.5 h-2.5 rounded-full ${colors.dot}`} />
-                {phase}
+        {/* Legends */}
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 sm:px-5 py-3 border-b border-gray-100 bg-light/50">
+          {/* Phase legend */}
+          <div className="flex flex-wrap gap-3">
+            {planPhases.map((phase) => {
+              const colors = PHASE_COLORS[phase] || DEFAULT_PHASE;
+              return (
+                <div key={phase} className="flex items-center gap-1.5 text-xs text-gray font-medium">
+                  <span className={`w-2.5 h-2.5 rounded-full ${colors.dot}`} />
+                  {phase}
+                </div>
+              );
+            })}
+          </div>
+          {/* Intensity legend */}
+          <div className="flex flex-wrap gap-3">
+            {[
+              { label: "Rest", color: "bg-gray-300" },
+              { label: "Easy", color: "bg-green-400" },
+              { label: "Tempo", color: "bg-yellow-500" },
+              { label: "Hard", color: "bg-orange-500" },
+              { label: "Long", color: "bg-red-500" },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-1.5 text-xs text-gray">
+                <span className={`w-3 h-1.5 rounded-sm ${item.color}`} />
+                {item.label}
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
         {/* Day-of-week headers */}
@@ -244,11 +275,15 @@ export default function CalendarTab({ plan, onEditWorkout, onLogWorkout, onMarkC
           const isSelected = key === selectedDate;
           const colors = data ? (PHASE_COLORS[data.phase] || DEFAULT_PHASE) : null;
 
+          const accent = data ? workoutAccent(data.workout.workout) : "";
+
           return (
             <button
               key={key}
               onClick={() => setSelectedDate(isSelected ? null : key)}
-              className={`min-h-[72px] sm:min-h-[88px] p-1.5 sm:p-2 text-left transition-all relative ${
+              className={`min-h-[72px] sm:min-h-[88px] p-1.5 sm:p-2 text-left transition-all relative border-l-[3px] ${
+                data ? accent : "border-l-transparent"
+              } ${
                 isSelected
                   ? "bg-primary/5 ring-2 ring-inset ring-primary"
                   : isToday
