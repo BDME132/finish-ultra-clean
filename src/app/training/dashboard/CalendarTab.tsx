@@ -37,6 +37,10 @@ const DEFAULT_PHASE = { bg: "bg-gray-50", text: "text-gray-600", border: "border
 
 const DAY_HEADERS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+const DAY_OFFSETS: Record<string, number> = {
+  Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6,
+};
+
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
 function dateKey(d: Date): string {
@@ -51,18 +55,27 @@ function buildWorkoutMap(plan: SavedPlan): Map<string, CalendarDayData> {
   const raceDate = new Date(plan.raceDate + "T00:00:00");
 
   for (const week of plan.weeks) {
+    // Compute the reference point for this week
     const weekStart = new Date(raceDate);
     weekStart.setDate(weekStart.getDate() - week.weeksToRace * 7);
 
+    // Find the Monday of the ISO week containing weekStart
+    const dow = weekStart.getDay(); // 0=Sun, 1=Mon, ...
+    const mondayOffset = dow === 0 ? -6 : 1 - dow;
+    const monday = new Date(weekStart);
+    monday.setDate(monday.getDate() + mondayOffset);
+
     for (let i = 0; i < week.days.length; i++) {
-      const dayDate = new Date(weekStart);
-      dayDate.setDate(dayDate.getDate() + i);
+      const day = week.days[i];
+      const offset = DAY_OFFSETS[day.day] ?? i;
+      const dayDate = new Date(monday);
+      dayDate.setDate(dayDate.getDate() + offset);
       const key = dateKey(dayDate);
 
       map.set(key, {
         weekNumber: week.weekNumber,
         dayIndex: i,
-        workout: week.days[i],
+        workout: day,
         phase: week.phase,
         isRecovery: week.isRecovery,
         completed: plan.completedWorkouts[`w${week.weekNumber}-d${i}`],
@@ -164,7 +177,7 @@ export default function CalendarTab({ plan, onEditWorkout, onLogWorkout, onMarkC
     (viewYear === planRange.end.getFullYear() && viewMonth < planRange.end.getMonth());
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Month header with navigation */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -188,39 +201,41 @@ export default function CalendarTab({ plan, onEditWorkout, onLogWorkout, onMarkC
         </div>
         <button
           onClick={goToToday}
-          className="text-xs font-semibold text-primary hover:underline"
+          className="px-3 py-1.5 text-xs font-semibold text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
         >
           Today
         </button>
       </div>
 
-      {/* Phase legend */}
-      <div className="flex flex-wrap gap-3">
-        {planPhases.map((phase) => {
-          const colors = PHASE_COLORS[phase] || DEFAULT_PHASE;
-          return (
-            <div key={phase} className="flex items-center gap-1.5 text-xs text-gray">
-              <span className={`w-2.5 h-2.5 rounded-full ${colors.dot}`} />
-              {phase}
+      {/* Calendar card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {/* Phase legend */}
+        <div className="flex flex-wrap gap-4 px-4 sm:px-5 py-3 border-b border-gray-100 bg-light/50">
+          {planPhases.map((phase) => {
+            const colors = PHASE_COLORS[phase] || DEFAULT_PHASE;
+            return (
+              <div key={phase} className="flex items-center gap-1.5 text-xs text-gray font-medium">
+                <span className={`w-2.5 h-2.5 rounded-full ${colors.dot}`} />
+                {phase}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Day-of-week headers */}
+        <div className="grid grid-cols-7 text-center border-b border-gray-100">
+          {DAY_HEADERS.map((d) => (
+            <div key={d} className="text-[10px] sm:text-xs font-semibold text-gray uppercase tracking-wider py-2.5">
+              {d}
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
 
-      {/* Day-of-week headers */}
-      <div className="grid grid-cols-7 text-center">
-        {DAY_HEADERS.map((d) => (
-          <div key={d} className="text-[10px] sm:text-xs font-semibold text-gray uppercase tracking-wider py-2">
-            {d}
-          </div>
-        ))}
-      </div>
-
-      {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1">
-        {grid.flat().map((cell, idx) => {
+        {/* Calendar grid */}
+        <div className="grid grid-cols-7 gap-px bg-gray-100 p-px">
+          {grid.flat().map((cell, idx) => {
           if (!cell) {
-            return <div key={`empty-${idx}`} className="min-h-[70px] sm:min-h-[85px]" />;
+            return <div key={`empty-${idx}`} className="min-h-[72px] sm:min-h-[88px] bg-white" />;
           }
 
           const key = dateKey(cell);
@@ -233,20 +248,20 @@ export default function CalendarTab({ plan, onEditWorkout, onLogWorkout, onMarkC
             <button
               key={key}
               onClick={() => setSelectedDate(isSelected ? null : key)}
-              className={`min-h-[70px] sm:min-h-[85px] p-1 sm:p-1.5 rounded-lg border text-left transition-all relative ${
+              className={`min-h-[72px] sm:min-h-[88px] p-1.5 sm:p-2 text-left transition-all relative ${
                 isSelected
-                  ? "border-primary ring-1 ring-primary/30 shadow-sm"
+                  ? "bg-primary/5 ring-2 ring-inset ring-primary"
                   : isToday
-                  ? "ring-2 ring-primary/50 border-primary/30"
+                  ? "bg-primary/5 ring-2 ring-inset ring-primary/40"
                   : data
-                  ? `${colors!.bg} ${colors!.border}`
-                  : "border-gray-100 bg-white"
+                  ? `${colors!.bg}`
+                  : "bg-white hover:bg-light/50"
               }`}
             >
               {/* Day number + completion check */}
               <div className="flex items-center justify-between mb-0.5">
-                <span className={`text-xs sm:text-sm font-bold ${
-                  isToday ? "text-primary" : data ? colors!.text : "text-gray/50"
+                <span className={`text-xs sm:text-sm font-bold leading-none ${
+                  isToday ? "bg-primary text-white w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center" : data ? colors!.text : "text-gray/40"
                 }`}>
                   {cell.getDate()}
                 </span>
@@ -257,7 +272,7 @@ export default function CalendarTab({ plan, onEditWorkout, onLogWorkout, onMarkC
 
               {/* Workout info (compact) */}
               {data && (
-                <div className="space-y-0.5">
+                <div className="space-y-0.5 mt-0.5">
                   <p className={`text-[10px] sm:text-xs font-medium ${colors!.text} leading-tight line-clamp-1`}>
                     {data.workout.workout}
                   </p>
@@ -271,6 +286,7 @@ export default function CalendarTab({ plan, onEditWorkout, onLogWorkout, onMarkC
             </button>
           );
         })}
+        </div>
       </div>
 
       {/* Selected day detail panel */}

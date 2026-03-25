@@ -5,7 +5,7 @@ import {
   Home, Calendar, BarChart2, Package, Zap, Flag, Flame, Dumbbell,
   Minus, Wind, AlertCircle, ClipboardList, CheckCircle, BedDouble,
   Droplets, AlertTriangle, Circle, Moon, Sunrise, Medal, Star, PersonStanding,
-  Pencil, CalendarDays,
+  Pencil, CalendarDays, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -93,6 +93,9 @@ export default function DashboardClient() {
 
   // Post-race report state
   const [postRaceForm, setPostRaceForm] = useState<PostRaceReport>({});
+
+  // Week navigation
+  const [viewWeekNum, setViewWeekNum] = useState<number | null>(null);
 
   // Nutrition fueling form
   const [fuelingWeight, setFuelingWeight] = useState("");
@@ -209,6 +212,10 @@ export default function DashboardClient() {
   });
   const currentWeek = currentWeekIndex >= 0 ? plan.weeks[currentWeekIndex] : plan.weeks[0];
   const currentWeekNum = currentWeek?.weekNumber ?? 1;
+
+  // Display week for Week tab navigation (defaults to current week)
+  const displayWeekNum = viewWeekNum ?? currentWeekNum;
+  const displayWeek = plan.weeks.find((w) => w.weekNumber === displayWeekNum) ?? currentWeek;
 
   // Today's day of week (0=Sun, 1=Mon...)
   const dayOfWeek = today.getDay();
@@ -705,6 +712,13 @@ export default function DashboardClient() {
                     >
                       Log Workout Details
                     </button>
+                    <button
+                      onClick={() => openEditWorkout(currentWeekNum, todayDayIndex)}
+                      className="px-5 py-2.5 bg-light text-dark text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200 flex items-center gap-1.5"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Edit
+                    </button>
                   </div>
                 )}
               </div>
@@ -789,24 +803,48 @@ export default function DashboardClient() {
         )}
 
         {/* ─── WEEK TAB ──────────────────────────────────────────────── */}
-        {tab === "week" && currentWeek && (
+        {tab === "week" && displayWeek && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-headline text-2xl font-bold text-dark">
-                  Week {currentWeekNum} — {currentWeek.phase}
-                  {currentWeek.isRecovery && " (Recovery)"}
-                </h2>
-                <p className="text-sm text-gray">{currentWeek.startDate} – {currentWeek.endDate} &middot; {currentWeek.totalMiles} miles target</p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewWeekNum(Math.max(1, displayWeekNum - 1))}
+                  disabled={displayWeekNum <= 1}
+                  className="p-1.5 rounded-lg hover:bg-light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-5 h-5 text-dark" />
+                </button>
+                <div>
+                  <h2 className="font-headline text-2xl font-bold text-dark">
+                    Week {displayWeekNum} — {displayWeek.phase}
+                    {displayWeek.isRecovery && " (Recovery)"}
+                  </h2>
+                  <p className="text-sm text-gray">{displayWeek.startDate} – {displayWeek.endDate} &middot; {displayWeek.totalMiles} miles target</p>
+                </div>
+                <button
+                  onClick={() => setViewWeekNum(Math.min(plan.weeksTotal, displayWeekNum + 1))}
+                  disabled={displayWeekNum >= plan.weeksTotal}
+                  className="p-1.5 rounded-lg hover:bg-light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="w-5 h-5 text-dark" />
+                </button>
               </div>
+              {displayWeekNum !== currentWeekNum && (
+                <button
+                  onClick={() => setViewWeekNum(null)}
+                  className="px-3 py-1.5 text-xs font-semibold text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
+                >
+                  Current Week
+                </button>
+              )}
             </div>
 
             {/* Day-by-day cards */}
             <div className="space-y-3">
-              {currentWeek.days.map((day, i) => {
-                const key = `w${currentWeekNum}-d${i}`;
+              {displayWeek.days.map((day, i) => {
+                const key = `w${displayWeekNum}-d${i}`;
                 const completed = plan.completedWorkouts[key];
-                const isToday = day.day === todayDayName;
+                const isToday = displayWeekNum === currentWeekNum && day.day === todayDayName;
                 return (
                   <div
                     key={i}
@@ -842,20 +880,20 @@ export default function DashboardClient() {
                       {!completed && day.workout !== "Rest" && (
                         <div className="flex gap-2 flex-shrink-0">
                           <button
-                            onClick={() => openEditWorkout(currentWeekNum, i)}
+                            onClick={() => openEditWorkout(displayWeekNum, i)}
                             className="text-xs font-medium text-gray hover:text-primary"
                             title="Edit workout"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => markDayComplete(currentWeekNum, i)}
+                            onClick={() => markDayComplete(displayWeekNum, i)}
                             className="text-xs font-medium text-primary hover:underline"
                           >
                             Done
                           </button>
                           <button
-                            onClick={() => openWorkoutLog(currentWeekNum, i)}
+                            onClick={() => openWorkoutLog(displayWeekNum, i)}
                             className="text-xs font-medium text-gray hover:text-dark"
                           >
                             Log
@@ -865,14 +903,14 @@ export default function DashboardClient() {
                       {!completed && day.workout === "Rest" && (
                         <div className="flex gap-2 flex-shrink-0">
                           <button
-                            onClick={() => openEditWorkout(currentWeekNum, i)}
+                            onClick={() => openEditWorkout(displayWeekNum, i)}
                             className="text-xs font-medium text-gray hover:text-primary"
                             title="Edit workout"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => markDayComplete(currentWeekNum, i)}
+                            onClick={() => markDayComplete(displayWeekNum, i)}
                             className="text-xs font-medium text-gray hover:text-primary"
                           >
                             Mark done
@@ -882,7 +920,7 @@ export default function DashboardClient() {
                       {completed && (
                         <div className="text-right flex-shrink-0 flex items-center gap-2">
                           <button
-                            onClick={() => openEditWorkout(currentWeekNum, i)}
+                            onClick={() => openEditWorkout(displayWeekNum, i)}
                             className="text-gray hover:text-primary"
                             title="Edit planned workout"
                           >
