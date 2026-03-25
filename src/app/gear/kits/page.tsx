@@ -1,4 +1,6 @@
 import { Metadata } from "next";
+import Link from "next/link";
+import { Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import KitBuilder from "./KitBuilder";
@@ -23,6 +25,7 @@ type ShowcaseKit = {
   distance: string;
   terrain: string;
   budget: string;
+  presetSlug: string;
   items: { category: string; product: string; price: string }[];
   totalEst: string;
   color: string;
@@ -38,8 +41,8 @@ const FEATURES: KitFeature[] = [
   },
   {
     icon: <DollarSign className="w-6 h-6 text-primary" />,
-    title: "Budget Tiers",
-    desc: "See budget, standard, and premium builds for every kit. Pick the version that fits your wallet.",
+    title: "Real Budget Logic",
+    desc: "Budget, premium, and elite answers no longer collapse into the same result.",
   },
   {
     icon: <ClipboardList className="w-6 h-6 text-primary" />,
@@ -69,6 +72,7 @@ const SHOWCASE_KITS: ShowcaseKit[] = [
     distance: "50K",
     terrain: "Forest Trails",
     budget: "~$550",
+    presetSlug: "first-50k",
     color: "from-green-500 to-emerald-600",
     items: [
       { category: "Shoes", product: "Brooks Cascadia 16", price: "$120" },
@@ -81,26 +85,28 @@ const SHOWCASE_KITS: ShowcaseKit[] = [
     totalEst: "~$549",
   },
   {
-    label: "Desert 100",
-    distance: "100 Miles",
-    terrain: "Desert / Open",
-    budget: "~$950",
+    label: "Budget Starter",
+    distance: "50K",
+    terrain: "Runnable / Mixed",
+    budget: "~$350",
+    presetSlug: "budget-starter",
     color: "from-orange-500 to-red-500",
     items: [
-      { category: "Shoes (2 pairs)", product: "Salomon Sense Ride 5 + HOKA Clifton", price: "$280" },
-      { category: "Pack", product: "Ultimate Direction Zeal Pro 10L", price: "$160" },
-      { category: "Lighting", product: "Petzl Iko Core + BD Backup", price: "$115" },
-      { category: "Top / Shorts", product: "Patagonia Capilene Cool + Janji AFO", price: "$113" },
-      { category: "Safety", product: "SPOT X Satellite + SOL Bivvy", price: "$170" },
-      { category: "Nutrition", product: "Maurten Gels + Skratch + SaltStick", price: "$110" },
+      { category: "Shoes", product: "Brooks Cascadia 16", price: "$120" },
+      { category: "Pack", product: "CamelBak Fastpack 5", price: "$90" },
+      { category: "Shorts", product: "Patagonia Strider Pro", price: "$65" },
+      { category: "Socks", product: "Darn Tough Run No-Show", price: "$22" },
+      { category: "Nutrition", product: "GU Gels + Tailwind", price: "$42" },
+      { category: "Foot Care", product: "Leukotape + Injinji", price: "$43" },
     ],
-    totalEst: "~$948",
+    totalEst: "~$382",
   },
   {
     label: "Mountain 50-Miler",
     distance: "50 Miles",
     terrain: "Alpine",
     budget: "~$1,100",
+    presetSlug: "mountain-trail",
     color: "from-blue-500 to-primary",
     items: [
       { category: "Shoes", product: "HOKA Torrent 3", price: "$140" },
@@ -188,7 +194,9 @@ export default function GearKitsPage() {
                 Answer 10 questions. Get a complete, personalized gear kit with packing lists, drop bag plans, and a testing timeline.
               </p>
             </div>
-            <KitBuilder />
+            <Suspense fallback={<div className="bg-white rounded-2xl border border-gray-100 min-h-[480px] animate-pulse" />}>
+              <KitBuilder />
+            </Suspense>
           </div>
         </section>
 
@@ -235,7 +243,11 @@ export default function GearKitsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {SHOWCASE_KITS.map((kit) => (
-                <div key={kit.label} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                <Link
+                  key={kit.label}
+                  href={`/gear/kits?preset=${encodeURIComponent(kit.presetSlug)}`}
+                  className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all"
+                >
                   <div className={`bg-gradient-to-r ${kit.color} px-5 py-4 text-white`}>
                     <p className="font-headline font-bold text-lg">{kit.label}</p>
                     <div className="flex gap-3 text-xs text-white/80 mt-1">
@@ -260,8 +272,14 @@ export default function GearKitsPage() {
                       <span className="text-sm font-semibold text-dark">Estimated Total</span>
                       <span className="font-bold text-dark">{kit.totalEst}</span>
                     </div>
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:underline">
+                      Load this preset
+                      <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

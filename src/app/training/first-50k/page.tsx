@@ -132,7 +132,7 @@ export default function First50kPage() {
             <h2 className="font-headline text-2xl font-bold text-dark mb-4">Need Gear for Training?</h2>
             <p className="text-gray mb-6">Check out our curated First 50K Kit — everything you need, nothing you don&apos;t.</p>
             <Link
-              href="/gear/kits#first-50k"
+              href="/gear/kits?preset=first-50k"
               className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors"
             >
               View the First 50K Kit

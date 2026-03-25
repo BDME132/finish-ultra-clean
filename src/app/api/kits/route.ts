@@ -2,8 +2,29 @@ import { NextResponse } from "next/server";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import type { SavedKit } from "@/lib/kit-types";
 
+type SavedKitRow = {
+  id: string;
+  kit_id: string;
+  kit_data: SavedKit;
+  created_at: string;
+  updated_at: string;
+  status: SavedKit["status"];
+};
+
+function normalizedKitStatus(status?: SavedKit["status"]): SavedKit["status"] {
+  if (status === "complete" || status === "archived") return status;
+  return "active";
+}
+
+function materializeKit(row: SavedKitRow): SavedKit {
+  return {
+    ...row.kit_data,
+    status: row.status,
+  };
+}
+
 // GET — Load all kits for the authenticated user
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = await createSupabaseServer();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -12,18 +33,66 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const kitId = searchParams.get("kitId");
+    const scope = searchParams.get("scope");
+
+    if (kitId) {
+      const { data, error } = await supabase
+        .from("saved_kits")
+        .select("id, kit_id, kit_data, created_at, updated_at, status")
+        .eq("user_id", user.id)
+        .eq("kit_id", kitId)
+        .single();
+
+      if (error) {
+        return NextResponse.json({ kit: null });
+      }
+
+      return NextResponse.json({ kit: materializeKit(data as SavedKitRow) });
+    }
+
+    if (scope === "active") {
+      let activeRow: SavedKitRow | null = null;
+
+      const { data: activeData } = await supabase
+        .from("saved_kits")
+        .select("id, kit_id, kit_data, created_at, updated_at, status")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      activeRow = (activeData as SavedKitRow | null) ?? null;
+
+      if (!activeRow) {
+        const { data: latestData } = await supabase
+          .from("saved_kits")
+          .select("id, kit_id, kit_data, created_at, updated_at, status")
+          .eq("user_id", user.id)
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        activeRow = (latestData as SavedKitRow | null) ?? null;
+      }
+
+      return NextResponse.json({ kit: activeRow ? materializeKit(activeRow) : null });
+    }
+
     const { data, error } = await supabase
       .from("saved_kits")
-      .select("id, kit_data, created_at, updated_at")
+      .select("id, kit_id, kit_data, created_at, updated_at, status")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .order("updated_at", { ascending: false });
 
     if (error) {
       console.error("Error loading kits:", error);
       return NextResponse.json({ error: "Failed to load kits" }, { status: 500 });
     }
 
-    const kits = (data ?? []).map((row) => row.kit_data as SavedKit);
+    const kits = (data ?? []).map((row) => materializeKit(row as SavedKitRow));
     return NextResponse.json({ kits });
   } catch (error) {
     console.error("Kits GET error:", error);
@@ -48,16 +117,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid kit data" }, { status: 400 });
     }
 
+    const kitToSave: SavedKit = {
+      ...kit,
+      status: normalizedKitStatus(kit.status),
+    };
+
+    if (kitToSave.status === "active") {
+      await supabase
+        .from("saved_kits")
+        .update({ status: "archived" })
+        .eq("user_id", user.id)
+        .eq("status", "active");
+    }
+
     const { data, error } = await supabase
       .from("saved_kits")
       .insert({
         user_id: user.id,
-        kit_id: kit.kitId,
-        kit_data: kit,
-        kit_title: kit.kitTitle || "Untitled Kit",
-        distance: kit.raceDetails?.distance || null,
-        total_cost: kit.totalCost,
-        status: kit.status || "active",
+        kit_id: kitToSave.kitId,
+        kit_data: kitToSave,
+        kit_title: kitToSave.kitTitle || "Untitled Kit",
+        distance: kitToSave.raceDetails?.distance || null,
+        total_cost: kitToSave.totalCost,
+        status: kitToSave.status,
       })
       .select("id")
       .single();
@@ -91,17 +173,31 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Invalid kit data" }, { status: 400 });
     }
 
+    const kitToSave: SavedKit = {
+      ...kit,
+      status: normalizedKitStatus(kit.status),
+    };
+
+    if (kitToSave.status === "active") {
+      await supabase
+        .from("saved_kits")
+        .update({ status: "archived" })
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .neq("kit_id", kitToSave.kitId);
+    }
+
     const { error } = await supabase
       .from("saved_kits")
       .update({
-        kit_data: kit,
-        kit_title: kit.kitTitle || "Untitled Kit",
-        total_cost: kit.totalCost,
-        status: kit.status || "active",
+        kit_data: kitToSave,
+        kit_title: kitToSave.kitTitle || "Untitled Kit",
+        total_cost: kitToSave.totalCost,
+        status: kitToSave.status,
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", user.id)
-      .eq("kit_id", kit.kitId);
+      .eq("kit_id", kitToSave.kitId);
 
     if (error) {
       console.error("Error updating kit:", error);
@@ -141,6 +237,23 @@ export async function DELETE(request: Request) {
     if (error) {
       console.error("Error deleting kit:", error);
       return NextResponse.json({ error: "Failed to delete kit" }, { status: 500 });
+    }
+
+    const { data: remaining } = await supabase
+      .from("saved_kits")
+      .select("kit_id, status")
+      .eq("user_id", user.id)
+      .order("updated_at", { ascending: false });
+
+    const hasActive = (remaining ?? []).some((row) => row.status === "active");
+    const latestRemaining = remaining?.[0];
+
+    if (!hasActive && latestRemaining) {
+      await supabase
+        .from("saved_kits")
+        .update({ status: "active" })
+        .eq("user_id", user.id)
+        .eq("kit_id", latestRemaining.kit_id);
     }
 
     return NextResponse.json({ success: true });

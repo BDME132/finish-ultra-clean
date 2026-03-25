@@ -28,8 +28,7 @@ export default function RaceDayKitPage() {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
       { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-      { "@type": "ListItem", position: 3, name: "Custom Kits", item: "https://finishultra.com/gear/kits" },
-      { "@type": "ListItem", position: 4, name: "Race Day Kit", item: "https://finishultra.com/gear/race-day-kit" },
+      { "@type": "ListItem", position: 3, name: "Race Day Kit", item: "https://finishultra.com/gear/race-day-kit" },
     ],
   };
 

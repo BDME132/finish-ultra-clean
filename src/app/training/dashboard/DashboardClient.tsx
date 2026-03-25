@@ -1201,7 +1201,7 @@ export default function DashboardClient() {
 
                           {/* Kit actions */}
                           <div className="flex gap-3 pt-2">
-                            <Link href="/gear/kits" className="text-xs text-primary hover:underline font-medium">Edit Kit</Link>
+                            <Link href={`/gear/kits?kit=${encodeURIComponent(savedKit.kitId)}`} className="text-xs text-primary hover:underline font-medium">Edit Kit</Link>
                             <button
                               onClick={async () => {
                                 if (confirm("Delete this kit? This cannot be undone.")) {
