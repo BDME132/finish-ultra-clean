@@ -26,7 +26,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { loadPlan, persistPlan, deletePlanData } from "@/lib/training-sync";
 import { loadKits, deleteKit as deleteKitSync, updateKit as updateKitSync } from "@/lib/kit-sync";
 import type { SavedKit } from "@/lib/kit-types";
-import { calculateFuelingStrategy, FuelingStrategy } from "@/lib/plan-generator";
+import { calculateFuelingStrategy, FuelingStrategy, generateDynamicPlan, getTimelineAssessment } from "@/lib/plan-generator";
 import CalendarTab from "./CalendarTab";
 
 type Tab = "today" | "week" | "calendar" | "progress" | "gear" | "nutrition" | "raceday";
@@ -97,6 +97,12 @@ export default function DashboardClient() {
   // Week navigation
   const [viewWeekNum, setViewWeekNum] = useState<number | null>(null);
 
+  // Plan settings
+  const [settingsRaceName, setSettingsRaceName] = useState("");
+  const [settingsRaceDate, setSettingsRaceDate] = useState("");
+  const [raceDateConfirmOpen, setRaceDateConfirmOpen] = useState(false);
+  const [pendingRaceDate, setPendingRaceDate] = useState("");
+
   // Nutrition fueling form
   const [fuelingWeight, setFuelingWeight] = useState("");
   const [fuelingSweatRate, setFuelingSweatRate] = useState<"light" | "moderate" | "heavy">("moderate");
@@ -131,6 +137,10 @@ export default function DashboardClient() {
       const saved = await loadPlan(user);
       if (!cancelled) {
         setPlan(saved);
+        if (saved) {
+          setSettingsRaceName(saved.raceName || "");
+          setSettingsRaceDate(saved.raceDate);
+        }
         if (saved?.runnerProfile) {
           setFuelingWeight(String(saved.runnerProfile.weightLbs ?? ""));
           setFuelingSweatRate(saved.runnerProfile.sweatRate ?? "moderate");
@@ -423,6 +433,37 @@ export default function DashboardClient() {
     setPlan({ ...plan, postRaceReport: report });
   }
 
+  // ─── Plan settings ─────────────────────────────────────────────────────────
+  function openPlanSettings() {
+    setSettingsRaceName(plan!.raceName || "");
+    setSettingsRaceDate(plan!.raceDate);
+  }
+
+  function saveRaceName(name: string) {
+    if (!plan) return;
+    setPlan({ ...plan, raceName: name });
+  }
+
+  function requestRaceDateChange(newDate: string) {
+    if (!plan || newDate === plan.raceDate) return;
+    setPendingRaceDate(newDate);
+    setRaceDateConfirmOpen(true);
+  }
+
+  function confirmRaceDateChange() {
+    if (!plan || !pendingRaceDate) return;
+    const today = new Date();
+    const raceDate = new Date(pendingRaceDate + "T00:00:00");
+    const weeksUntil = Math.round((raceDate.getTime() - today.getTime()) / (7 * 24 * 60 * 60 * 1000));
+    const totalWeeks = Math.max(1, weeksUntil);
+    const assessment = getTimelineAssessment(totalWeeks, plan.distance as Parameters<typeof getTimelineAssessment>[1]);
+    const newWeeks = generateDynamicPlan(totalWeeks, plan.distance as Parameters<typeof generateDynamicPlan>[1], plan.level as Parameters<typeof generateDynamicPlan>[2], plan.currentWeeklyMiles, pendingRaceDate, assessment);
+    setPlan({ ...plan, raceDate: pendingRaceDate, weeks: newWeeks, weeksTotal: totalWeeks });
+    setSettingsRaceDate(pendingRaceDate);
+    setRaceDateConfirmOpen(false);
+    setPendingRaceDate("");
+  }
+
   // ─── Workout editing ───────────────────────────────────────────────────────
   function openEditWorkout(weekNum: number, dayIndex: number) {
     const week = plan!.weeks.find((w) => w.weekNumber === weekNum);
@@ -633,7 +674,7 @@ export default function DashboardClient() {
             {TAB_LABELS.map((t) => (
               <button
                 key={t.id}
-                onClick={() => setTab(t.id)}
+                onClick={() => { setTab(t.id); if (t.id === "week") setViewWeekNum(null); }}
                 className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-colors flex-shrink-0 ${
                   tab === t.id ? "bg-primary text-white" : "text-gray hover:text-dark hover:bg-light"
                 }`}
@@ -960,6 +1001,42 @@ export default function DashboardClient() {
         {tab === "progress" && (
           <div className="space-y-6">
             <h2 className="font-headline text-2xl font-bold text-dark">Training Progress</h2>
+
+            {/* Plan Settings */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h3 className="font-headline text-base font-bold text-dark mb-4">Plan Settings</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Race Name</label>
+                  <input
+                    type="text"
+                    value={settingsRaceName || plan.raceName || ""}
+                    onChange={(e) => setSettingsRaceName(e.target.value)}
+                    onBlur={(e) => saveRaceName(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                    placeholder="e.g. Mt. Wilson 50K"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Race Date</label>
+                  <input
+                    type="date"
+                    value={settingsRaceDate || plan.raceDate}
+                    onChange={(e) => setSettingsRaceDate(e.target.value)}
+                    onBlur={(e) => requestRaceDateChange(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Distance</label>
+                  <p className="text-sm text-dark/60 py-2">{plan.distance} <span className="text-xs text-gray">(locked)</span></p>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Level</label>
+                  <p className="text-sm text-dark/60 py-2 capitalize">{plan.level} <span className="text-xs text-gray">(locked)</span></p>
+                </div>
+              </div>
+            </div>
 
             {/* Stats grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -2109,6 +2186,46 @@ export default function DashboardClient() {
                   Cancel
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Race Date Confirm Modal ─────────────────────────────────── */}
+      {raceDateConfirmOpen && pendingRaceDate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => { setRaceDateConfirmOpen(false); setSettingsRaceDate(plan?.raceDate || ""); }} />
+          <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+            <h3 className="font-headline text-xl font-bold text-dark mb-2">Update Race Date?</h3>
+            <p className="text-sm text-gray mb-4">
+              Changing your race date from{" "}
+              <span className="font-semibold text-dark">
+                {plan ? new Date(plan.raceDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
+              </span>{" "}
+              to{" "}
+              <span className="font-semibold text-dark">
+                {new Date(pendingRaceDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </span>{" "}
+              will regenerate your training schedule.
+            </p>
+            <ul className="text-sm text-gray space-y-1 mb-6 list-none">
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />Your completed workout logs will be preserved</li>
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />Gear and nutrition tracking stays the same</li>
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-500 flex-shrink-0" />The weekly schedule will be rebuilt to fit the new timeline</li>
+            </ul>
+            <div className="flex gap-3">
+              <button
+                onClick={confirmRaceDateChange}
+                className="flex-1 px-5 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors"
+              >
+                Update Schedule
+              </button>
+              <button
+                onClick={() => { setRaceDateConfirmOpen(false); setSettingsRaceDate(plan?.raceDate || ""); }}
+                className="px-5 py-3 bg-light text-dark font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
