@@ -24,6 +24,10 @@ import {
 import { useAuth } from "@/components/AuthProvider";
 import { loadPlan, persistPlan, deletePlanData } from "@/lib/training-sync";
 import { loadKits, deleteKit as deleteKitSync, updateKit as updateKitSync } from "@/lib/kit-sync";
+import {
+  publishKit as publishPublicKit,
+  unpublishKit as unpublishPublicKit,
+} from "@/lib/public-kit-sync";
 import type { SavedKit } from "@/lib/kit-types";
 import { calculateFuelingStrategy, FuelingStrategy } from "@/lib/plan-generator";
 
@@ -90,6 +94,8 @@ export default function DashboardClient() {
   // Saved kits
   const [savedKits, setSavedKits] = useState<SavedKit[]>([]);
   const [expandedKitId, setExpandedKitId] = useState<string | null>(null);
+  const [shareAction, setShareAction] = useState<{ kitId: string; action: "publishing" | "unpublishing" } | null>(null);
+  const [shareErrorKitId, setShareErrorKitId] = useState<string | null>(null);
   const [kitPurchaseModal, setKitPurchaseModal] = useState<{ kitId: string; itemIndex: number } | null>(null);
   const [kitPurchaseRetailer, setKitPurchaseRetailer] = useState("");
   const [kitPurchasePrice, setKitPurchasePrice] = useState("");
@@ -157,6 +163,46 @@ export default function DashboardClient() {
     }
     loadUserKits();
   }, [user]);
+
+  async function publishSavedKit(kitId: string) {
+    setShareErrorKitId(null);
+    setShareAction({ kitId, action: "publishing" });
+
+    const result = await publishPublicKit(kitId);
+
+    if (!result) {
+      setShareAction(null);
+      setShareErrorKitId(kitId);
+      return;
+    }
+
+    setSavedKits((prev) =>
+      prev.map((kit) =>
+        kit.kitId === kitId ? { ...kit, publicShare: result.publicShare } : kit,
+      ),
+    );
+    setShareAction(null);
+  }
+
+  async function unpublishSavedKit(kitId: string) {
+    setShareErrorKitId(null);
+    setShareAction({ kitId, action: "unpublishing" });
+
+    const success = await unpublishPublicKit(kitId);
+
+    if (!success) {
+      setShareAction(null);
+      setShareErrorKitId(kitId);
+      return;
+    }
+
+    setSavedKits((prev) =>
+      prev.map((kit) =>
+        kit.kitId === kitId ? { ...kit, publicShare: null } : kit,
+      ),
+    );
+    setShareAction(null);
+  }
 
   if (!loaded) return null;
 
@@ -1039,6 +1085,8 @@ export default function DashboardClient() {
 
                 {savedKits.map((savedKit) => {
                   const isExpanded = expandedKitId === savedKit.kitId;
+                  const isPublishing = shareAction?.kitId === savedKit.kitId && shareAction.action === "publishing";
+                  const isUnpublishing = shareAction?.kitId === savedKit.kitId && shareAction.action === "unpublishing";
                   const purchasedItems = savedKit.items.filter((i) => i.purchased);
                   const kitProgressPct = savedKit.items.length > 0
                     ? Math.round((purchasedItems.length / savedKit.items.length) * 100)
@@ -1057,6 +1105,11 @@ export default function DashboardClient() {
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-lg">🎒</span>
                               <h3 className="font-headline font-bold text-dark text-base truncate">{savedKit.kitTitle}</h3>
+                              {savedKit.publicShare && (
+                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                                  Public
+                                </span>
+                              )}
                             </div>
                             <p className="text-xs text-gray">{savedKit.items.length} items · ${savedKit.totalCost.toLocaleString()} total</p>
                           </div>
@@ -1202,6 +1255,33 @@ export default function DashboardClient() {
                           {/* Kit actions */}
                           <div className="flex gap-3 pt-2">
                             <Link href={`/gear/kits?kit=${encodeURIComponent(savedKit.kitId)}`} className="text-xs text-primary hover:underline font-medium">Edit Kit</Link>
+                            {user && (
+                              savedKit.publicShare ? (
+                                <>
+                                  <a
+                                    href={`/gear/race-day-kit/${savedKit.publicShare.slug}`}
+                                    className="text-xs text-primary hover:underline font-medium"
+                                  >
+                                    View Public Page
+                                  </a>
+                                  <button
+                                    onClick={() => unpublishSavedKit(savedKit.kitId)}
+                                    disabled={isUnpublishing}
+                                    className="text-xs text-dark hover:underline font-medium disabled:text-gray disabled:no-underline"
+                                  >
+                                    {isUnpublishing ? "Making Private..." : "Make Private"}
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  onClick={() => publishSavedKit(savedKit.kitId)}
+                                  disabled={isPublishing}
+                                  className="text-xs text-primary hover:underline font-medium disabled:text-gray disabled:no-underline"
+                                >
+                                  {isPublishing ? "Publishing..." : "Make Public"}
+                                </button>
+                              )
+                            )}
                             <button
                               onClick={async () => {
                                 if (confirm("Delete this kit? This cannot be undone.")) {
@@ -1214,6 +1294,14 @@ export default function DashboardClient() {
                               Delete Kit
                             </button>
                           </div>
+                          {savedKit.publicShare && (
+                            <p className="text-xs text-gray">
+                              Shared Kits readers can see this snapshot, but your purchase tracking stays private.
+                            </p>
+                          )}
+                          {user && shareErrorKitId === savedKit.kitId && (
+                            <p className="text-xs text-red-600">Couldn&apos;t update sharing for this kit. Try again.</p>
+                          )}
                         </div>
                       )}
                     </div>

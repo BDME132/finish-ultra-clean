@@ -11,8 +11,13 @@ import {
   type RetailerLink,
 } from "@/lib/gear-kit-builder";
 import { loadKitById, saveNewKit, updateKit } from "@/lib/kit-sync";
+import {
+  loadPublicKitBySlug,
+  publishKit as publishPublicKit,
+  unpublishKit as unpublishPublicKit,
+} from "@/lib/public-kit-sync";
 import { generateKitId } from "@/lib/kit-types";
-import type { SavedKit, SavedKitItem } from "@/lib/kit-types";
+import type { PublicKit, PublicShare, SavedKit, SavedKitItem } from "@/lib/kit-types";
 import type { Answers } from "@/types/gear";
 import {
   CheckCircle,
@@ -220,12 +225,29 @@ function itemKey(item: { category: string; product: string }) {
   return `${item.category}::${item.product}`;
 }
 
-function savedKitToBuiltKit(savedKit: SavedKit): BuiltKit {
-  const rebuilt = buildKit(savedKit.raceDetails);
+function snapshotToBuiltKit(snapshot: {
+  raceDetails: SavedKit["raceDetails"];
+  kitTitle: string;
+  kitSubtitle: string;
+  items: Array<{
+    category: string;
+    product: string;
+    brand: string;
+    price: number;
+    why: string;
+    tier: GearItem["tier"];
+    specs: string[];
+    links: GearItem["links"];
+  }>;
+  packingChecklist: string[];
+  dropBagEssentials: string[];
+  testingTimeline: string[];
+}): BuiltKit {
+  const rebuilt = buildKit(snapshot.raceDetails);
   return {
-    title: savedKit.kitTitle,
-    subtitle: savedKit.kitSubtitle,
-    items: savedKit.items.map((item) => ({
+    title: snapshot.kitTitle,
+    subtitle: snapshot.kitSubtitle,
+    items: snapshot.items.map((item) => ({
       category: item.category,
       product: item.product,
       brand: item.brand,
@@ -235,12 +257,20 @@ function savedKitToBuiltKit(savedKit: SavedKit): BuiltKit {
       specs: item.specs,
       links: item.links,
     })),
-    packingChecklist: savedKit.packingChecklist,
-    dropBagEssentials: savedKit.dropBagEssentials,
-    testingTimeline: savedKit.testingTimeline,
+    packingChecklist: snapshot.packingChecklist,
+    dropBagEssentials: snapshot.dropBagEssentials,
+    testingTimeline: snapshot.testingTimeline,
     impactBadges: rebuilt.impactBadges,
     selectedTier: rebuilt.selectedTier,
   };
+}
+
+function savedKitToBuiltKit(savedKit: SavedKit): BuiltKit {
+  return snapshotToBuiltKit(savedKit);
+}
+
+function publicKitToBuiltKit(publicKit: PublicKit): BuiltKit {
+  return snapshotToBuiltKit(publicKit);
 }
 
 function ProductCard({
@@ -389,17 +419,21 @@ export default function KitBuilder() {
   const searchParams = useSearchParams();
   const presetSlug = searchParams.get("preset");
   const queryKitId = searchParams.get("kit");
+  const publicKitSlug = searchParams.get("publicKit");
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<Answers>>({});
   const [kit, setKit] = useState<BuiltKit | null>(null);
   const [activeTab, setActiveTab] = useState<"gear" | "packing" | "dropbag" | "timeline">("gear");
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error" | "login-prompt">("idle");
+  const [shareState, setShareState] = useState<"idle" | "publishing" | "unpublishing" | "error">("idle");
   const [savedKitId, setSavedKitId] = useState<string | null>(null);
   const [kitCreatedAt, setKitCreatedAt] = useState<string | null>(null);
   const [sourcePresetId, setSourcePresetId] = useState<string | null>(null);
+  const [contextKind, setContextKind] = useState<"saved" | "preset" | "public" | null>(null);
+  const [publicShare, setPublicShare] = useState<PublicShare | null>(null);
   const [contextBanner, setContextBanner] = useState<{ title: string; body: string } | null>(null);
-  const [isHydrating, setIsHydrating] = useState(Boolean(queryKitId || presetSlug));
+  const [isHydrating, setIsHydrating] = useState(Boolean(queryKitId || presetSlug || publicKitSlug));
   const [purchased, setPurchasedRaw] = useState<Set<string>>(() => {
     if (typeof window === "undefined") return new Set<string>();
     try {
@@ -425,24 +459,31 @@ export default function KitBuilder() {
   }, [purchased]);
 
   useEffect(() => {
-    const hydrationKey = `${queryKitId ?? ""}|${presetSlug ?? ""}|${user?.id ?? "guest"}`;
+    const hydrationKey = `${queryKitId ?? ""}|${publicKitSlug ?? ""}|${presetSlug ?? ""}|${user?.id ?? "guest"}`;
     if (hydratedRef.current === hydrationKey) return;
     hydratedRef.current = hydrationKey;
 
     let cancelled = false;
-    setIsHydrating(Boolean(queryKitId || presetSlug));
+    setIsHydrating(Boolean(queryKitId || presetSlug || publicKitSlug));
 
     async function hydrateFromQuery() {
+      let loadedContext = false;
+
       if (queryKitId) {
         const savedKit = await loadKitById(user, queryKitId);
         if (cancelled) return;
 
         if (savedKit) {
+          loadedContext = true;
           setAnswers(savedKit.raceDetails);
           setKit(savedKitToBuiltKit(savedKit));
           setSavedKitId(savedKit.kitId);
           setKitCreatedAt(savedKit.createdAt);
           setSourcePresetId(savedKit.presetId ?? null);
+          setContextKind("saved");
+          setPublicShare(savedKit.publicShare ?? null);
+          setSaveState("idle");
+          setShareState("idle");
           setContextBanner({
             title: "Editing saved kit",
             body: "This builder is hydrated with your saved answers, item list, and purchase state.",
@@ -454,14 +495,45 @@ export default function KitBuilder() {
         }
       }
 
+      if (publicKitSlug) {
+        const publicKit = await loadPublicKitBySlug(publicKitSlug);
+        if (cancelled) return;
+
+        if (publicKit) {
+          loadedContext = true;
+          setAnswers(publicKit.raceDetails);
+          setKit(publicKitToBuiltKit(publicKit));
+          setSavedKitId(null);
+          setKitCreatedAt(null);
+          setSourcePresetId(publicKit.presetId ?? null);
+          setContextKind("public");
+          setPublicShare(null);
+          setSaveState("idle");
+          setShareState("idle");
+          setContextBanner({
+            title: `Loaded from ${publicKit.authorDisplayName}'s shared kit`,
+            body: "Their race setup is now loaded into your builder. Save it to Race HQ to make it your own.",
+          });
+          setPurchasedRaw(new Set<string>());
+          setActiveTab("gear");
+          setIsHydrating(false);
+          return;
+        }
+      }
+
       if (presetSlug) {
         const preset = getKitPreset(presetSlug);
         if (preset && !cancelled) {
+          loadedContext = true;
           setAnswers(preset.answers);
           setKit(buildKit(preset.answers));
           setSavedKitId(null);
           setKitCreatedAt(null);
           setSourcePresetId(preset.slug);
+          setContextKind("preset");
+          setPublicShare(null);
+          setSaveState("idle");
+          setShareState("idle");
           setContextBanner({
             title: `Loaded preset: ${preset.name}`,
             body: preset.description,
@@ -469,9 +541,25 @@ export default function KitBuilder() {
           setPurchasedRaw(new Set<string>());
           setActiveTab("gear");
         }
-      } else if (!queryKitId) {
+      } else if (!queryKitId && !publicKitSlug) {
         setContextBanner(null);
         setSourcePresetId(null);
+        setContextKind(null);
+        setPublicShare(null);
+      }
+
+      if (!loadedContext) {
+        setStep(0);
+        setAnswers({});
+        setKit(null);
+        setSavedKitId(null);
+        setKitCreatedAt(null);
+        setSourcePresetId(null);
+        setContextKind(null);
+        setPublicShare(null);
+        setContextBanner(null);
+        setPurchasedRaw(new Set<string>());
+        setActiveTab("gear");
       }
 
       if (!cancelled) {
@@ -483,7 +571,7 @@ export default function KitBuilder() {
     return () => {
       cancelled = true;
     };
-  }, [presetSlug, queryKitId, user]);
+  }, [presetSlug, queryKitId, publicKitSlug, user]);
 
   function setPurchased(updater: (prev: Set<string>) => Set<string>) {
     setPurchasedRaw(updater);
@@ -505,9 +593,15 @@ export default function KitBuilder() {
     setAnswers({});
     setKit(null);
     setActiveTab("gear");
+    setSaveState("idle");
+    setShareState("idle");
+    setSavedKitId(null);
+    setKitCreatedAt(null);
     setPurchasedRaw(new Set());
     setContextBanner(null);
     setSourcePresetId(null);
+    setContextKind(null);
+    setPublicShare(null);
     try {
       localStorage.removeItem(PURCHASED_STORAGE_KEY);
     } catch {
@@ -571,6 +665,7 @@ export default function KitBuilder() {
         },
         status: "active",
         notes: "",
+        publicShare,
       };
 
       if (savedKitId) {
@@ -581,6 +676,16 @@ export default function KitBuilder() {
         setKitCreatedAt(savedKit.createdAt);
       }
 
+      if (publicShare) {
+        const publishResult = await publishPublicKit(kitId);
+        if (publishResult?.publicShare) {
+          setPublicShare(publishResult.publicShare);
+        } else {
+          setShareState("error");
+          window.setTimeout(() => setShareState("idle"), 3500);
+        }
+      }
+
       setSaveState("saved");
       window.setTimeout(() => setSaveState("idle"), 4000);
     } catch (error) {
@@ -588,6 +693,38 @@ export default function KitBuilder() {
       setSaveState("error");
       window.setTimeout(() => setSaveState("idle"), 3000);
     }
+  }
+
+  async function handlePublishKit() {
+    if (!savedKitId) return;
+
+    setShareState("publishing");
+    const publishResult = await publishPublicKit(savedKitId);
+
+    if (!publishResult) {
+      setShareState("error");
+      window.setTimeout(() => setShareState("idle"), 3500);
+      return;
+    }
+
+    setPublicShare(publishResult.publicShare);
+    setShareState("idle");
+  }
+
+  async function handleUnpublishKit() {
+    if (!savedKitId) return;
+
+    setShareState("unpublishing");
+    const success = await unpublishPublicKit(savedKitId);
+
+    if (!success) {
+      setShareState("error");
+      window.setTimeout(() => setShareState("idle"), 3500);
+      return;
+    }
+
+    setPublicShare(null);
+    setShareState("idle");
   }
 
   const currentQ = QUESTIONS[step];
@@ -640,9 +777,14 @@ export default function KitBuilder() {
               Active saved kit
             </span>
           )}
-          {!savedKitId && sourcePresetId && (
+          {!savedKitId && contextKind === "preset" && sourcePresetId && (
             <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide">
               Preset loaded
+            </span>
+          )}
+          {!savedKitId && contextKind === "public" && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide">
+              Shared kit loaded
             </span>
           )}
         </div>
@@ -765,7 +907,11 @@ export default function KitBuilder() {
                     <span className="text-xl">&#10003;</span>
                     <div>
                       <p className="font-semibold text-green-800 text-sm">Kit Saved Successfully!</p>
-                      <p className="text-xs text-green-700 mt-0.5">Race HQ now points to this active saved kit.</p>
+                      <p className="text-xs text-green-700 mt-0.5">
+                        {publicShare
+                          ? "Race HQ now points to this active saved kit, and your shared page was refreshed."
+                          : "Race HQ now points to this active saved kit."}
+                      </p>
                     </div>
                   </div>
                   <a href="/race-hq" className="text-sm font-medium text-primary hover:underline shrink-0">
@@ -802,6 +948,71 @@ export default function KitBuilder() {
                 </button>
               )}
             </div>
+
+            {user && (
+              <div className="mb-5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-gray mb-1">Shared Kit</p>
+                    {publicShare ? (
+                      <>
+                        <p className="text-sm font-semibold text-dark">This kit is public.</p>
+                        <p className="text-sm text-gray mt-1">Other runners can browse it in Shared Kits, and every save here refreshes the public snapshot.</p>
+                      </>
+                    ) : savedKitId ? (
+                      <>
+                        <p className="text-sm font-semibold text-dark">Keep this private or publish it for other runners.</p>
+                        <p className="text-sm text-gray mt-1">Publishing creates a public inspiration page without exposing your purchase history.</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm font-semibold text-dark">Save this kit before sharing it.</p>
+                        <p className="text-sm text-gray mt-1">Once it is saved to Race HQ, you can publish a read-only public version.</p>
+                      </>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {publicShare && (
+                      <a
+                        href={`/gear/race-day-kit/${publicShare.slug}`}
+                        className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+                      >
+                        View Public Page
+                      </a>
+                    )}
+                    {savedKitId && !publicShare && (
+                      <button
+                        onClick={handlePublishKit}
+                        disabled={shareState === "publishing"}
+                        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                          shareState === "publishing"
+                            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                            : "bg-primary text-white hover:bg-blue-700"
+                        }`}
+                      >
+                        {shareState === "publishing" ? "Publishing..." : "Make Public"}
+                      </button>
+                    )}
+                    {savedKitId && publicShare && (
+                      <button
+                        onClick={handleUnpublishKit}
+                        disabled={shareState === "unpublishing"}
+                        className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
+                          shareState === "unpublishing"
+                            ? "border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed"
+                            : "border-gray-300 bg-white text-dark hover:bg-gray-100"
+                        }`}
+                      >
+                        {shareState === "unpublishing" ? "Making Private..." : "Make Private"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {shareState === "error" && (
+                  <p className="mt-3 text-sm text-red-600">Couldn&apos;t update the public share state. Try again.</p>
+                )}
+              </div>
+            )}
 
             <div className="mb-5 rounded-xl border border-gray-200 bg-light px-4 py-3 flex flex-wrap items-center justify-between gap-3">
               <div>

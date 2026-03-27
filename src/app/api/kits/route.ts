@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import type { SavedKit } from "@/lib/kit-types";
+import type { PublicShare, SavedKit } from "@/lib/kit-types";
+import { toPublicShare } from "@/lib/public-kits";
 
 type SavedKitRow = {
   id: string;
@@ -11,16 +12,56 @@ type SavedKitRow = {
   status: SavedKit["status"];
 };
 
+type PublicShareRow = {
+  source_kit_id: string;
+  slug: string;
+  published_at: string;
+  updated_at: string;
+};
+
+const SAVED_KIT_SELECT = "id, kit_id, kit_data, created_at, updated_at, status";
+
 function normalizedKitStatus(status?: SavedKit["status"]): SavedKit["status"] {
   if (status === "complete" || status === "archived") return status;
   return "active";
 }
 
-function materializeKit(row: SavedKitRow): SavedKit {
+function materializeKit(row: SavedKitRow, publicShare: PublicShare | null = null): SavedKit {
   return {
     ...row.kit_data,
     status: row.status,
+    publicShare,
   };
+}
+
+async function loadPublicShareMap(
+  supabase: Awaited<ReturnType<typeof createSupabaseServer>>,
+  userId: string,
+  kitIds: string[],
+): Promise<Map<string, PublicShare>> {
+  if (kitIds.length === 0) return new Map();
+
+  const { data } = await supabase
+    .from("public_kits")
+    .select("source_kit_id, slug, published_at, updated_at")
+    .eq("user_id", userId)
+    .in("source_kit_id", kitIds);
+
+  return new Map(
+    ((data ?? []) as PublicShareRow[]).map((row) => [
+      row.source_kit_id,
+      toPublicShare(row),
+    ]),
+  );
+}
+
+async function loadPublicShareForKit(
+  supabase: Awaited<ReturnType<typeof createSupabaseServer>>,
+  userId: string,
+  kitId: string,
+): Promise<PublicShare | null> {
+  const publicShareMap = await loadPublicShareMap(supabase, userId, [kitId]);
+  return publicShareMap.get(kitId) ?? null;
 }
 
 // GET — Load all kits for the authenticated user
@@ -40,7 +81,7 @@ export async function GET(request: Request) {
     if (kitId) {
       const { data, error } = await supabase
         .from("saved_kits")
-        .select("id, kit_id, kit_data, created_at, updated_at, status")
+        .select(SAVED_KIT_SELECT)
         .eq("user_id", user.id)
         .eq("kit_id", kitId)
         .single();
@@ -49,7 +90,8 @@ export async function GET(request: Request) {
         return NextResponse.json({ kit: null });
       }
 
-      return NextResponse.json({ kit: materializeKit(data as SavedKitRow) });
+      const publicShare = await loadPublicShareForKit(supabase, user.id, kitId);
+      return NextResponse.json({ kit: materializeKit(data as SavedKitRow, publicShare) });
     }
 
     if (scope === "active") {
@@ -57,7 +99,7 @@ export async function GET(request: Request) {
 
       const { data: activeData } = await supabase
         .from("saved_kits")
-        .select("id, kit_id, kit_data, created_at, updated_at, status")
+        .select(SAVED_KIT_SELECT)
         .eq("user_id", user.id)
         .eq("status", "active")
         .order("updated_at", { ascending: false })
@@ -69,7 +111,7 @@ export async function GET(request: Request) {
       if (!activeRow) {
         const { data: latestData } = await supabase
           .from("saved_kits")
-          .select("id, kit_id, kit_data, created_at, updated_at, status")
+          .select(SAVED_KIT_SELECT)
           .eq("user_id", user.id)
           .order("updated_at", { ascending: false })
           .limit(1)
@@ -78,12 +120,17 @@ export async function GET(request: Request) {
         activeRow = (latestData as SavedKitRow | null) ?? null;
       }
 
-      return NextResponse.json({ kit: activeRow ? materializeKit(activeRow) : null });
+      if (!activeRow) {
+        return NextResponse.json({ kit: null });
+      }
+
+      const publicShare = await loadPublicShareForKit(supabase, user.id, activeRow.kit_id);
+      return NextResponse.json({ kit: materializeKit(activeRow, publicShare) });
     }
 
     const { data, error } = await supabase
       .from("saved_kits")
-      .select("id, kit_id, kit_data, created_at, updated_at, status")
+      .select(SAVED_KIT_SELECT)
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false });
 
@@ -92,7 +139,13 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Failed to load kits" }, { status: 500 });
     }
 
-    const kits = (data ?? []).map((row) => materializeKit(row as SavedKitRow));
+    const rows = (data ?? []) as SavedKitRow[];
+    const publicShareMap = await loadPublicShareMap(
+      supabase,
+      user.id,
+      rows.map((row) => row.kit_id),
+    );
+    const kits = rows.map((row) => materializeKit(row, publicShareMap.get(row.kit_id) ?? null));
     return NextResponse.json({ kits });
   } catch (error) {
     console.error("Kits GET error:", error);
@@ -238,6 +291,12 @@ export async function DELETE(request: Request) {
       console.error("Error deleting kit:", error);
       return NextResponse.json({ error: "Failed to delete kit" }, { status: 500 });
     }
+
+    await supabase
+      .from("public_kits")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("source_kit_id", kitId);
 
     const { data: remaining } = await supabase
       .from("saved_kits")

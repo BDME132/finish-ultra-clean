@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Gear | FinishUltra",
-  description: "Honest gear recommendations for beginner ultra runners. Start with a personalized custom kit or browse race-day checklists and category guides.",
+  description: "Honest gear recommendations for beginner ultra runners. Start with a personalized custom kit or browse shared kits and category guides.",
   alternates: { canonical: "/gear" },
 };
 
@@ -43,7 +43,7 @@ export default function GearPage() {
               Gear That Gets You to the Start Line Ready
             </h1>
             <p className="text-lg text-gray max-w-3xl mx-auto">
-              Start with a personalized kit if you want recommendations for your exact race, or use the race-day checklist if you want the universal editorial version first.
+              Start with a personalized kit if you want recommendations for your exact race, or browse shared kits if you want to see how other runners are solving similar problems.
             </p>
           </div>
         </section>
@@ -91,19 +91,19 @@ export default function GearPage() {
                 className="group block rounded-3xl border border-gray-200 bg-white p-8 sm:p-10 shadow-sm hover:shadow-md transition-all"
               >
                 <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-semibold text-accent mb-6">
-                  Editorial Checklist
+                  Community Inspiration
                 </div>
                 <h2 className="font-headline text-3xl font-bold text-dark mb-4">
-                  Race Day Kit
+                  Shared Kits
                 </h2>
                 <p className="text-base text-gray leading-relaxed mb-6">
-                  The universal checklist version: what typically belongs on-body, in your vest, in your drop bag, with your crew, and at the finish.
+                  Browse public kits built by real runners. See how other people are handling terrain, budget, distance, and race-day logistics, then load their ideas into your own builder.
                 </p>
                 <div className="space-y-3 mb-8">
                   {[
-                    "Best for understanding the whole race-day system",
-                    "Useful if you want the broad checklist before choosing products",
-                    "Great companion to the custom builder",
+                    "Best for comparing how runners approach similar races",
+                    "Useful when you want inspiration before building your own setup",
+                    "Every public kit can be loaded into the custom builder",
                   ].map((point) => (
                     <div key={point} className="flex items-start gap-2 text-sm text-dark">
                       <span className="text-accent mt-0.5">•</span>
@@ -112,7 +112,7 @@ export default function GearPage() {
                   ))}
                 </div>
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-accent">
-                  View the checklist
+                  Browse shared kits
                   <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
@@ -130,8 +130,8 @@ export default function GearPage() {
                 <p className="text-sm text-dark">Personalized to your race, climate, runner profile, and budget. Best when you want product-level recommendations.</p>
               </div>
               <div className="rounded-2xl border border-accent/10 bg-accent/5 p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-2">Race Day Kit</p>
-                <p className="text-sm text-dark">Universal editorial checklist. Best when you want the full system view before dialing in exact products.</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-2">Shared Kits</p>
+                <p className="text-sm text-dark">Public runner-built kits. Best when you want inspiration, comparisons, and real-world ideas before customizing your own setup.</p>
               </div>
             </div>
           </div>

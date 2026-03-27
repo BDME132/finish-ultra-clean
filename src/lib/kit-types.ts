@@ -20,6 +20,23 @@ export interface SavedKitItem {
   rating: number; // 0-5
 }
 
+export interface PublicShare {
+  slug: string;
+  publishedAt: string;
+  updatedAt: string;
+}
+
+export interface PublicKitItem {
+  category: string;
+  product: string;
+  brand: string;
+  price: number;
+  why: string;
+  tier: "standard" | "budget" | "premium" | "elite";
+  specs: string[];
+  links: Record<string, { url: string; price: number }>;
+}
+
 export interface SavedKit {
   kitId: string;
   createdAt: string;
@@ -68,6 +85,32 @@ export interface SavedKit {
   // Status
   status: "active" | "complete" | "archived";
   notes: string;
+  publicShare?: PublicShare | null;
+}
+
+export interface PublicKit {
+  id: string;
+  sourceKitId: string;
+  slug: string;
+  authorDisplayName: string;
+  kitTitle: string;
+  kitSubtitle: string;
+  raceDetails: SavedKit["raceDetails"];
+  items: PublicKitItem[];
+  packingChecklist: string[];
+  dropBagEssentials: string[];
+  testingTimeline: string[];
+  totalCost: number;
+  presetId?: string;
+  publishedAt: string;
+  updatedAt: string;
+}
+
+export interface PublicKitFilters {
+  distance?: string;
+  terrain?: string;
+  budget?: string;
+  sort?: "newest" | "updated" | "lowest-cost" | "highest-cost";
 }
 
 // ─── localStorage ────────────────────────────────────────────────────────────
