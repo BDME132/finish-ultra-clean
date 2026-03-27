@@ -576,6 +576,12 @@ export default function DashboardClient() {
           style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #FF6B00 0%, transparent 50%), radial-gradient(circle at 80% 20%, #0066FF 0%, transparent 40%)" }}
         />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <Link href="/race-hq" className="inline-flex items-center gap-1 text-white/50 hover:text-white/80 text-xs mb-3 transition-colors">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Race HQ
+          </Link>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-1 flex-wrap">
@@ -1131,7 +1137,10 @@ export default function DashboardClient() {
             </div>
 
             {/* Delete plan */}
-            <div className="text-center pt-4">
+            <div className="flex items-center justify-center gap-6 pt-4">
+              <Link href="/training/plans" className="text-xs text-gray hover:text-primary transition-colors">
+                Build a New Plan
+              </Link>
               <button
                 onClick={() => { if (confirm("Delete your saved plan? This cannot be undone.")) deletePlan(); }}
                 className="text-xs text-gray hover:text-red-500 transition-colors"
