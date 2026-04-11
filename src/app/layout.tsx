@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   creator: "FinishUltra",
   metadataBase: new URL("https://www.finishultra.com"),
   verification: {
-    google: "PASTE_YOUR_CODE_HERE",
+    google: "X24norHDFiTwBrKvxmKNukCK-tejMgzix9jTIe9WBFY",
   },
   openGraph: {
     type: "website",
