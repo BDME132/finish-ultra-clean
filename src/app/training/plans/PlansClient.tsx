@@ -2216,6 +2216,30 @@ export default function PlansClient() {
               </div>
             </div>
 
+            {/* Save Plan CTA — Top (compact) */}
+            {dynamicPlan && dynamicPlan.length > 0 && (
+              <div className="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-xl px-5 py-3 mb-10">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                  <p className="text-sm text-dark">
+                    <span className="font-semibold">Your plan is ready.</span>{" "}
+                    Save it to your dashboard to start tracking.
+                  </p>
+                </div>
+                <button
+                  onClick={handleSavePlan}
+                  disabled={planSaved}
+                  className={`px-5 py-2 rounded-lg font-semibold text-sm transition-all flex-shrink-0 ${
+                    planSaved
+                      ? "bg-green-400 text-white cursor-default"
+                      : "bg-primary text-white hover:bg-primary-dark shadow-sm"
+                  }`}
+                >
+                  {planSaved ? "Saved!" : "Save Plan \u2192"}
+                </button>
+              </div>
+            )}
+
             {/* ── Dynamic Week-by-Week Plan ───────────────────────────── */}
             {dynamicPlan && dynamicPlan.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-10">

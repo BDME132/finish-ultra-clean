@@ -217,6 +217,16 @@ export default function Header() {
                     Race HQ
                   </Link>
                   <Link
+                    href="/training/dashboard"
+                    className={`text-sm font-medium transition-colors ${
+                      pathname?.startsWith("/training/dashboard")
+                        ? "text-primary"
+                        : "text-dark hover:text-primary"
+                    }`}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
                     href="/account"
                     className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
                     title="Account"

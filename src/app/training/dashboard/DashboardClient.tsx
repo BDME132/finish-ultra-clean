@@ -5,6 +5,7 @@ import {
   Home, Calendar, BarChart2, Package, Zap, Flag, Flame, Dumbbell,
   Minus, Wind, AlertCircle, ClipboardList, CheckCircle, BedDouble,
   Droplets, AlertTriangle, Circle, Moon, Sunrise, Medal, Star, PersonStanding,
+  Pencil, CalendarDays, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -25,13 +26,15 @@ import { useAuth } from "@/components/AuthProvider";
 import { loadPlan, persistPlan, deletePlanData } from "@/lib/training-sync";
 import { loadKits, deleteKit as deleteKitSync, updateKit as updateKitSync } from "@/lib/kit-sync";
 import type { SavedKit } from "@/lib/kit-types";
-import { calculateFuelingStrategy, FuelingStrategy } from "@/lib/plan-generator";
+import { calculateFuelingStrategy, FuelingStrategy, generateDynamicPlan, getTimelineAssessment } from "@/lib/plan-generator";
+import CalendarTab from "./CalendarTab";
 
-type Tab = "today" | "week" | "progress" | "gear" | "nutrition" | "raceday";
+type Tab = "today" | "week" | "calendar" | "progress" | "gear" | "nutrition" | "raceday";
 
 const TAB_LABELS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "today", label: "Today", icon: <Home className="w-4 h-4" /> },
   { id: "week", label: "Week", icon: <Calendar className="w-4 h-4" /> },
+  { id: "calendar", label: "Calendar", icon: <CalendarDays className="w-4 h-4" /> },
   { id: "progress", label: "Progress", icon: <BarChart2 className="w-4 h-4" /> },
   { id: "gear", label: "Gear", icon: <Package className="w-4 h-4" /> },
   { id: "nutrition", label: "Nutrition", icon: <Zap className="w-4 h-4" /> },
@@ -79,8 +82,26 @@ export default function DashboardClient() {
   const [nutritionRating, setNutritionRating] = useState(0);
   const [nutritionRaceUse, setNutritionRaceUse] = useState<"yes" | "maybe" | "no" | "">("");
 
+  // Workout editing
+  const [editWorkoutOpen, setEditWorkoutOpen] = useState(false);
+  const [editWeek, setEditWeek] = useState(0);
+  const [editDayIndex, setEditDayIndex] = useState(0);
+  const [editWorkoutType, setEditWorkoutType] = useState("");
+  const [editDistance, setEditDistance] = useState("");
+  const [editEffort, setEditEffort] = useState("");
+  const [editNotes, setEditNotes] = useState("");
+
   // Post-race report state
   const [postRaceForm, setPostRaceForm] = useState<PostRaceReport>({});
+
+  // Week navigation
+  const [viewWeekNum, setViewWeekNum] = useState<number | null>(null);
+
+  // Plan settings
+  const [settingsRaceName, setSettingsRaceName] = useState("");
+  const [settingsRaceDate, setSettingsRaceDate] = useState("");
+  const [raceDateConfirmOpen, setRaceDateConfirmOpen] = useState(false);
+  const [pendingRaceDate, setPendingRaceDate] = useState("");
 
   // Nutrition fueling form
   const [fuelingWeight, setFuelingWeight] = useState("");
@@ -116,6 +137,10 @@ export default function DashboardClient() {
       const saved = await loadPlan(user);
       if (!cancelled) {
         setPlan(saved);
+        if (saved) {
+          setSettingsRaceName(saved.raceName || "");
+          setSettingsRaceDate(saved.raceDate);
+        }
         if (saved?.runnerProfile) {
           setFuelingWeight(String(saved.runnerProfile.weightLbs ?? ""));
           setFuelingSweatRate(saved.runnerProfile.sweatRate ?? "moderate");
@@ -197,6 +222,10 @@ export default function DashboardClient() {
   });
   const currentWeek = currentWeekIndex >= 0 ? plan.weeks[currentWeekIndex] : plan.weeks[0];
   const currentWeekNum = currentWeek?.weekNumber ?? 1;
+
+  // Display week for Week tab navigation (defaults to current week)
+  const displayWeekNum = viewWeekNum ?? currentWeekNum;
+  const displayWeek = plan.weeks.find((w) => w.weekNumber === displayWeekNum) ?? currentWeek;
 
   // Today's day of week (0=Sun, 1=Mon...)
   const dayOfWeek = today.getDay();
@@ -404,6 +433,67 @@ export default function DashboardClient() {
     setPlan({ ...plan, postRaceReport: report });
   }
 
+  // ─── Plan settings ─────────────────────────────────────────────────────────
+  function openPlanSettings() {
+    setSettingsRaceName(plan!.raceName || "");
+    setSettingsRaceDate(plan!.raceDate);
+  }
+
+  function saveRaceName(name: string) {
+    if (!plan) return;
+    setPlan({ ...plan, raceName: name });
+  }
+
+  function requestRaceDateChange(newDate: string) {
+    if (!plan || newDate === plan.raceDate) return;
+    setPendingRaceDate(newDate);
+    setRaceDateConfirmOpen(true);
+  }
+
+  function confirmRaceDateChange() {
+    if (!plan || !pendingRaceDate) return;
+    const today = new Date();
+    const raceDate = new Date(pendingRaceDate + "T00:00:00");
+    const weeksUntil = Math.round((raceDate.getTime() - today.getTime()) / (7 * 24 * 60 * 60 * 1000));
+    const totalWeeks = Math.max(1, weeksUntil);
+    const assessment = getTimelineAssessment(totalWeeks, plan.distance as Parameters<typeof getTimelineAssessment>[1]);
+    const newWeeks = generateDynamicPlan(totalWeeks, plan.distance as Parameters<typeof generateDynamicPlan>[1], plan.level as Parameters<typeof generateDynamicPlan>[2], plan.currentWeeklyMiles, pendingRaceDate, assessment);
+    setPlan({ ...plan, raceDate: pendingRaceDate, weeks: newWeeks, weeksTotal: totalWeeks });
+    setSettingsRaceDate(pendingRaceDate);
+    setRaceDateConfirmOpen(false);
+    setPendingRaceDate("");
+  }
+
+  // ─── Workout editing ───────────────────────────────────────────────────────
+  function openEditWorkout(weekNum: number, dayIndex: number) {
+    const week = plan!.weeks.find((w) => w.weekNumber === weekNum);
+    const workout = week?.days[dayIndex];
+    if (!workout) return;
+    setEditWeek(weekNum);
+    setEditDayIndex(dayIndex);
+    setEditWorkoutType(workout.workout);
+    setEditDistance(workout.distance);
+    setEditEffort(workout.effort);
+    setEditNotes(workout.notes);
+    setEditWorkoutOpen(true);
+  }
+
+  function saveEditWorkout() {
+    if (!plan) return;
+    const updatedWeeks = plan.weeks.map((w) => {
+      if (w.weekNumber !== editWeek) return w;
+      return {
+        ...w,
+        days: w.days.map((d, i) => {
+          if (i !== editDayIndex) return d;
+          return { ...d, workout: editWorkoutType, distance: editDistance, effort: editEffort, notes: editNotes };
+        }),
+      };
+    });
+    setPlan({ ...plan, weeks: updatedWeeks });
+    setEditWorkoutOpen(false);
+  }
+
   // ─── Handlers ──────────────────────────────────────────────────────────────
   function openWorkoutLog(weekNum: number, dayIndex: number) {
     const week = plan!.weeks.find((w) => w.weekNumber === weekNum);
@@ -527,6 +617,12 @@ export default function DashboardClient() {
           style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #FF6B00 0%, transparent 50%), radial-gradient(circle at 80% 20%, #0066FF 0%, transparent 40%)" }}
         />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <Link href="/race-hq" className="inline-flex items-center gap-1 text-white/50 hover:text-white/80 text-xs mb-3 transition-colors">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Race HQ
+          </Link>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-1 flex-wrap">
@@ -578,7 +674,7 @@ export default function DashboardClient() {
             {TAB_LABELS.map((t) => (
               <button
                 key={t.id}
-                onClick={() => setTab(t.id)}
+                onClick={() => { setTab(t.id); if (t.id === "week") setViewWeekNum(null); }}
                 className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-colors flex-shrink-0 ${
                   tab === t.id ? "bg-primary text-white" : "text-gray hover:text-dark hover:bg-light"
                 }`}
@@ -662,6 +758,13 @@ export default function DashboardClient() {
                       className="px-5 py-2.5 bg-light text-dark text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200"
                     >
                       Log Workout Details
+                    </button>
+                    <button
+                      onClick={() => openEditWorkout(currentWeekNum, todayDayIndex)}
+                      className="px-5 py-2.5 bg-light text-dark text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200 flex items-center gap-1.5"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Edit
                     </button>
                   </div>
                 )}
@@ -747,24 +850,48 @@ export default function DashboardClient() {
         )}
 
         {/* ─── WEEK TAB ──────────────────────────────────────────────── */}
-        {tab === "week" && currentWeek && (
+        {tab === "week" && displayWeek && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-headline text-2xl font-bold text-dark">
-                  Week {currentWeekNum} — {currentWeek.phase}
-                  {currentWeek.isRecovery && " (Recovery)"}
-                </h2>
-                <p className="text-sm text-gray">{currentWeek.startDate} – {currentWeek.endDate} &middot; {currentWeek.totalMiles} miles target</p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewWeekNum(Math.max(1, displayWeekNum - 1))}
+                  disabled={displayWeekNum <= 1}
+                  className="p-1.5 rounded-lg hover:bg-light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-5 h-5 text-dark" />
+                </button>
+                <div>
+                  <h2 className="font-headline text-2xl font-bold text-dark">
+                    Week {displayWeekNum} — {displayWeek.phase}
+                    {displayWeek.isRecovery && " (Recovery)"}
+                  </h2>
+                  <p className="text-sm text-gray">{displayWeek.startDate} – {displayWeek.endDate} &middot; {displayWeek.totalMiles} miles target</p>
+                </div>
+                <button
+                  onClick={() => setViewWeekNum(Math.min(plan.weeksTotal, displayWeekNum + 1))}
+                  disabled={displayWeekNum >= plan.weeksTotal}
+                  className="p-1.5 rounded-lg hover:bg-light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="w-5 h-5 text-dark" />
+                </button>
               </div>
+              {displayWeekNum !== currentWeekNum && (
+                <button
+                  onClick={() => setViewWeekNum(null)}
+                  className="px-3 py-1.5 text-xs font-semibold text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
+                >
+                  Current Week
+                </button>
+              )}
             </div>
 
             {/* Day-by-day cards */}
             <div className="space-y-3">
-              {currentWeek.days.map((day, i) => {
-                const key = `w${currentWeekNum}-d${i}`;
+              {displayWeek.days.map((day, i) => {
+                const key = `w${displayWeekNum}-d${i}`;
                 const completed = plan.completedWorkouts[key];
-                const isToday = day.day === todayDayName;
+                const isToday = displayWeekNum === currentWeekNum && day.day === todayDayName;
                 return (
                   <div
                     key={i}
@@ -791,7 +918,8 @@ export default function DashboardClient() {
                           {isToday && <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">TODAY</span>}
                         </div>
                         <p className="text-sm text-dark">{day.workout}</p>
-                        {day.distance !== "—" && <p className="text-xs text-gray">{day.distance} &middot; {day.effort}</p>}
+                        {day.distance !== "\u2014" && <p className="text-xs text-gray">{day.distance} &middot; {day.effort}</p>}
+                        {day.notes && <p className="text-xs text-gray/70 mt-0.5 italic">{day.notes}</p>}
                         {completed && completed.notes && <p className="text-xs text-green-600 mt-1">&ldquo;{completed.notes}&rdquo;</p>}
                       </div>
 
@@ -799,13 +927,20 @@ export default function DashboardClient() {
                       {!completed && day.workout !== "Rest" && (
                         <div className="flex gap-2 flex-shrink-0">
                           <button
-                            onClick={() => markDayComplete(currentWeekNum, i)}
+                            onClick={() => openEditWorkout(displayWeekNum, i)}
+                            className="text-xs font-medium text-gray hover:text-primary"
+                            title="Edit workout"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => markDayComplete(displayWeekNum, i)}
                             className="text-xs font-medium text-primary hover:underline"
                           >
                             Done
                           </button>
                           <button
-                            onClick={() => openWorkoutLog(currentWeekNum, i)}
+                            onClick={() => openWorkoutLog(displayWeekNum, i)}
                             className="text-xs font-medium text-gray hover:text-dark"
                           >
                             Log
@@ -813,17 +948,35 @@ export default function DashboardClient() {
                         </div>
                       )}
                       {!completed && day.workout === "Rest" && (
-                        <button
-                          onClick={() => markDayComplete(currentWeekNum, i)}
-                          className="text-xs font-medium text-gray hover:text-primary flex-shrink-0"
-                        >
-                          Mark done
-                        </button>
+                        <div className="flex gap-2 flex-shrink-0">
+                          <button
+                            onClick={() => openEditWorkout(displayWeekNum, i)}
+                            className="text-xs font-medium text-gray hover:text-primary"
+                            title="Edit workout"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => markDayComplete(displayWeekNum, i)}
+                            className="text-xs font-medium text-gray hover:text-primary"
+                          >
+                            Mark done
+                          </button>
+                        </div>
                       )}
                       {completed && (
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-xs font-medium text-green-600">{completed.actualMiles > 0 ? `${completed.actualMiles} mi` : "Done"}</p>
-                          <p className="text-[10px] text-gray capitalize">{completed.feeling}</p>
+                        <div className="text-right flex-shrink-0 flex items-center gap-2">
+                          <button
+                            onClick={() => openEditWorkout(displayWeekNum, i)}
+                            className="text-gray hover:text-primary"
+                            title="Edit planned workout"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <div>
+                            <p className="text-xs font-medium text-green-600">{completed.actualMiles > 0 ? `${completed.actualMiles} mi` : "Done"}</p>
+                            <p className="text-[10px] text-gray capitalize">{completed.feeling}</p>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -834,10 +987,56 @@ export default function DashboardClient() {
           </div>
         )}
 
+        {/* ─── CALENDAR TAB ─────────────────────────────────────────── */}
+        {tab === "calendar" && (
+          <CalendarTab
+            plan={plan}
+            onEditWorkout={openEditWorkout}
+            onLogWorkout={openWorkoutLog}
+            onMarkComplete={markDayComplete}
+          />
+        )}
+
         {/* ─── PROGRESS TAB ──────────────────────────────────────────── */}
         {tab === "progress" && (
           <div className="space-y-6">
             <h2 className="font-headline text-2xl font-bold text-dark">Training Progress</h2>
+
+            {/* Plan Settings */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h3 className="font-headline text-base font-bold text-dark mb-4">Plan Settings</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Race Name</label>
+                  <input
+                    type="text"
+                    value={settingsRaceName || plan.raceName || ""}
+                    onChange={(e) => setSettingsRaceName(e.target.value)}
+                    onBlur={(e) => saveRaceName(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                    placeholder="e.g. Mt. Wilson 50K"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Race Date</label>
+                  <input
+                    type="date"
+                    value={settingsRaceDate || plan.raceDate}
+                    onChange={(e) => setSettingsRaceDate(e.target.value)}
+                    onBlur={(e) => requestRaceDateChange(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Distance</label>
+                  <p className="text-sm text-dark/60 py-2">{plan.distance} <span className="text-xs text-gray">(locked)</span></p>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Level</label>
+                  <p className="text-sm text-dark/60 py-2 capitalize">{plan.level} <span className="text-xs text-gray">(locked)</span></p>
+                </div>
+              </div>
+            </div>
 
             {/* Stats grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -1015,7 +1214,10 @@ export default function DashboardClient() {
             </div>
 
             {/* Delete plan */}
-            <div className="text-center pt-4">
+            <div className="flex items-center justify-center gap-6 pt-4">
+              <Link href="/training/plans" className="text-xs text-gray hover:text-primary transition-colors">
+                Build a New Plan
+              </Link>
               <button
                 onClick={() => { if (confirm("Delete your saved plan? This cannot be undone.")) deletePlan(); }}
                 className="text-xs text-gray hover:text-red-500 transition-colors"
@@ -1979,6 +2181,112 @@ export default function DashboardClient() {
                 </button>
                 <button
                   onClick={() => setLogOpen(false)}
+                  className="px-5 py-3 bg-light text-dark font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Race Date Confirm Modal ─────────────────────────────────── */}
+      {raceDateConfirmOpen && pendingRaceDate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => { setRaceDateConfirmOpen(false); setSettingsRaceDate(plan?.raceDate || ""); }} />
+          <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+            <h3 className="font-headline text-xl font-bold text-dark mb-2">Update Race Date?</h3>
+            <p className="text-sm text-gray mb-4">
+              Changing your race date from{" "}
+              <span className="font-semibold text-dark">
+                {plan ? new Date(plan.raceDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
+              </span>{" "}
+              to{" "}
+              <span className="font-semibold text-dark">
+                {new Date(pendingRaceDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </span>{" "}
+              will regenerate your training schedule.
+            </p>
+            <ul className="text-sm text-gray space-y-1 mb-6 list-none">
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />Your completed workout logs will be preserved</li>
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />Gear and nutrition tracking stays the same</li>
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-yellow-500 flex-shrink-0" />The weekly schedule will be rebuilt to fit the new timeline</li>
+            </ul>
+            <div className="flex gap-3">
+              <button
+                onClick={confirmRaceDateChange}
+                className="flex-1 px-5 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors"
+              >
+                Update Schedule
+              </button>
+              <button
+                onClick={() => { setRaceDateConfirmOpen(false); setSettingsRaceDate(plan?.raceDate || ""); }}
+                className="px-5 py-3 bg-light text-dark font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Edit Workout Modal ──────────────────────────────────────── */}
+      {editWorkoutOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setEditWorkoutOpen(false)} />
+          <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+            <h3 className="font-headline text-xl font-bold text-dark mb-4">Edit Workout</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-dark mb-2">Workout Type</label>
+                <input
+                  type="text"
+                  value={editWorkoutType}
+                  onChange={(e) => setEditWorkoutType(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary"
+                  placeholder="e.g. Easy run, Long run, Tempo run"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-dark mb-2">Distance</label>
+                <input
+                  type="text"
+                  value={editDistance}
+                  onChange={(e) => setEditDistance(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary"
+                  placeholder="e.g. 8 miles, 5K"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-dark mb-2">Effort</label>
+                <input
+                  type="text"
+                  value={editEffort}
+                  onChange={(e) => setEditEffort(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary"
+                  placeholder="e.g. Zone 2, Zone 3, Race pace"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-dark mb-2">Notes</label>
+                <textarea
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  placeholder="Workout instructions or personal notes..."
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-dark focus:outline-none focus:border-primary resize-none"
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={saveEditWorkout}
+                  className="flex-1 px-5 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => setEditWorkoutOpen(false)}
                   className="px-5 py-3 bg-light text-dark font-medium rounded-xl hover:bg-gray-200 transition-colors border border-gray-200"
                 >
                   Cancel
