@@ -1,0 +1,125 @@
+# FinishUltra
+
+> FinishUltra is a free ultramarathon resource site built by beginners, for beginners. We cover everything a first-time ultra runner needs: training plans, honest gear recommendations, an AI coach, calculators, and a growing library of articles. We focus on 50K through 100-mile distances.
+
+## About
+
+FinishUltra exists to make ultramarathon running approachable. We're not elite athletes or professional coaches — we're runners who've been where you are and want to help you get to the finish line. Everything on the site is free or clearly disclosed as affiliate-supported.
+
+## What We Offer
+
+- Free training plans: 50K plan, base building plan, race week plan
+- Curated gear recommendations with affiliate links: shoes, hydration vests/packs, nutrition, apparel
+- Gear kits: pre-built kit bundles for common race distances and conditions
+- Race day kit checklist: interactive tool to build and save your race day gear list
+- Pheidi AI coach: an AI ultramarathon coach available on every page
+- Pace calculator: trail and ultra pace planning tool
+- Glossary: ultramarathon terminology reference
+- Weekly newsletter: tips, gear picks, and race prep content
+- 18+ blog articles covering training, gear, nutrition, race day, and the science of ultra running
+
+## Target Audience
+
+- Beginner ultra runners tackling their first 50K, 50-mile, or 100-mile race
+- Marathon runners stepping up to trail and ultra distances
+- Trail running beginners who want structured guidance without elite-level jargon
+
+## Key Content Areas
+
+- Getting Started: what ultrarunning is, how to begin, what to expect
+- Training: plans, base building, periodization, race week prep
+- Gear: shoes, packs, nutrition, apparel — honest reviews and recommendations
+- Nutrition: fueling strategies, products, hydration
+- Race Day: checklists, pacing, crew and pacer guidance, drop bags
+- Science: physiology, recovery, training theory explained accessibly
+
+## Free Tools
+
+- Pace Calculator: `/tools/pace-calculator` — plan finish times and aid station splits
+- Pheidi AI Coach: `/coach` — AI-powered ultramarathon coach available site-wide
+- Training Plan Builder: `/training/dashboard` — interactive plan builder and tracker
+
+## How We Make Money
+
+FinishUltra uses affiliate links to Amazon, REI, Backcountry, and Running Warehouse. When you buy through our links, we earn a small commission at no cost to you. We run no display ads. All training plans are permanently free. We only recommend products we would genuinely use or have used. Full disclosure at `/affiliate-disclosure`.
+
+## Contact
+
+- Website: https://www.finishultra.com
+- Email: hello@finishultra.com
+- Instagram: @finishultra
+- Newsletter: https://www.finishultra.com/newsletter
+
+## Key Facts
+
+- All training plans are free, always
+- Content written by beginner runners, not elite athletes or certified coaches
+- Honest gear reviews — we disclose affiliate relationships
+- Pheidi AI coach is available on every page of the site
+- 18+ published articles across training, gear, nutrition, race day, and science categories
+- Amazon Associate program participant
+
+## Markdown Mirrors (Clean AI-Readable Versions)
+
+Every public page on FinishUltra has a clean, AI-readable markdown version. Append `/index.md` to any page URL to get it. Content-Type is `text/markdown; charset=utf-8`.
+
+### Core Pages
+- https://www.finishultra.com/index.md
+- https://www.finishultra.com/start-here/index.md
+- https://www.finishultra.com/about/index.md
+- https://www.finishultra.com/contact/index.md
+- https://www.finishultra.com/newsletter/index.md
+- https://www.finishultra.com/search/index.md
+
+### Training
+- https://www.finishultra.com/training/index.md
+- https://www.finishultra.com/training/first-50k/index.md
+- https://www.finishultra.com/training/base-building/index.md
+- https://www.finishultra.com/training/race-week/index.md
+- https://www.finishultra.com/training/race-day-checklist/index.md
+- https://www.finishultra.com/training/plans/index.md
+- https://www.finishultra.com/training/dashboard/index.md
+
+### Gear
+- https://www.finishultra.com/gear/index.md
+- https://www.finishultra.com/gear/shoes/index.md
+- https://www.finishultra.com/gear/packs/index.md
+- https://www.finishultra.com/gear/nutrition/index.md
+- https://www.finishultra.com/gear/apparel/index.md
+- https://www.finishultra.com/gear/kits/index.md
+- https://www.finishultra.com/gear/race-day-kit/index.md
+- https://www.finishultra.com/gear/builder/index.md
+
+### Tools & Coach
+- https://www.finishultra.com/tools/pace-calculator/index.md
+- https://www.finishultra.com/tools/glossary/index.md
+- https://www.finishultra.com/coach/index.md
+- https://www.finishultra.com/pheidi/index.md
+- https://www.finishultra.com/race-hq/index.md
+
+### Blog Index
+- https://www.finishultra.com/blog/index.md
+
+### Blog Posts
+- https://www.finishultra.com/blog/how-hard-is-a-50k/index.md
+- https://www.finishultra.com/blog/choosing-first-ultra/index.md
+- https://www.finishultra.com/blog/first-50k-training-guide/index.md
+- https://www.finishultra.com/blog/strength-training-ultra-runners/index.md
+- https://www.finishultra.com/blog/what-to-wear-first-ultra/index.md
+- https://www.finishultra.com/blog/hoka-speedgoat-6-review/index.md
+- https://www.finishultra.com/blog/best-running-vests-2025/index.md
+- https://www.finishultra.com/blog/trail-shoe-rotation/index.md
+- https://www.finishultra.com/blog/ultra-nutrition-beginners/index.md
+- https://www.finishultra.com/blog/electrolyte-guide-ultra-runners/index.md
+- https://www.finishultra.com/blog/real-food-ultra-marathon/index.md
+- https://www.finishultra.com/blog/race-day-checklist/index.md
+- https://www.finishultra.com/blog/first-100-miler-guide/index.md
+- https://www.finishultra.com/blog/summer-ultra-survival-guide/index.md
+- https://www.finishultra.com/blog/winter-trail-running-guide/index.md
+- https://www.finishultra.com/blog/western-states-course-guide/index.md
+- https://www.finishultra.com/blog/ultrarunning-science-sleep-deprivation/index.md
+- https://www.finishultra.com/blog/beginner-mistakes-ultra-marathon/index.md
+
+### Legal
+- https://www.finishultra.com/affiliate-disclosure/index.md
+- https://www.finishultra.com/privacy-policy/index.md
