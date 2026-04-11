@@ -16,11 +16,15 @@ import {
   Smile, Shield,
 } from "lucide-react";
 
+import { pageMetadata } from "@/lib/seo-metadata";
+
 export const metadata: Metadata = {
-  title: "Ultra Marathon Running Shoes Guide | FinishUltra",
-  description:
-    "Find the perfect ultra marathon running shoe. Compare top trail shoes by terrain, cushion, drop, and distance. Expert picks from 50K to 100 miles.",
-  alternates: { canonical: "/gear/shoes" },
+  ...pageMetadata({
+    title: "Best Trail Shoes for Ultra Marathons | FinishUltra",
+    description:
+      "Compare cushioned, technical, and race-day trail shoes for ultras — stack, drop, grip, and real-world picks from 50K to 100 miles.",
+    path: "/gear/shoes",
+  }),
 };
 
 // ─── Shoe Data ────────────────────────────────────────────────────────────────

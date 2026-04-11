@@ -4,13 +4,16 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import GlossaryDirectory from "./GlossaryDirectory";
 import { glossaryTerms } from "@/lib/content/glossary";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { definedTermSetJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Ultra Running Glossary | FinishUltra",
-  description:
-    "A searchable A-Z glossary of ultra marathon and trail running terms. Learn what DNF, aid station, drop bag, cutoff time, vert, and dozens more terms mean.",
-  alternates: { canonical: "/tools/glossary" },
+  ...pageMetadata({
+    title: "Ultra Running Glossary (A–Z) | FinishUltra",
+    description:
+      "Ultra running terminology explained in plain English. Every term a beginner needs to know.",
+    path: "/tools/glossary",
+  }),
 };
 
 const glossaryPageUrl = `${SITE_URL}/tools/glossary`;

@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import ApparelFinder from "./ApparelFinder";
 import { gearProductAnchorId, itemListJsonLd, SITE_URL } from "@/lib/schema";
+import { pageMetadata } from "@/lib/seo-metadata";
 import {
   Shirt, PersonStanding, Layers, CloudRain, Footprints, Shield,
   Sun, Cloud, Snowflake, Mountain, Scissors, Flame, Droplets, Leaf,
@@ -12,10 +13,12 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ultra Marathon Apparel & Running Clothing Guide | FinishUltra",
-  description:
-    "Complete ultra marathon apparel guide — base layers, shorts, rain jackets, socks, and accessories for every distance and condition. Expert picks, layering strategies, and fabric technology explained.",
-  alternates: { canonical: "/gear/apparel" },
+  ...pageMetadata({
+    title: "Ultra Running Apparel & Layering Guide | FinishUltra",
+    description:
+      "What to wear for trail ultras: base layers, shells, socks, and accessories — fabrics, chafe prevention, and hot/cold race picks.",
+    path: "/gear/apparel",
+  }),
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

@@ -2,12 +2,16 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { howToJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Race Week Protocol | FinishUltra",
-  description: "A day-by-day guide for the week before your ultra marathon. Taper, nutrition, gear prep, sleep, and mental preparation.",
-  alternates: { canonical: "/training/race-week" },
+  ...pageMetadata({
+    title: "Ultra Race Week Protocol (7 Days) | FinishUltra",
+    description:
+      "Day-by-day race week plan: taper runs, carb loading, gear checks, sleep, and mental prep so you start line ready.",
+    path: "/training/race-week",
+  }),
 };
 
 const days = [

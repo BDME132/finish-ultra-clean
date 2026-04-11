@@ -4,13 +4,16 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import PlansClient from "./PlansClient";
 import { getPlanBySlug } from "@/lib/content/training-plans";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { webApplicationJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Ultra Marathon Training Plans | FinishUltra",
-  description:
-    "Comprehensive ultra marathon training plans for every distance and experience level — 50K through 100 miles. Interactive distance selector, week-by-week schedules, calculators, and more.",
-  alternates: { canonical: "/training/plans" },
+  ...pageMetadata({
+    title: "Interactive Ultra Training Plan Builder | FinishUltra",
+    description:
+      "Pick your distance and timeline for a tailored ultra plan outline — 50K through 100 miles, with schedules, zones, and calculators.",
+    path: "/training/plans",
+  }),
 };
 
 const plansBuilder = getPlanBySlug("plans");

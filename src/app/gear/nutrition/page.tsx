@@ -10,6 +10,7 @@ import {
   itemListJsonLd,
   SITE_URL,
 } from "@/lib/schema";
+import { pageMetadata } from "@/lib/seo-metadata";
 import {
   Droplets, Candy, Coffee, Zap, Banana, Apple, Wheat, Beef,
   AlertTriangle, Smile, Frown, Sun, Calendar, Salad, PersonStanding,
@@ -17,10 +18,12 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ultra Marathon Nutrition & Fueling Strategy | FinishUltra",
-  description:
-    "Master ultra marathon nutrition from 50K to 100 miles. Personalized fueling calculator, top product reviews, distance-based strategies, and expert guidance on carbs, hydration, and electrolytes.",
-  alternates: { canonical: "/gear/nutrition" },
+  ...pageMetadata({
+    title: "Ultra Marathon Nutrition & Fueling Guide | FinishUltra",
+    description:
+      "Fuel ultras without bonking: gels, drink mixes, electrolytes, and real-food picks — plus a calculator and per-distance strategies.",
+    path: "/gear/nutrition",
+  }),
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

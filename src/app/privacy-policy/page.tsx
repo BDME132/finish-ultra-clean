@@ -2,14 +2,17 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 const lastUpdated = "March 14, 2026";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | FinishUltra",
-  description:
-    "How FinishUltra collects, uses, and protects information across the site, newsletter, account features, and AI chat.",
-  alternates: { canonical: "/privacy-policy" },
+  ...pageMetadata({
+    title: "Privacy Policy | FinishUltra",
+    description:
+      "How FinishUltra handles data for the site, newsletter, accounts, and AI chat — including cookies, email, and your rights.",
+    path: "/privacy-policy",
+  }),
 };
 
 export default function PrivacyPolicyPage() {

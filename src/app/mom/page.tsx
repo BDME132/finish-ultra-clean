@@ -1,3 +1,15 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo-metadata";
+
+export const metadata: Metadata = {
+  ...pageMetadata({
+    title: "Thanks Mom | FinishUltra",
+    description: "A small thank-you page from FinishUltra.",
+    path: "/mom",
+    robots: { index: false, follow: false },
+  }),
+};
+
 export default function MomPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-white p-6">

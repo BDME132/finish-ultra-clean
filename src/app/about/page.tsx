@@ -3,12 +3,16 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { aboutPageJsonLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "About | FinishUltra",
-  description: "We're two high school runners documenting our journey into ultra running. Built by beginners, for beginners.",
-  alternates: { canonical: "/about" },
+  ...pageMetadata({
+    title: "About FinishUltra | Our Mission",
+    description:
+      "FinishUltra is built by beginners, for beginners. Learn about our mission to make ultra running approachable.",
+    path: "/about",
+  }),
 };
 
 export default function AboutPage() {

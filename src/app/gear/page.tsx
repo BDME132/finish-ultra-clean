@@ -3,12 +3,16 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { absoluteUrl, itemListJsonLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Gear | FinishUltra",
-  description: "Honest gear recommendations for beginner ultra runners. Curated kits, shoe guides, pack reviews, and nutrition picks.",
-  alternates: { canonical: "/gear" },
+  ...pageMetadata({
+    title: "Ultra Running Gear Guides | FinishUltra",
+    description:
+      "Honest gear recommendations for ultra runners. Trail shoes, running vests, nutrition, and apparel — only products we'd actually use.",
+    path: "/gear",
+  }),
 };
 
 const categories = [

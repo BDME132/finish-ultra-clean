@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import EmailSignupForm from "@/components/EmailSignupForm";
 import JsonLd from "@/components/JsonLd";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { howToJsonLd, SITE_URL } from "@/lib/schema";
 import {
   Footprints,
@@ -16,10 +17,12 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Start Here — Your First Ultra Starts Now | FinishUltra",
-  description:
-    "New to ultra running? No gatekeeping, no jargon — just a clear path from zero to your first finish line. Free plans, gear guides, and an AI coach.",
-  alternates: { canonical: "/start-here" },
+  ...pageMetadata({
+    title: "Start Here — Your First Ultra Roadmap | FinishUltra",
+    description:
+      "New to ultra running? Follow these 5 steps to go from curious runner to finishing your first ultramarathon.",
+    path: "/start-here",
+  }),
 };
 
 /* ───────────────────────── data ───────────────────────── */

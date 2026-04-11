@@ -2,14 +2,17 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 const lastUpdated = "March 14, 2026";
 
 export const metadata: Metadata = {
-  title: "Affiliate Disclosure | FinishUltra",
-  description:
-    "How FinishUltra uses affiliate links, including Amazon Associates disclosures and editorial standards.",
-  alternates: { canonical: "/affiliate-disclosure" },
+  ...pageMetadata({
+    title: "Affiliate Disclosure | FinishUltra",
+    description:
+      "How FinishUltra uses affiliate links (including Amazon Associates), how commissions work, and how we keep picks honest.",
+    path: "/affiliate-disclosure",
+  }),
 };
 
 export default function AffiliateDisclosurePage() {

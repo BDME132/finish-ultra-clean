@@ -5,13 +5,16 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import { raceDayCategories, proTips } from "@/lib/content/race-day-kit";
 import { itemListJsonLd, SITE_URL } from "@/lib/schema";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { Footprints, Package, Zap, Target, Tent, Trophy, Lightbulb, Flag } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ultra Marathon Race Day Kits | FinishUltra",
-  description:
-    "The complete race day gear checklist for ultra runners. Every product you need across 6 kit categories — on-body, hydration, nutrition, drop bag, crew, and recovery.",
-  alternates: { canonical: "/gear/race-day-kit" },
+  ...pageMetadata({
+    title: "Ultra Race Day Kit Checklist (6 Categories) | FinishUltra",
+    description:
+      "Full race day kit for ultras: on-body, hydration, nutrition, drop bag, crew, and recovery — curated picks and packing tips.",
+    path: "/gear/race-day-kit",
+  }),
 };
 
 const categoryIconComponents: Record<string, React.ReactNode> = {

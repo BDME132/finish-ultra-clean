@@ -5,12 +5,16 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import TrainingPlanCard from "@/components/TrainingPlanCard";
 import { trainingPlans } from "@/lib/content/training-plans";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { itemListJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Training Plans | FinishUltra",
-  description: "Free ultra marathon training plans for beginners. From base building to your first 50K, with race week prep included.",
-  alternates: { canonical: "/training" },
+  ...pageMetadata({
+    title: "Free Ultra Training Plans | FinishUltra",
+    description:
+      "Free structured training plans for beginner ultra runners. 50K, base building, and race week protocols.",
+    path: "/training",
+  }),
 };
 
 const trainingHubItemListJsonLd = itemListJsonLd({

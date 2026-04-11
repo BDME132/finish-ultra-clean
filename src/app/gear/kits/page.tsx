@@ -4,12 +4,16 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import KitBuilder from "./KitBuilder";
 import { faqPageJsonLd, SITE_URL, webApplicationJsonLd } from "@/lib/schema";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { Target, DollarSign, ClipboardList, Package, Calendar, Microscope, Footprints, Flashlight, Shirt, Zap, Shield, Dumbbell } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Custom Gear Kit Builder | FinishUltra",
-  description: "Build your personalized ultra running gear kit in 10 questions. Get specific product recommendations for your distance, terrain, conditions, and budget — with packing checklists and training timelines.",
-  alternates: { canonical: "/gear/kits" },
+  ...pageMetadata({
+    title: "Custom Ultra Gear Kit Builder | FinishUltra",
+    description:
+      "Answer a few questions to get a personalized ultra gear list for your distance, terrain, climate, and budget — with checklists and timelines.",
+    path: "/gear/kits",
+  }),
 };
 
 // ─── Types ──────────────────────────────────────────────────────────────────

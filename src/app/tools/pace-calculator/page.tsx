@@ -3,13 +3,16 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import PaceCalculator from "./PaceCalculator";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { webApplicationJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Ultra Pace Calculator | FinishUltra",
-  description:
-    "Calculate your pace, finish time, or required pace for any ultra marathon. Supports 50K, 50 mile, 100K, and 100 mile with slowdown factor and aid station time.",
-  alternates: { canonical: "/tools/pace-calculator" },
+  ...pageMetadata({
+    title: "Ultra Marathon Pace Calculator | FinishUltra",
+    description:
+      "Calculate your pace, splits, and finish time for 50K, 50-mile, and 100-mile ultra marathon distances.",
+    path: "/tools/pace-calculator",
+  }),
 };
 
 const paceCalculatorJsonLd = webApplicationJsonLd({

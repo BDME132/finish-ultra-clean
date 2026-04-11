@@ -6,9 +6,15 @@ import FeatureGrid from "@/components/FeatureGrid";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import BlogPostCard from "@/components/BlogPostCard";
 import { blogPosts } from "@/lib/content/blog-posts";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/" },
+  ...pageMetadata({
+    title: "FinishUltra — Your First Ultra Starts Here",
+    description:
+      "Free training plans, honest gear reviews, and an AI coach for beginner ultra runners. Your first ultra starts here.",
+    path: "/",
+  }),
 };
 
 export default function HomePage() {

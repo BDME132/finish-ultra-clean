@@ -1,4 +1,27 @@
 User-agent: *
 Allow: /
 
+# AI Crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Sitemap
 Sitemap: https://www.finishultra.com/sitemap.xml
+
+# LLMs
+# See https://www.finishultra.com/llms.txt for AI-readable site overview

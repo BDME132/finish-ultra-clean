@@ -10,6 +10,7 @@ import {
   itemListJsonLd,
   SITE_URL,
 } from "@/lib/schema";
+import { pageMetadata } from "@/lib/seo-metadata";
 import {
   Package, Cloud, Moon, Sun, Snowflake, CloudRain, AlertTriangle,
   Ruler, Tag, PersonStanding, Wrench, Shirt, RefreshCcw, MapPin, Scale,
@@ -17,10 +18,12 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ultra Marathon Hydration Packs & Running Vests Guide | FinishUltra",
-  description:
-    "Find the perfect hydration vest or running pack for your ultra marathon. Compare top vests by capacity, fit, and distance — from 50K race vests to 100-mile expedition packs.",
-  alternates: { canonical: "/gear/packs" },
+  ...pageMetadata({
+    title: "Running Vests & Hydration Packs for Ultras | FinishUltra",
+    description:
+      "Compare race vests by capacity, bounce, and fit — picks for 50K through 100 miles, plus flasks, bladders, and pole carry tips.",
+    path: "/gear/packs",
+  }),
 };
 
 // ─── Types ───────────────────────────────────────────────────────────────────

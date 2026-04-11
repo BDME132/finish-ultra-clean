@@ -1,12 +1,15 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  title: "Contact | FinishUltra",
-  description:
-    "How to contact FinishUltra for general questions, editorial feedback, affiliate questions, and privacy requests.",
-  alternates: { canonical: "/contact" },
+  ...pageMetadata({
+    title: "Contact FinishUltra | Questions & Feedback",
+    description:
+      "Contact FinishUltra for site questions, editorial corrections, affiliate or privacy inquiries, and partnership ideas. We read every message.",
+    path: "/contact",
+  }),
 };
 
 const contactTopics = [

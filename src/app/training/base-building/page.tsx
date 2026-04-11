@@ -3,12 +3,16 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { howToJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Base Building for Ultra | FinishUltra",
-  description: "A 12-week base building program to prepare your body for ultra marathon training. Build aerobic fitness gradually.",
-  alternates: { canonical: "/training/base-building" },
+  ...pageMetadata({
+    title: "12-Week Base Building Plan for Ultras | FinishUltra",
+    description:
+      "Build aerobic fitness and consistency before a 50K plan: easy miles, growing long runs, and time on feet — no junk volume.",
+    path: "/training/base-building",
+  }),
 };
 
 const baseBuildingHowToJsonLd = howToJsonLd({

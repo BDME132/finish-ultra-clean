@@ -12,6 +12,7 @@ import {
   breadcrumbJsonLdDocument,
   faqPageJsonLd,
 } from "@/lib/schema";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { ShoppingCart } from "lucide-react";
 
 interface Props {
@@ -27,26 +28,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(slug);
   if (!post) return {};
 
-  return {
+  return pageMetadata({
     title: `${post.title} | FinishUltra`,
     description: post.excerpt,
-    alternates: { canonical: `/blog/${slug}` },
-    openGraph: {
-      type: "article",
-      title: post.title,
-      description: post.excerpt,
-      url: `/blog/${slug}`,
+    path: `/blog/${slug}`,
+    ogImage: post.image,
+    ogType: "article",
+    ogArticle: {
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt ?? post.publishedAt,
       authors: ["FinishUltra"],
       tags: post.tags,
     },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt,
-    },
-  };
+  });
 }
 
 /** Simple markdown-like renderer */

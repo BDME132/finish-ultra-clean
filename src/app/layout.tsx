@@ -19,35 +19,38 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "FinishUltra - Your First Ultra Starts Here",
+  title: "FinishUltra — Your First Ultra Starts Here",
   description:
-    "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners. Built by beginners, for beginners.",
+    "Free training plans, honest gear reviews, and an AI coach for beginner ultra runners. Your first ultra starts here.",
   keywords: ["ultra marathon training", "beginner ultra runner", "ultra running gear", "50k training plan", "ultra running nutrition"],
   authors: [{ name: "FinishUltra" }],
   creator: "FinishUltra",
   metadataBase: new URL("https://www.finishultra.com"),
+  verification: {
+    google: "PASTE_YOUR_CODE_HERE",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.finishultra.com",
+    url: "https://www.finishultra.com/",
     siteName: "FinishUltra",
-    title: "FinishUltra - Your First Ultra Starts Here",
+    title: "FinishUltra — Your First Ultra Starts Here",
     description:
-      "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
+      "Free training plans, honest gear reviews, and an AI coach for beginner ultra runners. Your first ultra starts here.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "FinishUltra - Your First Ultra Starts Here",
+        alt: "FinishUltra — Your first ultra starts here",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FinishUltra - Your First Ultra Starts Here",
+    title: "FinishUltra — Your First Ultra Starts Here",
     description:
-      "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
+      "Free training plans, honest gear reviews, and an AI coach for beginner ultra runners. Your first ultra starts here.",
     images: ["/og-image.png"],
   },
   robots: {

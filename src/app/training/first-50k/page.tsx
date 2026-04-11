@@ -4,12 +4,16 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { howToJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Your First 50K Training Plan | FinishUltra",
-  description: "A free 16-week training plan to get you from half marathon fitness to your first 50K ultra marathon. Week-by-week breakdown included.",
-  alternates: { canonical: "/training/first-50k" },
+  ...pageMetadata({
+    title: "Free First 50K Training Plan (16 Weeks) | FinishUltra",
+    description:
+      "16-week beginner 50K plan: weekly mileage, long runs, back-to-backs, and race-week taper. Built for half-marathon fitness and up.",
+    path: "/training/first-50k",
+  }),
 };
 
 const weeks = [
