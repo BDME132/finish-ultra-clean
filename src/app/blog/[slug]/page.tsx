@@ -6,6 +6,12 @@ import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import BlogPostCard from "@/components/BlogPostCard";
 import { blogPosts, getPostBySlug, getRelatedPosts } from "@/lib/content/blog-posts";
+import JsonLd from "@/components/JsonLd";
+import {
+  blogPostingJsonLd,
+  breadcrumbJsonLdDocument,
+  faqPageJsonLd,
+} from "@/lib/schema";
 import { ShoppingCart } from "lucide-react";
 
 interface Props {
@@ -123,72 +129,22 @@ export default async function BlogPostPage({ params }: Props) {
 
   const relatedPosts = getRelatedPosts(post, 3);
 
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.excerpt,
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt ?? post.publishedAt,
-    author: {
-      "@type": "Organization",
-      name: "FinishUltra",
-      url: "https://finishultra.com",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "FinishUltra",
-      url: "https://finishultra.com",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://finishultra.com/logo.png",
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `https://finishultra.com/blog/${post.slug}`,
-    },
-  };
-
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-      { "@type": "ListItem", position: 2, name: "Blog", item: "https://finishultra.com/blog" },
-      { "@type": "ListItem", position: 3, name: post.title, item: `https://finishultra.com/blog/${post.slug}` },
-    ],
-  };
-
-  const faqJsonLd = post.faq?.length
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: post.faq.map((f) => ({
-          "@type": "Question",
-          name: f.question,
-          acceptedAnswer: { "@type": "Answer", text: f.answer },
-        })),
-      }
-    : null;
+  const structuredData: Record<string, unknown>[] = [
+    blogPostingJsonLd(post),
+    breadcrumbJsonLdDocument(`/blog/${post.slug}`, post.title),
+  ];
+  if (post.faq?.length) {
+    structuredData.push(
+      faqPageJsonLd(
+        post.faq.map((f) => ({ question: f.question, answer: f.answer }))
+      )
+    );
+  }
 
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      {faqJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-        />
-      )}
+      <JsonLd data={structuredData} />
       <main>
         <article>
           {/* Hero */}

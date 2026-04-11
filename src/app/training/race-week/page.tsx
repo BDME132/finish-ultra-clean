@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
+import { howToJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Race Week Protocol | FinishUltra",
@@ -46,24 +48,23 @@ const days = [
   },
 ];
 
-export default function RaceWeekPage() {
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-      { "@type": "ListItem", position: 2, name: "Training", item: "https://finishultra.com/training" },
-      { "@type": "ListItem", position: 3, name: "Race Week", item: "https://finishultra.com/training/race-week" },
-    ],
-  };
+const raceWeekHowToJsonLd = howToJsonLd({
+  name: "Race week protocol for ultra marathons",
+  description:
+    "The final 7 days before your ultra. Day-by-day guidance for taper, nutrition, gear prep, and mental readiness.",
+  totalTime: "P7D",
+  steps: days.map((d, i) => ({
+    name: `${d.day}: ${d.title}`,
+    text: d.details,
+    url: `${SITE_URL}/training/race-week#day-${i + 1}`,
+  })),
+});
 
+export default function RaceWeekPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={raceWeekHowToJsonLd} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -85,7 +86,11 @@ export default function RaceWeekPage() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-8">
               {days.map((d, i) => (
-                <div key={i} className="flex gap-6">
+                <div
+                  key={i}
+                  id={`day-${i + 1}`}
+                  className="flex gap-6 scroll-mt-24"
+                >
                   <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                     <span className="text-primary font-bold text-sm">{i + 1}</span>
                   </div>

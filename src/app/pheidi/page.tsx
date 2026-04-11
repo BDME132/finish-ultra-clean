@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import ChatInterface from "@/components/ChatInterface";
+import JsonLd from "@/components/JsonLd";
+import { webApplicationJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Pheidi | FinishUltra",
@@ -8,10 +10,19 @@ export const metadata: Metadata = {
   alternates: { canonical: "/pheidi" },
 };
 
+const pheidiJsonLd = webApplicationJsonLd({
+  name: "Pheidi — AI Ultra Running Coach",
+  description:
+    "Chat with Pheidi for personalized training, gear, nutrition, and race day advice built for beginner ultra runners.",
+  url: `${SITE_URL}/pheidi`,
+  applicationCategory: "LifestyleApplication",
+});
+
 export default function PheidiPage() {
   return (
     <>
       <Header />
+      <JsonLd data={pheidiJsonLd} />
       <main className="h-[calc(100vh-4rem)] flex bg-[#0B1120]">
         {/* Sidebar — desktop only */}
         <aside className="hidden lg:flex lg:w-64 flex-shrink-0 flex-col bg-[#141C2E] border-r border-[#1E293B] p-6">

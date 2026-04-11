@@ -1,8 +1,10 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import { howToJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Your First 50K Training Plan | FinishUltra",
@@ -29,24 +31,23 @@ const weeks = [
   { week: 16, focus: "Race Week", longRun: "50K Race!", weeklyMiles: "Race", notes: "You've done the work. Go get that finish line." },
 ];
 
-export default function First50kPage() {
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-      { "@type": "ListItem", position: 2, name: "Training", item: "https://finishultra.com/training" },
-      { "@type": "ListItem", position: 3, name: "Your First 50K", item: "https://finishultra.com/training/first-50k" },
-    ],
-  };
+const first50kHowToJsonLd = howToJsonLd({
+  name: "Your First 50K: 16-week training plan",
+  description:
+    "From half marathon fitness to ultramarathoner in 16 weeks. This plan builds mileage gradually with nutrition practice and gear testing built in.",
+  totalTime: "P16W",
+  steps: weeks.map((w) => ({
+    name: `Week ${w.week}: ${w.focus}`,
+    text: `Long run: ${w.longRun}. Target weekly miles: ${w.weeklyMiles}. ${w.notes}`,
+    url: `${SITE_URL}/training/first-50k#week-${w.week}`,
+  })),
+});
 
+export default function First50kPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={first50kHowToJsonLd} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -80,7 +81,11 @@ export default function First50kPage() {
                 </thead>
                 <tbody>
                   {weeks.map((w) => (
-                    <tr key={w.week} className="border-b border-gray-100 hover:bg-light/50">
+                    <tr
+                      key={w.week}
+                      id={`week-${w.week}`}
+                      className="border-b border-gray-100 hover:bg-light/50 scroll-mt-24"
+                    >
                       <td className="py-3 px-3 font-medium text-dark">{w.week}</td>
                       <td className="py-3 px-3">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${

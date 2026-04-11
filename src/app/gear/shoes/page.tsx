@@ -2,7 +2,14 @@ import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import ShoeFinder from "./ShoeFinder";
+import {
+  faqPageJsonLd,
+  gearProductAnchorId,
+  itemListJsonLd,
+  SITE_URL,
+} from "@/lib/schema";
 import {
   Footprints, Circle, Settings, Ruler, ArrowLeftRight, RefreshCcw,
   PersonStanding, Zap, Mountain, BedDouble, CheckCircle, Dumbbell,
@@ -14,16 +21,6 @@ export const metadata: Metadata = {
   description:
     "Find the perfect ultra marathon running shoe. Compare top trail shoes by terrain, cushion, drop, and distance. Expert picks from 50K to 100 miles.",
   alternates: { canonical: "/gear/shoes" },
-};
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-    { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-    { "@type": "ListItem", position: 3, name: "Shoes", item: "https://finishultra.com/gear/shoes" },
-  ],
 };
 
 // ─── Shoe Data ────────────────────────────────────────────────────────────────
@@ -490,6 +487,59 @@ const categories: {
   },
 ];
 
+const shoesItemListJsonLd = itemListJsonLd({
+  name: "Trail running shoes for ultra marathons",
+  description:
+    "Compare top trail shoes by terrain, cushion, and drop — expert picks for 50K through 100 miles.",
+  url: `${SITE_URL}/gear/shoes`,
+  items: categories.flatMap((cat) =>
+    cat.shoes.map((shoe) => ({
+      name: `${shoe.brand} ${shoe.name}`,
+      url: `${SITE_URL}/gear/shoes#${gearProductAnchorId(cat.id, shoe.brand, shoe.name)}`,
+      description: shoe.bestFor.join(", "),
+    }))
+  ),
+});
+
+const shoesFaqEntries = [
+  {
+    q: "How many pairs of shoes should I own?",
+    a: "For 100-mile training, 3–4 pairs is ideal. At minimum, have a cushioned trainer for long days and a technical shoe for grip-demanding terrain. Multiple pairs also extends each shoe's lifespan by allowing midsole decompression between runs.",
+  },
+  {
+    q: "When should I buy new shoes before a race?",
+    a: "6–8 weeks out is the sweet spot. That gives you enough time to break them in properly (50–100 miles) without racing in fresh-out-of-the-box shoes. Never debut shoes on race day.",
+  },
+  {
+    q: "Can I use road shoes for trail ultras?",
+    a: "For groomed trail 50Ks, possibly. But for anything technical, you'll want trail-specific grip and a rock plate. Road shoes on wet roots and rock are a DNF waiting to happen.",
+  },
+  {
+    q: "What's the best shoe for Western States? UTMB? Hardrock?",
+    a: "Western States: Hoka Speedgoat 6 or Altra Lone Peak 8 — you'll want cushion and versatile traction across canyons and high country. UTMB: Salomon S/Lab Ultra 3 or La Sportiva Ultra Raptor II — technical European trails demand secure fit. Hardrock: La Sportiva Ultra Raptor II — it's essentially a mountain race and demands the most specialized footwear.",
+  },
+  {
+    q: "Zero drop vs traditional drop for ultras?",
+    a: "There's no universal answer. Zero drop (Altra) promotes natural mechanics but requires a long adaptation period. Traditional 6–8mm drop is easier to transition from road running. Many elite runners thrive on both. Choose based on your history, not hype.",
+  },
+  {
+    q: "Should I size up for 100-milers?",
+    a: "Yes — at least 0.5 size, ideally a full size. Feet swell significantly over 20+ hours. A shoe that fits perfectly fresh out of the box at mile 0 will feel like a vice grip at mile 70.",
+  },
+  {
+    q: "Are carbon plate shoes worth it for ultras?",
+    a: "For uphills, yes — the propulsive efficiency of carbon plates like in the Hoka Tecton X2 is real. For 100-mile events, the energy return helps on climbs. However, they require adaptation and offer less ground feel on technical terrain. Best for runners already comfortable in maximalist shoes.",
+  },
+  {
+    q: "How do I prevent blisters with new shoes?",
+    a: "Wear your race socks when fitting. Break shoes in gradually over 50–100 miles. Use anti-chafe balm (Body Glide, Squirrel's Nut Butter) on hot spots. Consider double-sock systems for 100-mile efforts. Address any fit issue in training — never assume it will resolve on race day.",
+  },
+];
+
+const shoesFaqJsonLd = faqPageJsonLd(
+  shoesFaqEntries.map((item) => ({ question: item.q, answer: item.a }))
+);
+
 // ─── Sub-Components ────────────────────────────────────────────────────────────
 
 function RatingBar({ value, max = 5 }: { value: number; max?: number }) {
@@ -505,9 +555,20 @@ function RatingBar({ value, max = 5 }: { value: number; max?: number }) {
   );
 }
 
-function ShoeCard({ shoe, categoryColor }: { shoe: Shoe; categoryColor: string }) {
+function ShoeCard({
+  shoe,
+  categoryColor,
+  id,
+}: {
+  shoe: Shoe;
+  categoryColor: string;
+  id?: string;
+}) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col">
+    <div
+      id={id}
+      className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col scroll-mt-24"
+    >
       {/* Image placeholder */}
       <div className="bg-gray-50 aspect-[4/3] flex items-center justify-center border-b border-gray-100">
         <div className="text-center">
@@ -617,10 +678,7 @@ export default function ShoesPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={[shoesItemListJsonLd, shoesFaqJsonLd]} />
 
       <main>
         {/* ── Hero ── */}
@@ -693,7 +751,12 @@ export default function ShoesPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cat.shoes.map((shoe) => (
-                  <ShoeCard key={shoe.name} shoe={shoe} categoryColor={cat.badgeColor} />
+                  <ShoeCard
+                    key={`${cat.id}-${shoe.brand}-${shoe.name}`}
+                    id={gearProductAnchorId(cat.id, shoe.brand, shoe.name)}
+                    shoe={shoe}
+                    categoryColor={cat.badgeColor}
+                  />
                 ))}
               </div>
             </div>
@@ -935,40 +998,7 @@ export default function ShoesPage() {
             </div>
 
             <div className="space-y-4">
-              {[
-                {
-                  q: "How many pairs of shoes should I own?",
-                  a: "For 100-mile training, 3–4 pairs is ideal. At minimum, have a cushioned trainer for long days and a technical shoe for grip-demanding terrain. Multiple pairs also extends each shoe's lifespan by allowing midsole decompression between runs.",
-                },
-                {
-                  q: "When should I buy new shoes before a race?",
-                  a: "6–8 weeks out is the sweet spot. That gives you enough time to break them in properly (50–100 miles) without racing in fresh-out-of-the-box shoes. Never debut shoes on race day.",
-                },
-                {
-                  q: "Can I use road shoes for trail ultras?",
-                  a: "For groomed trail 50Ks, possibly. But for anything technical, you'll want trail-specific grip and a rock plate. Road shoes on wet roots and rock are a DNF waiting to happen.",
-                },
-                {
-                  q: "What's the best shoe for Western States? UTMB? Hardrock?",
-                  a: "Western States: Hoka Speedgoat 6 or Altra Lone Peak 8 — you'll want cushion and versatile traction across canyons and high country. UTMB: Salomon S/Lab Ultra 3 or La Sportiva Ultra Raptor II — technical European trails demand secure fit. Hardrock: La Sportiva Ultra Raptor II — it's essentially a mountain race and demands the most specialized footwear.",
-                },
-                {
-                  q: "Zero drop vs traditional drop for ultras?",
-                  a: "There's no universal answer. Zero drop (Altra) promotes natural mechanics but requires a long adaptation period. Traditional 6–8mm drop is easier to transition from road running. Many elite runners thrive on both. Choose based on your history, not hype.",
-                },
-                {
-                  q: "Should I size up for 100-milers?",
-                  a: "Yes — at least 0.5 size, ideally a full size. Feet swell significantly over 20+ hours. A shoe that fits perfectly fresh out of the box at mile 0 will feel like a vice grip at mile 70.",
-                },
-                {
-                  q: "Are carbon plate shoes worth it for ultras?",
-                  a: "For uphills, yes — the propulsive efficiency of carbon plates like in the Hoka Tecton X2 is real. For 100-mile events, the energy return helps on climbs. However, they require adaptation and offer less ground feel on technical terrain. Best for runners already comfortable in maximalist shoes.",
-                },
-                {
-                  q: "How do I prevent blisters with new shoes?",
-                  a: "Wear your race socks when fitting. Break shoes in gradually over 50–100 miles. Use anti-chafe balm (Body Glide, Squirrel's Nut Butter) on hot spots. Consider double-sock systems for 100-mile efforts. Address any fit issue in training — never assume it will resolve on race day.",
-                },
-              ].map((item) => (
+              {shoesFaqEntries.map((item) => (
                 <details key={item.q} className="group bg-white rounded-xl border border-gray-100 shadow-sm">
                   <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-semibold text-dark list-none">
                     {item.q}

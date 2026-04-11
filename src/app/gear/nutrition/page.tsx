@@ -2,7 +2,14 @@ import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import NutritionCalculator from "./NutritionCalculator";
+import {
+  faqPageJsonLd,
+  gearProductAnchorId,
+  itemListJsonLd,
+  SITE_URL,
+} from "@/lib/schema";
 import {
   Droplets, Candy, Coffee, Zap, Banana, Apple, Wheat, Beef,
   AlertTriangle, Smile, Frown, Sun, Calendar, Salad, PersonStanding,
@@ -14,16 +21,6 @@ export const metadata: Metadata = {
   description:
     "Master ultra marathon nutrition from 50K to 100 miles. Personalized fueling calculator, top product reviews, distance-based strategies, and expert guidance on carbs, hydration, and electrolytes.",
   alternates: { canonical: "/gear/nutrition" },
-};
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-    { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-    { "@type": "ListItem", position: 3, name: "Nutrition", item: "https://finishultra.com/gear/nutrition" },
-  ],
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -563,11 +560,84 @@ const productCategories: {
   },
 ];
 
+
+const nutritionItemListJsonLd = itemListJsonLd({
+  name: "Ultra marathon nutrition products",
+  description:
+    "Energy gels, drink mixes, electrolytes, and real-food fuel reviewed for 50K through 100 miles.",
+  url: `${SITE_URL}/gear/nutrition`,
+  items: productCategories.flatMap((cat) =>
+    cat.products.map((product) => ({
+      name: `${product.brand} ${product.name}`,
+      url: `${SITE_URL}/gear/nutrition#${gearProductAnchorId(cat.id, product.brand, product.name)}`,
+      description: product.bestFor.join(", "),
+    }))
+  ),
+});
+
+const nutritionFaqEntries = [
+  {
+    q: "How much should I eat during an ultra?",
+    a: "Target 200–400 calories per hour depending on distance, intensity, and stomach tolerance. The longer the race, the more critical consistent intake becomes. Use the calculator above for personalized targets. The golden rule: eat before you're hungry, drink before you're thirsty.",
+  },
+  {
+    q: "When should I start fueling?",
+    a: "Within the first 30 minutes, regardless of how you feel. Your glycogen stores are limited, and waiting until you feel depleted means you're already behind. Set a timer on your watch — every 20–25 minutes is a good starting rhythm for most runners.",
+  },
+  {
+    q: "Can I fuel entirely from aid stations?",
+    a: "For shorter ultras (50K) with frequent aid stations, it's possible but risky. Aid stations vary wildly between races. Always carry at least 2 hours worth of your tested nutrition regardless of race support. Never rely on aid station offerings alone for a 50M or longer.",
+  },
+  {
+    q: "What if I can't stomach gels?",
+    a: "Many runners can't tolerate synthetic gels, especially late in a race. Options: real food gels (Spring Energy, Huma), actual food (dates, waffles, banana, baby food pouches), liquid calories (Tailwind), or aid station food. The best fuel is whatever you can consistently get in — not whatever is theoretically optimal.",
+  },
+  {
+    q: "Should I take salt tablets?",
+    a: "Yes, for most ultramarathon runners — especially in heat or if you sweat heavily. SaltStick Caps (215mg sodium each) are the gold standard. Target 300–700mg of sodium per hour total (from all sources). Don't just take salt — make sure you're hydrating adequately alongside it.",
+  },
+  {
+    q: "How do I train my gut for higher carb intake?",
+    a: "Gradually increase carb intake over 12–16 weeks of training. Start at 30g/hour and add 10g every 2–3 weeks. Practice with your exact race products on long runs. Your gut adapts — runners who train with 60–90g/hour can absorb it on race day. It's genuinely trainable.",
+  },
+  {
+    q: "How do I carb load properly?",
+    a: "Start 4–5 days before your race. Target 8–10g of carbohydrates per kg of body weight per day. Reduce fat and fiber to make room. Focus on pasta, rice, bread, oatmeal, and potatoes. Reduce portion size 2 days out — just maintain the high carb percentage. Don't stuff yourself the night before.",
+  },
+  {
+    q: "Is it normal to feel nauseous during a 100-miler?",
+    a: "Yes — GI distress affects 30–90% of 100-mile runners. It's normal to feel nauseous, especially after mile 60. The key is managing it: switch to bland foods (potatoes, pretzels, broth), slow down, try ginger or Coke, and take smaller, more frequent bites. Some runners carry anti-nausea medication (Zofran, Tums) with medical guidance.",
+  },
+  {
+    q: "Is expensive nutrition worth it?",
+    a: "Sometimes. Maurten's hydrogel technology genuinely helps sensitive stomachs tolerate higher carb intakes — worth the premium for some runners. But chocolate milk is as effective as $40 recovery drinks. Dates work as well as $3 gels for some runners. Test budget alternatives in training and invest selectively where you see real performance differences.",
+  },
+  {
+    q: "What's the best post-race recovery nutrition?",
+    a: "Within 30 minutes: 3:1 carb-to-protein ratio, 200–400 calories. Chocolate milk is the most evidence-backed, affordable option (4:1 ratio, widely available). Within 2 hours: a real meal with 20–40g protein and substantial carbs to restore glycogen. Keep hydrating with electrolytes for the next 24–48 hours.",
+  },
+];
+
+const nutritionFaqJsonLd = faqPageJsonLd(
+  nutritionFaqEntries.map((item) => ({ question: item.q, answer: item.a }))
+);
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function ProductCard({ product, categoryColor }: { product: NutritionProduct; categoryColor: string }) {
+function ProductCard({
+  product,
+  categoryColor,
+  id,
+}: {
+  product: NutritionProduct;
+  categoryColor: string;
+  id?: string;
+}) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col">
+    <div
+      id={id}
+      className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col scroll-mt-24"
+    >
       <div className="bg-gray-50 py-6 flex items-center justify-center border-b border-gray-100">
         <div className="text-center">
           <div className="mb-1"><Coffee className="w-8 h-8 text-gray" /></div>
@@ -655,10 +725,7 @@ export default function NutritionPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={[nutritionItemListJsonLd, nutritionFaqJsonLd]} />
 
       <main>
         {/* ── Hero ── */}
@@ -795,7 +862,12 @@ export default function NutritionPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cat.products.map((product) => (
-                  <ProductCard key={product.name + product.brand} product={product} categoryColor={cat.badgeColor} />
+                  <ProductCard
+                    key={`${cat.id}-${product.brand}-${product.name}`}
+                    id={gearProductAnchorId(cat.id, product.brand, product.name)}
+                    product={product}
+                    categoryColor={cat.badgeColor}
+                  />
                 ))}
               </div>
             </div>
@@ -1144,48 +1216,7 @@ export default function NutritionPage() {
             </div>
 
             <div className="space-y-4">
-              {[
-                {
-                  q: "How much should I eat during an ultra?",
-                  a: "Target 200–400 calories per hour depending on distance, intensity, and stomach tolerance. The longer the race, the more critical consistent intake becomes. Use the calculator above for personalized targets. The golden rule: eat before you're hungry, drink before you're thirsty.",
-                },
-                {
-                  q: "When should I start fueling?",
-                  a: "Within the first 30 minutes, regardless of how you feel. Your glycogen stores are limited, and waiting until you feel depleted means you're already behind. Set a timer on your watch — every 20–25 minutes is a good starting rhythm for most runners.",
-                },
-                {
-                  q: "Can I fuel entirely from aid stations?",
-                  a: "For shorter ultras (50K) with frequent aid stations, it's possible but risky. Aid stations vary wildly between races. Always carry at least 2 hours worth of your tested nutrition regardless of race support. Never rely on aid station offerings alone for a 50M or longer.",
-                },
-                {
-                  q: "What if I can't stomach gels?",
-                  a: "Many runners can't tolerate synthetic gels, especially late in a race. Options: real food gels (Spring Energy, Huma), actual food (dates, waffles, banana, baby food pouches), liquid calories (Tailwind), or aid station food. The best fuel is whatever you can consistently get in — not whatever is theoretically optimal.",
-                },
-                {
-                  q: "Should I take salt tablets?",
-                  a: "Yes, for most ultramarathon runners — especially in heat or if you sweat heavily. SaltStick Caps (215mg sodium each) are the gold standard. Target 300–700mg of sodium per hour total (from all sources). Don't just take salt — make sure you're hydrating adequately alongside it.",
-                },
-                {
-                  q: "How do I train my gut for higher carb intake?",
-                  a: "Gradually increase carb intake over 12–16 weeks of training. Start at 30g/hour and add 10g every 2–3 weeks. Practice with your exact race products on long runs. Your gut adapts — runners who train with 60–90g/hour can absorb it on race day. It's genuinely trainable.",
-                },
-                {
-                  q: "How do I carb load properly?",
-                  a: "Start 4–5 days before your race. Target 8–10g of carbohydrates per kg of body weight per day. Reduce fat and fiber to make room. Focus on pasta, rice, bread, oatmeal, and potatoes. Reduce portion size 2 days out — just maintain the high carb percentage. Don't stuff yourself the night before.",
-                },
-                {
-                  q: "Is it normal to feel nauseous during a 100-miler?",
-                  a: "Yes — GI distress affects 30–90% of 100-mile runners. It's normal to feel nauseous, especially after mile 60. The key is managing it: switch to bland foods (potatoes, pretzels, broth), slow down, try ginger or Coke, and take smaller, more frequent bites. Some runners carry anti-nausea medication (Zofran, Tums) with medical guidance.",
-                },
-                {
-                  q: "Is expensive nutrition worth it?",
-                  a: "Sometimes. Maurten's hydrogel technology genuinely helps sensitive stomachs tolerate higher carb intakes — worth the premium for some runners. But chocolate milk is as effective as $40 recovery drinks. Dates work as well as $3 gels for some runners. Test budget alternatives in training and invest selectively where you see real performance differences.",
-                },
-                {
-                  q: "What's the best post-race recovery nutrition?",
-                  a: "Within 30 minutes: 3:1 carb-to-protein ratio, 200–400 calories. Chocolate milk is the most evidence-backed, affordable option (4:1 ratio, widely available). Within 2 hours: a real meal with 20–40g protein and substantial carbs to restore glycogen. Keep hydrating with electrolytes for the next 24–48 hours.",
-                },
-              ].map((item) => (
+              {nutritionFaqEntries.map((item) => (
                 <details key={item.q} className="group bg-white rounded-xl border border-gray-100 shadow-sm">
                   <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-semibold text-dark list-none">
                     {item.q}

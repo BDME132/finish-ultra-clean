@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import EmailSignupForm from "@/components/EmailSignupForm";
+import JsonLd from "@/components/JsonLd";
+import { howToJsonLd, SITE_URL } from "@/lib/schema";
 import {
   Footprints,
   Dumbbell,
@@ -175,10 +177,22 @@ const pheidiPrompts = [
 
 /* ───────────────────────── page ───────────────────────── */
 
+const startHereHowToJsonLd = howToJsonLd({
+  name: "How to Prepare for Your First Ultra Marathon",
+  description:
+    "Follow these five steps — in order or at your own pace — to go from curious runner to ultramarathoner.",
+  steps: roadmap.map((r) => ({
+    name: r.title,
+    text: r.description,
+    url: `${SITE_URL}/start-here#step-${r.step}`,
+  })),
+});
+
 export default function StartHerePage() {
   return (
     <>
       <Header />
+      <JsonLd data={startHereHowToJsonLd} />
       <main>
         {/* ── 1. Hero ── */}
         <section className="bg-gradient-to-b from-light to-white py-20 sm:py-28">
@@ -255,7 +269,11 @@ export default function StartHerePage() {
 
               <div className="space-y-12">
                 {roadmap.map((item) => (
-                  <div key={item.step} className="flex gap-6 relative">
+                  <div
+                    key={item.step}
+                    id={`step-${item.step}`}
+                    className="flex gap-6 relative scroll-mt-28"
+                  >
                     {/* Step number */}
                     <div className="flex-shrink-0 w-12 h-12 bg-primary rounded-full flex items-center justify-center relative z-10">
                       <span className="text-white font-headline font-bold text-lg">

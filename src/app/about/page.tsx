@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
+import { aboutPageJsonLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "About | FinishUltra",
@@ -13,6 +15,7 @@ export default function AboutPage() {
   return (
     <>
       <Header />
+      <JsonLd data={aboutPageJsonLd()} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

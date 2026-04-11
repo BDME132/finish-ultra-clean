@@ -2,8 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { hasSupabaseServerEnv } from "./server";
 
+function nextWithPathname(request: NextRequest) {
+  const headers = new Headers(request.headers);
+  headers.set("x-pathname", request.nextUrl.pathname);
+  return NextResponse.next({ request: { headers } });
+}
+
 export function createSupabaseMiddleware(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  let response = nextWithPathname(request);
 
   if (!hasSupabaseServerEnv()) {
     return { supabase: null, response };
@@ -21,7 +27,7 @@ export function createSupabaseMiddleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
-          response = NextResponse.next({ request });
+          response = nextWithPathname(request);
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           );

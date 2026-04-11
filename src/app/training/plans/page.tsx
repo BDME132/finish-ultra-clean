@@ -1,7 +1,10 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import PlansClient from "./PlansClient";
+import { getPlanBySlug } from "@/lib/content/training-plans";
+import { webApplicationJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Ultra Marathon Training Plans | FinishUltra",
@@ -10,24 +13,22 @@ export const metadata: Metadata = {
   alternates: { canonical: "/training/plans" },
 };
 
-export default function TrainingPlansPage() {
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-      { "@type": "ListItem", position: 2, name: "Training", item: "https://finishultra.com/training" },
-      { "@type": "ListItem", position: 3, name: "Training Plans", item: "https://finishultra.com/training/plans" },
-    ],
-  };
+const plansBuilder = getPlanBySlug("plans");
 
+const trainingPlansWebAppJsonLd = webApplicationJsonLd({
+  name: plansBuilder?.title ?? "Ultra Marathon Training Plans",
+  description:
+    plansBuilder?.description ??
+    "Interactive ultra marathon training plan builder with distance selector, schedules, and calculators.",
+  url: `${SITE_URL}/training/plans`,
+  applicationCategory: "HealthApplication",
+});
+
+export default function TrainingPlansPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={trainingPlansWebAppJsonLd} />
       <PlansClient />
       <Footer />
     </>

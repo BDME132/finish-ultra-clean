@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
+import { absoluteUrl, itemListJsonLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Gear | FinishUltra",
@@ -74,10 +76,23 @@ const categories = [
   },
 ];
 
+const gearHubItemListJsonLd = itemListJsonLd({
+  name: "Ultra running gear categories",
+  description:
+    "Honest gear recommendations for beginner ultra runners — kits, shoes, packs, nutrition, apparel, and race day checklists.",
+  url: absoluteUrl("/gear"),
+  items: categories.map((cat) => ({
+    name: cat.title,
+    url: absoluteUrl(cat.href),
+    description: cat.description,
+  })),
+});
+
 export default function GearPage() {
   return (
     <>
       <Header />
+      <JsonLd data={gearHubItemListJsonLd} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

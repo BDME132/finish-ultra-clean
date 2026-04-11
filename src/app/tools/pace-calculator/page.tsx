@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import PaceCalculator from "./PaceCalculator";
+import { webApplicationJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Ultra Pace Calculator | FinishUltra",
@@ -10,10 +12,19 @@ export const metadata: Metadata = {
   alternates: { canonical: "/tools/pace-calculator" },
 };
 
+const paceCalculatorJsonLd = webApplicationJsonLd({
+  name: "Ultra Marathon Pace Calculator",
+  description:
+    "Calculate pace, splits, and finish times for ultra marathon distances with slowdown factor and aid station time.",
+  url: `${SITE_URL}/tools/pace-calculator`,
+  applicationCategory: "UtilityApplication",
+});
+
 export default function PaceCalculatorPage() {
   return (
     <>
       <Header />
+      <JsonLd data={paceCalculatorJsonLd} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

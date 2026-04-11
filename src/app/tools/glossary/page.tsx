@@ -1,8 +1,10 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import GlossaryDirectory from "./GlossaryDirectory";
 import { glossaryTerms } from "@/lib/content/glossary";
+import { definedTermSetJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Ultra Running Glossary | FinishUltra",
@@ -11,10 +13,20 @@ export const metadata: Metadata = {
   alternates: { canonical: "/tools/glossary" },
 };
 
+const glossaryPageUrl = `${SITE_URL}/tools/glossary`;
+
+const glossaryDefinedTermSetJsonLd = definedTermSetJsonLd(
+  "Ultra Running Glossary",
+  "Plain-English definitions of ultra marathon and trail running terms for beginners.",
+  glossaryPageUrl,
+  glossaryTerms
+);
+
 export default function GlossaryPage() {
   return (
     <>
       <Header />
+      <JsonLd data={glossaryDefinedTermSetJsonLd} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

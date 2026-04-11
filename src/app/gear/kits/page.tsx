@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import KitBuilder from "./KitBuilder";
+import { faqPageJsonLd, SITE_URL, webApplicationJsonLd } from "@/lib/schema";
 import { Target, DollarSign, ClipboardList, Package, Calendar, Microscope, Footprints, Flashlight, Shirt, Zap, Shield, Dumbbell } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -125,6 +127,14 @@ const CATEGORIES: { icon: React.ReactNode; name: string; desc: string; note: str
   { icon: <Dumbbell className="w-6 h-6 text-primary" />, name: "Recovery", desc: "Compression socks, foot care, post-race kit", note: "Starts when the race ends — have it at the finish" },
 ];
 
+const kitsWebAppJsonLd = webApplicationJsonLd({
+  name: "FinishUltra Custom Gear Kit Builder",
+  description:
+    "Answer 10 questions. Get a complete, personalized ultra running gear kit with packing lists, drop bag plans, and a testing timeline.",
+  url: `${SITE_URL}/gear/kits`,
+  applicationCategory: "ShoppingApplication",
+});
+
 const FAQS = [
   {
     q: "How accurate are the budget estimates?",
@@ -152,26 +162,15 @@ const FAQS = [
   },
 ];
 
+const kitsFaqJsonLd = faqPageJsonLd(FAQS.map((f) => ({ question: f.q, answer: f.a })));
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function GearKitsPage() {
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-      { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-      { "@type": "ListItem", position: 3, name: "Gear Kits", item: "https://finishultra.com/gear/kits" },
-    ],
-  };
-
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={[kitsWebAppJsonLd, kitsFaqJsonLd]} />
       <main>
 
         {/* ─── Hero + Kit Builder ───────────────────────────────────────────── */}

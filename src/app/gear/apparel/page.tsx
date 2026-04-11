@@ -2,7 +2,9 @@ import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import ApparelFinder from "./ApparelFinder";
+import { gearProductAnchorId, itemListJsonLd, SITE_URL } from "@/lib/schema";
 import {
   Shirt, PersonStanding, Layers, CloudRain, Footprints, Shield,
   Sun, Cloud, Snowflake, Mountain, Scissors, Flame, Droplets, Leaf,
@@ -14,16 +16,6 @@ export const metadata: Metadata = {
   description:
     "Complete ultra marathon apparel guide — base layers, shorts, rain jackets, socks, and accessories for every distance and condition. Expert picks, layering strategies, and fabric technology explained.",
   alternates: { canonical: "/gear/apparel" },
-};
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-    { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-    { "@type": "ListItem", position: 3, name: "Apparel", item: "https://finishultra.com/gear/apparel" },
-  ],
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -716,11 +708,36 @@ const categories: {
   },
 ];
 
+const apparelItemListJsonLd = itemListJsonLd({
+  name: "Ultra marathon running apparel",
+  description:
+    "Base layers, shorts, shells, socks, and accessories reviewed for trail ultras from 50K to 100 miles.",
+  url: `${SITE_URL}/gear/apparel`,
+  items: categories.flatMap((cat) =>
+    cat.products.map((product) => ({
+      name: `${product.brand} ${product.name}`,
+      url: `${SITE_URL}/gear/apparel#${gearProductAnchorId(cat.id, product.brand, product.name)}`,
+      description: product.bestFor.join(", "),
+    }))
+  ),
+});
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function ApparelCard({ product, categoryColor }: { product: ApparelProduct; categoryColor: string }) {
+function ApparelCard({
+  product,
+  categoryColor,
+  id,
+}: {
+  product: ApparelProduct;
+  categoryColor: string;
+  id?: string;
+}) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col">
+    <div
+      id={id}
+      className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col scroll-mt-24"
+    >
       <div className="bg-gray-50 py-8 flex items-center justify-center border-b border-gray-100">
         <div className="text-center">
           <div className="flex justify-center mb-1"><Shirt className="w-8 h-8 text-gray" /></div>
@@ -801,10 +818,7 @@ export default function ApparelPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={apparelItemListJsonLd} />
 
       <main>
         {/* ── Hero ── */}
@@ -867,7 +881,12 @@ export default function ApparelPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cat.products.map((product) => (
-                  <ApparelCard key={product.name + product.brand} product={product} categoryColor={cat.badgeColor} />
+                  <ApparelCard
+                    key={`${cat.id}-${product.brand}-${product.name}`}
+                    id={gearProductAnchorId(cat.id, product.brand, product.name)}
+                    product={product}
+                    categoryColor={cat.badgeColor}
+                  />
                 ))}
               </div>
             </div>

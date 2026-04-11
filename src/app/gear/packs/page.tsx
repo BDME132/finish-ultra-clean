@@ -2,7 +2,14 @@ import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import VestFinder from "./VestFinder";
+import {
+  faqPageJsonLd,
+  gearProductAnchorId,
+  itemListJsonLd,
+  SITE_URL,
+} from "@/lib/schema";
 import {
   Package, Cloud, Moon, Sun, Snowflake, CloudRain, AlertTriangle,
   Ruler, Tag, PersonStanding, Wrench, Shirt, RefreshCcw, MapPin, Scale,
@@ -14,16 +21,6 @@ export const metadata: Metadata = {
   description:
     "Find the perfect hydration vest or running pack for your ultra marathon. Compare top vests by capacity, fit, and distance — from 50K race vests to 100-mile expedition packs.",
   alternates: { canonical: "/gear/packs" },
-};
-
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-    { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-    { "@type": "ListItem", position: 3, name: "Packs & Vests", item: "https://finishultra.com/gear/packs" },
-  ],
 };
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -591,6 +588,63 @@ const categories: {
   },
 ];
 
+const packsItemListJsonLd = itemListJsonLd({
+  name: "Hydration packs and running vests for ultras",
+  description:
+    "Compare running vests by capacity, fit, and distance — from 50K race vests to 100-mile expedition packs.",
+  url: `${SITE_URL}/gear/packs`,
+  items: categories.flatMap((cat) =>
+    cat.vests.map((vest) => ({
+      name: `${vest.brand} ${vest.name}`,
+      url: `${SITE_URL}/gear/packs#${gearProductAnchorId(cat.id, vest.brand, vest.name)}`,
+      description: vest.bestFor.join(", "),
+    }))
+  ),
+});
+
+const packsFaqEntries = [
+  {
+    q: "How much capacity do I really need?",
+    a: "Start with your longest expected gap between aid stations and work backwards. A 50K with aid every 5 miles needs under 5L. A 100-miler with 15-mile gaps in remote terrain needs 12L+. The capacity calculator rule: 500ml per hour of running between aid stations, plus all mandatory gear items.",
+  },
+  {
+    q: "Front flasks vs. back bladder — which is better?",
+    a: "Most elite ultra runners have moved to front flask-only setups. The reasons: you can see exactly how much water you have, refilling is faster at aid stations, you can carry different drinks, and there's no tube to maintain. Bladders are better for beginners who need reminders to drink or for very remote sections with 15+ mile aid gaps.",
+  },
+  {
+    q: "How tight should my vest be?",
+    a: "Snug, not compressive. You should be able to take a full deep breath without restriction. Filled flasks should not bounce during running — if they bounce, tighten the sternum straps or side compression. A common mistake is wearing a vest too loose — a slightly snug fit is more comfortable over 100 miles than a loose vest that bounces constantly.",
+  },
+  {
+    q: "Will my vest work in winter with layers underneath?",
+    a: "Depends on the design. Most vests have some stretch. If you plan to run in a soft shell or mid-layer under your vest, try it on with that layer and size up if needed. The sternum straps need to tighten sufficiently over the extra bulk. Some runners specifically buy a size up for winter training.",
+  },
+  {
+    q: "What's the difference between men's and women's vests?",
+    a: "Women's-specific vests have a shorter torso, narrower shoulders, wider chest (accommodation for bust), and adjusted sternum strap placement. In a unisex vest, women often experience gaps in the chest area or sternum straps that sit in the wrong position. Brands like Osprey (Dyna) and Salomon's women's ADV Skin are genuinely different designs — not just recolored men's vests.",
+  },
+  {
+    q: "Do I need a vest for a 50K?",
+    a: "Depends on the race. A fully supported 50K with aid every 3–5 miles? You might be fine with a handheld or waist belt. A 50K with a 10-mile remote section and mandatory gear? You need a vest. Check your race's required gear list and longest aid gap, then decide. When in doubt, a small race vest gives you flexibility without the weight penalty.",
+  },
+  {
+    q: "How do I prevent chafing?",
+    a: "Anti-chafe balm (Body Glide, Squirrel's Nut Butter) on the neck, underarms, and anywhere the vest contacts skin. Wear a technical fabric base layer (not cotton). Ensure vest is the right size — both too large and too small cause chafing. Identify hot spots in training and address them before race day. Seam tape or moleskin on specific problem spots.",
+  },
+  {
+    q: "Are expensive vests ($180-250) worth it?",
+    a: "For racing, usually yes. The difference between a $90 vest and a $200 Salomon ADV Skin is real and measurable in bounce, comfort over 50+ miles, and pocket organization. That said, a $130 Ultimate Direction Race Vest is excellent for most runners. Buy the best you can afford for race day — it's gear you'll use for hundreds of races over 5+ years. Cost per use drops significantly.",
+  },
+  {
+    q: "How do I carry trekking poles when not using them?",
+    a: "Three options: (1) Stow-on-the-go via vest's built-in elastic loops on shoulders — best for frequent pole use on mountain courses (Salomon's system is best). (2) Diagonal back carry through straps — more secure for long carry sections. (3) Side pocket stash — fastest but tips poles forward and can catch on trail. Practice your preferred method in training until it's muscle memory.",
+  },
+];
+
+const packsFaqJsonLd = faqPageJsonLd(
+  packsFaqEntries.map((item) => ({ question: item.q, answer: item.a }))
+);
+
 // ─── Sub-Components ────────────────────────────────────────────────────────────
 
 function RatingBar({ value, max = 5 }: { value: number; max?: number }) {
@@ -606,9 +660,20 @@ function RatingBar({ value, max = 5 }: { value: number; max?: number }) {
   );
 }
 
-function VestCard({ vest, categoryColor }: { vest: Vest; categoryColor: string }) {
+function VestCard({
+  vest,
+  categoryColor,
+  id,
+}: {
+  vest: Vest;
+  categoryColor: string;
+  id?: string;
+}) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col">
+    <div
+      id={id}
+      className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/20 transition-all overflow-hidden flex flex-col scroll-mt-24"
+    >
       {/* Image placeholder */}
       <div className="bg-gray-50 aspect-[4/3] flex items-center justify-center border-b border-gray-100">
         <div className="text-center">
@@ -768,10 +833,7 @@ export default function PacksPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={[packsItemListJsonLd, packsFaqJsonLd]} />
 
       <main>
         {/* ── Hero ── */}
@@ -868,7 +930,12 @@ export default function PacksPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cat.vests.map((vest) => (
-                  <VestCard key={vest.name} vest={vest} categoryColor={cat.badgeColor} />
+                  <VestCard
+                    key={`${cat.id}-${vest.brand}-${vest.name}`}
+                    id={gearProductAnchorId(cat.id, vest.brand, vest.name)}
+                    vest={vest}
+                    categoryColor={cat.badgeColor}
+                  />
                 ))}
               </div>
             </div>
@@ -1419,44 +1486,7 @@ export default function PacksPage() {
             </div>
 
             <div className="space-y-4">
-              {[
-                {
-                  q: "How much capacity do I really need?",
-                  a: "Start with your longest expected gap between aid stations and work backwards. A 50K with aid every 5 miles needs under 5L. A 100-miler with 15-mile gaps in remote terrain needs 12L+. The capacity calculator rule: 500ml per hour of running between aid stations, plus all mandatory gear items.",
-                },
-                {
-                  q: "Front flasks vs. back bladder — which is better?",
-                  a: "Most elite ultra runners have moved to front flask-only setups. The reasons: you can see exactly how much water you have, refilling is faster at aid stations, you can carry different drinks, and there's no tube to maintain. Bladders are better for beginners who need reminders to drink or for very remote sections with 15+ mile aid gaps.",
-                },
-                {
-                  q: "How tight should my vest be?",
-                  a: "Snug, not compressive. You should be able to take a full deep breath without restriction. Filled flasks should not bounce during running — if they bounce, tighten the sternum straps or side compression. A common mistake is wearing a vest too loose — a slightly snug fit is more comfortable over 100 miles than a loose vest that bounces constantly.",
-                },
-                {
-                  q: "Will my vest work in winter with layers underneath?",
-                  a: "Depends on the design. Most vests have some stretch. If you plan to run in a soft shell or mid-layer under your vest, try it on with that layer and size up if needed. The sternum straps need to tighten sufficiently over the extra bulk. Some runners specifically buy a size up for winter training.",
-                },
-                {
-                  q: "What's the difference between men's and women's vests?",
-                  a: "Women's-specific vests have a shorter torso, narrower shoulders, wider chest (accommodation for bust), and adjusted sternum strap placement. In a unisex vest, women often experience gaps in the chest area or sternum straps that sit in the wrong position. Brands like Osprey (Dyna) and Salomon's women's ADV Skin are genuinely different designs — not just recolored men's vests.",
-                },
-                {
-                  q: "Do I need a vest for a 50K?",
-                  a: "Depends on the race. A fully supported 50K with aid every 3–5 miles? You might be fine with a handheld or waist belt. A 50K with a 10-mile remote section and mandatory gear? You need a vest. Check your race's required gear list and longest aid gap, then decide. When in doubt, a small race vest gives you flexibility without the weight penalty.",
-                },
-                {
-                  q: "How do I prevent chafing?",
-                  a: "Anti-chafe balm (Body Glide, Squirrel's Nut Butter) on the neck, underarms, and anywhere the vest contacts skin. Wear a technical fabric base layer (not cotton). Ensure vest is the right size — both too large and too small cause chafing. Identify hot spots in training and address them before race day. Seam tape or moleskin on specific problem spots.",
-                },
-                {
-                  q: "Are expensive vests ($180-250) worth it?",
-                  a: "For racing, usually yes. The difference between a $90 vest and a $200 Salomon ADV Skin is real and measurable in bounce, comfort over 50+ miles, and pocket organization. That said, a $130 Ultimate Direction Race Vest is excellent for most runners. Buy the best you can afford for race day — it's gear you'll use for hundreds of races over 5+ years. Cost per use drops significantly.",
-                },
-                {
-                  q: "How do I carry trekking poles when not using them?",
-                  a: "Three options: (1) Stow-on-the-go via vest's built-in elastic loops on shoulders — best for frequent pole use on mountain courses (Salomon's system is best). (2) Diagonal back carry through straps — more secure for long carry sections. (3) Side pocket stash — fastest but tips poles forward and can catch on trail. Practice your preferred method in training until it's muscle memory.",
-                },
-              ].map((item) => (
+              {packsFaqEntries.map((item) => (
                 <details
                   key={item.q}
                   className="group bg-white rounded-xl border border-gray-100 shadow-sm"

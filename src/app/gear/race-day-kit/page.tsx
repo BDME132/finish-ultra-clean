@@ -2,7 +2,9 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import { raceDayCategories, proTips } from "@/lib/content/race-day-kit";
+import { itemListJsonLd, SITE_URL } from "@/lib/schema";
 import { Footprints, Package, Zap, Target, Tent, Trophy, Lightbulb, Flag } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -21,25 +23,25 @@ const categoryIconComponents: Record<string, React.ReactNode> = {
   "post-race": <Trophy className="w-6 h-6 text-accent" />,
 };
 
-export default function RaceDayKitPage() {
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-      { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-      { "@type": "ListItem", position: 3, name: "Custom Kits", item: "https://finishultra.com/gear/kits" },
-      { "@type": "ListItem", position: 4, name: "Race Day Kit", item: "https://finishultra.com/gear/race-day-kit" },
-    ],
-  };
+const raceDayKitItemListJsonLd = itemListJsonLd({
+  name: "Ultra marathon race day gear recommendations",
+  description:
+    "Six kit categories with tested product recommendations for on-body gear, hydration, nutrition, drop bags, crew support, and recovery.",
+  url: `${SITE_URL}/gear/race-day-kit`,
+  items: raceDayCategories.flatMap((cat) =>
+    cat.products.map((p) => ({
+      name: `${p.brand} ${p.name}`,
+      url: `${SITE_URL}/gear/race-day-kit#${p.id}`,
+      description: p.description,
+    }))
+  ),
+});
 
+export default function RaceDayKitPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={raceDayKitItemListJsonLd} />
       <main style={{ scrollBehavior: "smooth" }}>
 
         {/* Hero */}
@@ -147,7 +149,8 @@ export default function RaceDayKitPage() {
                 {category.products.map((product) => (
                   <div
                     key={product.id}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-accent/20 transition-all duration-200 overflow-hidden group"
+                    id={product.id}
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-accent/20 transition-all duration-200 overflow-hidden group scroll-mt-24"
                   >
                     {/* Card image placeholder */}
                     <div className="aspect-[4/3] bg-gradient-to-br from-light to-gray-100 flex flex-col items-center justify-center relative overflow-hidden">
