@@ -2,6 +2,8 @@ import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FAQSection from "@/components/FAQSection";
+import { faqs } from "@/lib/content/faqs";
 import JsonLd from "@/components/JsonLd";
 import ShoeFinder from "./ShoeFinder";
 import {
@@ -1024,6 +1026,10 @@ export default function ShoesPage() {
             </p>
           </div>
         </section>
+        <FAQSection
+          faqs={faqs.filter(f => ["what-shoes-for-first-ultra", "trail-socks", "trekking-poles"].includes(f.id))}
+          title="Common Questions About Trail Running Shoes"
+        />
       </main>
 
       <Footer />

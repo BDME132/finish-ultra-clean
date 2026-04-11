@@ -66,6 +66,7 @@ Every public page on FinishUltra has a clean, AI-readable markdown version. Appe
 ### Core Pages
 - https://www.finishultra.com/index.md
 - https://www.finishultra.com/start-here/index.md
+- https://www.finishultra.com/faq/index.md
 - https://www.finishultra.com/about/index.md
 - https://www.finishultra.com/contact/index.md
 - https://www.finishultra.com/newsletter/index.md

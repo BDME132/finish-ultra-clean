@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
+import FAQSection from "@/components/FAQSection";
+import { faqsByCategory } from "@/lib/content/faqs";
 import { pageMetadata } from "@/lib/seo-metadata";
 import { absoluteUrl, itemListJsonLd } from "@/lib/schema";
 
@@ -144,6 +146,7 @@ export default function GearPage() {
             </div>
           </div>
         </section>
+        <FAQSection faqs={faqsByCategory["gear"]} title="Gear Questions, Answered" />
       </main>
       <Footer />
     </>

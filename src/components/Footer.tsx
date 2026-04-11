@@ -7,6 +7,7 @@ export default function Footer() {
     { href: "/training", label: "Training" },
     { href: "/gear", label: "Gear & Fuel" },
     { href: "/blog", label: "Blog" },
+    { href: "/faq", label: "FAQ" },
     { href: "/pheidi", label: "Pheidi" },
     { href: "/about", label: "About" },
   ];

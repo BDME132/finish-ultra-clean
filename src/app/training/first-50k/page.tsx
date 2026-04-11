@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import FAQSection from "@/components/FAQSection";
+import { faqsByCategory } from "@/lib/content/faqs";
 import { pageMetadata } from "@/lib/seo-metadata";
 import { howToJsonLd, SITE_URL } from "@/lib/schema";
 
@@ -149,6 +151,7 @@ export default function First50kPage() {
           </div>
         </section>
 
+        <FAQSection faqs={faqsByCategory["training"]} title="50K Training FAQs" />
         <NewsletterSignup />
       </main>
       <Footer />

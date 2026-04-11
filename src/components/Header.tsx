@@ -19,6 +19,7 @@ const toolsLinks = [
 
 const navLinksAfter = [
   { href: "/blog", label: "Blog" },
+  { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
 ];
 

@@ -60,6 +60,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry("/gear/builder", 0.7, "weekly"),
     entry("/gear/race-day-kit", 0.7, "monthly"),
 
+    // FAQ
+    entry("/faq", 0.9, "monthly"),
+
     // Blog
     entry("/blog", 0.8, "weekly"),
     ...blogRoutes,

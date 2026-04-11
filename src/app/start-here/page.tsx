@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import EmailSignupForm from "@/components/EmailSignupForm";
+import FAQSection from "@/components/FAQSection";
+import { faqsByCategory } from "@/lib/content/faqs";
 import JsonLd from "@/components/JsonLd";
 import { pageMetadata } from "@/lib/seo-metadata";
 import { howToJsonLd, SITE_URL } from "@/lib/schema";
@@ -396,7 +398,10 @@ export default function StartHerePage() {
           </div>
         </section>
 
-        {/* ── 7. Newsletter Signup ── */}
+        {/* ── 7. FAQ Section ── */}
+        <FAQSection faqs={faqsByCategory["getting-started"]} title="Common Questions About Getting Started" />
+
+        {/* ── 8. Newsletter Signup ── */}
         <section className="bg-primary py-16">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="font-headline text-3xl font-bold text-white mb-3">

@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FAQSection from "@/components/FAQSection";
+import { faqsByCategory } from "@/lib/content/faqs";
 import JsonLd from "@/components/JsonLd";
 import TrainingPlanCard from "@/components/TrainingPlanCard";
 import { trainingPlans } from "@/lib/content/training-plans";
@@ -84,6 +86,7 @@ export default function TrainingPage() {
             </div>
           </div>
         </section>
+        <FAQSection faqs={faqsByCategory["training"]} title="Common Questions About Ultra Training" />
       </main>
       <Footer />
     </>

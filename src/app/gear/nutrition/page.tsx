@@ -2,6 +2,8 @@ import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FAQSection from "@/components/FAQSection";
+import { faqsByCategory } from "@/lib/content/faqs";
 import JsonLd from "@/components/JsonLd";
 import NutritionCalculator from "./NutritionCalculator";
 import {
@@ -1241,6 +1243,7 @@ export default function NutritionPage() {
             </p>
           </div>
         </section>
+        <FAQSection faqs={faqsByCategory["nutrition"]} title="Nutrition FAQs" />
       </main>
 
       <Footer />

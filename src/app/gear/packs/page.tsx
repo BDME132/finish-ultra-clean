@@ -2,6 +2,8 @@ import React from "react";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FAQSection from "@/components/FAQSection";
+import { faqs } from "@/lib/content/faqs";
 import JsonLd from "@/components/JsonLd";
 import VestFinder from "./VestFinder";
 import {
@@ -1517,6 +1519,9 @@ export default function PacksPage() {
             </p>
           </div>
         </section>
+        <FAQSection
+          faqs={faqs.filter(f => ["do-i-need-a-vest", "what-to-carry"].includes(f.id))}
+        />
       </main>
 
       <Footer />
