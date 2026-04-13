@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import DashboardClient from "./DashboardClient";
 import { pageMetadata } from "@/lib/seo-metadata";
 
@@ -19,7 +18,6 @@ export default function TrainingDashboardPage() {
     <>
       <Header />
       <DashboardClient />
-      <Footer />
     </>
   );
 }
