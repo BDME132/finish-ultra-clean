@@ -176,6 +176,21 @@ export default function AccountSettings() {
         </p>
       </div>
 
+      <div className="bg-white rounded-xl border border-gray-100 p-6">
+        <h2 className="text-sm font-medium text-gray uppercase tracking-wider mb-4">
+          Community Posts
+        </h2>
+        <p className="text-sm text-gray mb-4">
+          Write, submit, and manage your public blog posts.
+        </p>
+        <a
+          href="/account/posts"
+          className="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          Manage posts
+        </a>
+      </div>
+
       {/* Sign out */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <button
