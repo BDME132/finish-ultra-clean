@@ -27,7 +27,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   apparel: "Apparel",
   kits: "Gear Kits",
   builder: "Gear Builder",
-  "race-day-kit": "Race Day Kit",
+  "race-day-kit": "Shared Kits",
   "first-50k": "Your First 50K",
   "base-building": "Base Building",
   "race-week": "Race Week",

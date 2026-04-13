@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { loadPlan } from "@/lib/training-sync";
-import { getMyKit } from "@/lib/supabase/kits";
+import { loadActiveKit } from "@/lib/kit-sync";
 import { hasSupabaseBrowserEnv } from "@/lib/supabase/client";
 import type { SavedPlan } from "@/lib/training-types";
 import type { KitSummary } from "@/types/gear";
+import { summarizeSavedKit } from "@/lib/kit-types";
 import { Flag, ClipboardList, Package } from "lucide-react";
 
 function weeksUntil(dateStr: string): number {
@@ -127,7 +128,7 @@ function EmptyPlanCard() {
 
 // ─── Kit card ───────────────────────────────────────────────────────────────
 
-function KitCard({ kitSummary }: { kitSummary: KitSummary }) {
+function KitCard({ kitSummary, kitId }: { kitSummary: KitSummary; kitId: string }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col gap-5">
       <div>
@@ -165,10 +166,10 @@ function KitCard({ kitSummary }: { kitSummary: KitSummary }) {
       </div>
 
       <Link
-        href="/gear/kits"
+        href={`/gear/kits?kit=${encodeURIComponent(kitId)}`}
         className="mt-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-primary text-primary text-sm font-semibold rounded-xl hover:bg-primary hover:text-white transition-colors"
       >
-        View &amp; Rebuild Kit
+        View &amp; Edit Kit
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
@@ -205,6 +206,7 @@ export default function RaceHQClient() {
   const { user, isLoading: authLoading } = useAuth();
   const [plan, setPlan] = useState<SavedPlan | null>(null);
   const [kitSummary, setKitSummary] = useState<KitSummary | null>(null);
+  const [activeKitId, setActiveKitId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
   const isSupabaseConfigured = hasSupabaseBrowserEnv();
 
@@ -215,10 +217,11 @@ export default function RaceHQClient() {
     async function load() {
       const [savedPlan, savedKit] = await Promise.all([
         loadPlan(user!),
-        getMyKit(user!.id),
+        loadActiveKit(user),
       ]);
       setPlan(savedPlan);
-      setKitSummary(savedKit?.kit_summary ?? null);
+      setKitSummary(savedKit ? summarizeSavedKit(savedKit) : null);
+      setActiveKitId(savedKit?.kitId ?? null);
       setLoaded(true);
     }
 
@@ -263,7 +266,7 @@ export default function RaceHQClient() {
           <>
             <div className="grid md:grid-cols-2 gap-6">
               {plan ? <PlanCard plan={plan} /> : <EmptyPlanCard />}
-              {kitSummary ? <KitCard kitSummary={kitSummary} /> : <EmptyKitCard />}
+              {kitSummary && activeKitId ? <KitCard kitSummary={kitSummary} kitId={activeKitId} /> : <EmptyKitCard />}
             </div>
 
             {/* Footer links */}
