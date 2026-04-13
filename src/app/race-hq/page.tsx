@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import RaceHQClient from "./RaceHQClient";
 import { pageMetadata } from "@/lib/seo-metadata";
 
@@ -21,7 +20,6 @@ export default function RaceHQPage() {
       <main className="min-h-[calc(100vh-4rem)] bg-light">
         <RaceHQClient />
       </main>
-      <Footer />
     </>
   );
 }
