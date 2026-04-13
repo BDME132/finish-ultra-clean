@@ -2,12 +2,15 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  title: "Race Day Checklist | FinishUltra",
-  description:
-    "Interactive packing checklist for your first ultra marathon. Customize by distance and conditions — never forget a thing on race day.",
-  alternates: { canonical: "/training/race-day-checklist" },
+  ...pageMetadata({
+    title: "Interactive Ultra Race Day Checklist | FinishUltra",
+    description:
+      "Build a custom race day packing list for your ultra by distance and conditions — vest, nutrition, layers, and drop bag items.",
+    path: "/training/race-day-checklist",
+  }),
 };
 
 export default function RaceDayChecklistPage() {

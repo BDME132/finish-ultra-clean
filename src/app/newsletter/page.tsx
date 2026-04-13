@@ -2,11 +2,15 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  title: "Newsletter | FinishUltra",
-  description: "Sign up for weekly ultra running tips. Training advice, gear recommendations, and beginner Q&A delivered to your inbox.",
-  alternates: { canonical: "/newsletter" },
+  ...pageMetadata({
+    title: "Weekly Ultra Running Newsletter | FinishUltra",
+    description:
+      "One email a week with training tips, gear picks, and beginner Q&A for ultra runners. Free, no spam, unsubscribe anytime.",
+    path: "/newsletter",
+  }),
 };
 
 export default function NewsletterPage() {

@@ -12,19 +12,19 @@ export const blogPosts: BlogPost[] = [
 
 The truth is: a 50K is only 4.9 miles longer than a marathon. That's it. The distance itself isn't the scary part — it's the terrain, the nutrition, and the mental game that make it different.
 
-## The Good
+## What Makes a 50K Different from a Marathon?
 
 Ultra runners are the friendliest people in all of running. The vibe at a 50K is completely different from a road marathon. People chat, share food, and genuinely cheer each other on. There's no "competing" — it's you vs. the distance.
 
 Most 50Ks have generous cutoff times. You don't need to be fast. You just need to keep moving forward.
 
-## The Bad
+## What Are the Hardest Parts of a 50K?
 
 You will bonk if you don't practice nutrition. This is the #1 mistake first-time ultra runners make. You need to eat and drink consistently from mile 1. We recommend starting with **Tailwind Endurance Fuel** — it's the simplest approach for beginners.
 
 Your feet will hurt in new ways. Trail terrain is unforgiving, and 31 miles of roots and rocks will find every weakness in your footwear. Invest in good trail shoes and toe socks.
 
-## The Bottom Line
+## Can You Actually Finish a 50K as a Beginner?
 
 A 50K is hard, but it's not impossible. If you can run 20 miles, you can train for a 50K. Start with our First 50K Training Plan and build up gradually.`,
     category: "Getting Started",
@@ -94,7 +94,7 @@ Start with a local 50K on runnable trails. Ask in local running groups — exper
       "16 weeks to your first 50K. No junk miles, no burnout, no mystery. Just a clear plan that builds you up without breaking you down.",
     body: `You don't need to run 50 miles a week to finish a 50K. Most beginner plans top out at 35–40 miles per week, and that's plenty.
 
-## The Framework
+## What Does a 50K Training Plan Look Like Week by Week?
 
 **Base building (Weeks 1–6):** Gradually increase your weekly mileage to 25–30 miles. Run 4 days per week. Keep everything easy — conversational pace.
 
@@ -102,7 +102,7 @@ Start with a local 50K on runnable trails. Ask in local running groups — exper
 
 **Peak & taper (Weeks 13–16):** Hit your longest run (22–24 miles) in week 13, then cut back 20% each week until race day.
 
-## The Key Workouts
+## What Are the Most Important Workouts for 50K Training?
 
 **Long run:** Your most important workout. Build to 22–24 miles. Run on trails similar to your race course. Practice nutrition on every long run over 15 miles.
 
@@ -110,14 +110,14 @@ Start with a local 50K on runnable trails. Ask in local running groups — exper
 
 **Easy runs:** 80% of your running should be genuinely easy. If you can't hold a conversation, slow down.
 
-## Common Mistakes
+## What Mistakes Do First-Time Ultra Runners Make in Training?
 
 1. **Running too fast on easy days.** Your easy pace should feel embarrassingly slow.
 2. **Skipping the taper.** Trust the training. The fitness is in the bank — let your body recover.
 3. **Ignoring strength work.** 15 minutes of squats, lunges, and calf raises 2x per week prevents most trail injuries.
 4. **Not running on trails.** Road fitness doesn't fully transfer to trail running. Get on dirt.
 
-## Race Week
+## What Should You Do Race Week Before a 50K?
 
 Rest. Hydrate. Eat carbs. Lay out all your gear the night before. Trust your training and go have fun.`,
     category: "Training",
@@ -140,7 +140,7 @@ Rest. Hydrate. Eat carbs. Lay out all your gear the night before. Trust your tra
       "You don't need a gym membership. These 6 exercises, done twice a week, will bulletproof your legs and keep you injury-free.",
     body: `Most ultra runners skip strength training because it feels like "extra" work. But 20 minutes twice a week can be the difference between finishing strong and dropping at mile 40.
 
-## The 6 Essential Exercises
+## What Strength Exercises Do Ultra Runners Need?
 
 **1. Single-leg squats (pistol progression):** Stand on one leg, lower as far as you can with control. Use a chair for support if needed. 3 sets of 8 per leg.
 
@@ -154,15 +154,15 @@ Rest. Hydrate. Eat carbs. Lay out all your gear the night before. Trust your tra
 
 **6. Glute bridges:** Lie on your back, feet flat, drive hips up. Single-leg variation once you can do 20 reps easily. 3 sets of 12.
 
-## When to Do It
+## When Should Ultra Runners Do Strength Training?
 
 **Tuesday and Thursday** after easy runs. Never the day before or after a long run. Keep it short — 20 minutes max.
 
-## The Science
+## Does Strength Training Actually Help Ultra Runners?
 
 A 2023 meta-analysis in the British Journal of Sports Medicine found that runners who did strength training 2x/week had a 50% lower injury rate than those who only ran. The biggest benefits were reduced IT band syndrome and plantar fasciitis — two of the most common ultra running injuries.
 
-## Don't Overcomplicate It
+## How Simple Can Ultra Runner Strength Training Be?
 
 You don't need a gym. A step, a resistance band, and your bodyweight are enough. Consistency beats intensity.`,
     category: "Training",
@@ -182,7 +182,7 @@ You don't need a gym. A step, a resistance band, and your bodyweight are enough.
       "Your road running wardrobe won't cut it on the trails. Here's exactly what to wear (and what to skip) for your first ultra marathon.",
     body: `Heading into your first ultra with road running gear is like showing up to a camping trip in dress shoes. You'll survive, but you won't enjoy it.
 
-## The Essentials
+## What Gear Do You Need for Your First Ultra?
 
 **Shoes:** Trail shoes are non-negotiable. You need grip, protection, and drainage. The **Hoka Speedgoat 5** is our top pick for beginners — cushioned enough for comfort, grippy enough for technical terrain.
 
@@ -192,7 +192,7 @@ You don't need a gym. A step, a resistance band, and your bodyweight are enough.
 
 **Vest/Pack:** A running vest is essential for carrying water, nutrition, and required gear. The **Salomon ADV Skin 5** is the gold standard for beginners.
 
-## What to Skip
+## What Should You Avoid Wearing for Your First Ultra?
 
 - Cotton anything (chafing nightmare)
 - New gear on race day (test everything in training)
@@ -386,7 +386,7 @@ If three feels like too many, start with two: one cushioned daily trainer and on
       "Forget complicated fueling strategies. Here's a dead-simple nutrition plan that will get you through your first 50K without bonking.",
     body: `Nutrition is where most first-time ultra runners fail. Not fitness, not mental toughness — food. The good news? It doesn't have to be complicated.
 
-## The Simple Strategy
+## What Should You Eat and Drink During an Ultra Marathon?
 
 **Calories per hour:** Aim for 200-300 calories per hour after the first hour. Set a timer on your watch if you need to.
 
@@ -394,14 +394,14 @@ If three feels like too many, start with two: one cushioned daily trainer and on
 
 **Backup plan:** Carry 2-3 **Spring Energy** gels for when you want something with more texture or when aid stations have water but you need calories.
 
-## Common Mistakes
+## What Nutrition Mistakes Do First-Time Ultra Runners Make?
 
 1. **Waiting too long to eat.** Start fueling at mile 5, not mile 15.
 2. **Trying new foods on race day.** Practice your nutrition plan on every long run.
 3. **Only drinking water.** You need electrolytes. Plain water can cause hyponatremia on hot days.
 4. **Eating too much at once.** Small amounts frequently > big meals infrequently.
 
-## Practice Makes Perfect
+## How Do You Train Your Gut to Handle Race-Day Nutrition?
 
 Use your weekend long runs to dial in nutrition. By race day, eating while running should feel automatic.`,
     category: "Nutrition",
@@ -437,7 +437,7 @@ The average runner loses 800–1,200mg of sodium per hour through sweat. Heavy s
 
 **General guideline:** Replace 500–700mg of sodium per hour during ultras. If you're a heavy sweater or it's a hot day, go up to 1,000mg.
 
-## The Best Electrolyte Products
+## What Are the Best Electrolyte Products for Ultra Running?
 
 **For simplicity:** Tailwind Endurance Fuel provides ~300mg sodium per serving plus calories. Use as your primary fuel source.
 
@@ -445,11 +445,11 @@ The average runner loses 800–1,200mg of sodium per hour through sweat. Heavy s
 
 **For prevention:** SaltStick caps provide 215mg sodium per capsule. Take 1–2 per hour on hot days in addition to your normal fuel.
 
-## The Research
+## What Does the Research Say About Electrolytes in Ultras?
 
 A 2024 study in the Journal of the International Society of Sports Nutrition found that sodium supplementation during ultras longer than 50K reduced finish times by an average of 26 minutes compared to water alone. The effect was most pronounced in hot conditions and in runners who described themselves as heavy sweaters.
 
-## Warning Signs of Electrolyte Imbalance
+## What Are the Warning Signs of Electrolyte Imbalance?
 
 - Muscle cramps that don't resolve with stretching
 - Nausea or bloating in the second half of a race
@@ -458,7 +458,7 @@ A 2024 study in the Journal of the International Society of Sports Nutrition fou
 
 If you experience confusion or significant swelling, seek medical help immediately.
 
-## The Bottom Line
+## How Much Sodium Should You Take Per Hour During an Ultra?
 
 Start with 500mg sodium per hour. Adjust up in heat or if you're a heavy sweater. Practice in training so you know what works for you.`,
     category: "Nutrition",
@@ -485,7 +485,7 @@ Start with 500mg sodium per hour. Adjust up in heat or if you're a heavy sweater
       "By mile 40, most runners can't look at another gel. Here are 12 real-food options that actually work mid-race.",
     body: `Gels are convenient. But after 6+ hours of running, your body starts craving real food. This isn't a weakness — it's biology. Your taste preferences shift during prolonged exercise, and savory, textured foods become more appealing.
 
-## The Best Real Foods for Ultras
+## What Real Foods Work Best During an Ultra Marathon?
 
 ### Savory Options
 - **Boiled potatoes with salt** — The #1 aid station food at Western States for a reason. Easy to digest, high in potassium, satisfies the salt craving.
@@ -504,13 +504,13 @@ Start with 500mg sodium per hour. Adjust up in heat or if you're a heavy sweater
 - **Coke** — Flat Coca-Cola is a legendary ultra food. Caffeine + sugar + carbonation settles the stomach.
 - **Ensure/Boost** — 250 calories in a bottle when you can't face solid food.
 
-## How to Plan It
+## When Should You Switch from Gels to Real Food in an Ultra?
 
 **Miles 0–20:** Stick with your primary fuel (Tailwind, gels, etc.)
 **Miles 20–40:** Start mixing in real food at aid stations. A potato here, a PB&J there.
 **Miles 40+:** Eat whatever sounds good. Your body knows what it needs.
 
-## The Rule
+## What's the Golden Rule for Race-Day Nutrition?
 
 Practice everything in training. If you've never eaten a quesadilla at mile 30, don't try it for the first time on race day.`,
     category: "Nutrition",
@@ -530,7 +530,7 @@ Practice everything in training. If you've never eaten a quesadilla at mile 30, 
       "Don't leave anything at home. This printable checklist covers everything from shoes to safety pins.",
     body: `You've trained for months. Don't let a forgotten item ruin your race. This checklist has been refined through dozens of ultras and hundreds of runner suggestions.
 
-## On-Body Gear
+## What Do You Wear for an Ultra Marathon?
 
 - Trail shoes (broken in, tested on long runs)
 - Race socks (tested — never new on race day)
@@ -542,7 +542,7 @@ Practice everything in training. If you've never eaten a quesadilla at mile 30, 
 - Watch (charged, race loaded)
 - Bib + safety pins
 
-## In Your Pack
+## What Should You Carry in Your Running Pack During an Ultra?
 
 - 2 soft flasks (filled with your fuel)
 - Backup nutrition (gels, bars)
@@ -552,7 +552,7 @@ Practice everything in training. If you've never eaten a quesadilla at mile 30, 
 - Small packet of toilet paper (trust us)
 - Any required gear (headlamp, whistle, emergency blanket)
 
-## Drop Bag Essentials
+## What Goes in an Ultra Marathon Drop Bag?
 
 - Spare socks
 - Spare shoes (optional, for 100-milers)
@@ -562,7 +562,7 @@ Practice everything in training. If you've never eaten a quesadilla at mile 30, 
 - Warm layer for night sections
 - Wipes for a quick refresh
 
-## Crew Support (if allowed)
+## What Does an Ultra Marathon Crew Need?
 
 - Folding chair
 - Cooler with cold drinks and ice
@@ -570,7 +570,7 @@ Practice everything in training. If you've never eaten a quesadilla at mile 30, 
 - Extra everything (socks, nutrition, batteries)
 - Positive attitude (seriously)
 
-## Night Before
+## What Should You Do the Night Before an Ultra?
 
 - Lay out all gear
 - Pin bib to vest/shirt
@@ -579,7 +579,7 @@ Practice everything in training. If you've never eaten a quesadilla at mile 30, 
 - Eat a carb-heavy dinner
 - Don't try to sleep 10 hours — resting is enough
 
-## Race Morning
+## What's the Race Morning Routine for an Ultra?
 
 - Eat 2-3 hours before start (what you practiced in training)
 - Apply sunscreen and anti-chafe

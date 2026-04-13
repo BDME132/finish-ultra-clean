@@ -2,12 +2,15 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  title: "Search | FinishUltra",
-  description:
-    "Search FinishUltra for training plans, gear guides, blog posts, and more.",
-  alternates: { canonical: "/search" },
+  ...pageMetadata({
+    title: "Search FinishUltra | Plans, Gear & Blog",
+    description:
+      "Search FinishUltra for training plans, gear guides, blog posts, glossary terms, and tools — all in one place.",
+    path: "/search",
+  }),
 };
 
 export default function SearchPage() {

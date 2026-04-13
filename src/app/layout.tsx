@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { headers } from "next/headers";
 import PheidiShell from "@/components/PheidiShell";
 import AuthProvider from "@/components/AuthProvider";
+import { rootLayoutJsonLdGraph } from "@/lib/schema";
 import "./globals.css";
 
 const inter = Inter({
@@ -17,35 +19,38 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "FinishUltra - Your First Ultra Starts Here",
+  title: "FinishUltra — Your First Ultra Starts Here",
   description:
-    "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners. Built by beginners, for beginners.",
+    "Free training plans, honest gear reviews, and an AI coach for beginner ultra runners. Your first ultra starts here.",
   keywords: ["ultra marathon training", "beginner ultra runner", "ultra running gear", "50k training plan", "ultra running nutrition"],
   authors: [{ name: "FinishUltra" }],
   creator: "FinishUltra",
-  metadataBase: new URL("https://finishultra.com"),
+  metadataBase: new URL("https://www.finishultra.com"),
+  verification: {
+    google: "X24norHDFiTwBrKvxmKNukCK-tejMgzix9jTIe9WBFY",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://finishultra.com",
+    url: "https://www.finishultra.com/",
     siteName: "FinishUltra",
-    title: "FinishUltra - Your First Ultra Starts Here",
+    title: "FinishUltra — Your First Ultra Starts Here",
     description:
-      "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
+      "Free training plans, honest gear reviews, and an AI coach for beginner ultra runners. Your first ultra starts here.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "FinishUltra - Your First Ultra Starts Here",
+        alt: "FinishUltra — Your first ultra starts here",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FinishUltra - Your First Ultra Starts Here",
+    title: "FinishUltra — Your First Ultra Starts Here",
     description:
-      "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
+      "Free training plans, honest gear reviews, and an AI coach for beginner ultra runners. Your first ultra starts here.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -60,38 +65,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://finishultra.com/#organization",
-        name: "FinishUltra",
-        url: "https://finishultra.com",
-        logo: {
-          "@type": "ImageObject",
-          url: "https://finishultra.com/logo.png",
-        },
-        description:
-          "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://finishultra.com/#website",
-        url: "https://finishultra.com",
-        name: "FinishUltra",
-        publisher: {
-          "@id": "https://finishultra.com/#organization",
-        },
-        description: "Free training plans, gear guides, and Pheidi your personal AI coach for beginner ultra runners.",
-      },
-    ],
-  };
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") ?? "/";
+  const jsonLd = rootLayoutJsonLdGraph(pathname);
 
   return (
     <html lang="en">

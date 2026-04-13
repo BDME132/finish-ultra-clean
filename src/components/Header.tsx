@@ -6,9 +6,11 @@ import { useState } from "react";
 import { usePheidi } from "./PheidiProvider";
 import { useAuth } from "./AuthProvider";
 
-const navLinks = [
+const navLinksBeforeTraining = [
   { href: "/start-here", label: "Start Here" },
-  { href: "/training", label: "Training" },
+];
+
+const navLinksAfterTraining = [
   { href: "/gear", label: "Gear & Fuel" },
 ];
 
@@ -19,6 +21,7 @@ const toolsLinks = [
 
 const navLinksAfter = [
   { href: "/blog", label: "Blog" },
+  { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
 ];
 
@@ -100,6 +103,9 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { openPheidi } = usePheidi();
   const { user, isLoading: authLoading } = useAuth();
+  const isTrainingSection = pathname?.startsWith("/training");
+  const isTrainingDashboard = pathname?.startsWith("/training/dashboard");
+  const isTrainingPlans = Boolean(isTrainingSection && !isTrainingDashboard);
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -111,7 +117,77 @@ export default function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
+            {navLinksBeforeTraining.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-colors ${
+                  pathname?.startsWith(link.href)
+                    ? "text-primary"
+                    : "text-dark hover:text-primary"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {/* Training dropdown */}
+            <div className="relative group">
+              <div className="flex items-center gap-0.5">
+                <Link
+                  href="/training"
+                  className={`text-sm font-medium transition-colors ${
+                    isTrainingSection
+                      ? "text-primary"
+                      : "text-dark hover:text-primary"
+                  }`}
+                >
+                  Training
+                </Link>
+                <svg
+                  className={`w-3.5 h-3.5 mt-px transition-colors ${
+                    isTrainingSection
+                      ? "text-primary"
+                      : "text-dark group-hover:text-primary group-focus-within:text-primary"
+                  }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 pointer-events-none transition-opacity duration-150 group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto">
+                <div className="bg-white border border-gray-100 rounded-lg shadow-lg py-1 min-w-[160px]">
+                  {user && (
+                    <Link
+                      href="/training/dashboard"
+                      className={`block px-4 py-2 text-sm transition-colors ${
+                        isTrainingDashboard
+                          ? "text-primary bg-primary/5"
+                          : "text-dark hover:text-primary hover:bg-gray-50"
+                      }`}
+                    >
+                      Dashboard
+                    </Link>
+                  )}
+                  <Link
+                    href="/training"
+                    className={`block px-4 py-2 text-sm transition-colors ${
+                      isTrainingPlans
+                        ? "text-primary bg-primary/5"
+                        : "text-dark hover:text-primary hover:bg-gray-50"
+                    }`}
+                  >
+                    Plans
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {navLinksAfterTraining.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -217,16 +293,6 @@ export default function Header() {
                     Race HQ
                   </Link>
                   <Link
-                    href="/training/dashboard"
-                    className={`text-sm font-medium transition-colors ${
-                      pathname?.startsWith("/training/dashboard")
-                        ? "text-primary"
-                        : "text-dark hover:text-primary"
-                    }`}
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
                     href="/account"
                     className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
                     title="Account"
@@ -279,7 +345,60 @@ export default function Header() {
             </Link>
 
             <div className="flex flex-col gap-3">
-              {navLinks.map((link) => (
+              {navLinksBeforeTraining.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`text-sm font-medium px-2 py-1 transition-colors ${
+                    pathname?.startsWith(link.href)
+                      ? "text-primary"
+                      : "text-dark hover:text-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              <div className="flex flex-col gap-1">
+                <Link
+                  href="/training"
+                  onClick={() => setMobileOpen(false)}
+                  className={`text-sm font-medium px-2 py-1 transition-colors ${
+                    isTrainingSection
+                      ? "text-primary"
+                      : "text-dark hover:text-primary"
+                  }`}
+                >
+                  Training
+                </Link>
+                {user && (
+                  <Link
+                    href="/training/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className={`text-sm font-medium px-2 py-1 pl-4 transition-colors ${
+                      isTrainingDashboard
+                        ? "text-primary"
+                        : "text-dark hover:text-primary"
+                    }`}
+                  >
+                    Dashboard
+                  </Link>
+                )}
+                <Link
+                  href="/training"
+                  onClick={() => setMobileOpen(false)}
+                  className={`text-sm font-medium px-2 py-1 pl-4 transition-colors ${
+                    isTrainingPlans
+                      ? "text-primary"
+                      : "text-dark hover:text-primary"
+                  }`}
+                >
+                  Plans
+                </Link>
+              </div>
+
+              {navLinksAfterTraining.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}

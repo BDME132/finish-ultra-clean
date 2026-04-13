@@ -3,6 +3,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import EmailSignupForm from "@/components/EmailSignupForm";
+import FAQSection from "@/components/FAQSection";
+import { faqsByCategory } from "@/lib/content/faqs";
+import JsonLd from "@/components/JsonLd";
+import { pageMetadata } from "@/lib/seo-metadata";
+import { howToJsonLd, SITE_URL } from "@/lib/schema";
 import {
   Footprints,
   Dumbbell,
@@ -14,10 +19,12 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Start Here — Your First Ultra Starts Now | FinishUltra",
-  description:
-    "New to ultra running? No gatekeeping, no jargon — just a clear path from zero to your first finish line. Free plans, gear guides, and an AI coach.",
-  alternates: { canonical: "/start-here" },
+  ...pageMetadata({
+    title: "Start Here — Your First Ultra Roadmap | FinishUltra",
+    description:
+      "New to ultra running? Follow these 5 steps to go from curious runner to finishing your first ultramarathon.",
+    path: "/start-here",
+  }),
 };
 
 /* ───────────────────────── data ───────────────────────── */
@@ -175,10 +182,22 @@ const pheidiPrompts = [
 
 /* ───────────────────────── page ───────────────────────── */
 
+const startHereHowToJsonLd = howToJsonLd({
+  name: "How to Prepare for Your First Ultra Marathon",
+  description:
+    "Follow these five steps — in order or at your own pace — to go from curious runner to ultramarathoner.",
+  steps: roadmap.map((r) => ({
+    name: r.title,
+    text: r.description,
+    url: `${SITE_URL}/start-here#step-${r.step}`,
+  })),
+});
+
 export default function StartHerePage() {
   return (
     <>
       <Header />
+      <JsonLd data={startHereHowToJsonLd} />
       <main>
         {/* ── 1. Hero ── */}
         <section className="bg-gradient-to-b from-light to-white py-20 sm:py-28">
@@ -255,7 +274,11 @@ export default function StartHerePage() {
 
               <div className="space-y-12">
                 {roadmap.map((item) => (
-                  <div key={item.step} className="flex gap-6 relative">
+                  <div
+                    key={item.step}
+                    id={`step-${item.step}`}
+                    className="flex gap-6 relative scroll-mt-28"
+                  >
                     {/* Step number */}
                     <div className="flex-shrink-0 w-12 h-12 bg-primary rounded-full flex items-center justify-center relative z-10">
                       <span className="text-white font-headline font-bold text-lg">
@@ -375,7 +398,10 @@ export default function StartHerePage() {
           </div>
         </section>
 
-        {/* ── 7. Newsletter Signup ── */}
+        {/* ── 7. FAQ Section ── */}
+        <FAQSection faqs={faqsByCategory["getting-started"]} title="Common Questions About Getting Started" />
+
+        {/* ── 8. Newsletter Signup ── */}
         <section className="bg-primary py-16">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="font-headline text-3xl font-bold text-white mb-3">

@@ -1,3 +1,5 @@
+import type { KitSummary } from "@/types/gear";
+
 // ─── Saved Kit Types ────────────────────────────────────────────────────────
 
 export interface SavedKitItem {
@@ -6,7 +8,7 @@ export interface SavedKitItem {
   brand: string;
   price: number;
   why: string;
-  tier: "standard" | "budget" | "premium";
+  tier: "standard" | "budget" | "premium" | "elite";
   specs: string[];
   links: Record<string, { url: string; price: number }>;
   productId?: string; // References central product library ID
@@ -19,10 +21,28 @@ export interface SavedKitItem {
   rating: number; // 0-5
 }
 
+export interface PublicShare {
+  slug: string;
+  publishedAt: string;
+  updatedAt: string;
+}
+
+export interface PublicKitItem {
+  category: string;
+  product: string;
+  brand: string;
+  price: number;
+  why: string;
+  tier: "standard" | "budget" | "premium" | "elite";
+  specs: string[];
+  links: Record<string, { url: string; price: number }>;
+}
+
 export interface SavedKit {
   kitId: string;
   createdAt: string;
   lastModified: string;
+  presetId?: string;
 
   // Quiz answers that generated this kit
   raceDetails: {
@@ -66,6 +86,32 @@ export interface SavedKit {
   // Status
   status: "active" | "complete" | "archived";
   notes: string;
+  publicShare?: PublicShare | null;
+}
+
+export interface PublicKit {
+  id: string;
+  sourceKitId: string;
+  slug: string;
+  authorDisplayName: string;
+  kitTitle: string;
+  kitSubtitle: string;
+  raceDetails: SavedKit["raceDetails"];
+  items: PublicKitItem[];
+  packingChecklist: string[];
+  dropBagEssentials: string[];
+  testingTimeline: string[];
+  totalCost: number;
+  presetId?: string;
+  publishedAt: string;
+  updatedAt: string;
+}
+
+export interface PublicKitFilters {
+  distance?: string;
+  terrain?: string;
+  budget?: string;
+  sort?: "newest" | "updated" | "lowest-cost" | "highest-cost";
 }
 
 // ─── localStorage ────────────────────────────────────────────────────────────
@@ -90,4 +136,70 @@ export function saveKitsToLocal(kits: SavedKit[]): void {
 
 export function generateKitId(): string {
   return `kit_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+export function sortKitsByModified(kits: SavedKit[]): SavedKit[] {
+  return [...kits].sort((a, b) => {
+    const aTime = new Date(a.lastModified || a.createdAt).getTime();
+    const bTime = new Date(b.lastModified || b.createdAt).getTime();
+    return bTime - aTime;
+  });
+}
+
+export function ensureSingleActiveKit(kits: SavedKit[]): SavedKit[] {
+  const sorted = sortKitsByModified(kits);
+  const firstActive = sorted.find((kit) => kit.status === "active");
+
+  if (!firstActive && sorted.length > 0) {
+    const [latest, ...rest] = sorted;
+    return [
+      { ...latest, status: "active" },
+      ...rest,
+    ];
+  }
+
+  if (!firstActive) return sorted;
+
+  let activeSeen = false;
+  return sorted.map((kit) => {
+    if (kit.kitId !== firstActive.kitId && kit.status === "active") {
+      return { ...kit, status: "archived" };
+    }
+    if (kit.kitId === firstActive.kitId) {
+      if (activeSeen) return { ...kit, status: "archived" };
+      activeSeen = true;
+      return { ...kit, status: "active" };
+    }
+    return kit;
+  });
+}
+
+export function upsertSavedKit(existing: SavedKit[], incoming: SavedKit): SavedKit[] {
+  const merged = [incoming, ...existing.filter((kit) => kit.kitId !== incoming.kitId)];
+  return ensureSingleActiveKit(
+    merged.map((kit) =>
+      incoming.status === "active" && kit.kitId !== incoming.kitId && kit.status === "active"
+        ? { ...kit, status: "archived" }
+        : kit
+    )
+  );
+}
+
+export function removeSavedKit(existing: SavedKit[], kitId: string): SavedKit[] {
+  return ensureSingleActiveKit(existing.filter((kit) => kit.kitId !== kitId));
+}
+
+export function getActiveKit(kits: SavedKit[]): SavedKit | null {
+  return ensureSingleActiveKit(kits).find((kit) => kit.status === "active") ?? null;
+}
+
+export function summarizeSavedKit(kit: SavedKit): KitSummary {
+  const categories = [...new Set(kit.items.map((item) => item.category))];
+  return {
+    title: kit.kitTitle,
+    subtitle: kit.kitSubtitle,
+    totalItems: kit.items.length,
+    categories,
+    totalCost: kit.totalCost,
+  };
 }

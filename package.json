@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check:gear-links": "node scripts/check-gear-links.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.34",
