@@ -8,7 +8,7 @@ const HEADERS = {
 
 export async function GET(request: NextRequest) {
   const path = request.nextUrl.searchParams.get("path") ?? "/";
-  const markdown = getMarkdownForPath(path);
+  const markdown = await getMarkdownForPath(path);
 
   if (!markdown) {
     return new NextResponse(notFoundMarkdown(path), {

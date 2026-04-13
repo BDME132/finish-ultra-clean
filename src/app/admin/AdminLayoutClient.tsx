@@ -121,6 +121,12 @@ export default function AdminLayoutClient({
               >
                 Send Newsletter
               </Link>
+              <Link
+                href="/admin/blog"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Blog Moderation
+              </Link>
             </div>
             <div className="flex items-center space-x-4">
               <button
