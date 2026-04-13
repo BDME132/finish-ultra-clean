@@ -1,13 +1,19 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import Header from "@/components/Header";
+import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import JsonLd from "@/components/JsonLd";
+import { faqsByCategory } from "@/lib/content/faqs";
+import { pageMetadata } from "@/lib/seo-metadata";
+import { absoluteUrl, itemListJsonLd } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "Gear | FinishUltra",
-  description: "Honest gear recommendations for beginner ultra runners. Start with a personalized custom kit or browse shared kits and category guides.",
-  alternates: { canonical: "/gear" },
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Ultra Running Gear Guides | FinishUltra",
+  description:
+    "Build a personalized ultra running gear kit, browse shared kits from other runners, and compare shoes, packs, nutrition, and apparel.",
+  path: "/gear",
+});
 
 const supportingCategories = [
   {
@@ -32,10 +38,39 @@ const supportingCategories = [
   },
 ];
 
+const gearHubSections = [
+  {
+    title: "Custom Gear Kits",
+    description:
+      "Answer 10 questions and get product-level recommendations tailored to your race, climate, runner profile, and budget.",
+    href: "/gear/kits",
+  },
+  {
+    title: "Shared Kits",
+    description:
+      "Browse public runner-built kits for ideas you can load into your own builder.",
+    href: "/gear/race-day-kit",
+  },
+  ...supportingCategories,
+];
+
+const gearHubItemListJsonLd = itemListJsonLd({
+  name: "Ultra running gear pages",
+  description:
+    "FinishUltra gear tools and guides, including the custom kit builder, shared kits, and product category pages.",
+  url: absoluteUrl("/gear"),
+  items: gearHubSections.map((section) => ({
+    name: section.title,
+    url: absoluteUrl(section.href),
+    description: section.description,
+  })),
+});
+
 export default function GearPage() {
   return (
     <>
       <Header />
+      <JsonLd data={gearHubItemListJsonLd} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -160,6 +195,8 @@ export default function GearPage() {
             </div>
           </div>
         </section>
+
+        <FAQSection faqs={faqsByCategory.gear} title="Gear Questions, Answered" />
       </main>
       <Footer />
     </>

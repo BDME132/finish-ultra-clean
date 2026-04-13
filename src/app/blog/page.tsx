@@ -5,12 +5,16 @@ import Link from "next/link";
 import BlogPostCard from "@/components/BlogPostCard";
 import BlogCategoryFilter from "@/components/BlogCategoryFilter";
 import { blogPosts, getFeaturedPosts } from "@/lib/content/blog-posts";
+import { pageMetadata } from "@/lib/seo-metadata";
 import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ultra Marathon Blog — Guides, Gear Reviews & Race Reports | FinishUltra",
-  description: "Practical guides, honest gear reviews, race reports, and training advice for beginner ultra runners. Updated weekly by runners who are still learning.",
-  alternates: { canonical: "/blog" },
+  ...pageMetadata({
+    title: "Ultra Running Blog — Guides, Gear Reviews & Tips | FinishUltra",
+    description:
+      "Guides, gear reviews, and race reports for beginner ultra runners. Training tips, nutrition strategies, and race day advice.",
+    path: "/blog",
+  }),
 };
 
 export default function BlogPage() {

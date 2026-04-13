@@ -3,14 +3,13 @@ import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Tate | FinishUltra",
+    title: "Egg | FinishUltra",
     description: "Internal FinishUltra page.",
-    path: "/tate",
+    path: "/egg",
     robots: { index: false, follow: false },
   }),
 };
 
-export default function TatePage() {
-    return <h1>Hello World</h1>;
-  }
-  
+export default function EggLayout({ children }: { children: React.ReactNode }) {
+  return children;
+}

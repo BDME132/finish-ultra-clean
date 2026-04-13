@@ -2,11 +2,16 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AccountSettings from "./AccountSettings";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  title: "Account | FinishUltra",
-  description: "Manage your FinishUltra account settings.",
-  robots: { index: false, follow: false },
+  ...pageMetadata({
+    title: "Account Settings | FinishUltra",
+    description:
+      "Manage your FinishUltra account, email preferences, and connected sessions. Private account page.",
+    path: "/account",
+    robots: { index: false, follow: false },
+  }),
 };
 
 export default function AccountPage() {

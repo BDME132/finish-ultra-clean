@@ -2,14 +2,34 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FAQSection from "@/components/FAQSection";
+import { faqsByCategory } from "@/lib/content/faqs";
+import JsonLd from "@/components/JsonLd";
 import TrainingPlanCard from "@/components/TrainingPlanCard";
 import { trainingPlans } from "@/lib/content/training-plans";
+import { pageMetadata } from "@/lib/seo-metadata";
+import { itemListJsonLd, SITE_URL } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Training Plans | FinishUltra",
-  description: "Free ultra marathon training plans for beginners. From base building to your first 50K, with race week prep included.",
-  alternates: { canonical: "/training" },
+  ...pageMetadata({
+    title: "Free Ultra Training Plans | FinishUltra",
+    description:
+      "Free structured training plans for beginner ultra runners. 50K, base building, and race week protocols.",
+    path: "/training",
+  }),
 };
+
+const trainingHubItemListJsonLd = itemListJsonLd({
+  name: "Ultra marathon training plans",
+  description:
+    "Structured plans for beginners — from base building and first 50K to race week and the interactive plan builder.",
+  url: `${SITE_URL}/training`,
+  items: trainingPlans.map((p) => ({
+    name: p.title,
+    url: `${SITE_URL}/training/${p.slug}`,
+    description: p.description,
+  })),
+});
 
 export default function TrainingPage() {
   const featuredPlan = trainingPlans.find((p) => p.slug === "plans");
@@ -18,6 +38,7 @@ export default function TrainingPage() {
   return (
     <>
       <Header />
+      <JsonLd data={trainingHubItemListJsonLd} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -65,6 +86,7 @@ export default function TrainingPage() {
             </div>
           </div>
         </section>
+        <FAQSection faqs={faqsByCategory["training"]} title="Common Questions About Ultra Training" />
       </main>
       <Footer />
     </>

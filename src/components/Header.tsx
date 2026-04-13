@@ -19,6 +19,7 @@ const toolsLinks = [
 
 const navLinksAfter = [
   { href: "/blog", label: "Blog" },
+  { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
 ];
 
@@ -215,6 +216,16 @@ export default function Header() {
                     }`}
                   >
                     Race HQ
+                  </Link>
+                  <Link
+                    href="/training/dashboard"
+                    className={`text-sm font-medium transition-colors ${
+                      pathname?.startsWith("/training/dashboard")
+                        ? "text-primary"
+                        : "text-dark hover:text-primary"
+                    }`}
+                  >
+                    Dashboard
                   </Link>
                   <Link
                     href="/account"

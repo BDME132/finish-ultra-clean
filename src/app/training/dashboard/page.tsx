@@ -2,11 +2,16 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DashboardClient from "./DashboardClient";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  title: "Training Dashboard | FinishUltra",
-  description: "Track your ultra marathon training progress. Daily workouts, gear checklist, nutrition testing, and race countdown — all in one place.",
-  alternates: { canonical: "/training/dashboard" },
+  ...pageMetadata({
+    title: "Training Dashboard | FinishUltra",
+    description:
+      "Track workouts, long runs, gear tests, and race countdown in your private ultra training dashboard. Sign in required.",
+    path: "/training/dashboard",
+    robots: { index: false, follow: false },
+  }),
 };
 
 export default function TrainingDashboardPage() {

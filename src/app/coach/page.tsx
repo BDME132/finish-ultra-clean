@@ -1,11 +1,15 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import ChatInterface from "@/components/ChatInterface";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  title: "AI Ultra Coach | FinishUltra",
-  description: "Get personalized ultra running advice from our AI coach. Ask about training, gear, nutrition, and race day prep.",
-  alternates: { canonical: "/chat" },
+  ...pageMetadata({
+    title: "AI Ultra Coach (Chat) | FinishUltra",
+    description:
+      "Chat with FinishUltra's AI coach for training, gear, nutrition, and race prep — same help as Pheidi in a full-page view.",
+    path: "/coach",
+  }),
 };
 
 export default function ChatPage() {

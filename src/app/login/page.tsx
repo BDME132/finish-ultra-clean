@@ -3,12 +3,16 @@ import { Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LoginForm from "./LoginForm";
+import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
-  title: "Log In | FinishUltra",
-  description:
-    "Sign in to your FinishUltra account to save your race plans, chat history, and training progress.",
-  robots: { index: false, follow: false },
+  ...pageMetadata({
+    title: "Log In | FinishUltra",
+    description:
+      "Sign in to FinishUltra to sync your training dashboard, Race HQ, and Pheidi chat. Private account page.",
+    path: "/login",
+    robots: { index: false, follow: false },
+  }),
 };
 
 export default function LoginPage() {

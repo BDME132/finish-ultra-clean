@@ -2,6 +2,16 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseMiddleware } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
+  // Intercept /index.md requests → rewrite to the markdown mirror API.
+  // This runs before auth so public pages are always readable by AI crawlers.
+  const { pathname } = request.nextUrl;
+  if (pathname.endsWith("/index.md")) {
+    const pagePath = pathname.slice(0, -"/index.md".length) || "/";
+    const apiUrl = new URL("/api/markdown-mirror", request.url);
+    apiUrl.searchParams.set("path", pagePath);
+    return NextResponse.rewrite(apiUrl);
+  }
+
   const { supabase, response } = createSupabaseMiddleware(request);
 
   if (!supabase) {
