@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShoeFinder from "./ShoeFinder";
+import { shoes } from "@/lib/products";
+import type { ShoeProduct, ShoeRatings } from "@/lib/products/types";
 import {
   Footprints, Circle, Settings, Ruler, ArrowLeftRight, RefreshCcw,
   PersonStanding, Zap, Mountain, BedDouble, CheckCircle, Dumbbell,
@@ -28,8 +30,7 @@ const breadcrumbJsonLd = {
 
 // ─── Shoe Data ────────────────────────────────────────────────────────────────
 
-type Rating = { cushioning: number; traction: number; durability: number; breathability: number; groundFeel: number };
-
+/** Presentational shape consumed by ShoeCard — mapped from ShoeProduct. */
 type Shoe = {
   name: string;
   brand: string;
@@ -42,7 +43,7 @@ type Shoe = {
   outsole: string;
   rockPlate: boolean;
   widths: string;
-  ratings: Rating;
+  ratings: ShoeRatings;
   bestFor: string[];
   pros: string[];
   cons: string[];
@@ -50,7 +51,46 @@ type Shoe = {
   affiliates: { rei: string; amazon: string; warehouse: string };
 };
 
-const categories: {
+/** Only include shoes that have the full data required by ShoeCard. */
+function hasFullData(
+  s: ShoeProduct,
+): s is ShoeProduct & {
+  ratings: ShoeRatings;
+  bestFor: string[];
+  pros: string[];
+  cons: string[];
+  review: { quote: string; race: string; runner: string };
+} {
+  return !!(s.ratings && s.bestFor && s.pros && s.cons && s.review);
+}
+
+function toShoe(s: ShoeProduct & { ratings: ShoeRatings; bestFor: string[]; pros: string[]; cons: string[]; review: { quote: string; race: string; runner: string } }): Shoe {
+  return {
+    name: s.name,
+    brand: s.brand,
+    price: s.priceDisplay,
+    weight: s.specs.weight,
+    stack: s.specs.stack,
+    drop: s.specs.drop,
+    lug: s.specs.lug ?? "—",
+    midsole: s.specs.midsole ?? "—",
+    outsole: s.specs.outsole ?? "—",
+    rockPlate: s.specs.rockPlate ?? false,
+    widths: s.specs.widths ?? "Regular",
+    ratings: s.ratings,
+    bestFor: s.bestFor,
+    pros: s.pros,
+    cons: s.cons,
+    review: s.review,
+    affiliates: {
+      rei: s.affiliateLinks.rei ?? "#",
+      amazon: s.affiliateLinks.amazon ?? "#",
+      warehouse: s.affiliateLinks.runningWarehouse ?? "#",
+    },
+  };
+}
+
+const categoryMeta: {
   id: string;
   title: string;
   subtitle: string;
@@ -58,7 +98,6 @@ const categories: {
   badgeColor: string;
   description: string;
   stackNote: string;
-  shoes: Shoe[];
 }[] = [
   {
     id: "max-cushion",
@@ -69,100 +108,6 @@ const categories: {
     description:
       "High-stack shoes prioritize underfoot protection and comfort over raw ground feel. Essential for 100-mile efforts and runners who log big training weeks.",
     stackNote: "Stack height: 30mm+",
-    shoes: [
-      {
-        name: "Speedgoat 6",
-        brand: "Hoka",
-        price: "$160",
-        weight: "10.1 oz",
-        stack: "37/33mm",
-        drop: "4mm",
-        lug: "5mm",
-        midsole: "EVA (ProFly)",
-        outsole: "Vibram Megagrip",
-        rockPlate: false,
-        widths: "Regular, Wide",
-        ratings: { cushioning: 5, traction: 5, durability: 4, breathability: 4, groundFeel: 2 },
-        bestFor: ["Technical trails", "100-mile races", "High weekly mileage"],
-        pros: ["Best-in-class Vibram traction", "Plush all-day comfort", "Wide platform stability", "Updated breathable upper"],
-        cons: ["Heavy for race-day speed", "Low ground feel", "Can run narrow in toebox"],
-        review: {
-          quote: "I've run Western States in Speedgoats for three years. They hold up from the canyons to the finish.",
-          race: "Western States 100",
-          runner: "Verified 100-mile finisher",
-        },
-        affiliates: { rei: "#", amazon: "https://amzn.to/4broufc", warehouse: "#" },
-      },
-      {
-        name: "Mafate Speed 4",
-        brand: "Hoka",
-        price: "$175",
-        weight: "11.0 oz",
-        stack: "37/33mm",
-        drop: "5mm",
-        lug: "6mm",
-        midsole: "Dual-density EVA",
-        outsole: "Vibram Megagrip",
-        rockPlate: false,
-        widths: "Regular",
-        ratings: { cushioning: 5, traction: 5, durability: 5, breathability: 3, groundFeel: 2 },
-        bestFor: ["100-mile races", "Rocky/mountain terrain", "Runners over 180 lbs"],
-        pros: ["Exceptional durability", "Bomber stability for big descents", "Dual-density midsole lasts longer"],
-        cons: ["Heaviest shoe in category", "Limited breathability", "Overkill for shorter ultras"],
-        review: {
-          quote: "After 400 miles the lugs still bite. Nothing else has lasted as long on scree and granite.",
-          race: "Hardrock 100",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Olympus 5",
-        brand: "Altra",
-        price: "$160",
-        weight: "11.2 oz",
-        stack: "33mm",
-        drop: "0mm",
-        lug: "4mm",
-        midsole: "Quantic foam",
-        outsole: "TrailClaw",
-        rockPlate: false,
-        widths: "Regular, Wide",
-        ratings: { cushioning: 5, traction: 4, durability: 4, breathability: 4, groundFeel: 3 },
-        bestFor: ["Zero-drop advocates", "Wide forefoot", "Desert and mixed terrain"],
-        pros: ["Maximum stack with zero drop", "Anatomical FootShape toe box", "Comfortable from mile 1 to 100"],
-        cons: ["Takes time to adapt if coming from heeled shoes", "Less aggressive traction than Vibram options"],
-        review: {
-          quote: "Switching to zero drop changed everything. The Olympus let me go big without destroying my feet.",
-          race: "Javelina Jundred",
-          runner: "Verified 100-mile finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Endorphin Edge",
-        brand: "Saucony",
-        price: "$190",
-        weight: "9.7 oz",
-        stack: "37/29mm",
-        drop: "8mm",
-        lug: "4mm",
-        midsole: "PEBA foam",
-        outsole: "TrailTack",
-        rockPlate: true,
-        widths: "Regular",
-        ratings: { cushioning: 5, traction: 3, durability: 3, breathability: 5, groundFeel: 3 },
-        bestFor: ["Groomed/smooth trails", "Faster paced 50K/50M", "Road-to-trail crossover runners"],
-        pros: ["PEBA foam energy return is exceptional", "Surprisingly lightweight", "Carbon plate efficiency"],
-        cons: ["Traction limited on wet rock", "Less durable than traditional rubber", "Premium price"],
-        review: {
-          quote: "Felt like racing flats on the groomed sections and still had enough foam for the long haul.",
-          race: "Lake Sonoma 50",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
   {
     id: "lightweight",
@@ -173,77 +118,6 @@ const categories: {
     description:
       "Stripped-down shoes that prioritize speed and feel. A smart choice for 50K race day or tempo training when you want responsiveness without dead weight.",
     stackNote: "Stack height: 20–28mm",
-    shoes: [
-      {
-        name: "S/Lab Ultra 3",
-        brand: "Salomon",
-        price: "$200",
-        weight: "9.2 oz",
-        stack: "30/24mm",
-        drop: "6mm",
-        lug: "4mm",
-        midsole: "EnergyCell foam",
-        outsole: "Contagrip MA",
-        rockPlate: false,
-        widths: "Regular",
-        ratings: { cushioning: 3, traction: 4, durability: 4, breathability: 5, groundFeel: 4 },
-        bestFor: ["Race day 50K/50M", "Technical trails at speed", "Experienced runners with strong feet"],
-        pros: ["SensiFit cradles foot perfectly on descents", "Excellent fit-to-feel ratio", "Used by elite ultra runners worldwide"],
-        cons: ["Expensive", "Narrow fit", "Not enough cushion for 100M"],
-        review: {
-          quote: "SensiFit is the most secure trail fit I've ever worn. I flew down the descents with zero slippage.",
-          race: "UTMB",
-          runner: "Elite finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Peregrine 14",
-        brand: "Saucony",
-        price: "$140",
-        weight: "9.6 oz",
-        stack: "31/23mm",
-        drop: "8mm",
-        lug: "4mm",
-        midsole: "PWRTRAC foam",
-        outsole: "TrailTack",
-        rockPlate: false,
-        widths: "Regular, Wide",
-        ratings: { cushioning: 3, traction: 4, durability: 5, breathability: 4, groundFeel: 4 },
-        bestFor: ["Technical and smooth mixed terrain", "50K to 50M", "High-mileage training"],
-        pros: ["Bulletproof durability", "Versatile lug pattern for mixed terrain", "Great value at $140"],
-        cons: ["Less cushion than higher-stack options", "Not the lightest in class"],
-        review: {
-          quote: "I've put 600 miles on my Peregrines and they're still racing. Best value in ultra footwear.",
-          race: "Cascade Crest 100",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Terraventure 4",
-        brand: "Topo",
-        price: "$130",
-        weight: "9.7 oz",
-        stack: "28/23mm",
-        drop: "5mm",
-        lug: "4mm",
-        midsole: "ZipFoam",
-        outsole: "Vibram Megagrip",
-        rockPlate: false,
-        widths: "Regular",
-        ratings: { cushioning: 3, traction: 5, durability: 4, breathability: 4, groundFeel: 4 },
-        bestFor: ["Versatile mixed terrain", "Runners transitioning from heeled shoes", "Budget-conscious racers"],
-        pros: ["Vibram grip at a lower price point", "Roomy toe box for Topo", "5mm drop is a sweet spot for many runners"],
-        cons: ["Less refined upper than Salomon or Hoka", "Somewhat heavy for a race shoe"],
-        review: {
-          quote: "The Terraventure punches above its price. Vibram Megagrip at $130 is a steal.",
-          race: "Black Hills 100",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
   {
     id: "technical",
@@ -254,77 +128,6 @@ const categories: {
     description:
       "When the trail demands precision grip and confident footing over rocks and roots, these shoes answer the call. Aggressive lugs and sticky rubber are non-negotiable.",
     stackNote: "Features: Deep lugs, sticky rubber, secure fit",
-    shoes: [
-      {
-        name: "Bushido III",
-        brand: "La Sportiva",
-        price: "$160",
-        weight: "10.4 oz",
-        stack: "26/19mm",
-        drop: "7mm",
-        lug: "4mm",
-        midsole: "Aero-Mesh upper + compression-molded EVA",
-        outsole: "FriXion AT",
-        rockPlate: true,
-        widths: "Regular",
-        ratings: { cushioning: 3, traction: 5, durability: 4, breathability: 4, groundFeel: 5 },
-        bestFor: ["Wet/slippery rock", "Rooty PNW trails", "Mountain racing"],
-        pros: ["FriXion AT is exceptional on wet rock", "Forefoot flex groove for natural feel", "Durable Italian construction"],
-        cons: ["Firm underfoot", "Narrow fit", "Less comfortable on non-technical terrain"],
-        review: {
-          quote: "On wet granite, nothing touches the Bushido. I felt glued to the mountain the entire race.",
-          race: "Waldo 100K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Speedcross 6",
-        brand: "Salomon",
-        price: "$140",
-        weight: "9.6 oz",
-        stack: "34/26mm",
-        drop: "8mm",
-        lug: "6mm",
-        midsole: "EnergyCell",
-        outsole: "Contagrip TA",
-        rockPlate: false,
-        widths: "Regular",
-        ratings: { cushioning: 4, traction: 5, durability: 4, breathability: 3, groundFeel: 3 },
-        bestFor: ["Mud", "Soft terrain", "Pacific Northwest races"],
-        pros: ["Unmatched mud performance", "Chevron lug pattern self-cleans", "Higher stack for a technical shoe"],
-        cons: ["Poor on hard-packed trails", "Heavy for a race shoe", "Lugs can feel awkward on rock"],
-        review: {
-          quote: "Soggy Oregon mud — the Speedcross just laughed at it. Nothing else comes close.",
-          race: "Tillamook Burn 50K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Mudclaw G 260",
-        brand: "Inov-8",
-        price: "$160",
-        weight: "9.2 oz",
-        stack: "25/19mm",
-        drop: "6mm",
-        lug: "8mm",
-        midsole: "Powerflow",
-        outsole: "Graphene Grip",
-        rockPlate: false,
-        widths: "Regular",
-        ratings: { cushioning: 2, traction: 5, durability: 5, groundFeel: 5, breathability: 4 },
-        bestFor: ["Bog, mud, wet fell running", "Technical fell racing", "Ultra-technical UK-style courses"],
-        pros: ["Graphene rubber is the most durable grip compound available", "8mm spike-like lugs dig deep", "Legendary in fell running circles"],
-        cons: ["Minimal cushion", "Uncomfortable on hard surfaces", "Niche use case"],
-        review: {
-          quote: "I've been running Mudclaws since 2018. Nothing else works on British fells.",
-          race: "Lakeland 100",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
   {
     id: "wide",
@@ -335,77 +138,6 @@ const categories: {
     description:
       "At mile 80, swollen feet need room. Wide toe box shoes allow natural toe splay, reduce hotspots, and dramatically cut blister risk on long efforts.",
     stackNote: "Feature: Anatomical FootShape or roomy toe box design",
-    shoes: [
-      {
-        name: "Lone Peak 8",
-        brand: "Altra",
-        price: "$140",
-        weight: "9.7 oz",
-        stack: "25mm",
-        drop: "0mm",
-        lug: "4mm",
-        midsole: "Altra EGO",
-        outsole: "TrailClaw",
-        rockPlate: false,
-        widths: "Regular, Wide, Max Wide",
-        ratings: { cushioning: 3, traction: 4, durability: 5, groundFeel: 4, breathability: 4 },
-        bestFor: ["Any terrain", "All distances", "Zero-drop runners", "Wide forefoot"],
-        pros: ["The most popular ultra shoe ever made", "Zero drop promotes natural running", "Bulletproof durability", "Available in Max Wide"],
-        cons: ["Minimal cushion for 100-mile efforts", "Zero drop requires adaptation period"],
-        review: {
-          quote: "I've finished 14 hundred-milers in Lone Peaks. If it ain't broke, don't fix it.",
-          race: "Leadville 100",
-          runner: "Verified multi-100 finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Timp 5",
-        brand: "Altra",
-        price: "$145",
-        weight: "10.1 oz",
-        stack: "33mm",
-        drop: "0mm",
-        lug: "5mm",
-        midsole: "Altra EGO Max",
-        outsole: "TrailClaw",
-        rockPlate: false,
-        widths: "Regular, Wide",
-        ratings: { cushioning: 5, traction: 5, groundFeel: 3, durability: 4, breathability: 4 },
-        bestFor: ["Technical 100-mile courses", "Runners wanting Lone Peak fit + more cushion", "Mountain terrain"],
-        pros: ["More cushion than Lone Peak", "Aggressive TrailClaw traction", "Zero drop in a high-stack shoe"],
-        cons: ["Heavier than Lone Peak", "Some runners find EGO Max less responsive"],
-        review: {
-          quote: "Lone Peak fit, Olympus cushion. The Timp 5 is my go-to for everything above 50 miles.",
-          race: "Bear 100",
-          runner: "Verified 100-mile finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Ultraventure 3",
-        brand: "Topo",
-        price: "$140",
-        weight: "10.1 oz",
-        stack: "28/23mm",
-        drop: "5mm",
-        lug: "4mm",
-        midsole: "ZipFoam",
-        outsole: "Vibram Megagrip",
-        rockPlate: false,
-        widths: "Regular",
-        ratings: { cushioning: 4, traction: 5, groundFeel: 3, durability: 4, breathability: 4 },
-        bestFor: ["Runners transitioning to wider toe boxes", "Mixed terrain", "50K to 100K"],
-        pros: ["5mm drop bridges the gap for non-zero-drop runners", "Vibram Megagrip for excellent traction", "Roomy fit without being extreme"],
-        cons: ["Less roomy than Altra", "Heavier build"],
-        review: {
-          quote: "I couldn't go zero-drop, but the Ultraventure's wide box still saved my toes at mile 60.",
-          race: "Zion 100",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
   {
     id: "mountain",
@@ -416,79 +148,16 @@ const categories: {
     description:
       "Courses like Hardrock and UTMB demand specialized footwear. Mountain shoes combine sticky rubber, toe protection, and gaiter compatibility for high-altitude punishment.",
     stackNote: "Features: Toe cap, gaiter attachment, sticky mountain rubber",
-    shoes: [
-      {
-        name: "Ultra Raptor II",
-        brand: "La Sportiva",
-        price: "$175",
-        weight: "11.6 oz",
-        stack: "28/22mm",
-        drop: "6mm",
-        lug: "4mm",
-        midsole: "Compression-molded EVA",
-        outsole: "FriXion AT",
-        rockPlate: true,
-        widths: "Regular",
-        ratings: { cushioning: 3, traction: 5, durability: 5, groundFeel: 5, breathability: 3 },
-        bestFor: ["Hardrock 100", "UTMB", "High-altitude scree and technical terrain"],
-        pros: ["Gaiter attachment system", "FriXion AT on wet alpine rock", "Exceptional toe protection", "Rock plate for scree"],
-        cons: ["Heavy", "Not ideal for smooth trails", "Warm in hot conditions"],
-        review: {
-          quote: "Hardrock is essentially a mountain climbing race. The Ultra Raptor is the only shoe I trust on the Grouse-Ouray section.",
-          race: "Hardrock 100",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Tecton X2",
-        brand: "Hoka",
-        price: "$225",
-        weight: "9.5 oz",
-        stack: "38/30mm",
-        drop: "8mm",
-        lug: "4mm",
-        midsole: "ProFly X with dual carbon plates",
-        outsole: "Vibram Megagrip",
-        rockPlate: true,
-        widths: "Regular",
-        ratings: { cushioning: 5, traction: 5, durability: 4, groundFeel: 3, breathability: 4 },
-        bestFor: ["Mixed mountain terrain", "Runners wanting max cushion + mountain grip", "Technical 100K/100M"],
-        pros: ["Two carbon fiber plates for explosive climbing", "Max cushion for descents", "Vibram Megagrip on alpine terrain", "Surprisingly lightweight"],
-        cons: ["Premium price", "High stack can feel unstable on off-camber", "Requires break-in on technical ground"],
-        review: {
-          quote: "The uphills felt effortless and the descents didn't destroy my quads. It's the future of mountain ultra footwear.",
-          race: "Transvulcania",
-          runner: "Elite finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Golden Gate ATR",
-        brand: "Scarpa",
-        price: "$200",
-        weight: "10.2 oz",
-        stack: "30/24mm",
-        drop: "6mm",
-        lug: "4mm",
-        midsole: "Responsive EVA",
-        outsole: "SILV-R rubber",
-        rockPlate: false,
-        widths: "Regular",
-        ratings: { cushioning: 3, traction: 5, durability: 5, groundFeel: 5, breathability: 4 },
-        bestFor: ["Alpine races", "Wet technical terrain", "Runners valuing ground feel"],
-        pros: ["Italian mountain craftsmanship", "Excellent durability", "SILV-R rubber excels on wet rock", "Natural flex"],
-        cons: ["Less cushion than Hoka", "Limited availability", "Not beginner-friendly"],
-        review: {
-          quote: "Built like a mountaineering boot but runs like a trail shoe. Scarpa nailed it.",
-          race: "Lavaredo Ultra Trail",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
 ];
+
+const categories = categoryMeta.map((meta) => ({
+  ...meta,
+  shoes: shoes
+    .filter((s) => s.subcategory === meta.id && hasFullData(s))
+    .filter(hasFullData)
+    .map(toShoe),
+}));
 
 // ─── Sub-Components ────────────────────────────────────────────────────────────
 

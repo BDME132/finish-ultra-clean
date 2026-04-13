@@ -9,6 +9,7 @@ export interface SavedKitItem {
   tier: "standard" | "budget" | "premium";
   specs: string[];
   links: Record<string, { url: string; price: number }>;
+  productId?: string; // References central product library ID
   purchased: boolean;
   purchaseDate?: string;
   retailerPurchasedFrom?: string;

@@ -8,6 +8,8 @@ import {
   Ruler, Tag, PersonStanding, Wrench, Shirt, RefreshCcw, MapPin, Scale,
   CheckCircle,
 } from "lucide-react";
+import { packs } from "@/lib/products";
+import type { PackProduct, PackRatings } from "@/lib/products/types";
 
 export const metadata: Metadata = {
   title: "Ultra Marathon Hydration Packs & Running Vests Guide | FinishUltra",
@@ -28,15 +30,6 @@ const breadcrumbJsonLd = {
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Rating = {
-  comfort: number;
-  bounce: number;
-  breathability: number;
-  loadDistribution: number;
-  easeOfAccess: number;
-  durability: number;
-};
-
 type Vest = {
   name: string;
   brand: string;
@@ -52,7 +45,7 @@ type Vest = {
   whistle: boolean;
   bladderCompatible: boolean;
   includedFlasks: string;
-  ratings: Rating;
+  ratings: PackRatings;
   bestFor: string[];
   distances: string[];
   pros: string[];
@@ -61,9 +54,41 @@ type Vest = {
   affiliates: { rei: string; amazon: string; warehouse: string };
 };
 
-// ─── Category Data ────────────────────────────────────────────────────────────
+// ─── Map PackProduct → Vest ─────────────────────────────────────────────────
 
-const categories: {
+function toVest(p: PackProduct): Vest {
+  return {
+    name: p.name,
+    brand: p.brand,
+    price: p.priceDisplay,
+    weight: p.specs.weight,
+    capacity: p.specs.capacity,
+    sizes: p.specs.sizes ?? "",
+    genderFit: p.specs.genderFit,
+    frontPockets: p.specs.frontPockets ?? "",
+    backStorage: p.specs.backStorage ?? "",
+    hydrationSystem: p.specs.hydrationSystem ?? "",
+    poleCarry: p.specs.poleCarry ?? false,
+    whistle: p.specs.whistle ?? false,
+    bladderCompatible: p.specs.bladderCompatible ?? false,
+    includedFlasks: p.specs.includedFlasks ?? "",
+    ratings: p.ratings ?? { comfort: 0, bounce: 0, breathability: 0, loadDistribution: 0, easeOfAccess: 0, durability: 0 },
+    bestFor: p.bestFor ?? [],
+    distances: p.distances ?? [],
+    pros: p.pros ?? [],
+    cons: p.cons ?? [],
+    review: p.review ?? { quote: "", race: "", runner: "" },
+    affiliates: {
+      rei: p.affiliateLinks.rei ?? "#",
+      amazon: p.affiliateLinks.amazon ?? "#",
+      warehouse: p.affiliateLinks.runningWarehouse ?? "#",
+    },
+  };
+}
+
+// ─── Category Metadata ───────────────────────────────────────────────────────
+
+const categoryMeta: {
   id: string;
   title: string;
   subtitle: string;
@@ -71,7 +96,6 @@ const categories: {
   badgeColor: string;
   description: string;
   capacityNote: string;
-  vests: Vest[];
 }[] = [
   {
     id: "race",
@@ -82,152 +106,6 @@ const categories: {
     capacityNote: "Capacity: 5–8L",
     description:
       "Lean, fast, and body-hugging. Race vests prioritize minimal bounce and quick access over raw storage. Perfect when aid stations are frequent and mandatory gear is light.",
-    vests: [
-      {
-        name: "ADV Skin 5 Set",
-        brand: "Salomon",
-        price: "$160",
-        weight: "161g",
-        capacity: "5L",
-        sizes: "XS–XL",
-        genderFit: "Unisex",
-        frontPockets: "4 front pockets + 2 soft flask pockets",
-        backStorage: "3L main + 2L extra",
-        hydrationSystem: "2× 500ml soft flasks included",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "2× 500ml",
-        ratings: { comfort: 5, bounce: 5, breathability: 5, loadDistribution: 4, easeOfAccess: 5, durability: 4 },
-        bestFor: ["50K race day", "Fast 50M efforts", "Minimalist training"],
-        distances: ["50K", "50 Miles"],
-        pros: [
-          "SensiFit body-hugging design eliminates bounce entirely",
-          "Two 500ml flasks included — ready to run out of the box",
-          "16 pockets in a 5L vest — exceptional organization",
-          "Pole carry stow-on-the-go system",
-        ],
-        cons: [
-          "Very snug fit — not comfortable for larger chest/shoulder runners",
-          "5L is limiting for races with extensive mandatory gear",
-        ],
-        review: {
-          quote: "I've done 12 ultras in the ADV Skin 5. It disappears on my body — I literally forget it's there at mile 40.",
-          race: "UTMB OCC",
-          runner: "Verified 50K finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Race Vest 6.0",
-        brand: "Ultimate Direction",
-        category: "race",
-        price: "$130",
-        weight: "185g",
-        capacity: "6L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "Kangaroo pouch + 2 flask pockets",
-        backStorage: "4L main compartment",
-        hydrationSystem: "Compatible with 2L bladder or soft flasks",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "None (sold separately)",
-        ratings: { comfort: 4, bounce: 4, breathability: 4, loadDistribution: 4, easeOfAccess: 5, durability: 4 },
-        bestFor: ["Versatile 50K-50M", "Runners preferring kangaroo-style access", "Value-conscious racers"],
-        distances: ["50K", "50 Miles"],
-        pros: [
-          "Comfort Cinch straps self-adjust mid-run",
-          "Large kangaroo front pocket fits phone, gels, jacket",
-          "Best value race vest on the market",
-          "Excellent fit range across body types",
-        ],
-        cons: [
-          "No flasks included",
-          "Back panel less breathable than Salomon",
-          "Pole stowage system less refined",
-        ],
-        review: {
-          quote: "The kangaroo pocket is game-changing. Everything I need is one motion away — no fumbling at aid stations.",
-          race: "Lake Sonoma 50",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      } as unknown as Vest,
-      {
-        name: "Slope Runner 8L",
-        brand: "Patagonia",
-        price: "$149",
-        weight: "220g",
-        capacity: "8L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "2 front stretch pockets + 2 zip pockets",
-        backStorage: "6L main compartment",
-        hydrationSystem: "Bladder sleeve + 2 soft flask compatible",
-        poleCarry: false,
-        whistle: false,
-        bladderCompatible: true,
-        includedFlasks: "None",
-        ratings: { comfort: 4, bounce: 4, breathability: 4, loadDistribution: 4, easeOfAccess: 4, durability: 5 },
-        bestFor: ["Eco-conscious runners", "50K to 100K", "Training and racing versatility"],
-        distances: ["50K", "50 Miles", "100K"],
-        pros: [
-          "Made with recycled materials — Patagonia's sustainability commitment",
-          "8L hits the sweet spot for most ultra distances",
-          "Exceptional build quality and durability",
-          "Clean, uncluttered design",
-        ],
-        cons: [
-          "No pole carry system",
-          "No whistle included",
-          "Fewer pockets than Salomon or UD",
-        ],
-        review: {
-          quote: "I've washed this thing 50 times and it still looks new. Patagonia builds things to last — and that matters for a vest I wear hundreds of miles.",
-          race: "Miwok 100K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Pinnacle 4L",
-        brand: "Nathan",
-        price: "$120",
-        weight: "198g",
-        capacity: "4L",
-        sizes: "XS–XL",
-        genderFit: "Unisex",
-        frontPockets: "2 angled Exoshot flask pockets + 1 zip pocket",
-        backStorage: "2L main + 2L side",
-        hydrationSystem: "2× 20oz Exoshot flasks included",
-        poleCarry: false,
-        whistle: true,
-        bladderCompatible: false,
-        includedFlasks: "2× 20oz Exoshot",
-        ratings: { comfort: 4, bounce: 5, breathability: 5, loadDistribution: 3, easeOfAccess: 5, durability: 4 },
-        bestFor: ["Supported 50Ks", "Minimalist racers", "Warm weather events"],
-        distances: ["50K"],
-        pros: [
-          "Angled Exoshot flask holders make drinking completely natural",
-          "Featherlight at 198g",
-          "Excellent breathability for hot weather racing",
-          "Included flasks make it great out of the box value",
-        ],
-        cons: [
-          "4L is strictly for short, supported races",
-          "No bladder compatibility limits hydration options",
-          "Limited pole carry",
-        ],
-        review: {
-          quote: "For supported 50Ks in hot weather, nothing comes close. The angled flasks are the best drinking system I've used.",
-          race: "Javelina 50K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
   {
     id: "allround",
@@ -238,152 +116,6 @@ const categories: {
     capacityNote: "Capacity: 8–12L",
     description:
       "The do-everything vests. Enough capacity for 100K mandatory gear, comfortable enough for daily training, and light enough that you won't notice the weight difference on race day.",
-    vests: [
-      {
-        name: "ADV Skin 12 Set",
-        brand: "Salomon",
-        price: "$200",
-        weight: "280g",
-        capacity: "12L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "6 front pockets + 2 flask sleeves",
-        backStorage: "6L main + 4L extra + 2 side pockets",
-        hydrationSystem: "2× 500ml flasks included + 2L bladder compatible",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "2× 500ml",
-        ratings: { comfort: 5, bounce: 5, breathability: 4, loadDistribution: 5, easeOfAccess: 5, durability: 5 },
-        bestFor: ["50M to 100M races", "UTMB mandatory gear", "High-volume training"],
-        distances: ["50 Miles", "100K", "100 Miles"],
-        pros: [
-          "The most trusted vest in ultra running — worn by more elites than any other",
-          "12L with SensiFit still feels like a race vest",
-          "20+ pockets with logical organization system",
-          "Stow-on-the-go pole carry works flawlessly",
-          "Included 500ml flasks are excellent quality",
-        ],
-        cons: [
-          "Premium price at $200",
-          "Salomon's sizing runs very snug — try before buying",
-        ],
-        review: {
-          quote: "The ADV Skin 12 has been on my back for four Western States, two UTMBs, and countless training runs. It just works.",
-          race: "UTMB",
-          runner: "Verified multi-100 finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Duro 6 / Dyna 6",
-        brand: "Osprey",
-        price: "$140",
-        weight: "312g",
-        capacity: "6L",
-        sizes: "XS–XL",
-        genderFit: "Men's (Duro) / Women's (Dyna)",
-        frontPockets: "2 front stretch pockets",
-        backStorage: "4L main + bladder sleeve",
-        hydrationSystem: "2.5L Hydraulics reservoir included",
-        poleCarry: false,
-        whistle: false,
-        bladderCompatible: true,
-        includedFlasks: "None (2.5L bladder included)",
-        ratings: { comfort: 4, bounce: 4, breathability: 5, loadDistribution: 4, easeOfAccess: 3, durability: 5 },
-        bestFor: ["Training runs", "50K to 50M", "Runners preferring bladder hydration"],
-        distances: ["50K", "50 Miles"],
-        pros: [
-          "AirScape back panel is the most breathable in this category",
-          "Lifetime warranty — Osprey will repair or replace forever",
-          "Gender-specific fit is genuinely better for both men and women",
-          "Excellent durability reputation",
-        ],
-        cons: [
-          "Bladder-focused design means front flask access is secondary",
-          "No pole carry system",
-          "Heavier than Salomon or UD equivalents",
-        ],
-        review: {
-          quote: "The Dyna fits my chest properly — first vest that doesn't gap or slip. Osprey's women's-specific design is real, not just marketing.",
-          race: "Black Hills 50K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "VaporKrar 12L",
-        brand: "Nathan",
-        price: "$160",
-        weight: "290g",
-        capacity: "12L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "2 wide front pockets + 2 zip pockets",
-        backStorage: "8L main compartment",
-        hydrationSystem: "Compatible with flasks + 2L bladder",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "None",
-        ratings: { comfort: 4, bounce: 4, breathability: 4, loadDistribution: 4, easeOfAccess: 5, durability: 4 },
-        bestFor: ["100K to 100M with mandatory gear", "Runners needing wide pockets", "High nutrition access priority"],
-        distances: ["50 Miles", "100K", "100 Miles"],
-        pros: [
-          "Rob Krar designed — optimized for 100-mile racing demands",
-          "Wide front pockets fit larger phones and more nutrition",
-          "12L handles most race mandatory gear requirements",
-          "Good value vs. Salomon at similar capacity",
-        ],
-        cons: [
-          "Flasks not included",
-          "Fit is looser than Salomon — can bounce more if not dialed",
-          "Pole carry less secure than Black Diamond",
-        ],
-        review: {
-          quote: "Rob Krar races Hardrock in this thing. That's all the endorsement I need. Front pockets fit everything I need for a 100-mile push.",
-          race: "Cascade Crest 100",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Distance 8",
-        brand: "Black Diamond",
-        price: "$130",
-        weight: "248g",
-        capacity: "8L",
-        sizes: "S–XL",
-        genderFit: "Unisex",
-        frontPockets: "2 front stretch pockets + 2 zip pockets",
-        backStorage: "6L main + side pockets",
-        hydrationSystem: "Bladder sleeve + soft flask compatible",
-        poleCarry: true,
-        whistle: false,
-        bladderCompatible: true,
-        includedFlasks: "None",
-        ratings: { comfort: 4, bounce: 4, breathability: 4, loadDistribution: 5, easeOfAccess: 4, durability: 5 },
-        bestFor: ["Mountain ultras", "Trekking pole users", "Technical terrain races"],
-        distances: ["50K", "50 Miles", "100K"],
-        pros: [
-          "Best trekking pole carry system in the category — Z-pole compatible",
-          "Alpine-grade durability from BD's mountaineering heritage",
-          "Excellent load distribution for heavier packs",
-          "Best value at $130 for the features offered",
-        ],
-        cons: [
-          "Less organized pocket system than Salomon",
-          "No whistle included",
-          "Less body-hugging than ADV Skin series",
-        ],
-        review: {
-          quote: "I carry poles for every mountain ultra. The BD Distance 8 is the only vest where I can grab and stow poles without stopping.",
-          race: "Waldo 100K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
   {
     id: "expedition",
@@ -394,117 +126,6 @@ const categories: {
     capacityNote: "Capacity: 12L+",
     description:
       "When your race demands a bivy, rain jacket, emergency kit, night gear, and two days of nutrition, you need real capacity. These vests carry it all without sacrificing the running vest form factor.",
-    vests: [
-      {
-        name: "ADV Skin 18 Set",
-        brand: "Salomon",
-        price: "$230",
-        weight: "390g",
-        capacity: "18L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "6 front pockets + 2 flask sleeves",
-        backStorage: "12L main + 6L extra pockets",
-        hydrationSystem: "2× 500ml flasks included + 3L bladder compatible",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "2× 500ml",
-        ratings: { comfort: 4, bounce: 5, breathability: 4, loadDistribution: 5, easeOfAccess: 5, durability: 5 },
-        bestFor: ["UTMB mandatory gear", "100-mile self-supported", "Alpine racing"],
-        distances: ["100K", "100 Miles", "Multi-day"],
-        pros: [
-          "18L that still runs like a race vest — remarkable engineering",
-          "Handles full UTMB mandatory gear list with room to spare",
-          "SensiFit scales to larger loads without bounce",
-          "Comprehensive pole carry system",
-          "Included 500ml flasks are top quality",
-        ],
-        cons: [
-          "Premium $230 price tag",
-          "18L feels excessive for anything shorter than 100K",
-          "Heavy when fully loaded — expect to notice it at mile 80",
-        ],
-        review: {
-          quote: "UTMB's mandatory gear list is brutal. The ADV Skin 18 is one of the only vests that fits it all and still lets me run properly.",
-          race: "UTMB",
-          runner: "Verified UTMB finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Fastpack 25",
-        brand: "Ultimate Direction",
-        price: "$200",
-        weight: "560g",
-        capacity: "25L",
-        sizes: "XS–XL",
-        genderFit: "Unisex",
-        frontPockets: "2 front pockets + 2 zip pockets",
-        backStorage: "20L main + side pockets",
-        hydrationSystem: "2L bladder compatible + flask pockets",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "None",
-        ratings: { comfort: 3, bounce: 3, breathability: 3, loadDistribution: 5, easeOfAccess: 4, durability: 5 },
-        bestFor: ["Multi-day stage races", "Self-supported expeditions", "Races with overnight gear"],
-        distances: ["100 Miles", "Multi-day"],
-        pros: [
-          "25L genuinely accommodates sleeping gear for stage races",
-          "Exceptional load distribution for heavy packs",
-          "UD's durability is industry-leading",
-          "Compression system keeps load stable at speed",
-        ],
-        cons: [
-          "560g is heavy compared to race vests",
-          "Overkill for single-day 100-milers with crew",
-          "Noticeably more bounce than smaller vests when full",
-        ],
-        review: {
-          quote: "PTL requires carrying a sleeping bag, bivy, and two days of food. The Fastpack 25 is the only running vest that actually works for that.",
-          race: "Petite Trotte à Léon (PTL)",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Revolutiv 18L",
-        brand: "Raidlight",
-        price: "$180",
-        weight: "350g",
-        capacity: "18L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "4 front pockets + 2 flask pockets",
-        backStorage: "12L main + 4 external pockets",
-        hydrationSystem: "2 soft flasks + 2L bladder compatible",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "2× 600ml",
-        ratings: { comfort: 4, bounce: 4, breathability: 4, loadDistribution: 5, easeOfAccess: 4, durability: 4 },
-        bestFor: ["UTMB-style mandatory gear races", "Alpine racing", "European ultra circuit"],
-        distances: ["100K", "100 Miles"],
-        pros: [
-          "French brand built for UTMB — knows mandatory gear demands inside out",
-          "18L at 350g is excellent weight-to-capacity ratio",
-          "Waterproof back pocket for electronics",
-          "Excellent pole carry optimized for alpine terrain",
-        ],
-        cons: [
-          "Less widely available outside Europe",
-          "Fit can be inconsistent across sizes",
-          "Less brand recognition means less resale value",
-        ],
-        review: {
-          quote: "Raidlight built this vest for the UTMB circuit. It shows — every pocket placement makes sense when you're navigating mandatory gear requirements.",
-          race: "CCC",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
   {
     id: "minimalist",
@@ -515,81 +136,21 @@ const categories: {
     capacityNote: "Capacity: Under 5L",
     description:
       "When mandatory gear is minimal and aid stations are frequent, carry only what you need. These vests are the difference between running and hauling — barely there, never noticed.",
-    vests: [
-      {
-        name: "Pulse 2 Set",
-        brand: "Salomon",
-        price: "$80",
-        weight: "100g",
-        capacity: "2L",
-        sizes: "XS–XL",
-        genderFit: "Unisex",
-        frontPockets: "2 flask pockets + 1 small zip",
-        backStorage: "1L back pocket",
-        hydrationSystem: "2× 500ml flasks included",
-        poleCarry: false,
-        whistle: false,
-        bladderCompatible: false,
-        includedFlasks: "2× 500ml",
-        ratings: { comfort: 5, bounce: 5, breathability: 5, loadDistribution: 3, easeOfAccess: 4, durability: 3 },
-        bestFor: ["Supported 50Ks", "Elite racers", "Warm weather minimalist running"],
-        distances: ["50K"],
-        pros: [
-          "100g — you will genuinely forget you're wearing a vest",
-          "Two 500ml flasks included at an $80 price point",
-          "Salomon's SensiFit body-mapping even in this minimalist form",
-        ],
-        cons: [
-          "2L is only suitable for supported races with close aid stations",
-          "No mandatory gear capacity",
-          "Not durable enough for heavy training use",
-        ],
-        review: {
-          quote: "I wore this at a road 50K and felt like I was running in just a singlet. Total weight including flasks was barely 300g.",
-          race: "California International 50K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "TrailFire",
-        brand: "OMM",
-        price: "$100",
-        weight: "118g",
-        capacity: "4L",
-        sizes: "XS–XL",
-        genderFit: "Unisex",
-        frontPockets: "2 flask pockets + 1 flat pocket",
-        backStorage: "3L flat storage",
-        hydrationSystem: "Soft flask compatible",
-        poleCarry: false,
-        whistle: true,
-        bladderCompatible: false,
-        includedFlasks: "None",
-        ratings: { comfort: 4, bounce: 5, breathability: 5, loadDistribution: 3, easeOfAccess: 4, durability: 4 },
-        bestFor: ["Fell/mountain racing", "British ultra circuit", "Minimalist 50K racing"],
-        distances: ["50K"],
-        pros: [
-          "OMM's fell running heritage — built for conditions, not comfort",
-          "Flat-pack design sits incredibly close to the body",
-          "British ultra racing pedigree",
-          "Whistle integrated",
-        ],
-        cons: [
-          "No flasks included",
-          "4L is restrictive for anything with mandatory gear",
-          "Limited availability outside UK market",
-        ],
-        review: {
-          quote: "The fell running community has trusted OMM for decades. The TrailFire is as minimal as a vest can get while still being functional.",
-          race: "Lakeland 50",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-    ],
   },
 ];
+
+// Group packs from central library by subcategory
+const packsBySubcategory = new Map<string, Vest[]>();
+for (const p of packs) {
+  const sub = p.subcategory ?? "race";
+  if (!packsBySubcategory.has(sub)) packsBySubcategory.set(sub, []);
+  packsBySubcategory.get(sub)!.push(toVest(p));
+}
+
+const categories = categoryMeta.map((meta) => ({
+  ...meta,
+  vests: packsBySubcategory.get(meta.id) ?? [],
+}));
 
 // ─── Sub-Components ────────────────────────────────────────────────────────────
 

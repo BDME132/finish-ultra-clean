@@ -5,6 +5,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { saveNewKit, updateKit } from "@/lib/kit-sync";
 import { generateKitId } from "@/lib/kit-types";
 import type { SavedKit, SavedKitItem } from "@/lib/kit-types";
+import { makeLinks } from "@/lib/products/helpers";
+import type { ProductLinks } from "@/lib/products/helpers";
 import {
   Flag, Mountain, Thermometer, Moon, Medal, DollarSign, Droplets,
   Salad, Footprints, Target, Flashlight, Shirt, Package, Zap,
@@ -28,14 +30,6 @@ type Answers = {
 
 type RetailerLink = { url: string; price: number };
 
-type ProductLinks = {
-  rei?: RetailerLink;
-  amazon?: RetailerLink;
-  backcountry?: RetailerLink;
-  rw?: RetailerLink;
-  direct?: RetailerLink;
-};
-
 type GearItem = {
   category: string;
   product: string;
@@ -45,6 +39,7 @@ type GearItem = {
   tier: "standard" | "budget" | "premium";
   specs: string[];
   links: ProductLinks;
+  productId?: string;
 };
 
 type Kit = {
@@ -87,18 +82,6 @@ function trackEvent(payload: AnalyticsEvent) {
   if (process.env.NODE_ENV === "development") {
     console.log("[FinishUltra Analytics]", payload);
   }
-}
-
-// ─── Affiliate link builder ───────────────────────────────────────────────────
-
-function makeLinks(searchTerm: string, basePrice: number, amazonDiscount = 0.97, rwDiscount = 0.98): ProductLinks {
-  const q = encodeURIComponent(searchTerm);
-  return {
-    rei: { url: `https://www.rei.com/search?q=${q}&cm_mmc=aff_AL-_-finishultra-_-1`, price: basePrice },
-    amazon: { url: `https://www.amazon.com/s?k=${q}&tag=finishultra-20`, price: Math.round(basePrice * amazonDiscount) },
-    backcountry: { url: `https://www.backcountry.com/search?q=${q}&CMP_ID=finishultra`, price: basePrice },
-    rw: { url: `https://www.runningwarehouse.com/searchresults/?searchTerm=${q}&sourceCode=FFULTRA`, price: Math.round(basePrice * rwDiscount) },
-  };
 }
 
 // ─── Quiz questions ───────────────────────────────────────────────────────────

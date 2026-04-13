@@ -123,6 +123,12 @@ export default function AdminLayout({
               >
                 Send Newsletter
               </Link>
+              <Link
+                href="/admin/reviews"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Moderate Reviews
+              </Link>
             </div>
             <div className="flex items-center space-x-4">
               <button
