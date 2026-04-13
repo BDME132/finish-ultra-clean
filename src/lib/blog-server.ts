@@ -23,7 +23,12 @@ import {
   createSupabaseServer,
   hasSupabaseServerEnv,
 } from "@/lib/supabase/server";
-import { getSupabase, hasSupabaseServiceEnv } from "@/lib/supabase";
+import {
+  getSupabase,
+  getSupabasePublic,
+  hasSupabasePublicEnv,
+  hasSupabaseServiceEnv,
+} from "@/lib/supabase";
 import {
   getLegacySeedPublicPostBySlug,
   getLegacySeedPublicPosts,
@@ -78,6 +83,35 @@ const COMMENT_SELECT = [
 ].join(", ");
 
 let seedPromise: Promise<void> | null = null;
+let blogSchemaState: "unknown" | "available" | "missing" = "unknown";
+
+function isBlogSchemaMissingError(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const candidate = error as { code?: string; message?: string };
+  return (
+    candidate.code === "PGRST205" ||
+    candidate.code === "42P01" ||
+    candidate.message?.includes("blog_posts") === true ||
+    candidate.message?.includes("blog_post_versions") === true ||
+    candidate.message?.includes("blog_comments") === true
+  );
+}
+
+function handleBlogError(error: unknown, context: string) {
+  if (isBlogSchemaMissingError(error)) {
+    blogSchemaState = "missing";
+    return;
+  }
+
+  console.error(`${context}:`, error);
+}
+
+function hasUsableBlogSchema() {
+  return blogSchemaState !== "missing";
+}
 
 async function fetchVersionsByIds(
   supabase: Awaited<ReturnType<typeof createSupabaseServer>> | ReturnType<typeof getSupabase>,
@@ -92,7 +126,7 @@ async function fetchVersionsByIds(
     .in("id", ids);
 
   if (error) {
-    console.error("fetchVersionsByIds error:", error);
+    handleBlogError(error, "fetchVersionsByIds error");
     return new Map<string, BlogPostVersionRow>();
   }
 
@@ -117,13 +151,13 @@ function materializeAuthorPost(
 }
 
 export async function ensureSeedBlogContent() {
-  if (!hasSupabaseServiceEnv()) {
-    return;
+  if (!hasSupabaseServiceEnv() || !hasUsableBlogSchema()) {
+    return false;
   }
 
   if (seedPromise) {
     await seedPromise;
-    return;
+    return hasUsableBlogSchema();
   }
 
   seedPromise = (async () => {
@@ -133,9 +167,11 @@ export async function ensureSeedBlogContent() {
       .select("id", { count: "exact", head: true });
 
     if (error) {
-      console.error("ensureSeedBlogContent count error:", error);
+      handleBlogError(error, "ensureSeedBlogContent count error");
       return;
     }
+
+    blogSchemaState = "available";
 
     if ((count ?? 0) > 0) {
       return;
@@ -149,7 +185,7 @@ export async function ensureSeedBlogContent() {
         .maybeSingle();
 
       if (postLookupError) {
-        console.error("ensureSeedBlogContent lookup error:", postLookupError);
+        handleBlogError(postLookupError, "ensureSeedBlogContent lookup error");
         continue;
       }
 
@@ -171,6 +207,10 @@ export async function ensureSeedBlogContent() {
         })
         .select("id")
         .single();
+
+      if (insertPostError?.code === "23505") {
+        continue;
+      }
 
       if (insertPostError || !insertedPost) {
         console.error("ensureSeedBlogContent insert post error:", insertPostError);
@@ -226,6 +266,7 @@ export async function ensureSeedBlogContent() {
   });
 
   await seedPromise;
+  return hasUsableBlogSchema();
 }
 
 export async function buildUniqueBlogSlug(
@@ -277,14 +318,17 @@ export async function resolveBlogAuthorName(
 export async function loadPublicBlogPostsServer(
   filters: BlogPostFilters = {},
 ): Promise<PublicBlogPost[]> {
-  if (!hasSupabaseServerEnv()) {
+  if (!hasSupabasePublicEnv() || blogSchemaState === "missing") {
     return applyBlogFilters(getLegacySeedPublicPosts(), filters);
   }
 
-  await ensureSeedBlogContent();
+  const schemaReady = await ensureSeedBlogContent();
+  if (hasSupabaseServiceEnv() && !schemaReady) {
+    return applyBlogFilters(getLegacySeedPublicPosts(), filters);
+  }
 
   try {
-    const supabase = await createSupabaseServer();
+    const supabase = getSupabasePublic();
     const { data, error } = await supabase
       .from("blog_posts")
       .select(PUBLIC_POST_SELECT)
@@ -294,7 +338,7 @@ export async function loadPublicBlogPostsServer(
       .limit(200);
 
     if (error) {
-      console.error("loadPublicBlogPostsServer error:", error);
+      handleBlogError(error, "loadPublicBlogPostsServer error");
       return applyBlogFilters(getLegacySeedPublicPosts(), filters);
     }
 
@@ -322,7 +366,7 @@ export async function loadPublicBlogPostsServer(
 
     return applyBlogFilters(posts, filters);
   } catch (error) {
-    console.error("loadPublicBlogPostsServer route error:", error);
+    handleBlogError(error, "loadPublicBlogPostsServer route error");
     return applyBlogFilters(getLegacySeedPublicPosts(), filters);
   }
 }
@@ -330,14 +374,17 @@ export async function loadPublicBlogPostsServer(
 export async function loadPublicBlogPostBySlugServer(
   slug: string,
 ): Promise<PublicBlogPost | null> {
-  if (!hasSupabaseServerEnv()) {
+  if (!hasSupabasePublicEnv() || blogSchemaState === "missing") {
     return getLegacySeedPublicPostBySlug(slug);
   }
 
-  await ensureSeedBlogContent();
+  const schemaReady = await ensureSeedBlogContent();
+  if (hasSupabaseServiceEnv() && !schemaReady) {
+    return getLegacySeedPublicPostBySlug(slug);
+  }
 
   try {
-    const supabase = await createSupabaseServer();
+    const supabase = getSupabasePublic();
     const { data, error } = await supabase
       .from("blog_posts")
       .select(PUBLIC_POST_SELECT)
@@ -346,7 +393,7 @@ export async function loadPublicBlogPostBySlugServer(
       .maybeSingle();
 
     if (error) {
-      console.error("loadPublicBlogPostBySlugServer error:", error);
+      handleBlogError(error, "loadPublicBlogPostBySlugServer error");
       return getLegacySeedPublicPostBySlug(slug);
     }
 
@@ -376,7 +423,7 @@ export async function loadPublicBlogPostBySlugServer(
 
     return materializePublicBlogPost(postRow, versionRow, count ?? 0);
   } catch (error) {
-    console.error("loadPublicBlogPostBySlugServer route error:", error);
+    handleBlogError(error, "loadPublicBlogPostBySlugServer route error");
     return getLegacySeedPublicPostBySlug(slug);
   }
 }
@@ -384,12 +431,12 @@ export async function loadPublicBlogPostBySlugServer(
 export async function loadVisibleBlogCommentsServer(
   postId: string,
 ): Promise<BlogComment[]> {
-  if (!hasSupabaseServerEnv()) {
+  if (!hasSupabasePublicEnv() || blogSchemaState === "missing") {
     return [];
   }
 
   try {
-    const supabase = await createSupabaseServer();
+    const supabase = getSupabasePublic();
     const { data, error } = await supabase
       .from("blog_comments")
       .select(COMMENT_SELECT)
@@ -398,7 +445,7 @@ export async function loadVisibleBlogCommentsServer(
       .order("created_at", { ascending: true });
 
     if (error) {
-      console.error("loadVisibleBlogCommentsServer error:", error);
+      handleBlogError(error, "loadVisibleBlogCommentsServer error");
       return [];
     }
 
@@ -406,7 +453,7 @@ export async function loadVisibleBlogCommentsServer(
       materializeBlogComment(row),
     );
   } catch (error) {
-    console.error("loadVisibleBlogCommentsServer route error:", error);
+    handleBlogError(error, "loadVisibleBlogCommentsServer route error");
     return [];
   }
 }
@@ -478,7 +525,7 @@ export async function loadAdminBlogPostsServer(): Promise<AuthorBlogPost[]> {
       .limit(300);
 
     if (error) {
-      console.error("loadAdminBlogPostsServer error:", error);
+      handleBlogError(error, "loadAdminBlogPostsServer error");
       return [];
     }
 
@@ -502,7 +549,7 @@ export async function loadAdminBlogPostsServer(): Promise<AuthorBlogPost[]> {
       ),
     );
   } catch (error) {
-    console.error("loadAdminBlogPostsServer route error:", error);
+    handleBlogError(error, "loadAdminBlogPostsServer route error");
     return [];
   }
 }
@@ -523,7 +570,7 @@ export async function loadAdminBlogCommentsServer(): Promise<AdminBlogComment[]>
       .limit(300);
 
     if (error) {
-      console.error("loadAdminBlogCommentsServer error:", error);
+      handleBlogError(error, "loadAdminBlogCommentsServer error");
       return [];
     }
 
@@ -539,7 +586,7 @@ export async function loadAdminBlogCommentsServer(): Promise<AdminBlogComment[]>
       .in("id", postIds);
 
     if (postError) {
-      console.error("loadAdminBlogCommentsServer post lookup error:", postError);
+      handleBlogError(postError, "loadAdminBlogCommentsServer post lookup error");
       return [];
     }
 
@@ -566,7 +613,7 @@ export async function loadAdminBlogCommentsServer(): Promise<AdminBlogComment[]>
       };
     });
   } catch (error) {
-    console.error("loadAdminBlogCommentsServer route error:", error);
+    handleBlogError(error, "loadAdminBlogCommentsServer route error");
     return [];
   }
 }

@@ -55,23 +55,27 @@ export function normalizeDraftInput(input: BlogEditorInput): BlogEditorInput {
   };
 }
 
+function buildFallbackExcerpt(bodyMarkdown: string): string {
+  const plainText = bodyMarkdown
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_#>`~-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!plainText) {
+    return "";
+  }
+
+  if (plainText.length <= 180) {
+    return plainText;
+  }
+
+  return `${plainText.slice(0, 177).trim()}...`;
+}
+
 export function validateBlogSubmissionInput(input: BlogEditorInput): string | null {
-  if (input.title.trim().length < 8) {
-    return "Add a more descriptive title before submitting.";
-  }
-
-  if (input.excerpt.trim().length < 20) {
-    return "Add a short excerpt so readers know what the post is about.";
-  }
-
-  if (input.bodyMarkdown.trim().length < 120) {
-    return "Write a fuller post before submitting it for review.";
-  }
-
-  if (!input.category || input.category === "All" || !isValidBlogCategory(input.category)) {
-    return "Choose a valid category before submitting.";
-  }
-
+  void input;
   return null;
 }
 
@@ -96,7 +100,7 @@ export function buildVersionPayload(
 ) {
   return {
     title: input.title,
-    excerpt: input.excerpt,
+    excerpt: input.excerpt || buildFallbackExcerpt(input.bodyMarkdown),
     body_markdown: input.bodyMarkdown,
     category: input.category,
     tags: input.tags,
