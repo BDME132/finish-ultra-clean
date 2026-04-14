@@ -39,7 +39,7 @@ Everything else is a comfort upgrade, not a requirement.
 Buy the previous generation of any major trail shoe when the new model releases. Retailers discount aggressively.
 
 **Best current budget picks:**
-- [Hoka Speedgoat 5](https://www.rei.com/search?q=Hoka+Speedgoat+5&irgwc=1&partner=finishultra) (previous gen) — often on sale for $90–$110. Excellent shoe, more durable upper than the 6.
+- [Hoka Speedgoat 5](https://www.amazon.com/s?k=Hoka+Speedgoat+5&tag=finishultra-20) (previous gen) — often on sale for $90–$110. Excellent shoe, more durable upper than the 6.
 - [Brooks Cascadia 16](https://www.amazon.com/s?k=Brooks+Cascadia+16&tag=finishultra-20) — $80–$100 on sale. Reliable, durable workhorse.
 - [Salomon Sense Ride 4](https://www.amazon.com/s?k=Salomon+Sense+Ride+4&tag=finishultra-20) — $80–$100 on sale. Versatile, good grip.
 
@@ -55,7 +55,7 @@ Adequate for a 50K with room for two soft flasks, nutrition, and required gear. 
 **[Salomon Active Skin 8](https://www.amazon.com/s?k=Salomon+Active+Skin+8&tag=finishultra-20) — $90**
 Salomon's entry-level vest uses the same fit philosophy as the ADV Skin 5 at a lower price. Less pocket volume but good for 50K distances.
 
-If you can stretch to $130, the [Salomon ADV Skin 5](https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra) is worth the difference — it will serve you through multiple races.
+If you can stretch to $130, the [Salomon ADV Skin 5](https://www.amazon.com/s?k=Salomon+ADV+Skin+5&tag=finishultra-20) is worth the difference — it will serve you through multiple races.
 
 ## Budget Nutrition Strategy
 

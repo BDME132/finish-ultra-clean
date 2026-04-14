@@ -101,4 +101,4 @@ South Tyrol sits at the intersection of Italian and Austrian culture — German 
 
 Budget at minimum 4–5 days for an international race trip: 2 travel days, 1 pre-race day for registration and reconnaissance, race day, and 1 recovery day before flying home. Jet lag affects race performance — plan arrival at least 3 days before a morning race start if flying from North America.
 
-Bring your own gear in carry-on luggage. Lost checked bags containing race gear is a worst-case scenario. Your [Salomon ADV Skin 5](https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra) vest, [Hoka Speedgoat](https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra) shoes, and nutrition should travel with you.
+Bring your own gear in carry-on luggage. Lost checked bags containing race gear is a worst-case scenario. Your [Salomon ADV Skin 5](https://www.amazon.com/s?k=Salomon+ADV+Skin+5&tag=finishultra-20) vest, [Hoka Speedgoat](https://www.amazon.com/s?k=Hoka+Speedgoat+6&tag=finishultra-20) shoes, and nutrition should travel with you.

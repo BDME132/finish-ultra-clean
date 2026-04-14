@@ -33,19 +33,19 @@ A rotation also extends total shoe life. Two pairs alternated over the same tota
 The cheapest way to build a rotation is to buy one current-model shoe at full price and one previous-generation model on sale. When a new shoe releases, retailers discount the old version significantly — often $40–$60 off.
 
 **Example budget rotation under $250:**
-- [Hoka Speedgoat 6](https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra) (current) — $160 — your primary daily trainer
-- [Hoka Speedgoat 5](https://www.rei.com/search?q=Hoka+Speedgoat+5&irgwc=1&partner=finishultra) (previous gen on sale) — $80–$100 — your backup
+- [Hoka Speedgoat 6](https://www.amazon.com/s?k=Hoka+Speedgoat+6&tag=finishultra-20) (current) — $160 — your primary daily trainer
+- [Hoka Speedgoat 5](https://www.amazon.com/s?k=Hoka+Speedgoat+5&tag=finishultra-20) (previous gen on sale) — $80–$100 — your backup
 
 This gives you two shoes with slightly different midsole characteristics (the 5 is firmer, the 6 is bouncier) that stress your body differently on alternating runs. Total cost: $240–$260.
 
 ## The Best Budget Trail Shoe Pairings
 
 **Best overall pairing ($230–$270):**
-- [Hoka Speedgoat 6](https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra) ($160) — max cushion, Vibram grip, all-terrain versatility
+- [Hoka Speedgoat 6](https://www.amazon.com/s?k=Hoka+Speedgoat+6&tag=finishultra-20) ($160) — max cushion, Vibram grip, all-terrain versatility
 - [Brooks Cascadia 17](https://www.amazon.com/s?k=Brooks+Cascadia+17&tag=finishultra-20) ($130) — firmer, more ground-feel, different cushion profile
 
 **Grip-focused pairing for wet/varied terrain ($250–$290):**
-- [Salomon Speedcross 6](https://www.rei.com/search?q=Salomon+Speedcross+6&irgwc=1&partner=finishultra) ($140) — aggressive mud grip, best for wet days
+- [Salomon Speedcross 6](https://www.amazon.com/s?k=Salomon+Speedcross+6&tag=finishultra-20) ($140) — aggressive mud grip, best for wet days
 - [Brooks Cascadia 17](https://www.amazon.com/s?k=Brooks+Cascadia+17&tag=finishultra-20) ($130) — versatile all-terrain daily trainer
 
 **Zero-drop pairing for wide-footed runners ($260–$290):**

@@ -27,7 +27,7 @@ Hoka, Salomon, and Brooks are the three brands most beginner ultra runners consi
 
 Hoka built its reputation on maximum-cushion trail shoes with an exaggerated foam stack and rocker geometry. The effect is a soft, forgiving ride that protects legs over long miles and reduces the impact of rocky terrain.
 
-**Best beginner shoe: [Hoka Speedgoat 6](https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra) — $160**
+**Best beginner shoe: [Hoka Speedgoat 6](https://www.amazon.com/s?k=Hoka+Speedgoat+6&tag=finishultra-20) — $160**
 
 The Speedgoat is our top recommendation for most first-time ultra runners. The PEBA midsole delivers genuinely cushy protection at mile 25. Vibram Megagrip outsole handles wet rock, dirt, and moderate technical terrain. Roomy toe box accommodates foot swelling.
 
@@ -39,10 +39,10 @@ The Speedgoat is our top recommendation for most first-time ultra runners. The P
 
 Salomon is the technical trail shoe specialist. Their Quicklace system, anatomical fit, and Contagrip/Megagrip outsoles are designed for runners who move fast on technical terrain and need precise foot placement.
 
-**Best beginner shoe for mixed terrain: [Salomon Sense Ride 5](https://www.rei.com/search?q=Salomon+Sense+Ride+5&irgwc=1&partner=finishultra) — $130**
+**Best beginner shoe for mixed terrain: [Salomon Sense Ride 5](https://www.amazon.com/s?k=Salomon+Sense+Ride+5&tag=finishultra-20) — $130**
 Versatile all-terrain shoe, less aggressive than Speedcross, good cushioning, the Quicklace system is a genuine convenience upgrade.
 
-**Best beginner shoe for mud: [Salomon Speedcross 6](https://www.rei.com/search?q=Salomon+Speedcross+6&irgwc=1&partner=finishultra) — $140**
+**Best beginner shoe for mud: [Salomon Speedcross 6](https://www.amazon.com/s?k=Salomon+Speedcross+6&tag=finishultra-20) — $140**
 Deep chevron lugs designed for soft ground and mud. Unmatched grip in wet, soft conditions. Too aggressive for hard-packed dirt or road sections.
 
 **Salomon is best for:** Technical trails, muddy conditions, runners who want precision and grip over cushioning, and runners who transition frequently between running and hiking.

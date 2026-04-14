@@ -48,7 +48,7 @@ For most beginner 50Ks with regular aid stations, a hydration pack is unnecessar
 
 ## The Best Running Vests for Ultra Runners
 
-**Best overall — [Salomon ADV Skin 5](https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra) ($130)**
+**Best overall — [Salomon ADV Skin 5](https://www.amazon.com/s?k=Salomon+ADV+Skin+5&tag=finishultra-20) ($130)**
 The most popular vest in ultra running. 5L capacity, extremely form-fitting, front pockets hold two 500ml flasks with easy access, stretch mesh pockets handle nutrition without bouncing. The gold standard for beginners.
 
 **Best for hot weather — [Nathan VaporAir 3.0](https://www.amazon.com/s?k=Nathan+VaporAir+3.0&tag=finishultra-20) ($150)**

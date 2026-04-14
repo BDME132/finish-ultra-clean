@@ -100,6 +100,6 @@ Quadrock is accessible from Denver and Fort Collins, runs through beautiful Rock
 
 ## How to Prepare for Any of These Races
 
-Whatever race you choose, the gear requirements are similar. You'll need a running vest to carry water and nutrition between aid stations. The [Salomon ADV Skin 5](https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra) ($130) handles everything on this list. Pair it with [Hoka Speedgoat 6](https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra) shoes for the most forgiving beginner setup.
+Whatever race you choose, the gear requirements are similar. You'll need a running vest to carry water and nutrition between aid stations. The [Salomon ADV Skin 5](https://www.amazon.com/s?k=Salomon+ADV+Skin+5&tag=finishultra-20) ($130) handles everything on this list. Pair it with [Hoka Speedgoat 6](https://www.amazon.com/s?k=Hoka+Speedgoat+6&tag=finishultra-20) shoes for the most forgiving beginner setup.
 
 For training, our [first 50K training guide](/blog/first-50k-training-guide) gives you a 16-week plan that builds you up for any race on this list.

@@ -33,10 +33,10 @@ Enter your first race early — most ultras sell out months in advance, and some
 This is where most of the cost is. Here's a realistic gear budget:
 
 **Trail shoes — $130–$160 (required)**
-The single most important purchase. The [Hoka Speedgoat 6](https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra) ($160) is our top pick. The [Brooks Cascadia 17](https://www.amazon.com/s?k=Brooks+Cascadia+17&tag=finishultra-20) ($130) is the budget alternative.
+The single most important purchase. The [Hoka Speedgoat 6](https://www.amazon.com/s?k=Hoka+Speedgoat+6&tag=finishultra-20) ($160) is our top pick. The [Brooks Cascadia 17](https://www.amazon.com/s?k=Brooks+Cascadia+17&tag=finishultra-20) ($130) is the budget alternative.
 
 **Running vest — $80–$130 (required)**
-You need to carry water and nutrition. A vest is more stable and comfortable than a handheld bottle for 6+ hours. The [Salomon ADV Skin 5](https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra) ($130) is the gold standard. Budget option: the Nathan VaporKrar ($80).
+You need to carry water and nutrition. A vest is more stable and comfortable than a handheld bottle for 6+ hours. The [Salomon ADV Skin 5](https://www.amazon.com/s?k=Salomon+ADV+Skin+5&tag=finishultra-20) ($130) is the gold standard. Budget option: the Nathan VaporKrar ($80).
 
 **Trail-specific socks — $15–$25 (highly recommended)**
 [Injinji Trail Midweight Crew](https://www.amazon.com/s?k=Injinji+Trail+Midweight+Crew&tag=finishultra-20) socks ($18) prevent the between-toe blisters that sideline more ultra runners than anything else.

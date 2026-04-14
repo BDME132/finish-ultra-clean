@@ -34,7 +34,7 @@ The **Hoka Speedgoat 6** is the most recommended beginner trail shoe for a reaso
 **Stack height:** 33mm heel / 28mm forefoot | **Weight:** 10.1oz | **Price:** $160
 **Best for:** Mixed terrain, long runs, 50K racing
 
-[Shop Hoka Speedgoat 6 at REI →](https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra)
+[Shop Hoka Speedgoat 6 on Amazon →](https://www.amazon.com/s?k=Hoka+Speedgoat+6&tag=finishultra-20)
 
 ## 2. Salomon Speedcross 6 — Best for Mud and Soft Terrain
 
@@ -46,7 +46,7 @@ One caveat: the Speedcross's aggressive outsole is overkill for hard-packed dirt
 **Weight:** 10.4oz | **Price:** $140
 **Best for:** Mud, wet trails, soft forest floors
 
-[Shop Salomon Speedcross 6 at REI →](https://www.rei.com/search?q=Salomon+Speedcross+6&irgwc=1&partner=finishultra)
+[Shop Salomon Speedcross 6 on Amazon →](https://www.amazon.com/s?k=Salomon+Speedcross+6&tag=finishultra-20)
 
 ## 3. Brooks Cascadia 17 — Best Budget Beginner Option
 

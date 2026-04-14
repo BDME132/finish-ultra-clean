@@ -58,7 +58,7 @@ See our [strength training for ultra runners guide](/blog/strength-training-ultr
 
 Shoe choice matters on descents. You need enough outsole grip to prevent slipping, a protective toe cap to absorb impacts on rocks, and enough lateral stability to handle side-angled footfalls on off-camber terrain.
 
-The [Hoka Speedgoat 6](https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra) excels on descents due to its maximum cushioning and Vibram Megagrip outsole. The extra stack height acts as a shock absorber on repeated hard landings. The [Salomon Speedcross 6](https://www.rei.com/search?q=Salomon+Speedcross+6&irgwc=1&partner=finishultra) is better on muddy descents where grip is the primary concern.
+The [Hoka Speedgoat 6](https://www.amazon.com/s?k=Hoka+Speedgoat+6&tag=finishultra-20) excels on descents due to its maximum cushioning and Vibram Megagrip outsole. The extra stack height acts as a shock absorber on repeated hard landings. The [Salomon Speedcross 6](https://www.amazon.com/s?k=Salomon+Speedcross+6&tag=finishultra-20) is better on muddy descents where grip is the primary concern.
 
 ## When to Walk Downhills
 

@@ -249,7 +249,7 @@ status: "draft"
   console.log(`\n✏️  Your review checklist:`);
   console.log(`   [ ] Read the full post and adjust tone/voice`);
   console.log(`   [ ] Add any personal experiences or examples`);
-  console.log(`   [ ] Add affiliate links (gear products, Amazon, REI)`);
+  console.log(`   [ ] Add affiliate links (gear products, Amazon)`);
   console.log(`   [ ] Check that all internal links are relevant`);
   console.log(`   [ ] Set publishDate in frontmatter to your target date`);
   console.log(`   [ ] Add a real image to /public/images/blog/${slug}.jpg`);

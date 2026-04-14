@@ -33,7 +33,7 @@ A handheld bottle is the simplest option: hold it in one hand, drink when you ne
 
 A running vest carries two 500ml soft flasks in front chest pockets plus additional storage in side and back pockets. This is the standard setup for ultra running.
 
-The [Salomon ADV Skin 5](https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra) ($130) and [Nathan VaporAir 3.0](https://www.amazon.com/s?k=Nathan+VaporAir+3.0&tag=finishultra-20) ($150) are the most recommended beginner vests. Both carry 1 liter in front flasks plus room for additional water in back pockets.
+The [Salomon ADV Skin 5](https://www.amazon.com/s?k=Salomon+ADV+Skin+5&tag=finishultra-20) ($130) and [Nathan VaporAir 3.0](https://www.amazon.com/s?k=Nathan+VaporAir+3.0&tag=finishultra-20) ($150) are the most recommended beginner vests. Both carry 1 liter in front flasks plus room for additional water in back pockets.
 
 **Best for:** Runs over 90 minutes, ultra racing, runs with nutrition and gear to carry
 **Limitation:** Higher upfront cost. Requires fitting to your body type.

@@ -64,4 +64,4 @@ Almost every elite ultra runner has the same advice: don't skip the 50K.
 
 Once you've decided on a 50K, read our [guide to choosing your first ultra marathon](/blog/choosing-first-ultra) for a full breakdown of what to look for in a specific race. The short version: flat course, generous cutoff, good aid station support, and close enough that you're not exhausted from travel before the start.
 
-Your running vest, shoes, and nutrition should all be tested before race day. The [Salomon ADV Skin 5](https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra) is the vest we recommend to most first-timers — light, well-fitted, and carries everything you need for a 50K.
+Your running vest, shoes, and nutrition should all be tested before race day. The [Salomon ADV Skin 5](https://www.amazon.com/s?k=Salomon+ADV+Skin+5&tag=finishultra-20) is the vest we recommend to most first-timers — light, well-fitted, and carries everything you need for a 50K.
