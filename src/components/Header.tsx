@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePheidi } from "./PheidiProvider";
 import { useAuth } from "./AuthProvider";
 
@@ -101,14 +101,21 @@ function ChatPixelArt() {
 export default function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { openPheidi } = usePheidi();
   const { user, isLoading: authLoading } = useAuth();
   const isTrainingSection = pathname?.startsWith("/training");
   const isTrainingDashboard = pathname?.startsWith("/training/dashboard");
   const isTrainingPlans = Boolean(isTrainingSection && !isTrainingDashboard);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <header className={`border-b border-gray-100 sticky top-0 z-50 transition-all duration-200 ${scrolled ? "nav-scrolled" : "bg-white"}`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="font-headline text-2xl font-bold text-primary">
@@ -121,10 +128,10 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-colors pb-0.5 ${
                   pathname?.startsWith(link.href)
-                    ? "text-primary"
-                    : "text-dark hover:text-primary"
+                    ? "text-primary border-b-2 border-accent"
+                    : "text-dark hover:text-primary border-b-2 border-transparent"
                 }`}
               >
                 {link.label}
@@ -136,10 +143,10 @@ export default function Header() {
               <div className="flex items-center gap-0.5">
                 <Link
                   href="/training"
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-sm font-medium transition-colors pb-0.5 ${
                     isTrainingSection
-                      ? "text-primary"
-                      : "text-dark hover:text-primary"
+                      ? "text-primary border-b-2 border-accent"
+                      : "text-dark hover:text-primary border-b-2 border-transparent"
                   }`}
                 >
                   Training
@@ -191,10 +198,10 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-colors pb-0.5 ${
                   pathname?.startsWith(link.href)
-                    ? "text-primary"
-                    : "text-dark hover:text-primary"
+                    ? "text-primary border-b-2 border-accent"
+                    : "text-dark hover:text-primary border-b-2 border-transparent"
                 }`}
               >
                 {link.label}
@@ -238,10 +245,10 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-colors pb-0.5 ${
                   pathname?.startsWith(link.href)
-                    ? "text-primary"
-                    : "text-dark hover:text-primary"
+                    ? "text-primary border-b-2 border-accent"
+                    : "text-dark hover:text-primary border-b-2 border-transparent"
                 }`}
               >
                 {link.label}
@@ -284,10 +291,10 @@ export default function Header() {
                 <>
                   <Link
                     href="/race-hq"
-                    className={`text-sm font-medium transition-colors ${
+                    className={`text-sm font-medium transition-colors pb-0.5 ${
                       pathname?.startsWith("/race-hq")
-                        ? "text-primary"
-                        : "text-dark hover:text-primary"
+                        ? "text-primary border-b-2 border-accent"
+                        : "text-dark hover:text-primary border-b-2 border-transparent"
                     }`}
                   >
                     Race HQ

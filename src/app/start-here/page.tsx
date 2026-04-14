@@ -200,24 +200,36 @@ export default function StartHerePage() {
       <JsonLd data={startHereHowToJsonLd} />
       <main>
         {/* ── 1. Hero ── */}
-        <section className="bg-gradient-to-b from-light to-white py-20 sm:py-28">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="font-headline text-4xl sm:text-5xl lg:text-6xl font-bold text-dark mb-6">
+        <section className="relative bg-gradient-to-b from-light to-white py-20 sm:py-28 overflow-hidden">
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cline x1='0' y1='40' x2='40' y2='0' stroke='%230F172A' stroke-width='0.5'/%3E%3C/svg%3E")`,
+              backgroundSize: "40px 40px",
+              opacity: 0.04,
+            }}
+            aria-hidden="true"
+          />
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1
+              className="font-headline text-5xl sm:text-6xl lg:text-7xl font-normal text-dark mb-6"
+              style={{ letterSpacing: "-0.02em" }}
+            >
               Everything You Need for Your First Ultra
             </h1>
-            <p className="text-lg sm:text-xl text-gray max-w-2xl mx-auto mb-10">
+            <p className="text-lg sm:text-xl text-gray/70 max-w-[480px] mx-auto mb-10">
               No gatekeeping. No jargon. Just a clear, step-by-step path from where you are now to crossing your first finish line.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href="#roadmap"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors"
+                className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-accent rounded hover:opacity-90 transition-opacity"
               >
                 See the Roadmap
               </a>
               <Link
                 href="/pheidi"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-primary bg-white border-2 border-primary rounded-lg hover:bg-light transition-colors"
+                className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-primary bg-transparent border border-primary/40 rounded hover:bg-primary/5 transition-colors"
               >
                 Talk to Pheidi (AI Coach)
               </Link>
@@ -228,10 +240,8 @@ export default function StartHerePage() {
         {/* ── 2. Where Are You? — Three Paths ── */}
         <section className="py-16 sm:py-20">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark text-center mb-3">
-              Where Are You Right Now?
-            </h2>
-            <p className="text-gray text-center max-w-xl mx-auto mb-12">
+            <h2 className="section-label">Where Are You Right Now?</h2>
+            <p className="text-gray text-sm max-w-xl mb-12">
               Pick the path that matches your current fitness and we&apos;ll point you to the right plan.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -261,10 +271,8 @@ export default function StartHerePage() {
         {/* ── 3. Five-Step Roadmap ── */}
         <section id="roadmap" className="bg-light py-16 sm:py-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark text-center mb-3">
-              Your 5-Step Roadmap
-            </h2>
-            <p className="text-gray text-center max-w-xl mx-auto mb-14">
+            <h2 className="section-label">Your 5-Step Roadmap</h2>
+            <p className="text-gray text-sm max-w-xl mb-14">
               Follow these steps — in order or at your own pace — and you&apos;ll be ready for race day.
             </p>
 
@@ -320,9 +328,7 @@ export default function StartHerePage() {
         {/* ── 4. Free Tools Strip ── */}
         <section className="py-16 sm:py-20">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark text-center mb-12">
-              Free Tools
-            </h2>
+            <h2 className="section-label mb-10">Free Tools</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {tools.map((tool) => {
                 const Icon = tool.icon;
@@ -347,9 +353,7 @@ export default function StartHerePage() {
         {/* ── 5. Essential Reading ── */}
         <section className="bg-light py-16 sm:py-20">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark text-center mb-12">
-              Essential Reading
-            </h2>
+            <h2 className="section-label mb-10">Essential Reading</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {essentialReads.map((post) => (
                 <Link
@@ -403,15 +407,20 @@ export default function StartHerePage() {
 
         {/* ── 8. Newsletter Signup ── */}
         <section className="bg-primary py-16">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="font-headline text-3xl font-bold text-white mb-3">
-              One Email a Week. That&apos;s It.
-            </h2>
-            <p className="text-white/80 mb-8">
-              Training tips, gear reviews, and beginner Q&amp;A — delivered every week. Free, no spam, unsubscribe anytime.
-            </p>
-            <div className="flex justify-center">
-              <EmailSignupForm />
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              className="rounded-xl p-8 text-center"
+              style={{ border: "1px solid rgba(255, 107, 0, 0.30)" }}
+            >
+              <h2 className="font-headline text-3xl font-semibold text-white mb-3">
+                One Email a Week. That&apos;s It.
+              </h2>
+              <p className="text-white/80 mb-8">
+                Training tips, gear reviews, and beginner Q&amp;A — delivered every week. Free, no spam, unsubscribe anytime.
+              </p>
+              <div className="flex justify-center">
+                <EmailSignupForm />
+              </div>
             </div>
           </div>
         </section>

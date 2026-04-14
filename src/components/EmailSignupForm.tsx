@@ -97,7 +97,7 @@ export default function EmailSignupForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
-          className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+          className="w-full px-2 py-3 text-lg newsletter-input transition-all duration-200"
           disabled={status === "loading"}
         />
         <button

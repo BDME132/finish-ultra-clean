@@ -19,9 +19,10 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:border-primary/20 transition-all"
+      className="group block bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-primary/20 transition-all hover:-translate-y-0.5 duration-200"
     >
-      <div className="aspect-[16/9] bg-gradient-to-br from-light to-gray-100 flex flex-col items-center justify-center relative overflow-hidden">
+      {/* Taller thumbnail — ~55% of card height */}
+      <div className="aspect-[4/3] bg-gradient-to-br from-light to-gray-100 flex flex-col items-center justify-center relative overflow-hidden">
         {post.coverImageUrl ? (
           <img
             src={post.coverImageUrl}
@@ -39,19 +40,23 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
           </>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-dark/60 via-dark/10 to-transparent" />
-        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-dark">
+
+        {/* Text-tag badges with left border accent — no pill background */}
+        <div className="absolute left-4 top-4 flex flex-col gap-1.5">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/90 border-l-2 border-white/70 pl-2 leading-none">
             {getBlogSourceLabel(post.authorType)}
           </span>
-          <span className="rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/90 border-l-2 border-accent pl-2 leading-none">
             {post.category}
           </span>
         </div>
+
         {post.featured && (
-          <span className="absolute top-3 right-3 text-[10px] font-bold text-white bg-accent px-2 py-0.5 rounded-full uppercase tracking-wider">
+          <span className="absolute top-3 right-3 text-[10px] font-bold text-white border-l-2 border-accent pl-2 uppercase tracking-wider">
             Featured
           </span>
         )}
+
         {!post.coverImageUrl && (
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="mb-1">
@@ -61,18 +66,18 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
             </span>
           </div>
         )}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
       </div>
 
       <div className="p-5">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+          <span className="text-xs font-medium text-primary">
             {post.authorName}
           </span>
           <span className="text-xs text-gray ml-auto">{post.readTime}</span>
         </div>
 
-        <h3 className="font-headline text-lg font-bold text-dark mb-2 leading-snug group-hover:text-primary transition-colors">
+        <h3 className="font-headline text-lg font-semibold text-dark mb-2 leading-snug group-hover:text-primary transition-colors">
           {post.title}
         </h3>
 

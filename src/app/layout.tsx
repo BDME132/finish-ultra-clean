@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Lora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
 import PheidiShell from "@/components/PheidiShell";
@@ -16,6 +16,12 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+const lora = Lora({
+  variable: "--font-lora",
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -84,7 +90,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${lora.variable} font-sans antialiased`}
       >
         <AuthProvider>
           <PheidiShell>{children}</PheidiShell>
