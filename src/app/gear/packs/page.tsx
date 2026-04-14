@@ -60,7 +60,7 @@ type Vest = {
   pros: string[];
   cons: string[];
   review: { quote: string; race: string; runner: string };
-  affiliates: { rei: string; amazon: string; warehouse: string };
+  affiliates: { amazon: string };
 };
 
 // ─── Category Data ────────────────────────────────────────────────────────────
@@ -118,7 +118,7 @@ const categories: {
           race: "UTMB OCC",
           runner: "Verified 50K finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/47PXJA2" },
       },
       {
         name: "Race Vest 6.0",
@@ -155,44 +155,8 @@ const categories: {
           race: "Lake Sonoma 50",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/3NpYeKo" },
       } as unknown as Vest,
-      {
-        name: "Slope Runner 8L",
-        brand: "Patagonia",
-        price: "$149",
-        weight: "220g",
-        capacity: "8L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "2 front stretch pockets + 2 zip pockets",
-        backStorage: "6L main compartment",
-        hydrationSystem: "Bladder sleeve + 2 soft flask compatible",
-        poleCarry: false,
-        whistle: false,
-        bladderCompatible: true,
-        includedFlasks: "None",
-        ratings: { comfort: 4, bounce: 4, breathability: 4, loadDistribution: 4, easeOfAccess: 4, durability: 5 },
-        bestFor: ["Eco-conscious runners", "50K to 100K", "Training and racing versatility"],
-        distances: ["50K", "50 Miles", "100K"],
-        pros: [
-          "Made with recycled materials — Patagonia's sustainability commitment",
-          "8L hits the sweet spot for most ultra distances",
-          "Exceptional build quality and durability",
-          "Clean, uncluttered design",
-        ],
-        cons: [
-          "No pole carry system",
-          "No whistle included",
-          "Fewer pockets than Salomon or UD",
-        ],
-        review: {
-          quote: "I've washed this thing 50 times and it still looks new. Patagonia builds things to last — and that matters for a vest I wear hundreds of miles.",
-          race: "Miwok 100K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
       {
         name: "Pinnacle 4L",
         brand: "Nathan",
@@ -227,7 +191,7 @@ const categories: {
           race: "Javelina 50K",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4bObB06" },
       },
     ],
   },
@@ -275,7 +239,7 @@ const categories: {
           race: "UTMB",
           runner: "Verified multi-100 finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/47apuDo" },
       },
       {
         name: "Duro 6 / Dyna 6",
@@ -311,7 +275,7 @@ const categories: {
           race: "Black Hills 50K",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/47QUisV" },
       },
       {
         name: "VaporKrar 12L",
@@ -347,43 +311,7 @@ const categories: {
           race: "Cascade Crest 100",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Distance 8",
-        brand: "Black Diamond",
-        price: "$130",
-        weight: "248g",
-        capacity: "8L",
-        sizes: "S–XL",
-        genderFit: "Unisex",
-        frontPockets: "2 front stretch pockets + 2 zip pockets",
-        backStorage: "6L main + side pockets",
-        hydrationSystem: "Bladder sleeve + soft flask compatible",
-        poleCarry: true,
-        whistle: false,
-        bladderCompatible: true,
-        includedFlasks: "None",
-        ratings: { comfort: 4, bounce: 4, breathability: 4, loadDistribution: 5, easeOfAccess: 4, durability: 5 },
-        bestFor: ["Mountain ultras", "Trekking pole users", "Technical terrain races"],
-        distances: ["50K", "50 Miles", "100K"],
-        pros: [
-          "Best trekking pole carry system in the category — Z-pole compatible",
-          "Alpine-grade durability from BD's mountaineering heritage",
-          "Excellent load distribution for heavier packs",
-          "Best value at $130 for the features offered",
-        ],
-        cons: [
-          "Less organized pocket system than Salomon",
-          "No whistle included",
-          "Less body-hugging than ADV Skin series",
-        ],
-        review: {
-          quote: "I carry poles for every mountain ultra. The BD Distance 8 is the only vest where I can grab and stow poles without stopping.",
-          race: "Waldo 100K",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4uBMOUm" },
       },
     ],
   },
@@ -397,43 +325,6 @@ const categories: {
     description:
       "When your race demands a bivy, rain jacket, emergency kit, night gear, and two days of nutrition, you need real capacity. These vests carry it all without sacrificing the running vest form factor.",
     vests: [
-      {
-        name: "ADV Skin 18 Set",
-        brand: "Salomon",
-        price: "$230",
-        weight: "390g",
-        capacity: "18L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "6 front pockets + 2 flask sleeves",
-        backStorage: "12L main + 6L extra pockets",
-        hydrationSystem: "2× 500ml flasks included + 3L bladder compatible",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "2× 500ml",
-        ratings: { comfort: 4, bounce: 5, breathability: 4, loadDistribution: 5, easeOfAccess: 5, durability: 5 },
-        bestFor: ["UTMB mandatory gear", "100-mile self-supported", "Alpine racing"],
-        distances: ["100K", "100 Miles", "Multi-day"],
-        pros: [
-          "18L that still runs like a race vest — remarkable engineering",
-          "Handles full UTMB mandatory gear list with room to spare",
-          "SensiFit scales to larger loads without bounce",
-          "Comprehensive pole carry system",
-          "Included 500ml flasks are top quality",
-        ],
-        cons: [
-          "Premium $230 price tag",
-          "18L feels excessive for anything shorter than 100K",
-          "Heavy when fully loaded — expect to notice it at mile 80",
-        ],
-        review: {
-          quote: "UTMB's mandatory gear list is brutal. The ADV Skin 18 is one of the only vests that fits it all and still lets me run properly.",
-          race: "UTMB",
-          runner: "Verified UTMB finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
       {
         name: "Fastpack 25",
         brand: "Ultimate Direction",
@@ -468,7 +359,7 @@ const categories: {
           race: "Petite Trotte à Léon (PTL)",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/3NmjZe7" },
       },
       {
         name: "Revolutiv 18L",
@@ -501,11 +392,6 @@ const categories: {
         ],
         review: {
           quote: "Raidlight built this vest for the UTMB circuit. It shows — every pocket placement makes sense when you're navigating mandatory gear requirements.",
-          race: "CCC",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
     ],
   },
   {
@@ -551,43 +437,7 @@ const categories: {
           race: "California International 50K",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "TrailFire",
-        brand: "OMM",
-        price: "$100",
-        weight: "118g",
-        capacity: "4L",
-        sizes: "XS–XL",
-        genderFit: "Unisex",
-        frontPockets: "2 flask pockets + 1 flat pocket",
-        backStorage: "3L flat storage",
-        hydrationSystem: "Soft flask compatible",
-        poleCarry: false,
-        whistle: true,
-        bladderCompatible: false,
-        includedFlasks: "None",
-        ratings: { comfort: 4, bounce: 5, breathability: 5, loadDistribution: 3, easeOfAccess: 4, durability: 4 },
-        bestFor: ["Fell/mountain racing", "British ultra circuit", "Minimalist 50K racing"],
-        distances: ["50K"],
-        pros: [
-          "OMM's fell running heritage — built for conditions, not comfort",
-          "Flat-pack design sits incredibly close to the body",
-          "British ultra racing pedigree",
-          "Whistle integrated",
-        ],
-        cons: [
-          "No flasks included",
-          "4L is restrictive for anything with mandatory gear",
-          "Limited availability outside UK market",
-        ],
-        review: {
-          quote: "The fell running community has trusted OMM for decades. The TrailFire is as minimal as a vest can get while still being functional.",
-          race: "Lakeland 50",
-          runner: "Verified finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4rJgSuN" },
       },
     ],
   },
@@ -811,21 +661,14 @@ function VestCard({
 
         {/* Affiliate links */}
         <div className="flex gap-2 flex-wrap mt-auto">
-          {[
-            ["REI", vest.affiliates.rei],
-            ["Amazon", vest.affiliates.amazon],
-            ["Running Warehouse", vest.affiliates.warehouse],
-          ].map(([label, href]) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="flex-1 text-center text-xs px-3 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
-            >
-              {label}
-            </a>
-          ))}
+          <a
+            href={vest.affiliates.amazon}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            className="flex-1 text-center text-xs px-3 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
+          >
+            Buy on Amazon
+          </a>
         </div>
       </div>
     </div>

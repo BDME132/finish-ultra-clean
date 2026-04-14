@@ -14,8 +14,8 @@ import {
 } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo-metadata";
 import {
-  Droplets, Candy, Coffee, Zap, Banana, Apple, Wheat, Beef,
-  AlertTriangle, Smile, Frown, Sun, Calendar, Salad, PersonStanding,
+  Droplets, Candy, Coffee, Zap,
+  AlertTriangle, Smile, Frown, Sun, Calendar, PersonStanding,
   RefreshCcw,
 } from "lucide-react";
 
@@ -42,7 +42,7 @@ type NutritionProduct = {
   pros: string[];
   cons: string[];
   tags: string[];
-  affiliates: { amazon: string; rei?: string; brand?: string };
+  affiliates: { amazon: string };
 };
 
 // ─── Product Categories ───────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ const productCategories: {
         ],
         cons: ["Most expensive gel on the market", "Neutral taste isn't for everyone", "Lower calories than some alternatives"],
         tags: ["elite", "sensitive", "all-distance"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4uzo13p" },
       },
       {
         name: "Energy Gel",
@@ -103,7 +103,7 @@ const productCategories: {
         ],
         cons: ["Higher osmolality can cause GI issues", "Thicker texture is hard to take without water", "Maltodextrin base isn't ideal for sensitive stomachs"],
         tags: ["popular", "caffeine", "value"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/473VbOB" },
       },
       {
         name: "Energy Gels",
@@ -122,7 +122,7 @@ const productCategories: {
         ],
         cons: ["Thick consistency — needs practice", "Refrigeration recommended for storage", "Limited caffeine options"],
         tags: ["real-food", "high-cal", "sensitive"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4uGaTd4" },
       },
       {
         name: "Chia Energy Gel",
@@ -140,7 +140,7 @@ const productCategories: {
         ],
         cons: ["Chia texture isn't for everyone", "Lower calorie density requires more volume", "Shorter shelf life than synthetic gels"],
         tags: ["natural", "sensitive", "mid-distance"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4lzYDGw" },
       },
       {
         name: "Beta Fuel Gel",
@@ -158,7 +158,7 @@ const productCategories: {
         ],
         cons: ["High carb load can overwhelm untrained gut", "Requires gut training to use effectively", "Thick, dense texture"],
         tags: ["high-carb", "advanced", "long-distance"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4uFBvuI" },
       },
     ],
   },
@@ -189,7 +189,7 @@ const productCategories: {
         ],
         cons: ["Sticky in warm weather — can be hard to handle", "May be too sweet late in races", "Difficult to eat while running at faster paces"],
         tags: ["electrolyte", "caffeine", "long-distance"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4rDbMAk" },
       },
       {
         name: "Sport Chews",
@@ -208,7 +208,7 @@ const productCategories: {
         ],
         cons: ["Lower calorie density requires more volume", "No caffeine option", "Higher price for fewer calories"],
         tags: ["natural", "sensitive", "mid-distance"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4ryZjNR" },
       },
       {
         name: "Organic Chews",
@@ -227,7 +227,7 @@ const productCategories: {
         ],
         cons: ["Honey can crystallize in cold weather", "Lower sodium than some competitors", "Some find them too sweet late in a race"],
         tags: ["organic", "value", "all-distance"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4cUtGuz" },
       },
       {
         name: "Stroopwafel",
@@ -246,7 +246,7 @@ const productCategories: {
         ],
         cons: ["Gets soggy if wet", "Hard to eat at faster running paces", "Not ideal for the first hours of racing (slower digestion)"],
         tags: ["real-food", "mid-race", "value"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/3PIclLD" },
       },
     ],
   },
@@ -277,7 +277,7 @@ const productCategories: {
         ],
         cons: ["Sweet taste becomes difficult late in long races", "200 cal/serving isn't enough alone for high-intensity efforts", "Requires precise measurement for ideal concentration"],
         tags: ["all-in-one", "sensitive", "all-distance"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/47QVr3H" },
       },
       {
         name: "Sport Hydration",
@@ -296,7 +296,7 @@ const productCategories: {
         ],
         cons: ["Lower calorie density requires pairing with other fuel", "No caffeine option", "More expensive per calorie than Tailwind"],
         tags: ["electrolyte", "low-sugar", "natural"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4bE9pY6" },
       },
       {
         name: "Drink Mix 320",
@@ -315,7 +315,7 @@ const productCategories: {
         ],
         cons: ["Significant investment at $45 for 14 servings", "High carb load requires extensive gut training", "Requires precise water measurement"],
         tags: ["elite", "high-carb", "sensitive"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/3PhqK1g" },
       },
       {
         name: "Sport Tablets",
@@ -334,7 +334,7 @@ const productCategories: {
         ],
         cons: ["Not a calorie source — must pair with other fuel", "Dissolves slowly in cold water", "Carbonation can cause bloating"],
         tags: ["electrolyte", "portable", "caffeine"],
-        affiliates: { amazon: "#", rei: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4bxhkq3" },
       },
     ],
   },
@@ -365,7 +365,7 @@ const productCategories: {
         ],
         cons: ["Small individual dose requires multiple per hour", "Tums-like texture isn't for everyone", "Mild flavor may not appeal to all"],
         tags: ["cramp", "mid-race", "value"],
-        affiliates: { amazon: "#", rei: "#" },
+        affiliates: { amazon: "https://amzn.to/40yeBHP" },
       },
       {
         name: "Caps",
@@ -384,7 +384,7 @@ const productCategories: {
         ],
         cons: ["Harder to swallow while running than chews", "Capsule breakdown can be inconsistent with some stomachs"],
         tags: ["capsule", "sodium", "hot-weather"],
-        affiliates: { amazon: "#", rei: "#" },
+        affiliates: { amazon: "https://amzn.to/4dtVGFv" },
       },
       {
         name: "Electrolyte Drink Mix",
@@ -403,95 +403,7 @@ const productCategories: {
         ],
         cons: ["Very high sodium isn't appropriate for everyone", "Premium price", "No calories means you still need calorie sources"],
         tags: ["high-sodium", "heavy-sweater", "heat"],
-        affiliates: { amazon: "#", brand: "#" },
-      },
-    ],
-  },
-  {
-    id: "realfood",
-    title: "Real Food Options",
-    icon: <Banana className="w-6 h-6 text-primary" />,
-    subtitle: "When gels fail, real food saves your race",
-    color: "from-lime-50 to-white",
-    badgeColor: "bg-lime-100 text-lime-800",
-    description:
-      "After 10+ hours, synthetic products often become impossible to stomach. Real food — familiar, comforting, and varied — is what keeps many runners moving through the night.",
-    products: [
-      {
-        name: "Medjool Dates",
-        brand: "Various",
-        price: "$0.25/date",
-        calories: "66 kcal",
-        carbs: "18g",
-        caffeine: "0mg",
-        sodium: "0mg",
-        bestFor: ["Natural fueling", "Sensitive stomachs", "Budget-conscious runners"],
-        pros: [
-          "Nature's gel — similar carb profile to energy gels",
-          "Rich in potassium (often depleted in long runs)",
-          "Incredibly affordable and available everywhere",
-          "Real food satisfaction prevents palate fatigue",
-        ],
-        cons: ["Low sodium — combine with salt supplementation", "Sticky in hot weather", "Short shelf life once unpacked"],
-        tags: ["natural", "value", "potassium"],
-        affiliates: { amazon: "#" },
-      },
-      {
-        name: "Baby Food Pouches",
-        brand: "Various",
-        price: "$1.00/pouch",
-        calories: "60–90 kcal",
-        carbs: "15–20g",
-        caffeine: "0mg",
-        sodium: "30–60mg",
-        bestFor: ["Sensitive stomachs", "Long 100-mile efforts", "Budget fueling"],
-        pros: [
-          "Real fruit and vegetable ingredients",
-          "Same squeeze format as a gel — easy to use on the run",
-          "Gentler on the stomach than most synthetic products",
-          "Much cheaper than specialty sports gels",
-        ],
-        cons: ["Lower calorie density requires more volume", "Limited flavors compared to sports products", "Some runners find the idea off-putting"],
-        tags: ["real-food", "sensitive", "value"],
-        affiliates: { amazon: "#" },
-      },
-      {
-        name: "Nut Butter Packets",
-        brand: "Justin's",
-        price: "$1.50/packet",
-        calories: "190 kcal",
-        carbs: "7g",
-        caffeine: "0mg",
-        sodium: "105mg",
-        bestFor: ["Miles 50+ fueling", "Calorie-dense options", "Savory craving relief"],
-        pros: [
-          "High calorie density (190 cal in a small packet)",
-          "Fat + protein helps sustain energy in later miles",
-          "Savory profile is a welcome break from sweet",
-          "Portable and doesn't melt or spoil",
-        ],
-        cons: ["High fat slows digestion — not ideal early in race", "Very thick — needs water to wash down", "Minimal carbs for primary fueling"],
-        tags: ["savory", "late-race", "calorie-dense"],
-        affiliates: { amazon: "#" },
-      },
-      {
-        name: "Boiled Potatoes",
-        brand: "Aid Station Classic",
-        price: "Free (aid stations)",
-        calories: "50–70 kcal",
-        carbs: "12–15g",
-        caffeine: "0mg",
-        sodium: "Variable (salted)",
-        bestFor: ["Night sections", "Nausea management", "Salt supplementation"],
-        pros: [
-          "The most universally tolerated ultra fuel — available at most aid stations",
-          "Bland enough to eat when nothing else stays down",
-          "Warm salted potatoes provide sodium and comfort simultaneously",
-          "Free at aid stations",
-        ],
-        cons: ["Low calorie density requires volume", "Not available between aid stations", "Can be hard to chew while running"],
-        tags: ["aid-station", "nausea", "savory"],
-        affiliates: { amazon: "#" },
+        affiliates: { amazon: "https://amzn.to/4lB2cwo" },
       },
     ],
   },
@@ -505,25 +417,6 @@ const productCategories: {
     description:
       "Caffeine is the most evidence-based performance supplement in sports science. Properly timed, it reduces perceived effort, delays fatigue, and can turn a dying race around.",
     products: [
-      {
-        name: "Caffeine Pills 200mg",
-        brand: "Generic",
-        price: "$0.10/pill",
-        calories: "0 kcal",
-        carbs: "0g",
-        caffeine: "200mg",
-        sodium: "0mg",
-        bestFor: ["Precise dosing", "Night running", "Budget caffeine strategy"],
-        pros: [
-          "Most affordable caffeine source by a large margin",
-          "Precise dosing — know exactly what you're taking",
-          "No stomach volume — adds no liquid or food bulk",
-          "Fast-acting when taken with water",
-        ],
-        cons: ["No calories — purely caffeine, not fuel", "Easy to accidentally overdose", "Some runners dislike pills at night"],
-        tags: ["precise", "night", "value"],
-        affiliates: { amazon: "#" },
-      },
       {
         name: "Canaberry (100mg caffeine)",
         brand: "Spring Energy",
@@ -541,7 +434,7 @@ const productCategories: {
         ],
         cons: ["Most expensive caffeinated gel available", "Thick consistency", "Coffee flavor isn't for everyone"],
         tags: ["natural", "night", "high-cal"],
-        affiliates: { amazon: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/4uFBgQk" },
       },
       {
         name: "Rebuild Recovery",
@@ -559,7 +452,7 @@ const productCategories: {
         ],
         cons: ["Pricier than chocolate milk which achieves similar results", "Some runners prefer whole food recovery"],
         tags: ["recovery", "post-race", "protein"],
-        affiliates: { amazon: "#", brand: "#" },
+        affiliates: { amazon: "https://amzn.to/40CwuVW" },
       },
     ],
   },
@@ -703,21 +596,14 @@ function ProductCard({
 
         {/* Affiliate links */}
         <div className="flex gap-2 flex-wrap mt-auto">
-          {[
-            ["Amazon", product.affiliates.amazon],
-            ...(product.affiliates.rei ? [["REI", product.affiliates.rei]] : []),
-            ...(product.affiliates.brand ? [["Brand Site", product.affiliates.brand]] : []),
-          ].map(([label, href]) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="flex-1 text-center text-xs px-3 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
-            >
-              {label}
-            </a>
-          ))}
+          <a
+            href={product.affiliates.amazon}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            className="flex-1 text-center text-xs px-3 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
+          >
+            Buy on Amazon
+          </a>
         </div>
       </div>
     </div>

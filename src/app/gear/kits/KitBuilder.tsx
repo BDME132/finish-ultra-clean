@@ -8,7 +8,7 @@ import type { SavedKit, SavedKitItem } from "@/lib/kit-types";
 import {
   Flag, Mountain, Thermometer, Moon, Medal, DollarSign, Droplets,
   Salad, Footprints, Target, Flashlight, Shirt, Package, Zap,
-  Shield, HardHat, Dumbbell, ShoppingCart, Lightbulb, CheckCircle,
+  Shield, HardHat, Dumbbell, ShoppingCart, CheckCircle,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -29,11 +29,7 @@ type Answers = {
 type RetailerLink = { url: string; price: number };
 
 type ProductLinks = {
-  rei?: RetailerLink;
-  amazon?: RetailerLink;
-  backcountry?: RetailerLink;
-  rw?: RetailerLink;
-  direct?: RetailerLink;
+  amazon: RetailerLink;
 };
 
 type GearItem = {
@@ -91,13 +87,10 @@ function trackEvent(payload: AnalyticsEvent) {
 
 // ─── Affiliate link builder ───────────────────────────────────────────────────
 
-function makeLinks(searchTerm: string, basePrice: number, amazonDiscount = 0.97, rwDiscount = 0.98): ProductLinks {
+function makeLinks(searchTerm: string, basePrice: number): ProductLinks {
   const q = encodeURIComponent(searchTerm);
   return {
-    rei: { url: `https://www.rei.com/search?q=${q}&cm_mmc=aff_AL-_-finishultra-_-1`, price: basePrice },
-    amazon: { url: `https://www.amazon.com/s?k=${q}&tag=finishultra-20`, price: Math.round(basePrice * amazonDiscount) },
-    backcountry: { url: `https://www.backcountry.com/search?q=${q}&CMP_ID=finishultra`, price: basePrice },
-    rw: { url: `https://www.runningwarehouse.com/searchresults/?searchTerm=${q}&sourceCode=FFULTRA`, price: Math.round(basePrice * rwDiscount) },
+    amazon: { url: `https://www.amazon.com/s?k=${q}&tag=finishultra-20`, price: basePrice },
   };
 }
 
@@ -429,7 +422,6 @@ function buildKit(answers: Answers): Kit {
       specs: ["Includes: Squirrel's Nut Butter 1oz", "Includes: Leukotape P (1\" roll)", "Includes: Sterile needle + gauze", "Weight: 2oz total kit"],
       links: {
         amazon: { url: "https://www.amazon.com/s?k=squirrels+nut+butter+leukotape&tag=finishultra-20", price: 25 },
-        rw: { url: "https://www.runningwarehouse.com/searchresults/?searchTerm=blister+kit&sourceCode=FFULTRA", price: 24 },
       },
     });
     items.push({
@@ -500,8 +492,6 @@ function buildKit(answers: Answers): Kit {
       specs: ["Coverage: Global satellite network", "Messaging: Two-way SMS via satellite", "Tracking: Customizable intervals", "SOS: 24/7 GEOS response center"],
       links: {
         amazon: { url: "https://www.amazon.com/s?k=SPOT+X+Satellite+Communicator&tag=finishultra-20", price: 150 },
-        rei: { url: "https://www.rei.com/search?q=spot+x+satellite&cm_mmc=aff_AL-_-finishultra-_-1", price: 150 },
-        direct: { url: "https://www.findmespot.com/en-us/products-services/SPOT-X?aff=finishultra", price: 149 },
       },
     });
     items.push({
@@ -638,9 +628,6 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Recovery": <Dumbbell className="w-5 h-5 text-primary" />,
 };
 
-const RETAILER_LABELS: Record<string, string> = {
-  rei: "REI", amazon: "Amazon", backcountry: "Backcountry", rw: "Running Warehouse", direct: "Brand Direct",
-};
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
 
@@ -658,14 +645,6 @@ function ProductCard({
   kitType: string;
 }) {
   const [showSpecs, setShowSpecs] = useState(false);
-
-  const retailers = Object.entries(item.links) as [string, RetailerLink][];
-  const lowestRetailer = retailers.reduce<[string, RetailerLink] | null>((best, curr) =>
-    !best || curr[1].price < best[1].price ? curr : best, null);
-  const primaryRetailer = item.links.rei ? ["rei", item.links.rei] as [string, RetailerLink]
-    : retailers[0] ?? null;
-  const secondaryRetailers = retailers.filter(([k]) => k !== primaryRetailer?.[0]);
-  const hasSavings = lowestRetailer && primaryRetailer && lowestRetailer[1].price < primaryRetailer[1].price - 4;
 
   return (
     <div className={`rounded-xl border transition-all ${purchased ? "border-green-200 bg-green-50/50 opacity-80" : "border-gray-200 bg-white"}`}>
@@ -727,60 +706,18 @@ function ProductCard({
           </div>
         )}
 
-        {/* Buy buttons */}
-        {retailers.length > 0 && (
-          <div className="space-y-2">
-            {/* Primary button */}
-            {primaryRetailer && (
-              <a
-                href={primaryRetailer[1].url}
-                target="_blank"
-                rel="noopener noreferrer sponsored"
-                onClick={() => trackEvent({ event: "product_click", product_name: `${item.brand} ${item.product}`, retailer: RETAILER_LABELS[primaryRetailer[0]], price: primaryRetailer[1].price, category: item.category, kit_type: kitType, position })}
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary hover:bg-blue-700 text-white font-semibold text-sm rounded-lg transition-all hover:shadow-md"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                <span>Buy at {RETAILER_LABELS[primaryRetailer[0]]} — ${primaryRetailer[1].price}</span>
-                <span>→</span>
-              </a>
-            )}
-
-            {/* Secondary retailer buttons */}
-            {secondaryRetailers.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {secondaryRetailers.map(([key, info]) => (
-                  <a
-                    key={key}
-                    href={info.url}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    onClick={() => trackEvent({ event: "product_click", product_name: `${item.brand} ${item.product}`, retailer: RETAILER_LABELS[key], price: info.price, category: item.category, kit_type: kitType, position })}
-                    className="flex-1 min-w-[120px] text-center px-3 py-2 border border-gray-200 hover:border-primary hover:bg-primary/5 text-dark text-xs font-medium rounded-lg transition-all"
-                  >
-                    {RETAILER_LABELS[key]} — ${info.price}
-                  </a>
-                ))}
-              </div>
-            )}
-
-            {/* Lowest price badge */}
-            {hasSavings && lowestRetailer && (() => {
-              const savings = primaryRetailer![1].price - lowestRetailer[1].price;
-              return (
-                <div
-                  className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 cursor-pointer"
-                  onClick={() => trackEvent({ event: "price_comparison_viewed", product_name: `${item.brand} ${item.product}`, cheapest_retailer: RETAILER_LABELS[lowestRetailer[0]], savings })}
-                >
-                  <Lightbulb className="w-4 h-4 text-yellow-600 flex-shrink-0" />
-                  <p className="text-xs text-dark font-medium">
-                    Lowest price: {RETAILER_LABELS[lowestRetailer[0]]} — ${lowestRetailer[1].price}{" "}
-                    <span className="text-green-700">(save ${savings})</span>
-                  </p>
-                </div>
-              );
-            })()}
-          </div>
-        )}
+        {/* Buy button */}
+        <a
+          href={item.links.amazon.url}
+          target="_blank"
+          rel="noopener noreferrer sponsored"
+          onClick={() => trackEvent({ event: "product_click", product_name: `${item.brand} ${item.product}`, retailer: "Amazon", price: item.links.amazon.price, category: item.category, kit_type: kitType, position })}
+          className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary hover:bg-blue-700 text-white font-semibold text-sm rounded-lg transition-all hover:shadow-md"
+        >
+          <ShoppingCart className="w-4 h-4" />
+          <span>Buy on Amazon — ${item.links.amazon.price}</span>
+          <span>→</span>
+        </a>
 
         {/* Purchased state */}
         {purchased && (
@@ -1123,39 +1060,19 @@ export default function KitBuilder() {
           {/* ── GEAR TAB ──────────────────────────────────────────── */}
           {activeTab === "gear" && (
             <div className="space-y-5">
-              {/* Bulk buy buttons */}
+              {/* Bulk buy button */}
               <div className="bg-dark rounded-xl p-4 space-y-2">
                 <p className="text-white text-xs font-semibold uppercase tracking-wide mb-3">Quick Purchase Options</p>
                 <a
-                  href={`https://www.rei.com/search?q=ultra+marathon+gear&cm_mmc=aff_AL-_-finishultra-_-1`}
+                  href={`https://www.amazon.com/s?k=ultra+marathon+gear&tag=finishultra-20`}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
-                  onClick={() => trackEvent({ event: "bulk_purchase_click", retailer: "REI", total_price: totalCost, kit_type: kit.title })}
+                  onClick={() => trackEvent({ event: "bulk_purchase_click", retailer: "Amazon", total_price: totalCost, kit_type: kit.title })}
                   className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary hover:bg-blue-700 text-white font-semibold text-sm rounded-lg transition-all hover:shadow-md"
                 >
                   <ShoppingCart className="w-4 h-4" />
-                  Shop Complete Kit at REI — ${totalCost.toLocaleString()}
+                  Shop Complete Kit on Amazon — ${totalCost.toLocaleString()}
                 </a>
-                <div className="grid grid-cols-2 gap-2">
-                  <a
-                    href={`https://www.amazon.com/s?k=ultra+marathon+gear&tag=finishultra-20`}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    onClick={() => trackEvent({ event: "bulk_purchase_click", retailer: "Amazon", total_price: Math.round(totalCost * 0.97), kit_type: kit.title })}
-                    className="text-center px-3 py-2.5 border border-white/20 hover:bg-white/10 text-white text-xs font-medium rounded-lg transition-all"
-                  >
-                    Amazon — ${Math.round(totalCost * 0.97).toLocaleString()}
-                  </a>
-                  <a
-                    href={`https://www.runningwarehouse.com/searchresults/?searchTerm=ultra+trail&sourceCode=FFULTRA`}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    onClick={() => trackEvent({ event: "bulk_purchase_click", retailer: "Running Warehouse", total_price: Math.round(totalCost * 0.96), kit_type: kit.title })}
-                    className="text-center px-3 py-2.5 border border-white/20 hover:bg-white/10 text-white text-xs font-medium rounded-lg transition-all"
-                  >
-                    Running Warehouse — ${Math.round(totalCost * 0.96).toLocaleString()}
-                  </a>
-                </div>
                 <p className="text-gray-400 text-[11px] text-center pt-1">
                   Or purchase items individually below ↓
                 </p>

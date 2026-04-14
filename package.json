@@ -6,9 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "blog:draft": "tsx scripts/generate-blog-draft.ts",
+    "blog:calendar": "tsx scripts/generate-content-calendar.ts",
+    "blog:publish": "tsx scripts/publish-scheduled.ts",
+    "blog:social": "tsx scripts/generate-social-posts.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
     "@ai-sdk/openai": "^3.0.34",
     "@ai-sdk/react": "^3.0.102",
     "@supabase/ssr": "^0.8.0",
@@ -24,6 +29,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "gray-matter": "^4.0.3",
+    "tsx": "^4.19.2",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.17.0",

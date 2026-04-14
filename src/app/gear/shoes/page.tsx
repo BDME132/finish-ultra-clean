@@ -50,7 +50,7 @@ type Shoe = {
   pros: string[];
   cons: string[];
   review: { quote: string; race: string; runner: string };
-  affiliates: { rei: string; amazon: string; warehouse: string };
+  affiliates: { amazon: string };
 };
 
 const categories: {
@@ -94,7 +94,7 @@ const categories: {
           race: "Western States 100",
           runner: "Verified 100-mile finisher",
         },
-        affiliates: { rei: "#", amazon: "https://amzn.to/4broufc", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/41b2CQt" },
       },
       {
         name: "Mafate Speed 4",
@@ -117,7 +117,7 @@ const categories: {
           race: "Hardrock 100",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/3PcIyus" },
       },
       {
         name: "Olympus 5",
@@ -140,7 +140,7 @@ const categories: {
           race: "Javelina Jundred",
           runner: "Verified 100-mile finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4sDutES" },
       },
       {
         name: "Endorphin Edge",
@@ -163,7 +163,7 @@ const categories: {
           race: "Lake Sonoma 50",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4sIF8Oo" },
       },
     ],
   },
@@ -177,29 +177,6 @@ const categories: {
       "Stripped-down shoes that prioritize speed and feel. A smart choice for 50K race day or tempo training when you want responsiveness without dead weight.",
     stackNote: "Stack height: 20–28mm",
     shoes: [
-      {
-        name: "S/Lab Ultra 3",
-        brand: "Salomon",
-        price: "$200",
-        weight: "9.2 oz",
-        stack: "30/24mm",
-        drop: "6mm",
-        lug: "4mm",
-        midsole: "EnergyCell foam",
-        outsole: "Contagrip MA",
-        rockPlate: false,
-        widths: "Regular",
-        ratings: { cushioning: 3, traction: 4, durability: 4, breathability: 5, groundFeel: 4 },
-        bestFor: ["Race day 50K/50M", "Technical trails at speed", "Experienced runners with strong feet"],
-        pros: ["SensiFit cradles foot perfectly on descents", "Excellent fit-to-feel ratio", "Used by elite ultra runners worldwide"],
-        cons: ["Expensive", "Narrow fit", "Not enough cushion for 100M"],
-        review: {
-          quote: "SensiFit is the most secure trail fit I've ever worn. I flew down the descents with zero slippage.",
-          race: "UTMB",
-          runner: "Elite finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
       {
         name: "Peregrine 14",
         brand: "Saucony",
@@ -221,7 +198,7 @@ const categories: {
           race: "Cascade Crest 100",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4dqik1w" },
       },
       {
         name: "Terraventure 4",
@@ -244,7 +221,7 @@ const categories: {
           race: "Black Hills 100",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/3NcJxdD" },
       },
     ],
   },
@@ -279,7 +256,7 @@ const categories: {
           race: "Waldo 100K",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4bARBNp" },
       },
       {
         name: "Speedcross 6",
@@ -302,7 +279,7 @@ const categories: {
           race: "Tillamook Burn 50K",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4sOhhNn" },
       },
       {
         name: "Mudclaw G 260",
@@ -325,7 +302,7 @@ const categories: {
           race: "Lakeland 100",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4uT1rTN" },
       },
     ],
   },
@@ -360,7 +337,7 @@ const categories: {
           race: "Leadville 100",
           runner: "Verified multi-100 finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4bsYAaV" },
       },
       {
         name: "Timp 5",
@@ -383,7 +360,7 @@ const categories: {
           race: "Bear 100",
           runner: "Verified 100-mile finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4sj1g2h" },
       },
       {
         name: "Ultraventure 3",
@@ -406,7 +383,7 @@ const categories: {
           race: "Zion 100",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/4rAEWQo" },
       },
     ],
   },
@@ -441,30 +418,7 @@ const categories: {
           race: "Hardrock 100",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-      },
-      {
-        name: "Tecton X2",
-        brand: "Hoka",
-        price: "$225",
-        weight: "9.5 oz",
-        stack: "38/30mm",
-        drop: "8mm",
-        lug: "4mm",
-        midsole: "ProFly X with dual carbon plates",
-        outsole: "Vibram Megagrip",
-        rockPlate: true,
-        widths: "Regular",
-        ratings: { cushioning: 5, traction: 5, durability: 4, groundFeel: 3, breathability: 4 },
-        bestFor: ["Mixed mountain terrain", "Runners wanting max cushion + mountain grip", "Technical 100K/100M"],
-        pros: ["Two carbon fiber plates for explosive climbing", "Max cushion for descents", "Vibram Megagrip on alpine terrain", "Surprisingly lightweight"],
-        cons: ["Premium price", "High stack can feel unstable on off-camber", "Requires break-in on technical ground"],
-        review: {
-          quote: "The uphills felt effortless and the descents didn't destroy my quads. It's the future of mountain ultra footwear.",
-          race: "Transvulcania",
-          runner: "Elite finisher",
-        },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/47TxfxF" },
       },
       {
         name: "Golden Gate ATR",
@@ -487,7 +441,7 @@ const categories: {
           race: "Lavaredo Ultra Trail",
           runner: "Verified finisher",
         },
-        affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+        affiliates: { amazon: "https://amzn.to/477rDQh" },
       },
     ],
   },
@@ -657,21 +611,14 @@ function ShoeCard({
 
         {/* Affiliate links */}
         <div className="flex gap-2 flex-wrap mt-auto">
-          {[
-            ["REI", shoe.affiliates.rei],
-            ["Amazon", shoe.affiliates.amazon],
-            ["Running Warehouse", shoe.affiliates.warehouse],
-          ].map(([label, href]) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="flex-1 text-center text-xs px-3 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
-            >
-              {label}
-            </a>
-          ))}
+          <a
+            href={shoe.affiliates.amazon}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            className="flex-1 text-center text-xs px-3 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
+          >
+            Buy on Amazon
+          </a>
         </div>
       </div>
     </div>

@@ -20,7 +20,7 @@ const VESTS = [
     hydrationTags: ["flasks", "both"],
     priorityTags: ["bounce", "light", "access"],
     blurb: "The benchmark race vest. Skin-tight SensiFit hugs your body with zero bounce. Two 500ml soft flasks included. The go-to choice for elite ultra runners worldwide.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+    affiliates: { amazon: "https://amzn.to/47PXJA2" },
   },
   {
     id: "ud-race-vest-6",
@@ -37,24 +37,7 @@ const VESTS = [
     hydrationTags: ["flasks", "both"],
     priorityTags: ["bounce", "access", "versatility"],
     blurb: "UD's flagship race vest. Kangaroo front pocket fits everything you need for a 50K. Comfort Cinch straps eliminate bounce while keeping the design minimal.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-  },
-  {
-    id: "patagonia-slope-runner-8",
-    name: "Slope Runner 8L",
-    brand: "Patagonia",
-    category: "race",
-    price: "$149",
-    weight: "220g",
-    capacity: "8L",
-    genderFit: "unisex",
-    distanceTags: ["50k", "50m", "100k"],
-    buildTags: ["average", "large"],
-    capacityTags: ["5to8"],
-    hydrationTags: ["flasks", "bladder"],
-    priorityTags: ["versatility", "bounce"],
-    blurb: "Patagonia's sustainable race vest. Made with recycled materials, generous 8L capacity, and a clean no-fuss design that works for training and race day.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+    affiliates: { amazon: "https://amzn.to/3NpYeKo" },
   },
   {
     id: "nathan-pinnacle-4",
@@ -71,7 +54,7 @@ const VESTS = [
     hydrationTags: ["flasks"],
     priorityTags: ["light", "bounce"],
     blurb: "Featherlight 4L vest for supported 50Ks. Dual 20oz Exoshot flasks in angled front pockets make drinking on the move completely natural.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+    affiliates: { amazon: "https://amzn.to/4bObB06" },
   },
   // ── All-Around Vests (8-12L) ───────────────────────────────────────────────
   {
@@ -89,7 +72,7 @@ const VESTS = [
     hydrationTags: ["flasks", "both"],
     priorityTags: ["bounce", "access", "versatility"],
     blurb: "The full-distance Salomon workhorse. 12L of organized storage, SensiFit, two included 500ml flasks, and enough pockets for 100-mile mandatory gear. The most trusted vest in ultra running.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+    affiliates: { amazon: "https://amzn.to/47apuDo" },
   },
   {
     id: "osprey-duro-6",
@@ -106,7 +89,7 @@ const VESTS = [
     hydrationTags: ["bladder", "both"],
     priorityTags: ["bounce", "versatility"],
     blurb: "Osprey's trail running vest with AirScape back panel for breathability. Lifetime warranty. The Dyna is women's-specific with adjusted shoulder and chest geometry.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+    affiliates: { amazon: "https://amzn.to/47QUisV" },
   },
   {
     id: "nathan-vaporkrar-12",
@@ -123,24 +106,7 @@ const VESTS = [
     hydrationTags: ["flasks", "both"],
     priorityTags: ["access", "capacity", "versatility"],
     blurb: "Designed with Rob Krar. Wide front pockets, massive back storage, and enough organizational pockets to handle 100-mile mandatory gear requirements.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-  },
-  {
-    id: "black-diamond-distance-8",
-    name: "Distance 8",
-    brand: "Black Diamond",
-    category: "allround",
-    price: "$130",
-    weight: "248g",
-    capacity: "8L",
-    genderFit: "unisex",
-    distanceTags: ["50k", "50m", "100k"],
-    buildTags: ["average", "large"],
-    capacityTags: ["5to8", "8to12"],
-    hydrationTags: ["flasks", "bladder"],
-    priorityTags: ["poles", "versatility", "bounce"],
-    blurb: "Built by mountaineers for trail runners. Exceptional trekking pole stowage, alpine heritage durability, and Z-pole carry compatibility. Perfect for mountain ultras.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+    affiliates: { amazon: "https://amzn.to/4uBMOUm" },
   },
   // ── Expedition / 100-Mile Vests (12L+) ────────────────────────────────────
   {
@@ -158,41 +124,7 @@ const VESTS = [
     hydrationTags: ["bladder", "both"],
     priorityTags: ["capacity", "poles", "weather"],
     blurb: "The self-supported ultra pack. 25L swallows mandatory gear, a down jacket, and everything you need for a multi-day stage race. Built for runners who are out there alone.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-  },
-  {
-    id: "salomon-adv-skin-18",
-    name: "ADV Skin 18 Set",
-    brand: "Salomon",
-    category: "expedition",
-    price: "$230",
-    weight: "390g",
-    capacity: "18L",
-    genderFit: "unisex",
-    distanceTags: ["100k", "100m", "multiday"],
-    buildTags: ["small", "average", "large"],
-    capacityTags: ["12plus"],
-    hydrationTags: ["flasks", "bladder", "both"],
-    priorityTags: ["capacity", "bounce", "poles", "weather"],
-    blurb: "Salomon's maximum-capacity vest that still runs like a race vest. 18L feels shockingly stable at speed. The choice for UTMB-style mandatory gear races.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-  },
-  {
-    id: "raidlight-revolutiv-18",
-    name: "Revolutiv 18L",
-    brand: "Raidlight",
-    category: "expedition",
-    price: "$180",
-    weight: "350g",
-    capacity: "18L",
-    genderFit: "unisex",
-    distanceTags: ["100k", "100m", "multiday"],
-    buildTags: ["average", "large"],
-    capacityTags: ["12plus"],
-    hydrationTags: ["flasks", "bladder", "both"],
-    priorityTags: ["capacity", "poles", "weather"],
-    blurb: "French engineering for alpine ultra racing. 18L built for UTMB's extensive mandatory gear. Excellent pole carry, waterproof pockets, and bomber durability.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+    affiliates: { amazon: "https://amzn.to/3NmjZe7" },
   },
   // ── Minimalist (Under 5L) ──────────────────────────────────────────────────
   {
@@ -210,24 +142,7 @@ const VESTS = [
     hydrationTags: ["flasks"],
     priorityTags: ["light", "bounce"],
     blurb: "Barely there. 100g barely registers on your body. Two 500ml flasks, a small back pocket for a jacket, and nothing else. For supported 50Ks when every gram counts.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
-  },
-  {
-    id: "omm-trailfire",
-    name: "TrailFire",
-    brand: "OMM",
-    category: "minimalist",
-    price: "$100",
-    weight: "118g",
-    capacity: "4L",
-    genderFit: "unisex",
-    distanceTags: ["50k"],
-    buildTags: ["small", "average"],
-    capacityTags: ["under5"],
-    hydrationTags: ["flasks"],
-    priorityTags: ["light", "bounce"],
-    blurb: "British ultra racing heritage. Ultra-minimal design with an innovative flat-pack construction. No wasted material — just what you need and nothing more.",
-    affiliates: { rei: "#", amazon: "#", warehouse: "#" },
+    affiliates: { amazon: "https://amzn.to/4rJgSuN" },
   },
 ];
 
@@ -443,21 +358,14 @@ export default function VestFinder() {
                 </div>
                 <p className="text-sm text-gray leading-relaxed mb-4">{vest.blurb}</p>
                 <div className="flex gap-2 flex-wrap">
-                  {[
-                    ["REI", vest.affiliates.rei],
-                    ["Amazon", vest.affiliates.amazon],
-                    ["Running Warehouse", vest.affiliates.warehouse],
-                  ].map(([label, href]) => (
-                    <a
-                      key={label}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer sponsored"
-                      className="text-xs px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors font-medium"
-                    >
-                      {label}
-                    </a>
-                  ))}
+                  <a
+                    href={vest.affiliates.amazon}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
+                  >
+                    Buy on Amazon
+                  </a>
                 </div>
               </div>
             ))}
