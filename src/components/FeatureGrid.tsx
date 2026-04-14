@@ -40,8 +40,8 @@ export default function FeatureGrid() {
         <h2 className="section-label">
           Everything You Need to Get Started
         </h2>
-        <p className="text-gray mb-12 max-w-2xl">
-          Built by beginners, for beginners. No gatekeeping, no jargon — just the stuff that actually helps.
+        <p className="text-gray text-sm mb-12">
+          Trusted by thousands of runners training for their first ultra.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {features.map((feature) => (
