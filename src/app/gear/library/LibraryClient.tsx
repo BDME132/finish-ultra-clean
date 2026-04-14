@@ -249,24 +249,14 @@ function ProductCard({
 
         {/* Affiliate links */}
         <div className="flex flex-wrap gap-2 mb-3">
-          {product.affiliateLinks.rei && (
-            <a
-              href={product.affiliateLinks.rei}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 text-dark hover:border-primary hover:text-primary transition-colors"
-            >
-              REI <ExternalLink className="w-3 h-3" />
-            </a>
-          )}
           {product.affiliateLinks.amazon && (
             <a
               href={product.affiliateLinks.amazon}
               target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 text-dark hover:border-primary hover:text-primary transition-colors"
+              rel="noopener noreferrer sponsored"
+              className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors"
             >
-              Amazon <ExternalLink className="w-3 h-3" />
+              Buy on Amazon <ExternalLink className="w-3 h-3" />
             </a>
           )}
         </div>

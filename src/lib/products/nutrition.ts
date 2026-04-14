@@ -21,18 +21,13 @@ export const nutrition: NutritionProduct[] = [
       calories: "100 per serving",
       carbs: "25g",
       sodium: "310mg per serving",
-      servings: "30 per bag",
-    },
+      servings: "30 per bag" },
     nutritionType: "drink-mix",
     stomachFriendly: true,
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Tailwind%20Endurance%20Fuel&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Tailwind%20Endurance%20Fuel&tag=finishultra-20",
-    },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Tailwind%20Endurance%20Fuel&tag=finishultra-20" },
     tags: ["drink-mix", "all-in-one", "calories", "electrolytes", "stomach-friendly"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "skratch-sport-hydration-mix",
     name: "Sport Hydration Mix",
@@ -48,17 +43,12 @@ export const nutrition: NutritionProduct[] = [
       calories: "80 per serving",
       sodium: "380mg per serving",
       carbs: "18g",
-      servings: "20 per bag",
-    },
+      servings: "20 per bag" },
     nutritionType: "drink-mix",
     stomachFriendly: true,
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Skratch%20Labs%20Sport%20Hydration%20Mix&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Skratch%20Labs%20Sport%20Hydration%20Mix&tag=finishultra-20",
-    },
-    tags: ["drink-mix", "electrolytes", "low-sugar", "heavy-sweater", "hot-weather"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Skratch%20Labs%20Sport%20Hydration%20Mix&tag=finishultra-20" },
+    tags: ["drink-mix", "electrolytes", "low-sugar", "heavy-sweater", "hot-weather"] },
 
   // ── Gels ──────────────────────────────────────────────────────────────────
 
@@ -77,17 +67,12 @@ export const nutrition: NutritionProduct[] = [
       calories: "100 per gel",
       carbs: "22g",
       caffeine: "0-40mg (varies by flavor)",
-      servings: "24 per box",
-    },
+      servings: "24 per box" },
     nutritionType: "gel",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=GU%20Energy%20Gels%2024%20pack&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=GU%20Energy%20Gels%2024%20pack&tag=finishultra-20",
-    },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=GU%20Energy%20Gels%2024%20pack&tag=finishultra-20" },
     tags: ["gel", "amino-acids", "variety-pack", "aid-station-staple"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "spring-energy-awesome-sauce",
     name: "Awesome Sauce Gel",
@@ -102,17 +87,12 @@ export const nutrition: NutritionProduct[] = [
     specs: {
       calories: "~130 per gel",
       carbs: "~30g",
-      servings: "12 per box",
-    },
+      servings: "12 per box" },
     nutritionType: "gel",
     stomachFriendly: true,
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=Spring%20Energy%20Awesome%20Sauce%20Gel&tag=finishultra-20",
-      rei: "https://www.rei.com/search?q=Spring%20Energy%20Awesome%20Sauce&cm_mmc=aff_AL-_-finishultra-_-1",
-    },
-    tags: ["gel", "real-food", "stomach-friendly", "rice-based"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Spring%20Energy%20Awesome%20Sauce%20Gel&tag=finishultra-20" },
+    tags: ["gel", "real-food", "stomach-friendly", "rice-based"] },
   {
     id: "maurten-gel-100",
     name: "Gel 100",
@@ -127,17 +107,12 @@ export const nutrition: NutritionProduct[] = [
     specs: {
       calories: "100 per gel",
       carbs: "25g",
-      caffeine: "0mg (plain)",
-    },
+      caffeine: "0mg (plain)" },
     nutritionType: "gel",
     stomachFriendly: true,
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=Maurten%20Gel%20100&tag=finishultra-20",
-      rei: "https://www.rei.com/search?q=Maurten%20Gel%20100&cm_mmc=aff_AL-_-finishultra-_-1",
-    },
-    tags: ["gel", "hydrogel", "sensitive-stomach", "premium", "gi-friendly"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Maurten%20Gel%20100&tag=finishultra-20" },
+    tags: ["gel", "hydrogel", "sensitive-stomach", "premium", "gi-friendly"] },
 
   // ── Real Food ─────────────────────────────────────────────────────────────
 
@@ -154,16 +129,11 @@ export const nutrition: NutritionProduct[] = [
       "Real food in portable oatmeal format. Whole grains, dates, and nuts give you a fat/protein/carb mix that sustains energy longer than simple sugars — ideal for iron-gut runners who can handle solid food at race pace.",
     specs: {
       calories: "200 per pouch",
-      carbs: "30g",
-    },
+      carbs: "30g" },
     nutritionType: "real-food",
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=Picky%20Bars%20Picky%20Oats&tag=finishultra-20",
-      rei: "https://www.rei.com/search?q=Picky%20Bars%20Picky%20Oats&cm_mmc=aff_AL-_-finishultra-_-1",
-    },
-    tags: ["real-food", "oatmeal", "whole-grains", "sustained-energy"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Picky%20Bars%20Picky%20Oats&tag=finishultra-20" },
+    tags: ["real-food", "oatmeal", "whole-grains", "sustained-energy"] },
   {
     id: "muir-energy-real-food-gel",
     name: "Real Food Gel",
@@ -177,17 +147,12 @@ export const nutrition: NutritionProduct[] = [
       "130 calories of dates, nuts, and seeds digest cleanly and prevent the flavor fatigue that kills gel-only strategies after mile 40. Real food in a portable, squeezable format.",
     specs: {
       calories: "130 per gel",
-      carbs: "19g",
-    },
+      carbs: "19g" },
     nutritionType: "real-food",
     stomachFriendly: true,
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=Muir%20Energy%20Real%20Food%20Gel&tag=finishultra-20",
-      rei: "https://www.rei.com/search?q=Muir%20Energy%20Gel&cm_mmc=aff_AL-_-finishultra-_-1",
-    },
-    tags: ["real-food", "gel-format", "natural", "no-artificial"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Muir%20Energy%20Real%20Food%20Gel&tag=finishultra-20" },
+    tags: ["real-food", "gel-format", "natural", "no-artificial"] },
 
   // ── Chews ─────────────────────────────────────────────────────────────────
 
@@ -206,16 +171,11 @@ export const nutrition: NutritionProduct[] = [
       calories: "~33 per blok (100 per 3-blok serving)",
       carbs: "24g per 3 bloks",
       sodium: "70mg per 3 bloks",
-      servings: "18 packages",
-    },
+      servings: "18 packages" },
     nutritionType: "chew",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Clif%20Shot%20Bloks%20Energy%20Chews&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Clif%20Shot%20Bloks%20Energy%20Chews&tag=finishultra-20",
-    },
-    tags: ["chew", "portable", "cold-weather-friendly", "variety"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Clif%20Shot%20Bloks%20Energy%20Chews&tag=finishultra-20" },
+    tags: ["chew", "portable", "cold-weather-friendly", "variety"] },
 
   // ── Electrolytes ──────────────────────────────────────────────────────────
 
@@ -232,17 +192,11 @@ export const nutrition: NutritionProduct[] = [
       "High-sodium formula specifically for heavy sweaters and hot conditions. Prevents the dangerous hyponatremia (low sodium) that hospitalizes ultra runners every year. Dose precisely based on your sweat rate.",
     specs: {
       sodium: "1500mg per serving",
-      servings: "10 sachets per box",
-    },
+      servings: "10 sachets per box" },
     nutritionType: "electrolyte",
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=Precision%20Hydration%20PH%201500&tag=finishultra-20",
-      runningWarehouse:
-        "https://www.runningwarehouse.com/searchresults/?searchTerm=Precision%20Hydration%201500&sourceCode=FFULTRA",
-    },
-    tags: ["electrolyte", "high-sodium", "heavy-sweater", "hot-weather", "hyponatremia-prevention"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Precision%20Hydration%20PH%201500&tag=finishultra-20" },
+    tags: ["electrolyte", "high-sodium", "heavy-sweater", "hot-weather", "hyponatremia-prevention"] },
   {
     id: "saltstick-fastchews",
     name: "Fastchews",
@@ -256,16 +210,11 @@ export const nutrition: NutritionProduct[] = [
       "Heavy sweaters and 100-mile runners need 600-800mg of sodium per hour — far more than most sports drinks provide. Chewable tabs let you dose precisely without adding stomach volume.",
     specs: {
       sodium: "100mg per tab",
-      servings: "60 per tube",
-    },
+      servings: "60 per tube" },
     nutritionType: "electrolyte",
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=SaltStick%20Fastchews%20electrolytes&tag=finishultra-20",
-      rei: "https://www.rei.com/search?q=SaltStick%20Fastchews&cm_mmc=aff_AL-_-finishultra-_-1",
-    },
-    tags: ["electrolyte", "chewable", "portable", "precise-dosing"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=SaltStick%20Fastchews%20electrolytes&tag=finishultra-20" },
+    tags: ["electrolyte", "chewable", "portable", "precise-dosing"] },
 
   // ── Recovery Nutrition ────────────────────────────────────────────────────
 
@@ -282,14 +231,9 @@ export const nutrition: NutritionProduct[] = [
       "NSF Certified for Sport means no banned substances — critical for competitive runners. Leucine-rich formula kick-starts muscle protein synthesis within 30 minutes of finishing.",
     specs: {
       calories: "~130 per serving",
-      servings: "30 per container",
-    },
+      servings: "30 per container" },
     nutritionType: "recovery",
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=Momentous%20Grass-Fed%20Whey%20Protein&tag=finishultra-20",
-      rei: "https://www.rei.com/search?q=Momentous%20Whey%20Protein&cm_mmc=aff_AL-_-finishultra-_-1",
-    },
-    tags: ["recovery", "protein", "nsf-certified", "post-race"],
-  },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Momentous%20Grass-Fed%20Whey%20Protein&tag=finishultra-20" },
+    tags: ["recovery", "protein", "nsf-certified", "post-race"] },
 ];

@@ -22,18 +22,14 @@ export const apparel: ApparelProduct[] = [
       fabric: "Recycled polyester",
       upf: "50+",
       fit: "Regular",
-      weight: "128g (M)",
-    },
+      weight: "128g (M)" },
     role: "base-layer",
     conditions: ["hot", "moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20Capilene%20Cool%20Daily%20Shirt&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20Capilene%20Cool%20Daily%20Shirt&tag=finishultra-20",
-    },
+        "https://www.amazon.com/s?k=Patagonia%20Capilene%20Cool%20Daily%20Shirt&tag=finishultra-20" },
     tags: ["base-layer", "hot-weather", "upf", "lightweight", "odor-control"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "smartwool-merino-150-ls",
     name: "Merino 150 Long Sleeve",
@@ -49,17 +45,13 @@ export const apparel: ApparelProduct[] = [
       fabric: "100% Merino wool 150gsm",
       upf: "20+",
       fit: "Slim",
-      weight: "198g (M)",
-    },
+      weight: "198g (M)" },
     role: "base-layer",
     conditions: ["moderate", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Smartwool%20Merino%20150%20Long%20Sleeve&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Smartwool%20Merino%20150%20Long%20Sleeve&tag=finishultra-20",
-    },
-    tags: ["base-layer", "merino", "moderate-weather", "temperature-regulation"],
-  },
+        "https://www.amazon.com/s?k=Smartwool%20Merino%20150%20Long%20Sleeve&tag=finishultra-20" },
+    tags: ["base-layer", "merino", "moderate-weather", "temperature-regulation"] },
   {
     id: "smartwool-merino-250-crew",
     name: "Merino 250 Base Layer Crew",
@@ -74,17 +66,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "100% Merino wool 250gsm",
       fit: "Next-to-skin",
-      weight: "~220g (M)",
-    },
+      weight: "~220g (M)" },
     role: "base-layer",
     conditions: ["cold", "extreme"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Smartwool%20Merino%20250%20Base%20Layer%20Crew&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Smartwool%20Merino%20250%20Base%20Layer%20Crew&tag=finishultra-20",
-    },
-    tags: ["base-layer", "merino", "cold-weather", "heavyweight", "odor-resistant"],
-  },
+        "https://www.amazon.com/s?k=Smartwool%20Merino%20250%20Base%20Layer%20Crew&tag=finishultra-20" },
+    tags: ["base-layer", "merino", "cold-weather", "heavyweight", "odor-resistant"] },
   {
     id: "smartwool-classic-thermal-crew",
     name: "Classic Thermal Crew Base Layer",
@@ -99,17 +87,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Merino wool blend",
       fit: "Regular",
-      weight: "~250g (M)",
-    },
+      weight: "~250g (M)" },
     role: "base-layer",
     conditions: ["cold", "extreme"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Smartwool%20Classic%20Thermal%20Crew%20Base%20Layer&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Smartwool%20Classic%20Thermal%20Crew%20Base%20Layer&tag=finishultra-20",
-    },
-    tags: ["base-layer", "merino", "thermal", "mountain", "cold-weather"],
-  },
+        "https://www.amazon.com/s?k=Smartwool%20Classic%20Thermal%20Crew%20Base%20Layer&tag=finishultra-20" },
+    tags: ["base-layer", "merino", "thermal", "mountain", "cold-weather"] },
 
   // ── Mid Layers / Insulation ───────────────────────────────────────────────
 
@@ -127,17 +111,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Polartec Power Grid fleece",
       fit: "Slim, layerable",
-      weight: "297g (M)",
-    },
+      weight: "297g (M)" },
     role: "mid-layer",
     conditions: ["extreme", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20R1%20Hoody&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20R1%20Hoody&tag=finishultra-20",
-    },
-    tags: ["mid-layer", "fleece", "active-insulation", "extreme-cold", "breathable"],
-  },
+        "https://www.amazon.com/s?k=Patagonia%20R1%20Hoody&tag=finishultra-20" },
+    tags: ["mid-layer", "fleece", "active-insulation", "extreme-cold", "breathable"] },
   {
     id: "patagonia-nano-puff-vest",
     name: "Nano Puff Vest",
@@ -152,17 +132,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "PrimaLoft Gold Eco fill, DWR shell",
       fit: "Regular",
-      weight: "212g (M)",
-    },
+      weight: "212g (M)" },
     role: "mid-layer",
     conditions: ["cold", "moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20Nano%20Puff%20Vest&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20Nano%20Puff%20Vest&tag=finishultra-20",
-    },
-    tags: ["mid-layer", "insulation", "packable", "vest", "night-running"],
-  },
+        "https://www.amazon.com/s?k=Patagonia%20Nano%20Puff%20Vest&tag=finishultra-20" },
+    tags: ["mid-layer", "insulation", "packable", "vest", "night-running"] },
   {
     id: "patagonia-r1-techface-fleece",
     name: "R1 TechFace Fleece",
@@ -177,17 +153,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "R1 TechFace fleece",
       fit: "Regular",
-      weight: "~310g (M)",
-    },
+      weight: "~310g (M)" },
     role: "mid-layer",
     conditions: ["cold", "moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20R1%20TechFace%20Fleece&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20R1%20TechFace%20Fleece&tag=finishultra-20",
-    },
-    tags: ["mid-layer", "fleece", "drop-bag", "night-running", "mountain"],
-  },
+        "https://www.amazon.com/s?k=Patagonia%20R1%20TechFace%20Fleece&tag=finishultra-20" },
+    tags: ["mid-layer", "fleece", "drop-bag", "night-running", "mountain"] },
   {
     id: "patagonia-synchilla-snap-t",
     name: "Synchilla Snap-T Fleece",
@@ -202,17 +174,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Recycled polyester Synchilla fleece",
       fit: "Relaxed",
-      weight: "~400g (M)",
-    },
+      weight: "~400g (M)" },
     role: "recovery",
     conditions: ["cold", "moderate", "hot"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20Synchilla%20Snap-T%20Fleece&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20Synchilla%20Snap-T%20Fleece&tag=finishultra-20",
-    },
-    tags: ["recovery", "fleece", "post-race", "warm-layer"],
-  },
+        "https://www.amazon.com/s?k=Patagonia%20Synchilla%20Snap-T%20Fleece&tag=finishultra-20" },
+    tags: ["recovery", "fleece", "post-race", "warm-layer"] },
 
   // ── Bottoms ───────────────────────────────────────────────────────────────
 
@@ -230,18 +198,14 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Recycled polyester",
       fit: "Regular",
-      inseam: "5\"",
-    },
+      inseam: "5\"" },
     role: "bottom",
     conditions: ["hot", "moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20Strider%20Pro%20Shorts%205%22&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20Strider%20Pro%20Shorts%205%22&tag=finishultra-20",
-    },
+        "https://www.amazon.com/s?k=Patagonia%20Strider%20Pro%20Shorts%205%22&tag=finishultra-20" },
     tags: ["shorts", "built-in-liner", "lightweight", "hot-weather", "moderate-weather"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "janji-afo-middle-short",
     name: "5\" AFO Middle Short",
@@ -256,17 +220,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "4-way stretch woven",
       fit: "Athletic",
-      inseam: "5\"",
-    },
+      inseam: "5\"" },
     role: "bottom",
     conditions: ["hot", "moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Janji%205%22%20AFO%20Middle%20Short&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Janji%205%22%20AFO%20Middle%20Short&tag=finishultra-20",
-    },
-    tags: ["shorts", "100-mile", "pockets", "nutrition-access", "performance-liner"],
-  },
+        "https://www.amazon.com/s?k=Janji%205%22%20AFO%20Middle%20Short&tag=finishultra-20" },
+    tags: ["shorts", "100-mile", "pockets", "nutrition-access", "performance-liner"] },
   {
     id: "patagonia-capilene-midweight-tights",
     name: "Capilene Midweight Tights",
@@ -281,17 +241,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Capilene 3 polyester",
       fit: "Slim trail-running cut",
-      weight: "~200g (M)",
-    },
+      weight: "~200g (M)" },
     role: "bottom",
     conditions: ["cold", "extreme"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20Capilene%20Midweight%20Tights&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20Capilene%20Midweight%20Tights&tag=finishultra-20",
-    },
-    tags: ["tights", "cold-weather", "flatlock-seams", "insulating"],
-  },
+        "https://www.amazon.com/s?k=Patagonia%20Capilene%20Midweight%20Tights&tag=finishultra-20" },
+    tags: ["tights", "cold-weather", "flatlock-seams", "insulating"] },
   {
     id: "2xu-mcs-compression-tights",
     name: "MCS Run Compression Tights",
@@ -306,17 +262,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "PWX compression fabric",
       fit: "Compression",
-      weight: "~180g (M)",
-    },
+      weight: "~180g (M)" },
     role: "recovery",
     conditions: ["hot", "moderate", "cold", "extreme"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=2XU%20MCS%20Run%20Compression%20Tights&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=2XU%20MCS%20Run%20Compression%20Tights&tag=finishultra-20",
-    },
-    tags: ["compression", "recovery", "post-race", "medical-grade"],
-  },
+        "https://www.amazon.com/s?k=2XU%20MCS%20Run%20Compression%20Tights&tag=finishultra-20" },
+    tags: ["compression", "recovery", "post-race", "medical-grade"] },
 
   // ── Shells ────────────────────────────────────────────────────────────────
 
@@ -334,17 +286,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Ripstop recycled nylon",
       fit: "Slim",
-      weight: "98g (M)",
-    },
+      weight: "98g (M)" },
     role: "shell",
     conditions: ["moderate", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20Houdini%20Wind%20Jacket&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20Houdini%20Wind%20Jacket&tag=finishultra-20",
-    },
-    tags: ["shell", "wind-jacket", "packable", "mandatory-gear", "ultralight"],
-  },
+        "https://www.amazon.com/s?k=Patagonia%20Houdini%20Wind%20Jacket&tag=finishultra-20" },
+    tags: ["shell", "wind-jacket", "packable", "mandatory-gear", "ultralight"] },
   {
     id: "arcteryx-norvan-sl-hoody",
     name: "Norvan SL Hoody",
@@ -359,17 +307,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Gore-Tex Shakedry",
       fit: "Trim, athletic",
-      weight: "130g (M)",
-    },
+      weight: "130g (M)" },
     role: "shell",
     conditions: ["cold", "extreme", "moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Arc%27teryx%20Norvan%20SL%20Hoody&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Arc%27teryx%20Norvan%20SL%20Hoody&tag=finishultra-20",
-    },
-    tags: ["shell", "rain-jacket", "gore-tex", "mountain", "premium", "ultralight"],
-  },
+        "https://www.amazon.com/s?k=Arc%27teryx%20Norvan%20SL%20Hoody&tag=finishultra-20" },
+    tags: ["shell", "rain-jacket", "gore-tex", "mountain", "premium", "ultralight"] },
   {
     id: "outdoor-research-helium-rain-jacket",
     name: "Helium Rain Jacket",
@@ -384,18 +328,14 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "2.5L Pertex Shield",
       fit: "Standard",
-      weight: "175g (M)",
-    },
+      weight: "175g (M)" },
     role: "shell",
     conditions: ["moderate", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Outdoor%20Research%20Helium%20Rain%20Jacket&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Outdoor%20Research%20Helium%20Rain%20Jacket&tag=finishultra-20",
-    },
+        "https://www.amazon.com/s?k=Outdoor%20Research%20Helium%20Rain%20Jacket&tag=finishultra-20" },
     tags: ["shell", "rain-jacket", "budget", "packable", "waterproof"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "patagonia-ultralight-stretch-rain-jacket",
     name: "Ultralight Stretch Rain Jacket",
@@ -410,17 +350,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "H2No 2.5L",
       fit: "Athletic, 4-way stretch",
-      weight: "210g (M)",
-    },
+      weight: "210g (M)" },
     role: "shell",
     conditions: ["moderate", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Patagonia%20Ultralight%20Stretch%20Rain%20Jacket&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Patagonia%20Ultralight%20Stretch%20Rain%20Jacket&tag=finishultra-20",
-    },
-    tags: ["shell", "rain-jacket", "stretch", "premium", "waterproof"],
-  },
+        "https://www.amazon.com/s?k=Patagonia%20Ultralight%20Stretch%20Rain%20Jacket&tag=finishultra-20" },
+    tags: ["shell", "rain-jacket", "stretch", "premium", "waterproof"] },
 
   // ── Headwear ──────────────────────────────────────────────────────────────
 
@@ -438,17 +374,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Recycled polyester mesh",
       upf: "50+",
-      weight: "45g",
-    },
+      weight: "45g" },
     role: "headwear",
     conditions: ["hot"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Salomon%20XA%20Cap&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Salomon%20XA%20Cap&tag=finishultra-20",
-    },
-    tags: ["cap", "hot-weather", "upf", "lightweight", "headwear"],
-  },
+        "https://www.amazon.com/s?k=Salomon%20XA%20Cap&tag=finishultra-20" },
+    tags: ["cap", "hot-weather", "upf", "lightweight", "headwear"] },
   {
     id: "ciele-gocap",
     name: "GOCap",
@@ -463,17 +395,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Technical mesh",
       fit: "Structured 5-panel",
-      weight: "57g",
-    },
+      weight: "57g" },
     role: "headwear",
     conditions: ["moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Ciele%20GOCap&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Ciele%20GOCap&tag=finishultra-20",
-    },
-    tags: ["cap", "moderate-weather", "headlamp-compatible", "headwear"],
-  },
+        "https://www.amazon.com/s?k=Ciele%20GOCap&tag=finishultra-20" },
+    tags: ["cap", "moderate-weather", "headlamp-compatible", "headwear"] },
   {
     id: "smartwool-merino-250-beanie",
     name: "Merino 250 Beanie",
@@ -487,17 +415,13 @@ export const apparel: ApparelProduct[] = [
       "Merino wool beanie covers your ears without the bulk of a heavy hat. Naturally odor-resistant for multi-day use and warm even after it gets damp from sweat or precipitation.",
     specs: {
       fabric: "100% Merino 250gsm",
-      weight: "65g",
-    },
+      weight: "65g" },
     role: "headwear",
     conditions: ["cold", "extreme"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Smartwool%20Merino%20250%20Beanie&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Smartwool%20Merino%20250%20Beanie&tag=finishultra-20",
-    },
-    tags: ["beanie", "cold-weather", "merino", "headwear"],
-  },
+        "https://www.amazon.com/s?k=Smartwool%20Merino%20250%20Beanie&tag=finishultra-20" },
+    tags: ["beanie", "cold-weather", "merino", "headwear"] },
   {
     id: "sunday-afternoons-ultra-adventure-hat",
     name: "Ultra Adventure Hat",
@@ -512,17 +436,13 @@ export const apparel: ApparelProduct[] = [
     specs: {
       fabric: "Nylon with UPF 50+",
       upf: "50+",
-      weight: "~85g",
-    },
+      weight: "~85g" },
     role: "headwear",
     conditions: ["hot"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Sunday%20Afternoons%20Ultra%20Adventure%20Hat&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Sunday%20Afternoons%20Ultra%20Adventure%20Hat&tag=finishultra-20",
-    },
-    tags: ["sun-hat", "upf", "full-brim", "desert", "headwear"],
-  },
+        "https://www.amazon.com/s?k=Sunday%20Afternoons%20Ultra%20Adventure%20Hat&tag=finishultra-20" },
+    tags: ["sun-hat", "upf", "full-brim", "desert", "headwear"] },
 
   // ── Gloves ────────────────────────────────────────────────────────────────
 
@@ -539,17 +459,13 @@ export const apparel: ApparelProduct[] = [
       "Lightweight merino warmth with touchscreen compatibility — easy to wear all night. Cover your hands for cold starts and night sections without overheating when you're working hard on climbs.",
     specs: {
       fabric: "Merino 150gsm blend",
-      weight: "48g/pair",
-    },
+      weight: "48g/pair" },
     role: "handwear",
     conditions: ["cold", "moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Smartwool%20Merino%20150%20Gloves&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Smartwool%20Merino%20150%20Gloves&tag=finishultra-20",
-    },
-    tags: ["gloves", "merino", "touchscreen", "night-running", "cold-weather"],
-  },
+        "https://www.amazon.com/s?k=Smartwool%20Merino%20150%20Gloves&tag=finishultra-20" },
+    tags: ["gloves", "merino", "touchscreen", "night-running", "cold-weather"] },
   {
     id: "black-diamond-mercury-mitts",
     name: "Mercury Mitts",
@@ -563,17 +479,13 @@ export const apparel: ApparelProduct[] = [
       "Sub-20°F Alpine conditions make cold hands the most dangerous comfort factor in ultra running. Mercury Mitts provide maximum warmth for extreme cold — when cold hands slow you down, everything slows down.",
     specs: {
       fabric: "PrimaLoft Gold insulation, Pertex Quantum shell",
-      weight: "72g/pair",
-    },
+      weight: "72g/pair" },
     role: "handwear",
     conditions: ["extreme"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Black%20Diamond%20Mercury%20Mitts&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Black%20Diamond%20Mercury%20Mitts&tag=finishultra-20",
-    },
-    tags: ["mitts", "extreme-cold", "alpine", "insulated", "windproof"],
-  },
+        "https://www.amazon.com/s?k=Black%20Diamond%20Mercury%20Mitts&tag=finishultra-20" },
+    tags: ["mitts", "extreme-cold", "alpine", "insulated", "windproof"] },
 
   // ── Socks ─────────────────────────────────────────────────────────────────
 
@@ -590,18 +502,14 @@ export const apparel: ApparelProduct[] = [
       "Lifetime warranty, merino wool, seamless toe construction to prevent blisters. Buy three pairs and never think about socks again.",
     specs: {
       fabric: "Merino wool blend",
-      weight: "Light cushion",
-    },
+      weight: "Light cushion" },
     role: "socks",
     conditions: ["hot", "moderate"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Darn%20Tough%20Run%20No-Show%20Tab%20Lightweight&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Darn%20Tough%20Run%20No-Show%20Tab%20Lightweight&tag=finishultra-20",
-    },
+        "https://www.amazon.com/s?k=Darn%20Tough%20Run%20No-Show%20Tab%20Lightweight&tag=finishultra-20" },
     tags: ["socks", "merino", "lifetime-warranty", "blister-prevention", "lightweight"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "darn-tough-run-endure-crew",
     name: "Run Endure Crew",
@@ -615,17 +523,13 @@ export const apparel: ApparelProduct[] = [
       "Blister-prone runners need the extra cushion of the Endure Crew. The seamless toe construction eliminates the single biggest cause of blisters. Lifetime warranty means these are a long-term investment.",
     specs: {
       fabric: "Merino wool blend",
-      weight: "Medium cushion",
-    },
+      weight: "Medium cushion" },
     role: "socks",
     conditions: ["hot", "moderate", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Darn%20Tough%20Run%20Endure%20Crew&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Darn%20Tough%20Run%20Endure%20Crew&tag=finishultra-20",
-    },
-    tags: ["socks", "merino", "cushion", "blister-prone", "lifetime-warranty"],
-  },
+        "https://www.amazon.com/s?k=Darn%20Tough%20Run%20Endure%20Crew&tag=finishultra-20" },
+    tags: ["socks", "merino", "cushion", "blister-prone", "lifetime-warranty"] },
   {
     id: "smartwool-merino-outdoor-medium-crew",
     name: "Merino Outdoor Medium Crew",
@@ -639,17 +543,13 @@ export const apparel: ApparelProduct[] = [
       "Merino wool stays warm even when damp — critical when stream crossings and snow patches are inevitable on cold-weather courses. The cushioning absorbs impact on long descents.",
     specs: {
       fabric: "Merino wool blend",
-      weight: "Medium cushion",
-    },
+      weight: "Medium cushion" },
     role: "socks",
     conditions: ["cold", "extreme"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Smartwool%20Merino%20Outdoor%20Medium%20Crew&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Smartwool%20Merino%20Outdoor%20Medium%20Crew&tag=finishultra-20",
-    },
-    tags: ["socks", "merino", "cold-weather", "cushion"],
-  },
+        "https://www.amazon.com/s?k=Smartwool%20Merino%20Outdoor%20Medium%20Crew&tag=finishultra-20" },
+    tags: ["socks", "merino", "cold-weather", "cushion"] },
   {
     id: "injinji-trail-midweight-crew",
     name: "Trail Midweight Crew Socks",
@@ -663,17 +563,13 @@ export const apparel: ApparelProduct[] = [
       "Toe socks physically prevent toe-on-toe friction — the root cause of blisters between toes. Many mountain 100 veterans swear by Injinji as the single most important blister-prevention tool.",
     specs: {
       fabric: "Moisture-wicking polyester blend",
-      weight: "Midweight cushion",
-    },
+      weight: "Midweight cushion" },
     role: "socks",
     conditions: ["hot", "moderate", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Injinji%20Trail%20Midweight%20Crew%20Socks&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Injinji%20Trail%20Midweight%20Crew%20Socks&tag=finishultra-20",
-    },
-    tags: ["socks", "toe-socks", "blister-prevention", "trail"],
-  },
+        "https://www.amazon.com/s?k=Injinji%20Trail%20Midweight%20Crew%20Socks&tag=finishultra-20" },
+    tags: ["socks", "toe-socks", "blister-prevention", "trail"] },
   {
     id: "injinji-run-original-no-show",
     name: "Run Original Weight No-Show",
@@ -686,17 +582,13 @@ export const apparel: ApparelProduct[] = [
     whyWeRecommend:
       "Toe socks physically prevent toe-on-toe friction — the root cause of blisters between toes. Many mountain 100 veterans layer Injinji toe socks under a regular sock for double protection on technical terrain.",
     specs: {
-      fabric: "Moisture-wicking polyester",
-    },
+      fabric: "Moisture-wicking polyester" },
     role: "socks",
     conditions: ["hot", "moderate", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Injinji%20Run%20Original%20Weight%20No-Show&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Injinji%20Run%20Original%20Weight%20No-Show&tag=finishultra-20",
-    },
-    tags: ["socks", "toe-socks", "liner", "blister-prevention", "lightweight"],
-  },
+        "https://www.amazon.com/s?k=Injinji%20Run%20Original%20Weight%20No-Show&tag=finishultra-20" },
+    tags: ["socks", "toe-socks", "liner", "blister-prevention", "lightweight"] },
   {
     id: "darn-tough-trail-running-3pack",
     name: "Trail Running Sock 3-Pack",
@@ -710,15 +602,11 @@ export const apparel: ApparelProduct[] = [
       "Dry socks at drop bags are the cheapest performance upgrade in ultras. Three pairs with a lifetime guarantee means you never worry about socks again.",
     specs: {
       fabric: "Merino wool blend",
-      weight: "Light cushion",
-    },
+      weight: "Light cushion" },
     role: "socks",
     conditions: ["hot", "moderate", "cold"],
     affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Darn%20Tough%20Trail%20Running%20Sock%203-Pack&cm_mmc=aff_AL-_-finishultra-_-1",
       amazon:
-        "https://www.amazon.com/s?k=Darn%20Tough%20Trail%20Running%20Sock%203-Pack&tag=finishultra-20",
-    },
-    tags: ["socks", "merino", "drop-bag", "multi-pack", "lifetime-warranty"],
-  },
+        "https://www.amazon.com/s?k=Darn%20Tough%20Trail%20Running%20Sock%203-Pack&tag=finishultra-20" },
+    tags: ["socks", "merino", "drop-bag", "multi-pack", "lifetime-warranty"] },
 ];

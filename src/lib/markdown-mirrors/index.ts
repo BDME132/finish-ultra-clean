@@ -771,7 +771,7 @@ Honest gear reviews and recommendations for first-time ultra runners.
 
 ## How We Review Gear
 
-We use affiliate links to Amazon, REI, Backcountry, and Running Warehouse. We only recommend products we'd actually use. See our [affiliate disclosure](/affiliate-disclosure).
+We use Amazon affiliate links. We only recommend products we'd actually use. See our [affiliate disclosure](/affiliate-disclosure).
 `,
 
   "/gear/shoes":
@@ -1048,10 +1048,8 @@ Waterproof shell, poles, insulation layer. ~$700–1000
 
 ## Where to Buy
 
-- Running Warehouse — Best selection of trail running gear
-- REI — Great for packs, apparel, outdoor gear
-- Amazon — Convenient; check for Prime eligibility
-- Local running store — Try shoes before buying
+- Amazon — Fast delivery, competitive pricing, and the widest selection of trail running gear
+- Local running store — Try shoes before buying for proper fit
 
 → [Build your kit at finishultra.com/gear/kits](https://www.finishultra.com/gear/kits)
 `,
@@ -1204,9 +1202,6 @@ We recommend products based on merit, not affiliate income. We will always discl
 ## Programs We Participate In
 
 - Amazon Associates (amazon.com)
-- REI affiliate program
-- Backcountry affiliate program
-- Running Warehouse affiliate program
 
 Questions? Email hello@finishultra.com.
 `,

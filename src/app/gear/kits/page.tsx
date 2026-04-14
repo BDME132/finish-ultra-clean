@@ -338,7 +338,7 @@ export default function GearKitsPage() {
                     "Brooks or Saucony trail shoes",
                     "Nathan or CamelBak entry vest",
                     "Black Diamond 400lm headlamp",
-                    "Patagonia or REI Co-op shorts/top",
+                    "Patagonia or similar shorts/top",
                     "GU gels + generic electrolytes",
                     "Budget shell from Outdoor Research",
                   ],
@@ -401,12 +401,10 @@ export default function GearKitsPage() {
             <h2 className="font-headline text-2xl font-bold text-dark text-center mb-8">
               Where to Buy Your Kit
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
               {[
-                { name: "Running Warehouse", specialty: "Largest trail shoe selection, competitive pricing, free 2-day shipping", badge: "Best for Shoes" },
-                { name: "REI", specialty: "Full-service store, knowledgeable staff for pack fitting, generous return policy", badge: "Best for Packs" },
-                { name: "Amazon", specialty: "Price matching, fast delivery, best for nutrition and accessories you know you want", badge: "Best for Nutrition" },
-                { name: "Local Running Store", specialty: "Gait analysis, professional fitting, community knowledge of local races and terrain", badge: "Best for First-Timers" },
+                { name: "Amazon", specialty: "Fast delivery, competitive pricing, and the largest selection of trail running gear — all in one place.", badge: "Our Recommended Retailer" },
+                { name: "Local Running Store", specialty: "Gait analysis, professional shoe fitting, and community knowledge of local races and terrain.", badge: "Best for First-Timers" },
               ].map((s) => (
                 <div key={s.name} className="bg-white rounded-xl p-4 border border-gray-100">
                   <p className="text-xs font-bold text-primary mb-1">{s.badge}</p>

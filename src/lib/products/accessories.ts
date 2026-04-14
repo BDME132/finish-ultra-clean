@@ -22,15 +22,10 @@ export const accessories: AccessoryProduct[] = [
       lumens: "500 max",
       runtime: "100hr low / 2hr high",
       charge: "USB-C rechargeable",
-      weight: "105g",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Petzl%20Iko%20Core%20500&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Petzl%20Iko%20Core%20500&tag=finishultra-20",
-    },
-    tags: ["headlamp", "rechargeable", "usb-c", "night-running", "primary"],
-  },
+      weight: "105g" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Petzl%20Iko%20Core%20500&tag=finishultra-20" },
+    tags: ["headlamp", "rechargeable", "usb-c", "night-running", "primary"] },
   {
     id: "black-diamond-core-headlamp-400",
     name: "Core Headlamp 400",
@@ -46,16 +41,11 @@ export const accessories: AccessoryProduct[] = [
       lumens: "400 max",
       runtime: "200hr low / 4hr high",
       charge: "USB-C rechargeable",
-      weight: "95g",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Black%20Diamond%20Core%20Headlamp%20400&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Black%20Diamond%20Core%20Headlamp%20400&tag=finishultra-20",
-    },
+      weight: "95g" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Black%20Diamond%20Core%20Headlamp%20400&tag=finishultra-20" },
     tags: ["headlamp", "rechargeable", "budget", "usb-c", "night-running"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "black-diamond-spot-400-r",
     name: "Spot 400-R Headlamp",
@@ -71,15 +61,10 @@ export const accessories: AccessoryProduct[] = [
       lumens: "400 max",
       charge: "USB-C rechargeable",
       modes: "Spot, flood, red night-vision",
-      weight: "~95g",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Black%20Diamond%20Spot%20400-R%20Headlamp&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Black%20Diamond%20Spot%20400-R%20Headlamp&tag=finishultra-20",
-    },
-    tags: ["headlamp", "rechargeable", "red-mode", "night-vision"],
-  },
+      weight: "~95g" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Black%20Diamond%20Spot%20400-R%20Headlamp&tag=finishultra-20" },
+    tags: ["headlamp", "rechargeable", "red-mode", "night-vision"] },
   {
     id: "black-diamond-spot-400-e",
     name: "Spot 400-E",
@@ -95,15 +80,10 @@ export const accessories: AccessoryProduct[] = [
       lumens: "400 max",
       runtime: "40hr low / 2hr high",
       battery: "3x AAA",
-      weight: "88g (w/ batteries)",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Black%20Diamond%20Spot%20400-E%20headlamp&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Black%20Diamond%20Spot%20400-E%20headlamp&tag=finishultra-20",
-    },
-    tags: ["headlamp", "backup", "battery-powered", "mandatory-gear", "100-mile"],
-  },
+      weight: "88g (w/ batteries)" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Black%20Diamond%20Spot%20400-E%20headlamp&tag=finishultra-20" },
+    tags: ["headlamp", "backup", "battery-powered", "mandatory-gear", "100-mile"] },
   {
     id: "biolite-headlamp-330",
     name: "HeadLamp 330",
@@ -119,15 +99,10 @@ export const accessories: AccessoryProduct[] = [
       lumens: "330 max",
       charge: "USB-C rechargeable",
       weight: "69g",
-      modes: "Spot, flood, red",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=BioLite%20HeadLamp%20330&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=BioLite%20HeadLamp%20330&tag=finishultra-20",
-    },
-    tags: ["headlamp", "crew-gear", "lightweight", "rechargeable"],
-  },
+      modes: "Spot, flood, red" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=BioLite%20HeadLamp%20330&tag=finishultra-20" },
+    tags: ["headlamp", "crew-gear", "lightweight", "rechargeable"] },
 
   // ── Accessories — Watches ─────────────────────────────────────────────────
 
@@ -146,15 +121,10 @@ export const accessories: AccessoryProduct[] = [
       battery: "49hr GPS mode (solar extends)",
       navigation: "Full course GPS + breadcrumb",
       sensors: "HR, altimeter, compass, gyroscope",
-      weight: "53g",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Garmin%20Forerunner%20955%20Solar&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Garmin%20Forerunner%20955%20Solar&tag=finishultra-20",
-    },
-    tags: ["watch", "gps", "navigation", "ultra-battery", "solar"],
-  },
+      weight: "53g" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Garmin%20Forerunner%20955%20Solar&tag=finishultra-20" },
+    tags: ["watch", "gps", "navigation", "ultra-battery", "solar"] },
 
   // ── Accessories — Eyewear ─────────────────────────────────────────────────
 
@@ -173,16 +143,11 @@ export const accessories: AccessoryProduct[] = [
       lenses: "Polarized, UV400",
       fit: "No-slip, no-bounce",
       coverage: "Wrap-around",
-      weight: "~25g",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Goodr%20BFGs%20Running%20Sunglasses&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Goodr%20BFGs%20Running%20Sunglasses&tag=finishultra-20",
-    },
+      weight: "~25g" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Goodr%20BFGs%20Running%20Sunglasses&tag=finishultra-20" },
     tags: ["sunglasses", "polarized", "no-bounce", "affordable"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
 
   // ── Accessories — Trekking Poles ──────────────────────────────────────────
 
@@ -201,15 +166,10 @@ export const accessories: AccessoryProduct[] = [
       weight: "300g/pair",
       collapsed: "~13\" folded",
       material: "Aluminum",
-      grip: "EVA foam",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Black%20Diamond%20Distance%20Z%20Trekking%20Poles&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Black%20Diamond%20Distance%20Z%20Trekking%20Poles&tag=finishultra-20",
-    },
-    tags: ["trekking-poles", "folding", "ultralight", "mountain", "climbing"],
-  },
+      grip: "EVA foam" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Black%20Diamond%20Distance%20Z%20Trekking%20Poles&tag=finishultra-20" },
+    tags: ["trekking-poles", "folding", "ultralight", "mountain", "climbing"] },
 
   // ── Accessories — Power ───────────────────────────────────────────────────
 
@@ -228,14 +188,10 @@ export const accessories: AccessoryProduct[] = [
       capacity: "10,000mAh",
       output: "USB-A + USB-C",
       weight: "~180g",
-      charges: "~2 full GPS watch charges",
-    },
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=Anker%20PowerCore%2010000%20Power%20Bank&tag=finishultra-20",
-    },
-    tags: ["power-bank", "drop-bag", "charging", "100-mile"],
-  },
+      charges: "~2 full GPS watch charges" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Anker%20PowerCore%2010000%20Power%20Bank&tag=finishultra-20" },
+    tags: ["power-bank", "drop-bag", "charging", "100-mile"] },
 
   // ── Accessories — Anti-Chafe ──────────────────────────────────────────────
 
@@ -253,16 +209,11 @@ export const accessories: AccessoryProduct[] = [
     specs: {
       size: "2oz stick",
       ingredients: "All-natural (coconut oil, cocoa butter, beeswax)",
-      application: "Pre-race + every crew/drop-bag stop",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Squirrel%27s%20Nut%20Butter%20Anti-Chafe&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Squirrel%27s%20Nut%20Butter%20Anti-Chafe&tag=finishultra-20",
-    },
+      application: "Pre-race + every crew/drop-bag stop" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Squirrel%27s%20Nut%20Butter%20Anti-Chafe&tag=finishultra-20" },
     tags: ["anti-chafe", "body-care", "drop-bag", "all-natural"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
 
   // ── Accessories — Sun Protection ──────────────────────────────────────────
 
@@ -280,14 +231,10 @@ export const accessories: AccessoryProduct[] = [
     specs: {
       spf: "70",
       type: "Sweat-proof sport formula",
-      size: "2.5 fl oz",
-    },
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=Neutrogena%20Sport%20Face%20SPF%2070&tag=finishultra-20",
-    },
-    tags: ["sunscreen", "sun-protection", "sweat-proof", "drop-bag"],
-  },
+      size: "2.5 fl oz" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Neutrogena%20Sport%20Face%20SPF%2070&tag=finishultra-20" },
+    tags: ["sunscreen", "sun-protection", "sweat-proof", "drop-bag"] },
 
   // ── Safety ────────────────────────────────────────────────────────────────
 
@@ -306,16 +253,11 @@ export const accessories: AccessoryProduct[] = [
       weight: "8.5oz",
       packed: "3.5\" x 5.5\"",
       material: "Reflective polyethylene",
-      heatRetention: "90%",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=SOL%20Escape%20Pro%20Bivvy&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=SOL%20Escape%20Pro%20Bivvy&tag=finishultra-20",
-    },
+      heatRetention: "90%" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=SOL%20Escape%20Pro%20Bivvy&tag=finishultra-20" },
     tags: ["emergency", "bivvy", "mandatory-gear", "mountain", "safety"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "sol-emergency-bivvy",
     name: "Emergency Bivvy",
@@ -331,15 +273,10 @@ export const accessories: AccessoryProduct[] = [
       weight: "3.8oz",
       packed: "3.5\" x 5.5\"",
       material: "Reflective polyethylene",
-      heatRetention: "90%",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=SOL%20Emergency%20Bivvy&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=SOL%20Emergency%20Bivvy&tag=finishultra-20",
-    },
-    tags: ["emergency", "bivvy", "mandatory-gear", "ultralight", "budget"],
-  },
+      heatRetention: "90%" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=SOL%20Emergency%20Bivvy&tag=finishultra-20" },
+    tags: ["emergency", "bivvy", "mandatory-gear", "ultralight", "budget"] },
   {
     id: "spot-x-satellite-communicator",
     name: "Spot X Satellite Communicator",
@@ -355,15 +292,10 @@ export const accessories: AccessoryProduct[] = [
       coverage: "Global satellite network",
       messaging: "Two-way SMS via satellite",
       tracking: "Customizable intervals",
-      sos: "24/7 GEOS response center",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=SPOT%20X%20Satellite%20Communicator&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=SPOT%20X%20Satellite%20Communicator&tag=finishultra-20",
-    },
-    tags: ["satellite", "communication", "sos", "tracking", "remote", "100-mile"],
-  },
+      sos: "24/7 GEOS response center" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=SPOT%20X%20Satellite%20Communicator&tag=finishultra-20" },
+    tags: ["satellite", "communication", "sos", "tracking", "remote", "100-mile"] },
   {
     id: "adventure-medical-kits-trail",
     name: "Trail Series Medical Kit",
@@ -378,15 +310,10 @@ export const accessories: AccessoryProduct[] = [
     specs: {
       contents: "Blister care, wound closure, pain management",
       size: "Compact crew-bag size",
-      weight: "~8oz",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Adventure%20Medical%20Kits%20Trail%20Series&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Adventure%20Medical%20Kits%20Trail%20Series&tag=finishultra-20",
-    },
-    tags: ["first-aid", "crew-gear", "blister-care", "medical"],
-  },
+      weight: "~8oz" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Adventure%20Medical%20Kits%20Trail%20Series&tag=finishultra-20" },
+    tags: ["first-aid", "crew-gear", "blister-care", "medical"] },
 
   // ── Foot Care ─────────────────────────────────────────────────────────────
 
@@ -404,16 +331,11 @@ export const accessories: AccessoryProduct[] = [
     specs: {
       type: "Zinc oxide adhesive tape",
       adhesion: "Stays on wet feet 100+ miles",
-      includes: "1\" roll + sterile needle",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Leukotape%20blister%20prevention&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Leukotape%20blister%20prevention%20tape&tag=finishultra-20",
-    },
+      includes: "1\" roll + sterile needle" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Leukotape%20blister%20prevention%20tape&tag=finishultra-20" },
     tags: ["blister-tape", "prevention", "drop-bag", "mandatory"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "anti-blister-kit-mixed",
     name: "Anti-Blister Kit",
@@ -427,14 +349,10 @@ export const accessories: AccessoryProduct[] = [
       "Blisters are the #1 preventable DNF cause. Apply Squirrel's Nut Butter before the start, use Leukotape on known hot spots pre-race, and carry the sterile needle for mid-race drainage.",
     specs: {
       contents: "SNB 1oz + Leukotape P 1\" roll + sterile needle + gauze",
-      weight: "2oz total",
-    },
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=squirrels%20nut%20butter%20leukotape%20blister%20kit&tag=finishultra-20",
-    },
-    tags: ["blister-kit", "prevention", "repair", "foot-care", "complete-kit"],
-  },
+      weight: "2oz total" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=squirrels%20nut%20butter%20leukotape%20blister%20kit&tag=finishultra-20" },
+    tags: ["blister-kit", "prevention", "repair", "foot-care", "complete-kit"] },
 
   // ── Recovery ──────────────────────────────────────────────────────────────
 
@@ -453,16 +371,11 @@ export const accessories: AccessoryProduct[] = [
       technology: "OOfoam impact absorption",
       reduction: "37% less impact vs. traditional",
       closure: "Slip-on",
-      weight: "~200g/pair",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Oofos%20OOahh%20Sport%20Flex%20Sandals&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Oofos%20OOahh%20Sport%20Flex%20Sandals&tag=finishultra-20",
-    },
+      weight: "~200g/pair" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Oofos%20OOahh%20Sport%20Flex%20Sandals&tag=finishultra-20" },
     tags: ["recovery", "sandals", "post-race", "impact-absorption"],
-    beginnerPick: true,
-  },
+    beginnerPick: true },
   {
     id: "cep-compression-socks",
     name: "Compression Socks 20-30mmHg",
@@ -478,15 +391,10 @@ export const accessories: AccessoryProduct[] = [
       compression: "20-30mmHg graduated",
       fabric: "Meryl Skinlife nylon",
       height: "Knee-high",
-      duration: "Wear 4-6 hrs post-race",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=CEP%20Compression%20Socks%20recovery&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=CEP%20Compression%20Socks%2020-30mmHg&tag=finishultra-20",
-    },
-    tags: ["compression", "recovery", "post-race", "medical-grade"],
-  },
+      duration: "Wear 4-6 hrs post-race" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=CEP%20Compression%20Socks%2020-30mmHg&tag=finishultra-20" },
+    tags: ["compression", "recovery", "post-race", "medical-grade"] },
   {
     id: "triggerpoint-grid-foam-roller",
     name: "GRID Foam Roller",
@@ -502,15 +410,10 @@ export const accessories: AccessoryProduct[] = [
       surface: "Multi-density EVA foam",
       dimensions: "13\" x 5.5\"",
       weight: "~500g",
-      durability: "Hollow core, maintains shape",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=TriggerPoint%20GRID%20Foam%20Roller&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=TriggerPoint%20GRID%20Foam%20Roller&tag=finishultra-20",
-    },
-    tags: ["foam-roller", "recovery", "self-massage", "post-race"],
-  },
+      durability: "Hollow core, maintains shape" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=TriggerPoint%20GRID%20Foam%20Roller&tag=finishultra-20" },
+    tags: ["foam-roller", "recovery", "self-massage", "post-race"] },
   {
     id: "theragun-mini",
     name: "Mini Percussive Therapy Device",
@@ -526,15 +429,10 @@ export const accessories: AccessoryProduct[] = [
       depth: "12mm amplitude",
       speed: "1750-2400 PPM",
       battery: "150 minutes",
-      weight: "680g",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Theragun%20Mini&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Theragun%20Mini&tag=finishultra-20",
-    },
-    tags: ["percussion", "recovery", "portable", "deep-tissue", "premium"],
-  },
+      weight: "680g" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Theragun%20Mini&tag=finishultra-20" },
+    tags: ["percussion", "recovery", "portable", "deep-tissue", "premium"] },
 
   // ── Crew Gear ─────────────────────────────────────────────────────────────
 
@@ -553,15 +451,10 @@ export const accessories: AccessoryProduct[] = [
       weight: "1.1 lbs (510g)",
       capacity: "265 lbs",
       packed: "10\" x 4\"",
-      material: "DAC aluminum, ripstop polyester",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Helinox%20Chair%20Zero&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Helinox%20Chair%20Zero&tag=finishultra-20",
-    },
-    tags: ["crew-gear", "chair", "ultralight", "packable"],
-  },
+      material: "DAC aluminum, ripstop polyester" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Helinox%20Chair%20Zero&tag=finishultra-20" },
+    tags: ["crew-gear", "chair", "ultralight", "packable"] },
   {
     id: "yeti-roadie-24",
     name: "Roadie 24 Hard Cooler",
@@ -577,15 +470,10 @@ export const accessories: AccessoryProduct[] = [
       capacity: "24 cans",
       insulation: "Permafrost insulation, 24hr ice retention",
       material: "Rotomolded polyethylene",
-      weight: "12.8 lbs",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=YETI%20Roadie%2024%20Hard%20Cooler&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=YETI%20Roadie%2024%20Hard%20Cooler&tag=finishultra-20",
-    },
-    tags: ["crew-gear", "cooler", "food-storage", "100-mile"],
-  },
+      weight: "12.8 lbs" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=YETI%20Roadie%2024%20Hard%20Cooler&tag=finishultra-20" },
+    tags: ["crew-gear", "cooler", "food-storage", "100-mile"] },
   {
     id: "thermacell-mr450",
     name: "MR450 Mosquito Repeller",
@@ -601,15 +489,10 @@ export const accessories: AccessoryProduct[] = [
       coverage: "15-foot zone",
       fuel: "Butane cartridge",
       runtime: "12 hours per cartridge",
-      weight: "~230g",
-    },
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Thermacell%20MR450%20Mosquito%20Repeller&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon:
-        "https://www.amazon.com/s?k=Thermacell%20MR450%20Mosquito%20Repeller&tag=finishultra-20",
-    },
-    tags: ["crew-gear", "bug-protection", "aid-station"],
-  },
+      weight: "~230g" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=Thermacell%20MR450%20Mosquito%20Repeller&tag=finishultra-20" },
+    tags: ["crew-gear", "bug-protection", "aid-station"] },
   {
     id: "dude-wipes-48pack",
     name: "Wipes (Flushable, 48-Pack)",
@@ -624,12 +507,8 @@ export const accessories: AccessoryProduct[] = [
     specs: {
       count: "48 per pack",
       type: "Biodegradable, flushable",
-      size: "7\" x 7.5\"",
-    },
-    affiliateLinks: {
-      amazon:
-        "https://www.amazon.com/s?k=DUDE%20Wipes%20Flushable%2048%20Pack&tag=finishultra-20",
-    },
-    tags: ["wipes", "hygiene", "crew-gear", "drop-bag", "mental-reset"],
-  },
+      size: "7\" x 7.5\"" },
+    affiliateLinks: { amazon:
+        "https://www.amazon.com/s?k=DUDE%20Wipes%20Flushable%2048%20Pack&tag=finishultra-20" },
+    tags: ["wipes", "hygiene", "crew-gear", "drop-bag", "mental-reset"] },
 ];

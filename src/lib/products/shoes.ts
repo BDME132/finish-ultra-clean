@@ -26,7 +26,7 @@ export const shoes: ShoeProduct[] = [
       "The gold standard for high-mileage trail comfort. Vibram Megagrip traction handles technical terrain without sacrificing plush underfoot feel.",
     whyWeRecommend:
       "Best-in-class Vibram traction paired with plush all-day comfort makes the Speedgoat 6 the most trusted high-mileage trail shoe for 100-mile efforts.",
-    affiliateLinks: { rei: "#", amazon: "https://amzn.to/4broufc", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4broufc" },
     tags: ["max-cushion", "technical trails", "100-mile races", "high weekly mileage", "vibram", "plush"],
     specs: {
       weight: "10.1 oz",
@@ -36,14 +36,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "EVA (ProFly)",
       outsole: "Vibram Megagrip",
       rockPlate: false,
-      widths: "Regular, Wide",
-    },
+      widths: "Regular, Wide" },
     ratings: { cushioning: 5, traction: 5, durability: 4, breathability: 4, groundFeel: 2 },
     finderTags: {
       terrain: ["technical", "mixed", "mountain"],
       priority: ["cushion", "traction"],
-      distance: ["50k", "50m", "100k", "100m"],
-    },
+      distance: ["50k", "50m", "100k", "100m"] },
     bestFor: ["Technical trails", "100-mile races", "High weekly mileage"],
     pros: [
       "Best-in-class Vibram traction",
@@ -55,9 +53,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "I've run Western States in Speedgoats for three years. They hold up from the canyons to the finish.",
       race: "Western States 100",
-      runner: "Verified 100-mile finisher",
-    },
-  },
+      runner: "Verified 100-mile finisher" } },
   {
     id: "hoka-mafate-speed-4",
     name: "Mafate Speed 4",
@@ -70,7 +66,7 @@ export const shoes: ShoeProduct[] = [
       "Built for 100-mile punishment. Dual-density midsole with aggressive Vibram outsole — when you need maximum protection on brutal courses.",
     whyWeRecommend:
       "Exceptional durability and bomber stability make the Mafate Speed 4 the tank you need for rocky 100-mile mountain courses.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["max-cushion", "100-mile races", "rocky terrain", "mountain", "durability", "heavy runners"],
     specs: {
       weight: "11.0 oz",
@@ -80,14 +76,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "Dual-density EVA",
       outsole: "Vibram Megagrip",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 5, traction: 5, durability: 5, breathability: 3, groundFeel: 2 },
     finderTags: {
       terrain: ["technical", "mountain", "mixed"],
       priority: ["cushion", "stability"],
-      distance: ["100k", "100m"],
-    },
+      distance: ["100k", "100m"] },
     bestFor: ["100-mile races", "Rocky/mountain terrain", "Runners over 180 lbs"],
     pros: [
       "Exceptional durability",
@@ -98,9 +92,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "After 400 miles the lugs still bite. Nothing else has lasted as long on scree and granite.",
       race: "Hardrock 100",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
   {
     id: "altra-olympus-5",
     name: "Olympus 5",
@@ -113,7 +105,7 @@ export const shoes: ShoeProduct[] = [
       "Zero-drop maximum cushion with Altra's anatomical FootShape toe box. Ideal for runners who want plush comfort without heel elevation.",
     whyWeRecommend:
       "The Olympus 5 delivers maximum stack cushion with a zero-drop platform and roomy toe box, making it ideal for zero-drop advocates tackling 100-mile desert and mixed-terrain courses.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["max-cushion", "zero-drop", "wide forefoot", "desert", "mixed terrain", "anatomical toe box"],
     specs: {
       weight: "11.2 oz",
@@ -123,14 +115,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "Quantic foam",
       outsole: "TrailClaw",
       rockPlate: false,
-      widths: "Regular, Wide",
-    },
+      widths: "Regular, Wide" },
     ratings: { cushioning: 5, traction: 4, durability: 4, breathability: 4, groundFeel: 3 },
     finderTags: {
       terrain: ["smooth", "mixed", "desert"],
       priority: ["cushion", "wide"],
-      distance: ["50k", "50m", "100k", "100m"],
-    },
+      distance: ["50k", "50m", "100k", "100m"] },
     bestFor: ["Zero-drop advocates", "Wide forefoot", "Desert and mixed terrain"],
     pros: [
       "Maximum stack with zero drop",
@@ -144,9 +134,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "Switching to zero drop changed everything. The Olympus let me go big without destroying my feet.",
       race: "Javelina Jundred",
-      runner: "Verified 100-mile finisher",
-    },
-  },
+      runner: "Verified 100-mile finisher" } },
   {
     id: "saucony-endorphin-edge",
     name: "Endorphin Edge",
@@ -159,7 +147,7 @@ export const shoes: ShoeProduct[] = [
       "PEBA foam with a carbon plate for trail runners who want road-shoe responsiveness on groomed singletrack. Surprisingly fast for its cushion level.",
     whyWeRecommend:
       "Exceptional PEBA foam energy return and a carbon plate give the Endorphin Edge road-shoe speed on groomed trails with enough cushion for long ultras.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["max-cushion", "carbon plate", "PEBA", "groomed trails", "fast", "road-to-trail"],
     specs: {
       weight: "9.7 oz",
@@ -169,14 +157,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "PEBA foam",
       outsole: "TrailTack",
       rockPlate: true,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 5, traction: 3, durability: 3, breathability: 5, groundFeel: 3 },
     finderTags: {
       terrain: ["smooth", "mixed"],
       priority: ["cushion", "light"],
-      distance: ["50k", "50m", "100k"],
-    },
+      distance: ["50k", "50m", "100k"] },
     bestFor: ["Groomed/smooth trails", "Faster paced 50K/50M", "Road-to-trail crossover runners"],
     pros: [
       "PEBA foam energy return is exceptional",
@@ -187,9 +173,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "Felt like racing flats on the groomed sections and still had enough foam for the long haul.",
       race: "Lake Sonoma 50",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   // ─────────────────────────────────────────────────────────────────────────
   // LIGHTWEIGHT
@@ -206,7 +190,7 @@ export const shoes: ShoeProduct[] = [
       "Race-day weapon from Salomon's elite lab. SensiFit upper locks your foot down on descents while Contagrip keeps you planted on wet rocks.",
     whyWeRecommend:
       "The S/Lab Ultra 3 is the elite race-day pick with an unmatched fit-to-feel ratio and Contagrip traction trusted by top ultra runners worldwide.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["lightweight", "race day", "technical trails", "elite", "SensiFit", "Contagrip"],
     specs: {
       weight: "9.2 oz",
@@ -216,14 +200,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "EnergyCell foam",
       outsole: "Contagrip MA",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 3, traction: 4, durability: 4, breathability: 5, groundFeel: 4 },
     finderTags: {
       terrain: ["technical", "mixed", "mountain"],
       priority: ["light", "traction"],
-      distance: ["50k", "50m", "100k"],
-    },
+      distance: ["50k", "50m", "100k"] },
     bestFor: ["Race day 50K/50M", "Technical trails at speed", "Experienced runners with strong feet"],
     pros: [
       "SensiFit cradles foot perfectly on descents",
@@ -234,9 +216,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "SensiFit is the most secure trail fit I've ever worn. I flew down the descents with zero slippage.",
       race: "UTMB",
-      runner: "Elite finisher",
-    },
-  },
+      runner: "Elite finisher" } },
   {
     id: "saucony-peregrine-14",
     name: "Peregrine 14",
@@ -249,7 +229,7 @@ export const shoes: ShoeProduct[] = [
       "The reliable workhorse. TrailTack rubber and a versatile lug pattern make it one of the most trusted everyday trainers in ultra running.",
     whyWeRecommend:
       "Bulletproof durability and a versatile lug pattern at an unbeatable price make the Peregrine 14 the best value everyday trail trainer for ultra runners.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["lightweight", "workhorse", "versatile", "mixed terrain", "great value", "training"],
     specs: {
       weight: "9.6 oz",
@@ -259,14 +239,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "PWRTRAC foam",
       outsole: "TrailTack",
       rockPlate: false,
-      widths: "Regular, Wide",
-    },
+      widths: "Regular, Wide" },
     ratings: { cushioning: 3, traction: 4, durability: 5, breathability: 4, groundFeel: 4 },
     finderTags: {
       terrain: ["technical", "smooth", "mixed"],
       priority: ["light", "traction"],
-      distance: ["50k", "50m"],
-    },
+      distance: ["50k", "50m"] },
     bestFor: ["Technical and smooth mixed terrain", "50K to 50M", "High-mileage training"],
     pros: [
       "Bulletproof durability",
@@ -277,9 +255,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "I've put 600 miles on my Peregrines and they're still racing. Best value in ultra footwear.",
       race: "Cascade Crest 100",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
   {
     id: "topo-terraventure-4",
     name: "Terraventure 4",
@@ -292,7 +268,7 @@ export const shoes: ShoeProduct[] = [
       "Vibram Megagrip traction at a budget-friendly price with Topo's roomy toe box and a versatile 5mm drop that works for runners transitioning from heeled shoes.",
     whyWeRecommend:
       "The Terraventure 4 delivers Vibram Megagrip grip at the lowest price in its class, making it the smart budget pick for versatile mixed-terrain racing.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["lightweight", "budget", "versatile", "mixed terrain", "vibram", "roomy toe box"],
     specs: {
       weight: "9.7 oz",
@@ -302,14 +278,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "ZipFoam",
       outsole: "Vibram Megagrip",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 3, traction: 5, durability: 4, breathability: 4, groundFeel: 4 },
     finderTags: {
       terrain: ["smooth", "mixed"],
       priority: ["light", "traction"],
-      distance: ["50k", "50m"],
-    },
+      distance: ["50k", "50m"] },
     bestFor: ["Versatile mixed terrain", "Runners transitioning from heeled shoes", "Budget-conscious racers"],
     pros: [
       "Vibram grip at a lower price point",
@@ -320,9 +294,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "The Terraventure punches above its price. Vibram Megagrip at $130 is a steal.",
       race: "Black Hills 100",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
   {
     id: "altra-superior-6",
     name: "Superior 6",
@@ -335,7 +307,7 @@ export const shoes: ShoeProduct[] = [
       "Altra's lightest trail shoe. Zero-drop minimalism meets a wide toe box for natural foot mechanics — beloved by ultra runners chasing PRs.",
     whyWeRecommend:
       "At just 8.7 oz with zero drop and a wide toe box, the Superior 6 is the minimalist racer's dream for fast 50K and 50M efforts.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["lightweight", "zero-drop", "minimalist", "wide toe box", "fast", "race day"],
     specs: {
       weight: "8.7 oz",
@@ -345,16 +317,13 @@ export const shoes: ShoeProduct[] = [
       midsole: undefined,
       outsole: undefined,
       rockPlate: undefined,
-      widths: undefined,
-    },
+      widths: undefined },
     ratings: undefined,
     finderTags: {
       terrain: ["smooth", "mixed", "desert"],
       priority: ["light", "wide"],
-      distance: ["50k", "50m"],
-    },
-    bestFor: ["Minimalist racing", "Wide forefoot", "Desert and mixed terrain"],
-  },
+      distance: ["50k", "50m"] },
+    bestFor: ["Minimalist racing", "Wide forefoot", "Desert and mixed terrain"] },
 
   // ─────────────────────────────────────────────────────────────────────────
   // TECHNICAL
@@ -371,7 +340,7 @@ export const shoes: ShoeProduct[] = [
       "Italian precision for gnarly terrain. FriXion AT rubber and a flex grooved outsole grip wet roots and angled rock faces with confidence.",
     whyWeRecommend:
       "FriXion AT rubber is exceptional on wet rock, making the Bushido III the go-to technical shoe for PNW and mountain racing where grip is everything.",
-    affiliateLinks: { rei: "#", amazon: "#", backcountry: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["technical", "wet rock", "mountain racing", "FriXion", "Italian", "roots"],
     specs: {
       weight: "10.4 oz",
@@ -381,14 +350,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "Aero-Mesh upper + compression-molded EVA",
       outsole: "FriXion AT",
       rockPlate: true,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 3, traction: 5, durability: 4, breathability: 4, groundFeel: 5 },
     finderTags: {
       terrain: ["technical", "mountain"],
       priority: ["traction", "stability"],
-      distance: ["50k", "50m", "100k"],
-    },
+      distance: ["50k", "50m", "100k"] },
     bestFor: ["Wet/slippery rock", "Rooty PNW trails", "Mountain racing"],
     pros: [
       "FriXion AT is exceptional on wet rock",
@@ -399,9 +366,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "On wet granite, nothing touches the Bushido. I felt glued to the mountain the entire race.",
       race: "Waldo 100K",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
   {
     id: "salomon-speedcross-6",
     name: "Speedcross 6",
@@ -414,7 +379,7 @@ export const shoes: ShoeProduct[] = [
       "The ultimate mud shoe. Deep chevron lugs bite into soft terrain like nothing else — if your race is muddy, these are your answer.",
     whyWeRecommend:
       "Unmatched mud performance with self-cleaning chevron lugs makes the Speedcross 6 the only choice for soggy PNW and UK-style ultra courses.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["technical", "mud", "soft terrain", "PNW", "chevron lugs", "self-cleaning"],
     specs: {
       weight: "9.6 oz",
@@ -424,14 +389,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "EnergyCell",
       outsole: "Contagrip TA",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 4, traction: 5, durability: 4, breathability: 3, groundFeel: 3 },
     finderTags: {
       terrain: ["technical", "mountain"],
       priority: ["traction"],
-      distance: ["50k", "50m"],
-    },
+      distance: ["50k", "50m"] },
     bestFor: ["Mud", "Soft terrain", "Pacific Northwest races"],
     pros: [
       "Unmatched mud performance",
@@ -442,9 +405,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "Soggy Oregon mud — the Speedcross just laughed at it. Nothing else comes close.",
       race: "Tillamook Burn 50K",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
   {
     id: "inov8-mudclaw-g260",
     name: "Mudclaw G 260",
@@ -457,7 +418,7 @@ export const shoes: ShoeProduct[] = [
       "Graphene-enhanced rubber with 8mm spike-like lugs. Designed for wet, boggy, and ultra-technical courses where grip is life.",
     whyWeRecommend:
       "Graphene-enhanced rubber and 8mm spike-like lugs give the Mudclaw G 260 the most aggressive grip available for bog, fell, and ultra-technical courses.",
-    affiliateLinks: { rei: "#", amazon: "#", backcountry: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["technical", "graphene", "fell running", "bog", "mud", "spike lugs"],
     specs: {
       weight: "9.2 oz",
@@ -467,14 +428,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "Powerflow",
       outsole: "Graphene Grip",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 2, traction: 5, durability: 5, breathability: 4, groundFeel: 5 },
     finderTags: {
       terrain: ["technical"],
       priority: ["traction", "light"],
-      distance: ["50k", "50m"],
-    },
+      distance: ["50k", "50m"] },
     bestFor: ["Bog, mud, wet fell running", "Technical fell racing", "Ultra-technical UK-style courses"],
     pros: [
       "Graphene rubber is the most durable grip compound available",
@@ -485,9 +444,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "I've been running Mudclaws since 2018. Nothing else works on British fells.",
       race: "Lakeland 100",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   // ─────────────────────────────────────────────────────────────────────────
   // WIDE TOE BOX
@@ -504,7 +461,7 @@ export const shoes: ShoeProduct[] = [
       "The most popular ultra shoe of all time. FootShape toe box, zero drop, and bomber durability across any terrain. A legend for a reason.",
     whyWeRecommend:
       "With 14+ years of trust from ultra runners worldwide, the Lone Peak 8 is the proven zero-drop, wide-toe-box workhorse for any distance on any terrain.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["wide toe box", "zero-drop", "all terrain", "all distances", "durability", "legend"],
     specs: {
       weight: "9.7 oz",
@@ -514,14 +471,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "Altra EGO",
       outsole: "TrailClaw",
       rockPlate: false,
-      widths: "Regular, Wide, Max Wide",
-    },
+      widths: "Regular, Wide, Max Wide" },
     ratings: { cushioning: 3, traction: 4, durability: 5, breathability: 4, groundFeel: 4 },
     finderTags: {
       terrain: ["smooth", "mixed", "mountain"],
       priority: ["wide", "cushion"],
-      distance: ["50k", "50m", "100k", "100m"],
-    },
+      distance: ["50k", "50m", "100k", "100m"] },
     bestFor: ["Any terrain", "All distances", "Zero-drop runners", "Wide forefoot"],
     pros: [
       "The most popular ultra shoe ever made",
@@ -533,9 +488,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "I've finished 14 hundred-milers in Lone Peaks. If it ain't broke, don't fix it.",
       race: "Leadville 100",
-      runner: "Verified multi-100 finisher",
-    },
-  },
+      runner: "Verified multi-100 finisher" } },
   {
     id: "altra-timp-5",
     name: "Timp 5",
@@ -548,7 +501,7 @@ export const shoes: ShoeProduct[] = [
       "The cushioned wide-toe-box choice. More stack than the Lone Peak with aggressive TrailClaw lugs — perfect for technical 100-mile courses.",
     whyWeRecommend:
       "The Timp 5 bridges the gap between the Lone Peak's wide fit and the Olympus's cushion, delivering aggressive traction for technical 100-mile courses.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["wide toe box", "zero-drop", "cushion", "technical", "100-mile", "TrailClaw"],
     specs: {
       weight: "10.1 oz",
@@ -558,14 +511,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "Altra EGO Max",
       outsole: "TrailClaw",
       rockPlate: false,
-      widths: "Regular, Wide",
-    },
+      widths: "Regular, Wide" },
     ratings: { cushioning: 5, traction: 5, durability: 4, breathability: 4, groundFeel: 3 },
     finderTags: {
       terrain: ["technical", "mixed", "mountain"],
       priority: ["wide", "cushion", "traction"],
-      distance: ["50k", "50m", "100k", "100m"],
-    },
+      distance: ["50k", "50m", "100k", "100m"] },
     bestFor: ["Technical 100-mile courses", "Runners wanting Lone Peak fit + more cushion", "Mountain terrain"],
     pros: [
       "More cushion than Lone Peak",
@@ -576,9 +527,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "Lone Peak fit, Olympus cushion. The Timp 5 is my go-to for everything above 50 miles.",
       race: "Bear 100",
-      runner: "Verified 100-mile finisher",
-    },
-  },
+      runner: "Verified 100-mile finisher" } },
   {
     id: "topo-ultraventure-3",
     name: "Ultraventure 3",
@@ -591,7 +540,7 @@ export const shoes: ShoeProduct[] = [
       "Topo's roomy fit and 5mm drop bridge the gap between zero-drop and traditional shoes. Great for wide-footed runners who want versatility.",
     whyWeRecommend:
       "The Ultraventure 3 pairs Vibram Megagrip traction with a wide toe box and a 5mm drop, making it the ideal transition shoe for runners new to wider fits.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["wide toe box", "5mm drop", "vibram", "transition shoe", "mixed terrain", "versatile"],
     specs: {
       weight: "10.1 oz",
@@ -601,14 +550,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "ZipFoam",
       outsole: "Vibram Megagrip",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 4, traction: 5, durability: 4, breathability: 4, groundFeel: 3 },
     finderTags: {
       terrain: ["smooth", "mixed"],
       priority: ["wide", "cushion"],
-      distance: ["50k", "50m", "100k"],
-    },
+      distance: ["50k", "50m", "100k"] },
     bestFor: ["Runners transitioning to wider toe boxes", "Mixed terrain", "50K to 100K"],
     pros: [
       "5mm drop bridges the gap for non-zero-drop runners",
@@ -619,9 +566,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "I couldn't go zero-drop, but the Ultraventure's wide box still saved my toes at mile 60.",
       race: "Zion 100",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   // ─────────────────────────────────────────────────────────────────────────
   // MOUNTAIN / ALPINE
@@ -638,7 +583,7 @@ export const shoes: ShoeProduct[] = [
       "Built for the mountains. Gaiter-compatible, rockered construction, and Italian FriXion AT rubber that sticks to wet granite.",
     whyWeRecommend:
       "Gaiter compatibility, FriXion AT grip, and a protective rock plate make the Ultra Raptor II the definitive shoe for Hardrock, UTMB, and high-altitude scree.",
-    affiliateLinks: { rei: "#", amazon: "#", backcountry: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["mountain", "alpine", "gaiter compatible", "rock plate", "Hardrock", "UTMB", "FriXion"],
     specs: {
       weight: "11.6 oz",
@@ -648,14 +593,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "Compression-molded EVA",
       outsole: "FriXion AT",
       rockPlate: true,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 3, traction: 5, durability: 5, breathability: 3, groundFeel: 5 },
     finderTags: {
       terrain: ["mountain", "technical"],
       priority: ["traction", "stability"],
-      distance: ["50k", "50m", "100k"],
-    },
+      distance: ["50k", "50m", "100k"] },
     bestFor: ["Hardrock 100", "UTMB", "High-altitude scree and technical terrain"],
     pros: [
       "Gaiter attachment system",
@@ -667,9 +610,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "Hardrock is essentially a mountain climbing race. The Ultra Raptor is the only shoe I trust on the Grouse-Ouray section.",
       race: "Hardrock 100",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
   {
     id: "hoka-tecton-x2",
     name: "Tecton X2",
@@ -682,7 +623,7 @@ export const shoes: ShoeProduct[] = [
       "Two carbon fiber plates meet Hoka's max cushion platform. Explosive uphill response and plush downhill protection — the pinnacle of trail tech.",
     whyWeRecommend:
       "Dual carbon plates and max cushion in a lightweight package make the Tecton X2 the pinnacle of mountain ultra footwear for runners who demand speed and protection.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["mountain", "carbon plate", "max cushion", "lightweight", "vibram", "climbing", "descents"],
     specs: {
       weight: "9.5 oz",
@@ -692,14 +633,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "ProFly X with dual carbon plates",
       outsole: "Vibram Megagrip",
       rockPlate: true,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 5, traction: 5, durability: 4, breathability: 4, groundFeel: 3 },
     finderTags: {
       terrain: ["mountain", "technical", "mixed"],
       priority: ["cushion", "light"],
-      distance: ["50k", "50m", "100k"],
-    },
+      distance: ["50k", "50m", "100k"] },
     bestFor: ["Mixed mountain terrain", "Runners wanting max cushion + mountain grip", "Technical 100K/100M"],
     pros: [
       "Two carbon fiber plates for explosive climbing",
@@ -711,9 +650,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "The uphills felt effortless and the descents didn't destroy my quads. It's the future of mountain ultra footwear.",
       race: "Transvulcania",
-      runner: "Elite finisher",
-    },
-  },
+      runner: "Elite finisher" } },
   {
     id: "scarpa-golden-gate-atr",
     name: "Golden Gate ATR",
@@ -726,7 +663,7 @@ export const shoes: ShoeProduct[] = [
       "Italian mountain craftsmanship with SILV-R rubber that excels on wet rock. Natural flex and exceptional durability for alpine races.",
     whyWeRecommend:
       "Scarpa's mountain heritage shines in the Golden Gate ATR with SILV-R rubber grip and ground feel that make it a favorite for European alpine races.",
-    affiliateLinks: { rei: "#", amazon: "#", runningWarehouse: "#" },
+    affiliateLinks: { amazon: "#" },
     tags: ["mountain", "alpine", "Italian", "wet rock", "ground feel", "durability"],
     specs: {
       weight: "10.2 oz",
@@ -736,14 +673,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "Responsive EVA",
       outsole: "SILV-R rubber",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     ratings: { cushioning: 3, traction: 5, durability: 5, breathability: 4, groundFeel: 5 },
     finderTags: {
       terrain: ["mountain", "technical"],
       priority: ["traction", "stability"],
-      distance: ["50k", "50m", "100k"],
-    },
+      distance: ["50k", "50m", "100k"] },
     bestFor: ["Alpine races", "Wet technical terrain", "Runners valuing ground feel"],
     pros: [
       "Italian mountain craftsmanship",
@@ -755,9 +690,7 @@ export const shoes: ShoeProduct[] = [
     review: {
       quote: "Built like a mountaineering boot but runs like a trail shoe. Scarpa nailed it.",
       race: "Lavaredo Ultra Trail",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   // ─────────────────────────────────────────────────────────────────────────
   // KIT-BUILDER SHOES (recommended in KitBuilder.tsx, not in other files)
@@ -774,12 +707,7 @@ export const shoes: ShoeProduct[] = [
       "The previous-generation Speedgoat with proven Vibram Megagrip traction and plush cushion. A reliable all-conditions trail shoe for any ultra distance.",
     whyWeRecommend:
       "A proven all-conditions trail shoe with reliable Vibram grip and race-tested cushion that you forget you are wearing.",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=HOKA%20Speedgoat%205&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon: "https://www.amazon.com/s?k=HOKA%20Speedgoat%205&tag=finishultra-20",
-      runningWarehouse: "https://www.runningwarehouse.com/searchresults/?searchTerm=HOKA%20Speedgoat%205&sourceCode=FFULTRA",
-      backcountry: "https://www.backcountry.com/search?q=HOKA%20Speedgoat%205&CMP_ID=finishultra",
-    },
+    affiliateLinks: { amazon: "https://www.amazon.com/s?k=HOKA%20Speedgoat%205&tag=finishultra-20" },
     tags: ["max-cushion", "vibram", "all-conditions", "proven", "previous-gen"],
     specs: {
       weight: "10.9 oz",
@@ -789,15 +717,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "EVA (ProFly)",
       outsole: "Vibram Megagrip",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     finderTags: {
       terrain: ["technical", "mixed", "mountain"],
       priority: ["cushion", "traction"],
-      distance: ["50k", "50m", "100k", "100m"],
-    },
-    bestFor: ["All-conditions racing", "Technical trails", "100-mile races"],
-  },
+      distance: ["50k", "50m", "100k", "100m"] },
+    bestFor: ["All-conditions racing", "Technical trails", "100-mile races"] },
   {
     id: "hoka-speedgoat-5-wide",
     name: "Speedgoat 5 Wide",
@@ -810,12 +735,7 @@ export const shoes: ShoeProduct[] = [
       "The extra-wide version of the Speedgoat 5 eliminates toe box compression on long descents — critical for distances where feet swell 1+ sizes.",
     whyWeRecommend:
       "Max cushion and Vibram traction in an extra-wide fit make the Speedgoat 5 Wide essential for wide-footed runners on technical alpine terrain.",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=HOKA%20Speedgoat%205%20Wide&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon: "https://www.amazon.com/s?k=HOKA%20Speedgoat%205%20Wide&tag=finishultra-20",
-      runningWarehouse: "https://www.runningwarehouse.com/searchresults/?searchTerm=HOKA%20Speedgoat%205%20Wide&sourceCode=FFULTRA",
-      backcountry: "https://www.backcountry.com/search?q=HOKA%20Speedgoat%205%20Wide&CMP_ID=finishultra",
-    },
+    affiliateLinks: { amazon: "https://www.amazon.com/s?k=HOKA%20Speedgoat%205%20Wide&tag=finishultra-20" },
     tags: ["wide toe box", "max-cushion", "vibram", "alpine", "extra-wide"],
     specs: {
       weight: "10.9 oz",
@@ -825,15 +745,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "EVA (ProFly)",
       outsole: "Vibram Megagrip",
       rockPlate: false,
-      widths: "Wide, Extra Wide",
-    },
+      widths: "Wide, Extra Wide" },
     finderTags: {
       terrain: ["technical", "mixed", "mountain"],
       priority: ["wide", "cushion", "traction"],
-      distance: ["50k", "50m", "100k", "100m"],
-    },
-    bestFor: ["Wide/extra-wide feet", "Technical alpine terrain", "100-mile races"],
-  },
+      distance: ["50k", "50m", "100k", "100m"] },
+    bestFor: ["Wide/extra-wide feet", "Technical alpine terrain", "100-mile races"] },
   {
     id: "saucony-peregrine-13",
     name: "Peregrine 13",
@@ -846,12 +763,7 @@ export const shoes: ShoeProduct[] = [
       "Aggressive lugs and a protective rock plate make the Peregrine 13 a budget-friendly mountain workhorse with PWRTRAC grip.",
     whyWeRecommend:
       "The Peregrine 13 delivers aggressive mountain traction with a rock plate at the lowest price point in the technical category.",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Saucony%20Peregrine%2013&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon: "https://www.amazon.com/s?k=Saucony%20Peregrine%2013&tag=finishultra-20",
-      runningWarehouse: "https://www.runningwarehouse.com/searchresults/?searchTerm=Saucony%20Peregrine%2013&sourceCode=FFULTRA",
-      backcountry: "https://www.backcountry.com/search?q=Saucony%20Peregrine%2013&CMP_ID=finishultra",
-    },
+    affiliateLinks: { amazon: "https://www.amazon.com/s?k=Saucony%20Peregrine%2013&tag=finishultra-20" },
     tags: ["technical", "budget", "mountain", "rock plate", "aggressive lugs"],
     specs: {
       weight: "9.7 oz",
@@ -861,15 +773,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "PWRTRAC foam",
       outsole: "PWRTRAC",
       rockPlate: true,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     finderTags: {
       terrain: ["technical", "mountain"],
       priority: ["traction", "stability"],
-      distance: ["50k", "50m"],
-    },
-    bestFor: ["Mountain terrain", "Budget-conscious racers", "Technical trail training"],
-  },
+      distance: ["50k", "50m"] },
+    bestFor: ["Mountain terrain", "Budget-conscious racers", "Technical trail training"] },
   {
     id: "hoka-torrent-3",
     name: "Torrent 3",
@@ -882,12 +791,7 @@ export const shoes: ShoeProduct[] = [
       "A nimble mountain shoe with Vibram Megagrip traction and a protective rock plate, built for technical terrain at a lighter weight.",
     whyWeRecommend:
       "The Torrent 3 pairs Vibram Megagrip grip with a light 8.6 oz build, making it an agile choice for technical mountain races on a standard budget.",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=HOKA%20Torrent%203&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon: "https://www.amazon.com/s?k=HOKA%20Torrent%203&tag=finishultra-20",
-      runningWarehouse: "https://www.runningwarehouse.com/searchresults/?searchTerm=HOKA%20Torrent%203&sourceCode=FFULTRA",
-      backcountry: "https://www.backcountry.com/search?q=HOKA%20Torrent%203&CMP_ID=finishultra",
-    },
+    affiliateLinks: { amazon: "https://www.amazon.com/s?k=HOKA%20Torrent%203&tag=finishultra-20" },
     tags: ["lightweight", "mountain", "vibram", "agile", "rock plate"],
     specs: {
       weight: "8.6 oz",
@@ -897,15 +801,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "ProFly foam",
       outsole: "Vibram Megagrip",
       rockPlate: true,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     finderTags: {
       terrain: ["technical", "mountain", "mixed"],
       priority: ["light", "traction"],
-      distance: ["50k", "50m"],
-    },
-    bestFor: ["Technical mountain terrain", "Lighter runners", "50K race day"],
-  },
+      distance: ["50k", "50m"] },
+    bestFor: ["Technical mountain terrain", "Lighter runners", "50K race day"] },
   {
     id: "salomon-sense-ride-5",
     name: "Sense Ride 5",
@@ -918,12 +819,7 @@ export const shoes: ShoeProduct[] = [
       "A breathable, secure trail shoe with Quicklace lockdown and Sensifit mesh. Ideal for hot conditions and dusty, sandy terrain where airflow matters.",
     whyWeRecommend:
       "The Sense Ride 5's breathable upper and secure Quicklace system keep feet cool and locked in on hot, dusty courses where blister prevention is key.",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Salomon%20Sense%20Ride%205&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon: "https://www.amazon.com/s?k=Salomon%20Sense%20Ride%205&tag=finishultra-20",
-      runningWarehouse: "https://www.runningwarehouse.com/searchresults/?searchTerm=Salomon%20Sense%20Ride%205&sourceCode=FFULTRA",
-      backcountry: "https://www.backcountry.com/search?q=Salomon%20Sense%20Ride%205&CMP_ID=finishultra",
-    },
+    affiliateLinks: { amazon: "https://www.amazon.com/s?k=Salomon%20Sense%20Ride%205&tag=finishultra-20" },
     tags: ["lightweight", "breathable", "hot conditions", "desert", "Quicklace", "Sensifit"],
     specs: {
       weight: "9.5 oz",
@@ -933,15 +829,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "EnergyCell foam",
       outsole: "Contagrip MA",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     finderTags: {
       terrain: ["smooth", "desert", "mixed"],
       priority: ["light", "cushion"],
-      distance: ["50k", "50m", "100k"],
-    },
-    bestFor: ["Hot conditions", "Desert races", "Dusty/sandy terrain"],
-  },
+      distance: ["50k", "50m", "100k"] },
+    bestFor: ["Hot conditions", "Desert races", "Dusty/sandy terrain"] },
   {
     id: "brooks-cascadia-16",
     name: "Cascadia 16",
@@ -954,12 +847,7 @@ export const shoes: ShoeProduct[] = [
       "A budget-friendly trail workhorse with TrailTack rubber grip and enough cushion for long efforts. The go-to for runners watching their gear budget.",
     whyWeRecommend:
       "At $120 the Cascadia 16 is the most affordable all-conditions trail shoe on the list, delivering reliable TrailTack grip and solid cushion for budget-conscious ultra runners.",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=Brooks%20Cascadia%2016&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon: "https://www.amazon.com/s?k=Brooks%20Cascadia%2016&tag=finishultra-20",
-      runningWarehouse: "https://www.runningwarehouse.com/searchresults/?searchTerm=Brooks%20Cascadia%2016&sourceCode=FFULTRA",
-      backcountry: "https://www.backcountry.com/search?q=Brooks%20Cascadia%2016&CMP_ID=finishultra",
-    },
+    affiliateLinks: { amazon: "https://www.amazon.com/s?k=Brooks%20Cascadia%2016&tag=finishultra-20" },
     tags: ["lightweight", "budget", "all-conditions", "TrailTack", "workhorse"],
     beginnerPick: true,
     specs: {
@@ -970,15 +858,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "BioMoGo DNA foam",
       outsole: "TrailTack rubber",
       rockPlate: true,
-      widths: "Regular, Wide",
-    },
+      widths: "Regular, Wide" },
     finderTags: {
       terrain: ["smooth", "mixed"],
       priority: ["cushion", "stability"],
-      distance: ["50k", "50m"],
-    },
-    bestFor: ["Budget-conscious racers", "First-time ultra runners", "Groomed trails"],
-  },
+      distance: ["50k", "50m"] },
+    bestFor: ["Budget-conscious racers", "First-time ultra runners", "Groomed trails"] },
   {
     id: "la-sportiva-ultraventure-pro",
     name: "Ultraventure Pro",
@@ -991,12 +876,7 @@ export const shoes: ShoeProduct[] = [
       "A premium all-conditions mountain shoe with FriXion XT Climb outsole and high-stack cushion. Built for runners who want the best on every surface.",
     whyWeRecommend:
       "FriXion XT Climb grip and a generous 33mm stack make the Ultraventure Pro a premium all-terrain mountain shoe for runners who refuse to compromise.",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=La%20Sportiva%20Ultraventure%20Pro&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon: "https://www.amazon.com/s?k=La%20Sportiva%20Ultraventure%20Pro&tag=finishultra-20",
-      runningWarehouse: "https://www.runningwarehouse.com/searchresults/?searchTerm=La%20Sportiva%20Ultraventure%20Pro&sourceCode=FFULTRA",
-      backcountry: "https://www.backcountry.com/search?q=La%20Sportiva%20Ultraventure%20Pro&CMP_ID=finishultra",
-    },
+    affiliateLinks: { amazon: "https://www.amazon.com/s?k=La%20Sportiva%20Ultraventure%20Pro&tag=finishultra-20" },
     tags: ["mountain", "premium", "all-terrain", "FriXion", "high-stack", "Italian"],
     specs: {
       weight: "10.4 oz",
@@ -1006,15 +886,12 @@ export const shoes: ShoeProduct[] = [
       midsole: "MEMlex foam",
       outsole: "FriXion XT Climb",
       rockPlate: true,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     finderTags: {
       terrain: ["mountain", "technical", "mixed"],
       priority: ["cushion", "traction"],
-      distance: ["50k", "50m", "100k"],
-    },
-    bestFor: ["All-conditions mountain racing", "Premium gear seekers", "Technical and mixed terrain"],
-  },
+      distance: ["50k", "50m", "100k"] },
+    bestFor: ["All-conditions mountain racing", "Premium gear seekers", "Technical and mixed terrain"] },
   {
     id: "hoka-clifton-9-trail",
     name: "Clifton 9 Trail",
@@ -1027,12 +904,7 @@ export const shoes: ShoeProduct[] = [
       "Maximum cushion drop-bag shoe for the final third of 100-mile races. Switch at mile 60-70 when your feet have swollen and the terrain flattens.",
     whyWeRecommend:
       "The Clifton 9 Trail is the ideal drop-bag shoe for 100-milers, absorbing late-race pounding in a fresh, plush package when your primary shoes are spent.",
-    affiliateLinks: {
-      rei: "https://www.rei.com/search?q=HOKA%20Clifton%209%20Trail&cm_mmc=aff_AL-_-finishultra-_-1",
-      amazon: "https://www.amazon.com/s?k=HOKA%20Clifton%209%20Trail&tag=finishultra-20",
-      runningWarehouse: "https://www.runningwarehouse.com/searchresults/?searchTerm=HOKA%20Clifton%209%20Trail&sourceCode=FFULTRA",
-      backcountry: "https://www.backcountry.com/search?q=HOKA%20Clifton%209%20Trail&CMP_ID=finishultra",
-    },
+    affiliateLinks: { amazon: "https://www.amazon.com/s?k=HOKA%20Clifton%209%20Trail&tag=finishultra-20" },
     tags: ["max-cushion", "drop-bag", "100-mile", "late-race", "plush", "fresh shoes"],
     specs: {
       weight: "9.7 oz",
@@ -1042,13 +914,10 @@ export const shoes: ShoeProduct[] = [
       midsole: "Compression-molded EVA",
       outsole: "Engineered mesh",
       rockPlate: false,
-      widths: "Regular",
-    },
+      widths: "Regular" },
     finderTags: {
       terrain: ["smooth", "mixed"],
       priority: ["cushion"],
-      distance: ["100k", "100m"],
-    },
-    bestFor: ["Drop-bag swap at mile 60-70", "100-mile late-race comfort", "Groomed/flat final sections"],
-  },
+      distance: ["100k", "100m"] },
+    bestFor: ["Drop-bag swap at mile 60-70", "100-mile late-race comfort", "Groomed/flat final sections"] },
 ];

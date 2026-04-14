@@ -72,15 +72,7 @@ function buildLinks(
 ): Record<string, { url: string; price: number }> {
   const links: Record<string, { url: string; price: number }> = {};
   const al = product.affiliateLinks;
-
-  if (al.rei) links.rei = { url: al.rei, price: product.price };
   if (al.amazon) links.amazon = { url: al.amazon, price: product.price };
-  if (al.runningWarehouse)
-    links.rw = { url: al.runningWarehouse, price: product.price };
-  if (al.backcountry)
-    links.backcountry = { url: al.backcountry, price: product.price };
-  if (al.direct) links.direct = { url: al.direct, price: product.price };
-
   return links;
 }
 

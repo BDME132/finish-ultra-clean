@@ -69,38 +69,22 @@ function SpecRow({ label, value }: { label: string; value: string | boolean | un
   );
 }
 
-const affiliateLabelMap: Record<string, string> = {
-  rei: "REI",
-  amazon: "Amazon",
-  runningWarehouse: "Running Warehouse",
-  backcountry: "Backcountry",
-  direct: "Direct",
-};
-
 function AffiliateButtons({ links }: { links: Product["affiliateLinks"] }) {
-  const entries = Object.entries(links).filter(
-    ([, url]) => url && url !== "#",
-  );
-  if (entries.length === 0) return null;
+  if (!links.amazon || links.amazon === "#") return null;
 
   return (
     <div>
       <h2 className="font-headline font-bold text-dark text-lg mb-3">
         Where to Buy
       </h2>
-      <div className="flex flex-wrap gap-2">
-        {entries.map(([key, url]) => (
-          <a
-            key={key}
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            className="text-sm px-5 py-2.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
-          >
-            {affiliateLabelMap[key] ?? key}
-          </a>
-        ))}
-      </div>
+      <a
+        href={links.amazon}
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        className="inline-block text-sm px-5 py-2.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
+      >
+        Buy on Amazon
+      </a>
     </div>
   );
 }
