@@ -10,7 +10,8 @@
     "blog:draft": "tsx scripts/generate-blog-draft.ts",
     "blog:calendar": "tsx scripts/generate-content-calendar.ts",
     "blog:publish": "tsx scripts/publish-scheduled.ts",
-    "blog:social": "tsx scripts/generate-social-posts.ts"
+    "blog:social": "tsx scripts/generate-social-posts.ts",
+    "check:gear-links": "node scripts/check-gear-links.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

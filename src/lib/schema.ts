@@ -1,4 +1,4 @@
-import type { BlogPost } from "@/types/content";
+import type { PublicBlogPost } from "@/lib/blog";
 import type { GlossaryTerm } from "@/types/content";
 
 /** Canonical site origin — all structured-data URLs must use this. */
@@ -27,7 +27,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   apparel: "Apparel",
   kits: "Gear Kits",
   builder: "Gear Builder",
-  "race-day-kit": "Race Day Kit",
+  "race-day-kit": "Shared Kits",
   "first-50k": "Your First 50K",
   "base-building": "Base Building",
   "race-week": "Race Week",
@@ -196,14 +196,15 @@ function estimateWordCount(body: string): number {
   return body.trim().split(/\s+/).filter(Boolean).length;
 }
 
-export function blogPostingJsonLd(post: BlogPost) {
+export function blogPostingJsonLd(post: PublicBlogPost) {
   const url = absoluteUrl(`/blog/${post.slug}`);
-  const imageUrl = post.image.startsWith("http")
-    ? post.image
-    : absoluteUrl(post.image);
+  const imagePath = post.coverImageUrl || "/og-image.png";
+  const imageUrl = imagePath.startsWith("http")
+    ? imagePath
+    : absoluteUrl(imagePath);
 
   const modified = isoDateOnly(post.updatedAt ?? post.publishedAt);
-  const published = isoDateOnly(post.publishedAt);
+  const published = isoDateOnly(post.publishedAt ?? post.createdAt);
 
   return {
     "@context": "https://schema.org",
@@ -214,8 +215,8 @@ export function blogPostingJsonLd(post: BlogPost) {
     dateModified: modified,
     author: {
       "@type": "Person",
-      name: "FinishUltra Team",
-      url: absoluteUrl("/about"),
+      name: post.authorName,
+      url: post.authorType === "ai" ? absoluteUrl("/pheidi") : absoluteUrl("/account"),
     },
     publisher: {
       "@type": "Organization",
@@ -233,7 +234,7 @@ export function blogPostingJsonLd(post: BlogPost) {
     },
     articleSection: post.category,
     keywords: post.tags.join(", "),
-    wordCount: estimateWordCount(post.body),
+    wordCount: estimateWordCount(post.bodyMarkdown),
   };
 }
 

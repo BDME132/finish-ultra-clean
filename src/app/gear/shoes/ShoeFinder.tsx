@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { PersonStanding, Mountain, Target, Calendar } from "lucide-react";
-
 const SHOES = [
   {
     id: "hoka-speedgoat-6",

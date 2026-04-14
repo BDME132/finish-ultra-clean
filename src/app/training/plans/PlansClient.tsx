@@ -2896,7 +2896,7 @@ export default function PlansClient() {
                         ))}
                         <div className="mt-2">
                           <Link href="/gear/race-day-kit" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
-                            View the complete Race Day Kit guide &rarr;
+                            Browse Shared Kits from other runners &rarr;
                           </Link>
                         </div>
                       </div>
@@ -2929,7 +2929,7 @@ export default function PlansClient() {
               <p className="text-gray mb-8 max-w-xl mx-auto text-sm">Pick your distance, commit to the plan, and trust the process. Consistency beats intensity every time.</p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link href="/gear/race-day-kit" className="inline-flex items-center gap-2 px-7 py-3.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors">
-                  Build Your Race Kit
+                  Browse Shared Kits
                 </Link>
                 <Link href="/training/first-50k" className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20">
                   First 50K Plan

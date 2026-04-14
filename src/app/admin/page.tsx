@@ -7,6 +7,7 @@ import { Newsletter, SubscribersResponse } from "@/types/newsletter";
 interface DashboardData {
   subscriberCount: number;
   newsletters: Newsletter[];
+  pendingFlags: number;
   loading: boolean;
   error: string | null;
 }
@@ -15,6 +16,7 @@ export default function AdminDashboard() {
   const [data, setData] = useState<DashboardData>({
     subscriberCount: 0,
     newsletters: [],
+    pendingFlags: 0,
     loading: true,
     error: null,
   });
@@ -22,14 +24,19 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("/api/admin/subscribers");
-        if (!res.ok) {
+        const [subscribersRes, reviewsRes] = await Promise.all([
+          fetch("/api/admin/subscribers"),
+          fetch("/api/admin/reviews"),
+        ]);
+        if (!subscribersRes.ok) {
           throw new Error("Failed to fetch data");
         }
-        const json: SubscribersResponse = await res.json();
+        const json: SubscribersResponse = await subscribersRes.json();
+        const reviewsJson = reviewsRes.ok ? await reviewsRes.json() : null;
         setData({
           subscriberCount: json.count || 0,
           newsletters: json.newsletters || [],
+          pendingFlags: reviewsJson?.stats?.pendingFlags ?? 0,
           loading: false,
           error: null,
         });
@@ -64,7 +71,7 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       <h1 className="text-3xl font-bold">Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Subscriber Count Card */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-medium text-gray-600 mb-2">
@@ -75,17 +82,41 @@ export default function AdminDashboard() {
           </p>
         </div>
 
+        {/* Pending Flags Card */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-medium text-gray-600 mb-2">
+            Pending Flags
+          </h2>
+          <p className="text-4xl font-bold text-blue-600">
+            {data.pendingFlags}
+          </p>
+          <Link
+            href="/admin/reviews"
+            className="text-sm text-blue-600 hover:underline mt-2 inline-block"
+          >
+            View flagged content
+          </Link>
+        </div>
+
         {/* Quick Actions Card */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-medium text-gray-600 mb-4">
             Quick Actions
           </h2>
-          <Link
-            href="/admin/newsletter"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Send Newsletter
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/admin/newsletter"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Send Newsletter
+            </Link>
+            <Link
+              href="/admin/reviews"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Moderate Reviews
+            </Link>
+          </div>
         </div>
       </div>
 

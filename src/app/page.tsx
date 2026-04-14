@@ -5,7 +5,7 @@ import Hero from "@/components/Hero";
 import FeatureGrid from "@/components/FeatureGrid";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import BlogPostCard from "@/components/BlogPostCard";
-import { blogPosts } from "@/lib/content/blog-posts";
+import { loadPublicBlogPostsServer } from "@/lib/blog-server";
 import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   }),
 };
 
-export default function HomePage() {
-  const recentPosts = blogPosts.slice(0, 3);
+export default async function HomePage() {
+  const recentPosts = await loadPublicBlogPostsServer({ limit: 3 });
 
   return (
     <>

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { PersonStanding, Package, Droplets, Target } from "lucide-react";
-
 const VESTS = [
   // ── Race Vests (5-8L) ──────────────────────────────────────────────────────
   {

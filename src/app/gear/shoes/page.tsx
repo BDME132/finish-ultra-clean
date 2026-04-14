@@ -31,8 +31,7 @@ export const metadata: Metadata = {
 
 // ─── Shoe Data ────────────────────────────────────────────────────────────────
 
-type Rating = { cushioning: number; traction: number; durability: number; breathability: number; groundFeel: number };
-
+/** Presentational shape consumed by ShoeCard — mapped from ShoeProduct. */
 type Shoe = {
   name: string;
   brand: string;
@@ -45,7 +44,7 @@ type Shoe = {
   outsole: string;
   rockPlate: boolean;
   widths: string;
-  ratings: Rating;
+  ratings: { cushioning: number; traction: number; durability: number; breathability: number; groundFeel: number };
   bestFor: string[];
   pros: string[];
   cons: string[];
@@ -53,7 +52,8 @@ type Shoe = {
   affiliates: { amazon: string };
 };
 
-const categories: {
+
+const categoryMeta: {
   id: string;
   title: string;
   subtitle: string;
@@ -446,6 +446,8 @@ const categories: {
     ],
   },
 ];
+
+const categories = categoryMeta;
 
 const shoesItemListJsonLd = itemListJsonLd({
   name: "Trail running shoes for ultra marathons",

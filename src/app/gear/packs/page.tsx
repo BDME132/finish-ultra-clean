@@ -30,15 +30,6 @@ export const metadata: Metadata = {
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Rating = {
-  comfort: number;
-  bounce: number;
-  breathability: number;
-  loadDistribution: number;
-  easeOfAccess: number;
-  durability: number;
-};
-
 type Vest = {
   name: string;
   brand: string;
@@ -54,7 +45,7 @@ type Vest = {
   whistle: boolean;
   bladderCompatible: boolean;
   includedFlasks: string;
-  ratings: Rating;
+  ratings: { comfort: number; bounce: number; breathability: number; loadDistribution: number; easeOfAccess: number; durability: number };
   bestFor: string[];
   distances: string[];
   pros: string[];
@@ -63,9 +54,9 @@ type Vest = {
   affiliates: { amazon: string };
 };
 
-// ─── Category Data ────────────────────────────────────────────────────────────
+// ─── Category Metadata ───────────────────────────────────────────────────────
 
-const categories: {
+const categoryMeta: {
   id: string;
   title: string;
   subtitle: string;
@@ -123,7 +114,6 @@ const categories: {
       {
         name: "Race Vest 6.0",
         brand: "Ultimate Direction",
-        category: "race",
         price: "$130",
         weight: "185g",
         capacity: "6L",
@@ -156,7 +146,7 @@ const categories: {
           runner: "Verified finisher",
         },
         affiliates: { amazon: "https://amzn.to/3NpYeKo" },
-      } as unknown as Vest,
+      },
       {
         name: "Pinnacle 4L",
         brand: "Nathan",
@@ -361,37 +351,6 @@ const categories: {
         },
         affiliates: { amazon: "https://amzn.to/3NmjZe7" },
       },
-      {
-        name: "Revolutiv 18L",
-        brand: "Raidlight",
-        price: "$180",
-        weight: "350g",
-        capacity: "18L",
-        sizes: "XS–XL",
-        genderFit: "Unisex (Women's version available)",
-        frontPockets: "4 front pockets + 2 flask pockets",
-        backStorage: "12L main + 4 external pockets",
-        hydrationSystem: "2 soft flasks + 2L bladder compatible",
-        poleCarry: true,
-        whistle: true,
-        bladderCompatible: true,
-        includedFlasks: "2× 600ml",
-        ratings: { comfort: 4, bounce: 4, breathability: 4, loadDistribution: 5, easeOfAccess: 4, durability: 4 },
-        bestFor: ["UTMB-style mandatory gear races", "Alpine racing", "European ultra circuit"],
-        distances: ["100K", "100 Miles"],
-        pros: [
-          "French brand built for UTMB — knows mandatory gear demands inside out",
-          "18L at 350g is excellent weight-to-capacity ratio",
-          "Waterproof back pocket for electronics",
-          "Excellent pole carry optimized for alpine terrain",
-        ],
-        cons: [
-          "Less widely available outside Europe",
-          "Fit can be inconsistent across sizes",
-          "Less brand recognition means less resale value",
-        ],
-        review: {
-          quote: "Raidlight built this vest for the UTMB circuit. It shows — every pocket placement makes sense when you're navigating mandatory gear requirements.",
     ],
   },
   {
@@ -442,6 +401,8 @@ const categories: {
     ],
   },
 ];
+
+const categories = categoryMeta;
 
 const packsItemListJsonLd = itemListJsonLd({
   name: "Hydration packs and running vests for ultras",

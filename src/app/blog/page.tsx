@@ -1,32 +1,37 @@
 import { Metadata } from "next";
+import Link from "next/link";
+import { Mail, PenSquare } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Link from "next/link";
-import BlogPostCard from "@/components/BlogPostCard";
 import BlogCategoryFilter from "@/components/BlogCategoryFilter";
-import { blogPosts, getFeaturedPosts } from "@/lib/content/blog-posts";
+import { getBlogSourceLabel } from "@/lib/blog";
+import { loadPublicBlogPostsServer } from "@/lib/blog-server";
 import { pageMetadata } from "@/lib/seo-metadata";
-import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Ultra Running Blog — Guides, Gear Reviews & Tips | FinishUltra",
+    title: "Ultra Running Blog — AI Guides, Community Posts & Tips | FinishUltra",
     description:
-      "Guides, gear reviews, and race reports for beginner ultra runners. Training tips, nutrition strategies, and race day advice.",
+      "Browse FinishUltra's blog feed with clearly labeled Pheidi AI guides and community posts from ultra runners.",
     path: "/blog",
   }),
 };
 
-export default function BlogPage() {
-  const featured = getFeaturedPosts();
-  const heroPost = featured[0];
-  const nonHeroPosts = blogPosts.filter((p) => p.id !== heroPost.id);
+const aiNotice =
+  "Some articles here are written by Pheidi, FinishUltra’s AI guide. AI articles are labeled clearly. Pheidi generates these guides after processing extensive ultrarunning information, but they are still AI-generated and should not replace professional medical, coaching, or safety advice.";
+
+export default async function BlogPage() {
+  const posts = await loadPublicBlogPostsServer();
+  const featuredPosts = posts.filter((post) => post.featured);
+  const heroPost = featuredPosts[0] ?? posts[0] ?? null;
+  const nonHeroPosts = heroPost
+    ? posts.filter((post) => post.id !== heroPost.id)
+    : posts;
 
   return (
     <>
       <Header />
       <main>
-        {/* Hero — Featured Article */}
         <section className="bg-dark relative overflow-hidden">
           <div
             className="absolute inset-0 opacity-10"
@@ -36,94 +41,137 @@ export default function BlogPage() {
             }}
           />
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div className="grid gap-10 lg:grid-cols-[1.2fr,0.8fr] items-start">
               <div>
-                <div className="inline-flex items-center gap-2 bg-accent/20 text-accent text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5">
-                  <span>Featured</span>
+                <div className="mb-5 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-2 bg-accent/20 text-accent text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
+                    Blog Feed
+                  </span>
+                  <span className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
+                    AI Guides + Community
+                  </span>
                 </div>
                 <h1 className="font-headline text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight">
-                  {heroPost.title}
+                  FinishUltra Blog
                 </h1>
-                <p className="text-lg text-gray leading-relaxed mb-6">
-                  {heroPost.excerpt}
+                <p className="text-lg text-gray leading-relaxed mb-6 max-w-2xl">
+                  One feed. Clearly labeled sources. Pheidi&apos;s AI guides live
+                  alongside community posts from runners building toward their own
+                  finish lines.
                 </p>
-                <div className="flex items-center gap-4 mb-8">
-                  <span className="text-sm text-white/60 bg-white/10 px-3 py-1 rounded-full">
-                    {heroPost.category}
-                  </span>
-                  <span className="text-sm text-white/50">{heroPost.readTime}</span>
-                  {heroPost.updatedAt && (
-                    <span className="text-sm text-white/50">
-                      Updated {heroPost.updatedAt}
-                    </span>
-                  )}
+
+                <div className="rounded-2xl border border-accent/30 bg-accent/10 p-5 mb-8">
+                  <p className="text-sm leading-relaxed text-white/90">
+                    {aiNotice}
+                  </p>
                 </div>
-                <Link
-                  href={`/blog/${heroPost.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"
-                >
-                  Read Article
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/blog/new"
+                    className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white hover:bg-orange-600 transition-colors"
+                  >
+                    <PenSquare className="w-4 h-4" />
+                    Write a Community Post
+                  </Link>
+                  <span className="text-sm text-white/60">
+                    {posts.length} published posts
+                  </span>
+                </div>
               </div>
 
-              {/* Featured articles sidebar */}
-              <div className="space-y-4">
-                <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-2">
-                  More Featured
-                </p>
-                {featured.slice(1, 4).map((post) => (
-                  <Link
-                    key={post.id}
-                    href={`/blog/${post.slug}`}
-                    className="block bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-colors group"
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-medium text-accent bg-accent/20 px-2 py-0.5 rounded-full">
-                        {post.category}
+              {heroPost && (
+                <Link
+                  href={`/blog/${heroPost.slug}`}
+                  className="group block rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm hover:bg-white/10 transition-colors"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-white/5">
+                    {heroPost.coverImageUrl ? (
+                      <img
+                        src={heroPost.coverImageUrl}
+                        alt={heroPost.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-white/60">
+                        Featured Post
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark/70 via-dark/10 to-transparent" />
+                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                      <span className="rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-dark">
+                        {getBlogSourceLabel(heroPost.authorType)}
                       </span>
-                      <span className="text-xs text-white/40">{post.readTime}</span>
+                      <span className="rounded-full bg-accent/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                        {heroPost.category}
+                      </span>
                     </div>
-                    <h3 className="font-headline text-base font-bold text-white group-hover:text-accent transition-colors leading-snug">
-                      {post.title}
-                    </h3>
-                    <p className="text-sm text-white/50 mt-1 line-clamp-2">
-                      {post.excerpt}
+                  </div>
+                  <div className="p-2 pt-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-2">
+                      Featured
                     </p>
-                  </Link>
-                ))}
-              </div>
+                    <h2 className="font-headline text-2xl font-bold text-white leading-tight mb-3 group-hover:text-accent transition-colors">
+                      {heroPost.title}
+                    </h2>
+                    <p className="text-sm text-white/70 leading-relaxed mb-4">
+                      {heroPost.excerpt}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-white/60">
+                      <span>{heroPost.authorName}</span>
+                      <span>{heroPost.readTime}</span>
+                      <span>
+                        {new Date(
+                          heroPost.publishedAt ?? heroPost.updatedAt,
+                        ).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              )}
             </div>
           </div>
         </section>
 
-        {/* Category Filter + All Posts */}
         <section className="py-12 sm:py-16">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark">
-                All Articles
-              </h2>
-              <span className="text-sm text-gray">
-                {blogPosts.length} articles
-              </span>
+            <div className="flex items-center justify-between gap-4 mb-8">
+              <div>
+                <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark">
+                  Browse the Feed
+                </h2>
+                <p className="text-sm text-gray mt-2">
+                  Filter by source and topic. Every AI article is explicitly
+                  labeled.
+                </p>
+              </div>
+              <Link
+                href="/account/posts"
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                Manage your posts
+              </Link>
             </div>
 
             <BlogCategoryFilter posts={nonHeroPosts} />
           </div>
         </section>
 
-        {/* Newsletter CTA */}
         <section className="bg-light py-12 sm:py-16 border-t border-gray-100">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="flex justify-center mb-3"><Mail className="w-8 h-8 text-primary" /></div>
+            <div className="flex justify-center mb-3">
+              <Mail className="w-8 h-8 text-primary" />
+            </div>
             <h2 className="font-headline text-2xl sm:text-3xl font-bold text-dark mb-3">
-              Get New Articles in Your Inbox
+              Get New Posts in Your Inbox
             </h2>
             <p className="text-gray mb-6 max-w-xl mx-auto">
-              One email per week. Gear reviews, training tips, and race guides — no spam, no fluff.
+              AI guides, runner stories, gear reviews, and race-day lessons. One
+              email per week.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <input

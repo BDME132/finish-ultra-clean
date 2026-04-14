@@ -1,6 +1,13 @@
 import type { User } from "@supabase/supabase-js";
 import type { SavedKit } from "./kit-types";
-import { loadSavedKits, saveKitsToLocal } from "./kit-types";
+import {
+  ensureSingleActiveKit,
+  getActiveKit,
+  loadSavedKits,
+  removeSavedKit,
+  saveKitsToLocal,
+  upsertSavedKit,
+} from "./kit-types";
 
 // ─── Load kits: Supabase for auth users, localStorage for guests ────────────
 
@@ -15,9 +22,43 @@ export async function loadKits(user: User | null): Promise<SavedKit[]> {
       return loadSavedKits();
     }
     const data = await res.json();
-    return data.kits ?? [];
+    return ensureSingleActiveKit(data.kits ?? []);
   } catch {
     return loadSavedKits();
+  }
+}
+
+export async function loadKitById(user: User | null, kitId: string): Promise<SavedKit | null> {
+  if (!user) {
+    return loadSavedKits().find((kit) => kit.kitId === kitId) ?? null;
+  }
+
+  try {
+    const res = await fetch(`/api/kits?kitId=${encodeURIComponent(kitId)}`, { credentials: "include" });
+    if (!res.ok) {
+      return loadSavedKits().find((kit) => kit.kitId === kitId) ?? null;
+    }
+    const data = await res.json();
+    return data.kit ?? null;
+  } catch {
+    return loadSavedKits().find((kit) => kit.kitId === kitId) ?? null;
+  }
+}
+
+export async function loadActiveKit(user: User | null): Promise<SavedKit | null> {
+  if (!user) {
+    return getActiveKit(loadSavedKits());
+  }
+
+  try {
+    const res = await fetch("/api/kits?scope=active", { credentials: "include" });
+    if (!res.ok) {
+      return getActiveKit(loadSavedKits());
+    }
+    const data = await res.json();
+    return data.kit ?? null;
+  } catch {
+    return getActiveKit(loadSavedKits());
   }
 }
 
@@ -25,9 +66,7 @@ export async function loadKits(user: User | null): Promise<SavedKit[]> {
 
 export async function saveNewKit(kit: SavedKit, user: User | null): Promise<boolean> {
   // Always save to localStorage
-  const existing = loadSavedKits();
-  const updated = [kit, ...existing.filter((k) => k.kitId !== kit.kitId)];
-  saveKitsToLocal(updated);
+  saveKitsToLocal(upsertSavedKit(loadSavedKits(), kit));
 
   if (!user) return true;
 
@@ -48,9 +87,7 @@ export async function saveNewKit(kit: SavedKit, user: User | null): Promise<bool
 
 export async function updateKit(kit: SavedKit, user: User | null): Promise<void> {
   // Always save to localStorage
-  const existing = loadSavedKits();
-  const updated = existing.map((k) => (k.kitId === kit.kitId ? kit : k));
-  saveKitsToLocal(updated);
+  saveKitsToLocal(upsertSavedKit(loadSavedKits(), kit));
 
   if (!user) return;
 
@@ -70,8 +107,7 @@ export async function updateKit(kit: SavedKit, user: User | null): Promise<void>
 
 export async function deleteKit(kitId: string, user: User | null): Promise<void> {
   // Remove from localStorage
-  const existing = loadSavedKits();
-  saveKitsToLocal(existing.filter((k) => k.kitId !== kitId));
+  saveKitsToLocal(removeSavedKit(loadSavedKits(), kitId));
 
   if (!user) return;
 

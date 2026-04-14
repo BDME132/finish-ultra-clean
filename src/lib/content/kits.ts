@@ -54,10 +54,10 @@ export const kits: GearKit[] = [
   },
   {
     id: "race-day-kit",
-    name: "Ultra Marathon Race Day Kit",
+    name: "Shared Kits Hub",
     slug: "race-day-kit",
     description:
-      "The complete race day checklist across 6 categories — on-body gear, hydration pack, nutrition, drop bag, crew support, and recovery. Everything from the gun to the finish.",
+      "Browse public runner-built kits, compare ideas across terrain and budget, and load any setup into your own custom builder.",
     distance: "All",
     image: "/images/kits/race-day-kit.jpg",
     itemIds: [],
