@@ -2,29 +2,188 @@
 
 import { useState } from "react";
 import { PersonStanding, Mountain, Target, Calendar } from "lucide-react";
-import { shoes as shoeProducts } from "@/lib/products";
-import type { ShoeProduct } from "@/lib/products/types";
-
-const SHOES = shoeProducts.map((s: ShoeProduct) => ({
-  id: s.id,
-  name: s.name,
-  brand: s.brand,
-  category: s.subcategory ?? "max-cushion",
-  price: s.priceDisplay,
-  weight: s.specs.weight,
-  drop: s.specs.drop,
-  stack: s.specs.stack,
-  terrainTags: s.finderTags.terrain,
-  priorityTags: s.finderTags.priority,
-  distanceTags: s.finderTags.distance,
-  blurb: s.description,
-  affiliates: {
-    rei: s.affiliateLinks.rei,
-    amazon: s.affiliateLinks.amazon,
-    runningWarehouse: s.affiliateLinks.runningWarehouse,
-    backcountry: s.affiliateLinks.backcountry,
+const SHOES = [
+  {
+    id: "hoka-speedgoat-6",
+    name: "Speedgoat 6",
+    brand: "Hoka",
+    category: "max-cushion",
+    price: "$160",
+    weight: "10.1 oz",
+    drop: "4mm",
+    stack: "37/33mm",
+    terrainTags: ["technical", "mixed", "mountain"],
+    priorityTags: ["cushion", "traction"],
+    distanceTags: ["50k", "50m", "100k", "100m"],
+    blurb: "The gold standard for high-mileage trail comfort. Vibram Megagrip traction handles technical terrain without sacrificing plush underfoot feel.",
+    affiliates: { amazon: "https://amzn.to/41b2CQt" },
   },
-}));
+  {
+    id: "hoka-mafate-speed-4",
+    name: "Mafate Speed 4",
+    brand: "Hoka",
+    category: "max-cushion",
+    price: "$175",
+    weight: "11.0 oz",
+    drop: "5mm",
+    stack: "37/33mm",
+    terrainTags: ["technical", "mountain", "mixed"],
+    priorityTags: ["cushion", "stability"],
+    distanceTags: ["100k", "100m"],
+    blurb: "Built for 100-mile punishment. Dual-density midsole with aggressive Vibram outsole — when you need maximum protection on brutal courses.",
+    affiliates: { amazon: "https://amzn.to/3PcIyus" },
+  },
+  {
+    id: "altra-olympus-5",
+    name: "Olympus 5",
+    brand: "Altra",
+    category: "max-cushion",
+    price: "$160",
+    weight: "11.2 oz",
+    drop: "0mm",
+    stack: "33mm",
+    terrainTags: ["smooth", "mixed", "desert"],
+    priorityTags: ["cushion", "wide"],
+    distanceTags: ["50k", "50m", "100k", "100m"],
+    blurb: "Zero-drop maximum cushion with Altra's anatomical FootShape toe box. Ideal for runners who want plush comfort without heel elevation.",
+    affiliates: { amazon: "https://amzn.to/4sDutES" },
+  },
+  {
+    id: "saucony-endorphin-edge",
+    name: "Endorphin Edge",
+    brand: "Saucony",
+    category: "max-cushion",
+    price: "$190",
+    weight: "9.7 oz",
+    drop: "8mm",
+    stack: "37/29mm",
+    terrainTags: ["smooth", "mixed"],
+    priorityTags: ["cushion", "light"],
+    distanceTags: ["50k", "50m", "100k"],
+    blurb: "PEBA foam with a carbon plate for trail runners who want road-shoe responsiveness on groomed singletrack. Surprisingly fast for its cushion level.",
+    affiliates: { amazon: "https://amzn.to/4sIF8Oo" },
+  },
+  {
+    id: "saucony-peregrine-14",
+    name: "Peregrine 14",
+    brand: "Saucony",
+    category: "lightweight",
+    price: "$140",
+    weight: "9.6 oz",
+    drop: "8mm",
+    stack: "31/23mm",
+    terrainTags: ["technical", "smooth", "mixed"],
+    priorityTags: ["light", "traction"],
+    distanceTags: ["50k", "50m"],
+    blurb: "The reliable workhorse. TrailTack rubber and a versatile lug pattern make it one of the most trusted everyday trainers in ultra running.",
+    affiliates: { amazon: "https://amzn.to/4dqik1w" },
+  },
+  {
+    id: "la-sportiva-bushido-iii",
+    name: "Bushido III",
+    brand: "La Sportiva",
+    category: "technical",
+    price: "$160",
+    weight: "10.4 oz",
+    drop: "7mm",
+    stack: "26/19mm",
+    terrainTags: ["technical", "mountain"],
+    priorityTags: ["traction", "stability"],
+    distanceTags: ["50k", "50m", "100k"],
+    blurb: "Italian precision for gnarly terrain. FriXion AT rubber and a flex grooved outsole grip wet roots and angled rock faces with confidence.",
+    affiliates: { amazon: "https://amzn.to/4bARBNp" },
+  },
+  {
+    id: "salomon-speedcross-6",
+    name: "Speedcross 6",
+    brand: "Salomon",
+    category: "technical",
+    price: "$140",
+    weight: "9.6 oz",
+    drop: "8mm",
+    stack: "34/26mm",
+    terrainTags: ["technical", "mountain"],
+    priorityTags: ["traction"],
+    distanceTags: ["50k", "50m"],
+    blurb: "The ultimate mud shoe. Deep chevron lugs bite into soft terrain like nothing else — if your race is muddy, these are your answer.",
+    affiliates: { amazon: "https://amzn.to/4sOhhNn" },
+  },
+  {
+    id: "inov8-mudclaw-g260",
+    name: "Mudclaw G 260",
+    brand: "Inov-8",
+    category: "technical",
+    price: "$160",
+    weight: "9.2 oz",
+    drop: "6mm",
+    stack: "25/19mm",
+    terrainTags: ["technical"],
+    priorityTags: ["traction", "light"],
+    distanceTags: ["50k", "50m"],
+    blurb: "Graphene-enhanced rubber with 8mm spike-like lugs. Designed for wet, boggy, and ultra-technical courses where grip is life.",
+    affiliates: { amazon: "https://amzn.to/4uT1rTN" },
+  },
+  {
+    id: "altra-lone-peak-8",
+    name: "Lone Peak 8",
+    brand: "Altra",
+    category: "wide",
+    price: "$140",
+    weight: "9.7 oz",
+    drop: "0mm",
+    stack: "25mm",
+    terrainTags: ["smooth", "mixed", "mountain"],
+    priorityTags: ["wide", "cushion"],
+    distanceTags: ["50k", "50m", "100k", "100m"],
+    blurb: "The most popular ultra shoe of all time. FootShape toe box, zero drop, and bomber durability across any terrain. A legend for a reason.",
+    affiliates: { amazon: "https://amzn.to/4bsYAaV" },
+  },
+  {
+    id: "altra-timp-5",
+    name: "Timp 5",
+    brand: "Altra",
+    category: "wide",
+    price: "$145",
+    weight: "10.1 oz",
+    drop: "0mm",
+    stack: "33mm",
+    terrainTags: ["technical", "mixed", "mountain"],
+    priorityTags: ["wide", "cushion", "traction"],
+    distanceTags: ["50k", "50m", "100k", "100m"],
+    blurb: "The cushioned wide-toe-box choice. More stack than the Lone Peak with aggressive TrailClaw lugs — perfect for technical 100-mile courses.",
+    affiliates: { amazon: "https://amzn.to/4sj1g2h" },
+  },
+  {
+    id: "topo-ultraventure-3",
+    name: "Ultraventure 3",
+    brand: "Topo",
+    category: "wide",
+    price: "$140",
+    weight: "10.1 oz",
+    drop: "5mm",
+    stack: "28/23mm",
+    terrainTags: ["smooth", "mixed"],
+    priorityTags: ["wide", "cushion"],
+    distanceTags: ["50k", "50m", "100k"],
+    blurb: "Topo's roomy fit and 5mm drop bridge the gap between zero-drop and traditional shoes. Great for wide-footed runners who want versatility.",
+    affiliates: { amazon: "https://amzn.to/4rAEWQo" },
+  },
+  {
+    id: "la-sportiva-ultra-raptor-ii",
+    name: "Ultra Raptor II",
+    brand: "La Sportiva",
+    category: "mountain",
+    price: "$175",
+    weight: "11.6 oz",
+    drop: "6mm",
+    stack: "28/22mm",
+    terrainTags: ["mountain", "technical"],
+    priorityTags: ["traction", "stability"],
+    distanceTags: ["50k", "50m", "100k"],
+    blurb: "Built for the mountains. Gaiter-compatible, rockered construction, and Italian FriXion AT rubber that sticks to wet granite.",
+    affiliates: { amazon: "https://amzn.to/47TxfxF" },
+  },
+];
 
 const QUESTIONS: { id: string; question: string; icon: React.ReactNode; options: { label: string; value: string }[] }[] = [
   {
@@ -227,28 +386,12 @@ export default function ShoeFinder() {
                 <p className="text-sm text-gray leading-relaxed mb-4">{shoe.blurb}</p>
                 <div className="flex gap-2 flex-wrap">
                   <a
-                    href={shoe.affiliates.rei}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    className="text-xs px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors font-medium"
-                  >
-                    REI
-                  </a>
-                  <a
                     href={shoe.affiliates.amazon}
                     target="_blank"
                     rel="noopener noreferrer sponsored"
-                    className="text-xs px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors font-medium"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
                   >
-                    Amazon
-                  </a>
-                  <a
-                    href={shoe.affiliates.runningWarehouse ?? shoe.affiliates.backcountry ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    className="text-xs px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors font-medium"
-                  >
-                    Running Warehouse
+                    Buy on Amazon
                   </a>
                 </div>
               </div>

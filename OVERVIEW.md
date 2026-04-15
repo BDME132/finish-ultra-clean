@@ -78,7 +78,7 @@ Pheidi is a key differentiator — a 24/7 coaching assistant tuned specifically 
 ## Monetization
 
 **Current:**
-- **Affiliate links** — gear pages link out to products on Amazon, REI, and brand sites. Revenue is commission-based on purchases.
+- **Affiliate links** — gear pages link out to products on Amazon. Revenue is commission-based on purchases.
 - **Newsletter** — not directly monetized today, but grows the owned audience that future products/offers can reach.
 
 **Potential future directions:**

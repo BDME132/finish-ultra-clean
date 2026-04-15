@@ -1,0 +1,75 @@
+name: Scheduled Blog Publish
+
+# Runs daily at 8am UTC. Also triggerable manually from the GitHub Actions tab.
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (log what would publish without making changes)"
+        required: false
+        default: "false"
+        type: boolean
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to commit and push
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check for posts due today
+        id: check
+        run: |
+          echo "Today: $(date +%Y-%m-%d)"
+          echo "Scheduled posts:"
+          ls content/scheduled/ 2>/dev/null || echo "  (none)"
+
+      - name: Run publisher
+        run: npx tsx scripts/publish-scheduled.ts
+        env:
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+
+      - name: Run post-publish hooks
+        run: npx tsx scripts/post-publish-hooks.ts
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push published posts
+        if: steps.changes.outputs.changed == 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name "FinishUltra Bot"
+          git config user.email "bot@finishultra.com"
+          git add src/lib/content/blog-posts.ts
+          git add content/published/ || true
+          git add public/llms.txt || true
+          PUBLISHED=$(git diff --cached --name-only | grep -c "blog-posts.ts" || true)
+          DATE=$(date +%Y-%m-%d)
+          git commit -m "📝 Auto-publish scheduled blog post(s) — ${DATE}"
+          git push
+
+      - name: No posts published
+        if: steps.changes.outputs.changed == 'false'
+        run: echo "No posts were due today — nothing to publish."

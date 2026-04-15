@@ -16,11 +16,11 @@ export default function Button({
   className = "",
 }: ButtonProps) {
   const baseStyles =
-    "inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200";
+    "inline-flex items-center justify-center font-medium rounded transition-colors duration-200";
 
   const variants = {
-    primary: "bg-primary text-white hover:bg-primary-light",
-    secondary: "bg-white text-primary border-2 border-primary hover:bg-light",
+    primary: "bg-primary text-white hover:bg-primary-dark",
+    secondary: "bg-transparent text-primary border border-primary/40 hover:bg-primary/5",
   };
 
   const sizes = {

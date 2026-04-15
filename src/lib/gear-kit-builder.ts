@@ -3,11 +3,7 @@ import type { Answers } from "@/types/gear";
 export type RetailerLink = { url: string; price: number };
 
 export type ProductLinks = {
-  rei?: RetailerLink;
-  amazon?: RetailerLink;
-  backcountry?: RetailerLink;
-  rw?: RetailerLink;
-  direct?: RetailerLink;
+  amazon: RetailerLink;
 };
 
 export type GearTier = "budget" | "standard" | "premium" | "elite";
@@ -35,13 +31,10 @@ export type BuiltKit = {
   selectedTier: GearTier;
 };
 
-function makeLinks(searchTerm: string, basePrice: number, amazonDiscount = 0.97, rwDiscount = 0.98): ProductLinks {
+function makeLinks(searchTerm: string, basePrice: number): ProductLinks {
   const q = encodeURIComponent(searchTerm);
   return {
-    rei: { url: `https://www.rei.com/search?q=${q}&cm_mmc=aff_AL-_-finishultra-_-1`, price: basePrice },
-    amazon: { url: `https://www.amazon.com/s?k=${q}&tag=finishultra-20`, price: Math.round(basePrice * amazonDiscount) },
-    backcountry: { url: `https://www.backcountry.com/search?q=${q}&CMP_ID=finishultra`, price: basePrice },
-    rw: { url: `https://www.runningwarehouse.com/searchresults/?searchTerm=${q}&sourceCode=FFULTRA`, price: Math.round(basePrice * rwDiscount) },
+    amazon: { url: `https://www.amazon.com/s?k=${q}&tag=finishultra-20`, price: basePrice },
   };
 }
 
@@ -576,7 +569,6 @@ export function buildKit(answers: Answers): BuiltKit {
       specs: ["Includes: Squirrel's Nut Butter 1oz", "Includes: Leukotape P (1\" roll)", "Includes: Sterile needle + gauze", "Weight: 2oz total kit"],
       links: {
         amazon: { url: "https://www.amazon.com/s?k=squirrels+nut+butter+leukotape&tag=finishultra-20", price: 25 },
-        rw: { url: "https://www.runningwarehouse.com/searchresults/?searchTerm=blister+kit&sourceCode=FFULTRA", price: 24 },
       },
     });
   }
@@ -682,8 +674,6 @@ export function buildKit(answers: Answers): BuiltKit {
         ? makeLinks("Garmin inReach Mini 2", 300)
         : {
             amazon: { url: "https://www.amazon.com/s?k=SPOT+X+Satellite+Communicator&tag=finishultra-20", price: 150 },
-            rei: { url: "https://www.rei.com/search?q=spot+x+satellite&cm_mmc=aff_AL-_-finishultra-_-1", price: 150 },
-            direct: { url: "https://www.findmespot.com/en-us/products-services/SPOT-X?aff=finishultra", price: 149 },
           },
     });
 

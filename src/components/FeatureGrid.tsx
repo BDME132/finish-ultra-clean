@@ -37,18 +37,18 @@ export default function FeatureGrid() {
   return (
     <section className="py-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="font-headline text-3xl font-bold text-dark text-center mb-4">
+        <h2 className="section-label">
           Everything You Need to Get Started
         </h2>
-        <p className="text-gray text-center mb-12 max-w-2xl mx-auto">
-          Built by beginners, for beginners. No gatekeeping, no jargon — just the stuff that actually helps.
+        <p className="text-gray text-sm mb-12">
+          Trusted by thousands of runners training for their first ultra.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {features.map((feature) => (
             <Link
               key={feature.title}
               href={feature.href}
-              className="group bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center hover:shadow-md hover:border-primary/20 transition-all"
+              className="group bg-white rounded-xl border border-gray-100 [border-top:2px_solid_#FF6B00] p-8 text-center hover:-translate-y-1 transition-transform duration-200"
             >
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                 {feature.icon}

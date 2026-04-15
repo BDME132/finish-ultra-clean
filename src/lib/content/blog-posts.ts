@@ -36,8 +36,8 @@ A 50K is hard, but it's not impossible. If you can run 20 miles, you can train f
     featured: true,
     relatedSlugs: ["choosing-first-ultra", "what-to-wear-first-ultra", "ultra-nutrition-beginners"],
     affiliateProducts: [
-      { name: "Tailwind Endurance Fuel", brand: "Tailwind", price: "$25", url: "https://www.amazon.com/s?k=Tailwind+Endurance+Fuel&tag=finishultra-20", why: "Simplest nutrition for first-timers — calories + electrolytes in one drink" },
-      { name: "Speedgoat 5", brand: "Hoka", price: "$155", url: "https://www.rei.com/search?q=Hoka+Speedgoat+5&ir=q%3AHoka+Speedgoat+5&irgwc=1&partner=finishultra", why: "Best beginner trail shoe — max cushion, great grip" },
+      { name: "Tailwind Endurance Fuel", brand: "Tailwind", price: "$25", url: "https://amzn.to/47QVr3H", why: "Simplest nutrition for first-timers — calories + electrolytes in one drink" },
+      { name: "Speedgoat 5", brand: "Hoka", price: "$155", url: "https://amzn.to/4rvMtjk", why: "Best beginner trail shoe — max cushion, great grip" },
     ],
     faq: [
       { question: "How long does a 50K take?", answer: "Most first-timers finish between 5.5 and 8 hours depending on terrain and elevation. Flat trail 50Ks are faster; mountain races can take 10+ hours." },
@@ -208,9 +208,8 @@ Nothing new on race day. Whatever you wear in your longest training run should b
     readTime: "4 min read",
     relatedSlugs: ["hoka-speedgoat-6-review", "best-running-vests-2025", "how-hard-is-a-50k"],
     affiliateProducts: [
-      { name: "Speedgoat 5", brand: "Hoka", price: "$155", url: "https://www.rei.com/search?q=Hoka+Speedgoat+5&ir=q%3AHoka+Speedgoat+5&irgwc=1&partner=finishultra", why: "Best beginner trail shoe — max cushion, great grip" },
-      { name: "Trail Midweight Crew", brand: "Injinji", price: "$18", url: "https://www.amazon.com/s?k=Injinji+Trail+Midweight+Crew&tag=finishultra-20", why: "Toe socks prevent 80% of ultra blisters" },
-      { name: "ADV Skin 5", brand: "Salomon", price: "$130", url: "https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra", why: "Gold standard running vest for beginners" },
+      { name: "Speedgoat 5", brand: "Hoka", price: "$155", url: "https://amzn.to/4rvMtjk", why: "Best beginner trail shoe — max cushion, great grip" },
+      { name: "ADV Skin 5", brand: "Salomon", price: "$130", url: "https://amzn.to/47PXJA2", why: "Gold standard running vest for beginners" },
     ],
   },
   {
@@ -259,9 +258,9 @@ The Speedgoat 6 is still our #1 pick for beginner ultra runners. The ride is bet
     featured: true,
     relatedSlugs: ["what-to-wear-first-ultra", "best-running-vests-2025", "trail-shoe-rotation"],
     affiliateProducts: [
-      { name: "Speedgoat 6", brand: "Hoka", price: "$160", url: "https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra", why: "Our #1 beginner trail shoe — max cushion, Vibram grip, roomy toe box" },
-      { name: "Speedgoat 5 (on sale)", brand: "Hoka", price: "$120", url: "https://www.rei.com/search?q=Hoka+Speedgoat+5&irgwc=1&partner=finishultra", why: "Previous version at a discount — more durable upper" },
-      { name: "Lone Peak 8", brand: "Altra", price: "$140", url: "https://www.amazon.com/s?k=Altra+Lone+Peak+8&tag=finishultra-20", why: "Zero-drop alternative with wide toe box" },
+      { name: "Speedgoat 6", brand: "Hoka", price: "$160", url: "https://amzn.to/41b2CQt", why: "Our #1 beginner trail shoe — max cushion, Vibram grip, roomy toe box" },
+      { name: "Speedgoat 5 (on sale)", brand: "Hoka", price: "$120", url: "https://amzn.to/4rvMtjk", why: "Previous version at a discount — more durable upper" },
+      { name: "Lone Peak 8", brand: "Altra", price: "$140", url: "https://amzn.to/4bsYAaV", why: "Zero-drop alternative with wide toe box" },
     ],
     faq: [
       { question: "Is the Hoka Speedgoat 6 good for beginners?", answer: "Yes. It's our #1 recommendation for first-time ultra runners. The cushion, grip, and roomy toe box make it forgiving on long trail runs." },
@@ -325,7 +324,7 @@ Just two front pouches that stretch to hold flasks, phone, and nutrition. No bac
     readTime: "8 min read",
     relatedSlugs: ["what-to-wear-first-ultra", "hoka-speedgoat-6-review", "race-day-checklist"],
     affiliateProducts: [
-      { name: "ADV Skin 5", brand: "Salomon", price: "$130", url: "https://www.rei.com/search?q=Salomon+ADV+Skin+5&irgwc=1&partner=finishultra", why: "Best overall running vest — fits like a second skin" },
+      { name: "ADV Skin 5", brand: "Salomon", price: "$130", url: "https://amzn.to/47PXJA2", why: "Best overall running vest — fits like a second skin" },
       { name: "VaporAir 3.0", brand: "Nathan", price: "$150", url: "https://www.amazon.com/s?k=Nathan+VaporAir+3.0&tag=finishultra-20", why: "Best breathability for hot weather ultras" },
       { name: "Ultra Vest 6.0", brand: "Ultimate Direction", price: "$160", url: "https://www.amazon.com/s?k=Ultimate+Direction+Ultra+Vest+6.0&tag=finishultra-20", why: "Maximum storage for 100-milers" },
     ],
@@ -371,9 +370,9 @@ If three feels like too many, start with two: one cushioned daily trainer and on
     readTime: "5 min read",
     relatedSlugs: ["hoka-speedgoat-6-review", "what-to-wear-first-ultra"],
     affiliateProducts: [
-      { name: "Speedgoat 6", brand: "Hoka", price: "$160", url: "https://www.rei.com/search?q=Hoka+Speedgoat+6&irgwc=1&partner=finishultra", why: "Best daily trainer for ultra runners" },
-      { name: "Sense Ride 5", brand: "Salomon", price: "$130", url: "https://www.rei.com/search?q=Salomon+Sense+Ride+5&irgwc=1&partner=finishultra", why: "Versatile light/fast shoe for speed days" },
-      { name: "Bushido III", brand: "La Sportiva", price: "$149", url: "https://www.amazon.com/s?k=La+Sportiva+Bushido+III&tag=finishultra-20", why: "Best grip for technical rocky terrain" },
+      { name: "Speedgoat 6", brand: "Hoka", price: "$160", url: "https://amzn.to/41b2CQt", why: "Best daily trainer for ultra runners" },
+      { name: "Sense Ride 5", brand: "Salomon", price: "$130", url: "https://www.amazon.com/s?k=Salomon+Sense+Ride+5&tag=finishultra-20", why: "Versatile light/fast shoe for speed days" },
+      { name: "Bushido III", brand: "La Sportiva", price: "$149", url: "https://amzn.to/4bARBNp", why: "Best grip for technical rocky terrain" },
     ],
   },
 
@@ -748,8 +747,6 @@ The hardest part of winter running is getting out the door. Two strategies that 
     readTime: "6 min read",
     relatedSlugs: ["strength-training-ultra-runners", "first-50k-training-guide"],
     affiliateProducts: [
-      { name: "MICROspikes", brand: "Kahtoola", price: "$30", url: "https://www.rei.com/search?q=Kahtoola+MICROspikes&irgwc=1&partner=finishultra", why: "Essential ice traction — fits any shoe" },
-      { name: "Merino 250 Base Layer Crew", brand: "Smartwool", price: "$100", url: "https://www.rei.com/search?q=Smartwool+Merino+250+Base+Layer&irgwc=1&partner=finishultra", why: "Best cold-weather base layer — warm even when wet" },
     ],
   },
 

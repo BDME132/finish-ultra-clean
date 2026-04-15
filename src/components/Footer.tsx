@@ -24,7 +24,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-dark text-white py-8">
+    <footer className="bg-dark text-white border-t border-white/15 pt-20 pb-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_1.8fr] lg:items-start">
           <div className="max-w-md">
@@ -50,7 +50,7 @@ export default function Footer() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-white/60 hover:text-white transition-colors text-sm"
+                    className="text-white/60 hover:text-white transition-colors duration-300 text-sm no-underline"
                   >
                     {link.label}
                   </Link>
@@ -65,7 +65,7 @@ export default function Footer() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-white/60 hover:text-white transition-colors text-sm"
+                    className="text-white/60 hover:text-white transition-colors duration-300 text-sm no-underline"
                   >
                     {link.label}
                   </Link>
@@ -80,19 +80,19 @@ export default function Footer() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-white/60 hover:text-white transition-colors text-sm"
+                    className="text-white/60 hover:text-white transition-colors duration-300 text-sm no-underline"
                   >
                     {link.label}
                   </Link>
                 ))}
               </div>
               <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-2">
-              <a href="mailto:hello@finishultra.com" className="text-white/60 hover:text-white transition-colors text-sm">hello@finishultra.com</a>
+              <a href="mailto:hello@finishultra.com" className="text-white/60 hover:text-white transition-colors duration-300 text-sm no-underline">hello@finishultra.com</a>
               <a
                 href="https://instagram.com/finishultra"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/60 hover:text-white transition-colors text-sm"
+                className="text-white/60 hover:text-white transition-colors duration-300 text-sm no-underline"
               >
                 Instagram
               </a>

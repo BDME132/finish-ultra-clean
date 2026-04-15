@@ -176,3 +176,51 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #2A3A55 #141C2E;
 }
+
+@layer components {
+  /* ─── Section label (eyebrow / kicker) ──────────────────────────────────── */
+  .section-label {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 1.25rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray);
+    opacity: 0.25;
+  }
+
+  /* ─── Navbar: blur when scrolled ────────────────────────────────────────── */
+  .nav-scrolled {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* ─── Newsletter input: bottom border only ──────────────────────────────── */
+  .newsletter-input {
+    border: none !important;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+  .newsletter-input::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+  .newsletter-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-bottom-color: rgba(255, 255, 255, 0.85) !important;
+  }
+}

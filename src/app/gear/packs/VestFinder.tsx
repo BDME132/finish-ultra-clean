@@ -2,30 +2,148 @@
 
 import { useState } from "react";
 import { PersonStanding, Package, Droplets, Target } from "lucide-react";
-import { packs } from "@/lib/products";
-import type { PackProduct } from "@/lib/products/types";
-
-const VESTS = packs.map((p: PackProduct) => ({
-  id: p.id,
-  name: p.name,
-  brand: p.brand,
-  category: p.subcategory ?? "",
-  price: p.priceDisplay,
-  weight: p.specs.weight,
-  capacity: p.specs.capacity,
-  genderFit: p.specs.genderFit,
-  distanceTags: p.finderTags.distance,
-  buildTags: p.finderTags.build,
-  capacityTags: p.finderTags.capacity,
-  hydrationTags: p.finderTags.hydration,
-  priorityTags: p.finderTags.priority,
-  blurb: p.description,
-  affiliates: {
-    rei: p.affiliateLinks.rei ?? "#",
-    amazon: p.affiliateLinks.amazon ?? "#",
-    warehouse: p.affiliateLinks.runningWarehouse ?? "#",
+const VESTS = [
+  // ── Race Vests (5-8L) ──────────────────────────────────────────────────────
+  {
+    id: "salomon-adv-skin-5",
+    name: "ADV Skin 5 Set",
+    brand: "Salomon",
+    category: "race",
+    price: "$160",
+    weight: "161g",
+    capacity: "5L",
+    genderFit: "unisex",
+    distanceTags: ["50k", "50m"],
+    buildTags: ["small", "average"],
+    capacityTags: ["under5", "5to8"],
+    hydrationTags: ["flasks", "both"],
+    priorityTags: ["bounce", "light", "access"],
+    blurb: "The benchmark race vest. Skin-tight SensiFit hugs your body with zero bounce. Two 500ml soft flasks included. The go-to choice for elite ultra runners worldwide.",
+    affiliates: { amazon: "https://amzn.to/47PXJA2" },
   },
-}));
+  {
+    id: "ud-race-vest-6",
+    name: "Race Vest 6.0",
+    brand: "Ultimate Direction",
+    category: "race",
+    price: "$130",
+    weight: "185g",
+    capacity: "6L",
+    genderFit: "unisex",
+    distanceTags: ["50k", "50m"],
+    buildTags: ["average", "large"],
+    capacityTags: ["5to8"],
+    hydrationTags: ["flasks", "both"],
+    priorityTags: ["bounce", "access", "versatility"],
+    blurb: "UD's flagship race vest. Kangaroo front pocket fits everything you need for a 50K. Comfort Cinch straps eliminate bounce while keeping the design minimal.",
+    affiliates: { amazon: "https://amzn.to/3NpYeKo" },
+  },
+  {
+    id: "nathan-pinnacle-4",
+    name: "Pinnacle 4L",
+    brand: "Nathan",
+    category: "race",
+    price: "$120",
+    weight: "198g",
+    capacity: "4L",
+    genderFit: "unisex",
+    distanceTags: ["50k"],
+    buildTags: ["small", "average"],
+    capacityTags: ["under5"],
+    hydrationTags: ["flasks"],
+    priorityTags: ["light", "bounce"],
+    blurb: "Featherlight 4L vest for supported 50Ks. Dual 20oz Exoshot flasks in angled front pockets make drinking on the move completely natural.",
+    affiliates: { amazon: "https://amzn.to/4bObB06" },
+  },
+  // ── All-Around Vests (8-12L) ───────────────────────────────────────────────
+  {
+    id: "salomon-adv-skin-12",
+    name: "ADV Skin 12 Set",
+    brand: "Salomon",
+    category: "allround",
+    price: "$200",
+    weight: "280g",
+    capacity: "12L",
+    genderFit: "unisex",
+    distanceTags: ["50m", "100k", "100m"],
+    buildTags: ["small", "average", "large"],
+    capacityTags: ["8to12"],
+    hydrationTags: ["flasks", "both"],
+    priorityTags: ["bounce", "access", "versatility"],
+    blurb: "The full-distance Salomon workhorse. 12L of organized storage, SensiFit, two included 500ml flasks, and enough pockets for 100-mile mandatory gear. The most trusted vest in ultra running.",
+    affiliates: { amazon: "https://amzn.to/47apuDo" },
+  },
+  {
+    id: "osprey-duro-6",
+    name: "Duro 6 / Dyna 6",
+    brand: "Osprey",
+    category: "allround",
+    price: "$140",
+    weight: "312g",
+    capacity: "6L",
+    genderFit: "gendered",
+    distanceTags: ["50k", "50m"],
+    buildTags: ["average", "large", "broad"],
+    capacityTags: ["5to8"],
+    hydrationTags: ["bladder", "both"],
+    priorityTags: ["bounce", "versatility"],
+    blurb: "Osprey's trail running vest with AirScape back panel for breathability. Lifetime warranty. The Dyna is women's-specific with adjusted shoulder and chest geometry.",
+    affiliates: { amazon: "https://amzn.to/47QUisV" },
+  },
+  {
+    id: "nathan-vaporkrar-12",
+    name: "VaporKrar 12L",
+    brand: "Nathan",
+    category: "allround",
+    price: "$160",
+    weight: "290g",
+    capacity: "12L",
+    genderFit: "unisex",
+    distanceTags: ["50m", "100k", "100m"],
+    buildTags: ["average", "large", "broad"],
+    capacityTags: ["8to12"],
+    hydrationTags: ["flasks", "both"],
+    priorityTags: ["access", "capacity", "versatility"],
+    blurb: "Designed with Rob Krar. Wide front pockets, massive back storage, and enough organizational pockets to handle 100-mile mandatory gear requirements.",
+    affiliates: { amazon: "https://amzn.to/4uBMOUm" },
+  },
+  // ── Expedition / 100-Mile Vests (12L+) ────────────────────────────────────
+  {
+    id: "ud-fastpack-25",
+    name: "Fastpack 25",
+    brand: "Ultimate Direction",
+    category: "expedition",
+    price: "$200",
+    weight: "560g",
+    capacity: "25L",
+    genderFit: "unisex",
+    distanceTags: ["100m", "multiday"],
+    buildTags: ["average", "large", "broad"],
+    capacityTags: ["12plus"],
+    hydrationTags: ["bladder", "both"],
+    priorityTags: ["capacity", "poles", "weather"],
+    blurb: "The self-supported ultra pack. 25L swallows mandatory gear, a down jacket, and everything you need for a multi-day stage race. Built for runners who are out there alone.",
+    affiliates: { amazon: "https://amzn.to/3NmjZe7" },
+  },
+  // ── Minimalist (Under 5L) ──────────────────────────────────────────────────
+  {
+    id: "salomon-pulse-2",
+    name: "Pulse 2 Set",
+    brand: "Salomon",
+    category: "minimalist",
+    price: "$80",
+    weight: "100g",
+    capacity: "2L",
+    genderFit: "unisex",
+    distanceTags: ["50k"],
+    buildTags: ["small", "average"],
+    capacityTags: ["under5"],
+    hydrationTags: ["flasks"],
+    priorityTags: ["light", "bounce"],
+    blurb: "Barely there. 100g barely registers on your body. Two 500ml flasks, a small back pocket for a jacket, and nothing else. For supported 50Ks when every gram counts.",
+    affiliates: { amazon: "https://amzn.to/4rJgSuN" },
+  },
+];
 
 const QUESTIONS: { id: string; question: string; icon: React.ReactNode; options: { label: string; value: string }[] }[] = [
   {
@@ -239,21 +357,14 @@ export default function VestFinder() {
                 </div>
                 <p className="text-sm text-gray leading-relaxed mb-4">{vest.blurb}</p>
                 <div className="flex gap-2 flex-wrap">
-                  {[
-                    ["REI", vest.affiliates.rei],
-                    ["Amazon", vest.affiliates.amazon],
-                    ["Running Warehouse", vest.affiliates.warehouse],
-                  ].map(([label, href]) => (
-                    <a
-                      key={label}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer sponsored"
-                      className="text-xs px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-primary hover:text-primary transition-colors font-medium"
-                    >
-                      {label}
-                    </a>
-                  ))}
+                  <a
+                    href={vest.affiliates.amazon}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors font-medium"
+                  >
+                    Buy on Amazon
+                  </a>
                 </div>
               </div>
             ))}

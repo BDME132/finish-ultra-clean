@@ -14,11 +14,7 @@ export type ProductCategory =
 // ─── Shared Types ───────────────────────────────────────────────────────────
 
 export interface AffiliateLinks {
-  rei?: string;
   amazon?: string;
-  runningWarehouse?: string;
-  backcountry?: string;
-  direct?: string;
 }
 
 // ─── Product Base ───────────────────────────────────────────────────────────

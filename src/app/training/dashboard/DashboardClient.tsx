@@ -1381,10 +1381,7 @@ export default function DashboardClient() {
                                         className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-dark focus:outline-none focus:border-primary"
                                       >
                                         <option value="">Select...</option>
-                                        <option value="REI">REI</option>
                                         <option value="Amazon">Amazon</option>
-                                        <option value="Backcountry">Backcountry</option>
-                                        <option value="Running Warehouse">Running Warehouse</option>
                                         <option value="Other">Other</option>
                                       </select>
                                     </div>

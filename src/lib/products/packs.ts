@@ -27,11 +27,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The most proven race vest in ultra running — SensiFit eliminates bounce and 16 pockets keep everything organized.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: ["50K race day", "Fast 50M efforts", "Minimalist training", "50K", "50 Miles", "5L"],
     beginnerPick: false,
     specs: {
@@ -45,23 +41,20 @@ export const packs: PackProduct[] = [
       poleCarry: true,
       whistle: true,
       bladderCompatible: true,
-      includedFlasks: "2× 500ml",
-    },
+      includedFlasks: "2× 500ml" },
     ratings: {
       comfort: 5,
       bounce: 5,
       breathability: 5,
       loadDistribution: 4,
       easeOfAccess: 5,
-      durability: 4,
-    },
+      durability: 4 },
     finderTags: {
       distance: ["50k", "50m"],
       build: ["small", "average"],
       capacity: ["under5", "5to8"],
       hydration: ["flasks", "both"],
-      priority: ["bounce", "light", "access"],
-    },
+      priority: ["bounce", "light", "access"] },
     bestFor: ["50K race day", "Fast 50M efforts", "Minimalist training"],
     distances: ["50K", "50 Miles"],
     pros: [
@@ -78,9 +71,7 @@ export const packs: PackProduct[] = [
       quote:
         "I've done 12 ultras in the ADV Skin 5. It disappears on my body — I literally forget it's there at mile 40.",
       race: "UTMB OCC",
-      runner: "Verified 50K finisher",
-    },
-  },
+      runner: "Verified 50K finisher" } },
 
   {
     id: "ud-race-vest-6",
@@ -95,11 +86,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Best value race vest on the market with the game-changing kangaroo front pocket for instant access to nutrition.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Versatile 50K-50M",
       "Kangaroo-style access",
@@ -120,23 +107,20 @@ export const packs: PackProduct[] = [
       poleCarry: true,
       whistle: true,
       bladderCompatible: true,
-      includedFlasks: "None (sold separately)",
-    },
+      includedFlasks: "None (sold separately)" },
     ratings: {
       comfort: 4,
       bounce: 4,
       breathability: 4,
       loadDistribution: 4,
       easeOfAccess: 5,
-      durability: 4,
-    },
+      durability: 4 },
     finderTags: {
       distance: ["50k", "50m"],
       build: ["average", "large"],
       capacity: ["5to8"],
       hydration: ["flasks", "both"],
-      priority: ["bounce", "access", "versatility"],
-    },
+      priority: ["bounce", "access", "versatility"] },
     bestFor: [
       "Versatile 50K-50M",
       "Runners preferring kangaroo-style access",
@@ -158,9 +142,7 @@ export const packs: PackProduct[] = [
       quote:
         "The kangaroo pocket is game-changing. Everything I need is one motion away — no fumbling at aid stations.",
       race: "Lake Sonoma 50",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   {
     id: "patagonia-slope-runner-8",
@@ -175,11 +157,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The eco-conscious choice that doesn't compromise on performance — 8L sweet spot with Patagonia's legendary durability.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Eco-conscious runners",
       "50K to 100K",
@@ -201,23 +179,20 @@ export const packs: PackProduct[] = [
       poleCarry: false,
       whistle: false,
       bladderCompatible: true,
-      includedFlasks: "None",
-    },
+      includedFlasks: "None" },
     ratings: {
       comfort: 4,
       bounce: 4,
       breathability: 4,
       loadDistribution: 4,
       easeOfAccess: 4,
-      durability: 5,
-    },
+      durability: 5 },
     finderTags: {
       distance: ["50k", "50m", "100k"],
       build: ["average", "large"],
       capacity: ["5to8"],
       hydration: ["flasks", "bladder"],
-      priority: ["versatility", "bounce"],
-    },
+      priority: ["versatility", "bounce"] },
     bestFor: ["Eco-conscious runners", "50K to 100K", "Training and racing versatility"],
     distances: ["50K", "50 Miles", "100K"],
     pros: [
@@ -235,9 +210,7 @@ export const packs: PackProduct[] = [
       quote:
         "I've washed this thing 50 times and it still looks new. Patagonia builds things to last — and that matters for a vest I wear hundreds of miles.",
       race: "Miwok 100K",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   {
     id: "nathan-pinnacle-4",
@@ -252,11 +225,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The best hot-weather race vest with angled Exoshot flasks that make drinking at speed effortless.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: ["Supported 50Ks", "Minimalist racers", "Warm weather events", "50K", "4L"],
     beginnerPick: false,
     specs: {
@@ -270,23 +239,20 @@ export const packs: PackProduct[] = [
       poleCarry: false,
       whistle: true,
       bladderCompatible: false,
-      includedFlasks: "2× 20oz Exoshot",
-    },
+      includedFlasks: "2× 20oz Exoshot" },
     ratings: {
       comfort: 4,
       bounce: 5,
       breathability: 5,
       loadDistribution: 3,
       easeOfAccess: 5,
-      durability: 4,
-    },
+      durability: 4 },
     finderTags: {
       distance: ["50k"],
       build: ["small", "average"],
       capacity: ["under5"],
       hydration: ["flasks"],
-      priority: ["light", "bounce"],
-    },
+      priority: ["light", "bounce"] },
     bestFor: ["Supported 50Ks", "Minimalist racers", "Warm weather events"],
     distances: ["50K"],
     pros: [
@@ -304,9 +270,7 @@ export const packs: PackProduct[] = [
       quote:
         "For supported 50Ks in hot weather, nothing comes close. The angled flasks are the best drinking system I've used.",
       race: "Javelina 50K",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // ALL-AROUND VESTS (8–12 L)
@@ -325,11 +289,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The most trusted vest in ultra running — worn by more elites than any other, with 12L that still feels like a race vest.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "50M to 100M races",
       "UTMB mandatory gear",
@@ -351,23 +311,20 @@ export const packs: PackProduct[] = [
       poleCarry: true,
       whistle: true,
       bladderCompatible: true,
-      includedFlasks: "2× 500ml",
-    },
+      includedFlasks: "2× 500ml" },
     ratings: {
       comfort: 5,
       bounce: 5,
       breathability: 4,
       loadDistribution: 5,
       easeOfAccess: 5,
-      durability: 5,
-    },
+      durability: 5 },
     finderTags: {
       distance: ["50m", "100k", "100m"],
       build: ["small", "average", "large"],
       capacity: ["8to12"],
       hydration: ["flasks", "both"],
-      priority: ["bounce", "access", "versatility"],
-    },
+      priority: ["bounce", "access", "versatility"] },
     bestFor: ["50M to 100M races", "UTMB mandatory gear", "High-volume training"],
     distances: ["50 Miles", "100K", "100 Miles"],
     pros: [
@@ -385,9 +342,7 @@ export const packs: PackProduct[] = [
       quote:
         "The ADV Skin 12 has been on my back for four Western States, two UTMBs, and countless training runs. It just works.",
       race: "UTMB",
-      runner: "Verified multi-100 finisher",
-    },
-  },
+      runner: "Verified multi-100 finisher" } },
 
   {
     id: "osprey-duro-6",
@@ -402,11 +357,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Osprey's lifetime warranty and gender-specific fit make this the most breathable and long-lasting all-around vest.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Training runs",
       "50K to 50M",
@@ -427,23 +378,20 @@ export const packs: PackProduct[] = [
       poleCarry: false,
       whistle: false,
       bladderCompatible: true,
-      includedFlasks: "None (2.5L bladder included)",
-    },
+      includedFlasks: "None (2.5L bladder included)" },
     ratings: {
       comfort: 4,
       bounce: 4,
       breathability: 5,
       loadDistribution: 4,
       easeOfAccess: 3,
-      durability: 5,
-    },
+      durability: 5 },
     finderTags: {
       distance: ["50k", "50m"],
       build: ["average", "large", "broad"],
       capacity: ["5to8"],
       hydration: ["bladder", "both"],
-      priority: ["bounce", "versatility"],
-    },
+      priority: ["bounce", "versatility"] },
     bestFor: ["Training runs", "50K to 50M", "Runners preferring bladder hydration"],
     distances: ["50K", "50 Miles"],
     pros: [
@@ -461,9 +409,7 @@ export const packs: PackProduct[] = [
       quote:
         "The Dyna fits my chest properly — first vest that doesn't gap or slip. Osprey's women's-specific design is real, not just marketing.",
       race: "Black Hills 50K",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   {
     id: "nathan-vaporkrar-12",
@@ -478,11 +424,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Rob Krar's signature vest delivers wide front pockets and 12L capacity at a better price than the Salomon ADV Skin 12.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "100K to 100M with mandatory gear",
       "Wide pockets",
@@ -504,23 +446,20 @@ export const packs: PackProduct[] = [
       poleCarry: true,
       whistle: true,
       bladderCompatible: true,
-      includedFlasks: "None",
-    },
+      includedFlasks: "None" },
     ratings: {
       comfort: 4,
       bounce: 4,
       breathability: 4,
       loadDistribution: 4,
       easeOfAccess: 5,
-      durability: 4,
-    },
+      durability: 4 },
     finderTags: {
       distance: ["50m", "100k", "100m"],
       build: ["average", "large", "broad"],
       capacity: ["8to12"],
       hydration: ["flasks", "both"],
-      priority: ["access", "capacity", "versatility"],
-    },
+      priority: ["access", "capacity", "versatility"] },
     bestFor: [
       "100K to 100M with mandatory gear",
       "Runners needing wide pockets",
@@ -542,9 +481,7 @@ export const packs: PackProduct[] = [
       quote:
         "Rob Krar races Hardrock in this thing. That's all the endorsement I need. Front pockets fit everything I need for a 100-mile push.",
       race: "Cascade Crest 100",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   {
     id: "black-diamond-distance-8",
@@ -559,11 +496,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The best trekking pole carry system in the category, backed by Black Diamond's alpine-grade durability.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Mountain ultras",
       "Trekking pole users",
@@ -585,23 +518,20 @@ export const packs: PackProduct[] = [
       poleCarry: true,
       whistle: false,
       bladderCompatible: true,
-      includedFlasks: "None",
-    },
+      includedFlasks: "None" },
     ratings: {
       comfort: 4,
       bounce: 4,
       breathability: 4,
       loadDistribution: 5,
       easeOfAccess: 4,
-      durability: 5,
-    },
+      durability: 5 },
     finderTags: {
       distance: ["50k", "50m", "100k"],
       build: ["average", "large"],
       capacity: ["5to8", "8to12"],
       hydration: ["flasks", "bladder"],
-      priority: ["poles", "versatility", "bounce"],
-    },
+      priority: ["poles", "versatility", "bounce"] },
     bestFor: ["Mountain ultras", "Trekking pole users", "Technical terrain races"],
     distances: ["50K", "50 Miles", "100K"],
     pros: [
@@ -619,9 +549,7 @@ export const packs: PackProduct[] = [
       quote:
         "I carry poles for every mountain ultra. The BD Distance 8 is the only vest where I can grab and stow poles without stopping.",
       race: "Waldo 100K",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EXPEDITION / 100-MILE VESTS (12 L+)
@@ -640,11 +568,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "18L that still runs like a race vest — the only choice when UTMB-level mandatory gear lists demand serious capacity.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "UTMB mandatory gear",
       "100-mile self-supported",
@@ -666,23 +590,20 @@ export const packs: PackProduct[] = [
       poleCarry: true,
       whistle: true,
       bladderCompatible: true,
-      includedFlasks: "2× 500ml",
-    },
+      includedFlasks: "2× 500ml" },
     ratings: {
       comfort: 4,
       bounce: 5,
       breathability: 4,
       loadDistribution: 5,
       easeOfAccess: 5,
-      durability: 5,
-    },
+      durability: 5 },
     finderTags: {
       distance: ["100k", "100m", "multiday"],
       build: ["small", "average", "large"],
       capacity: ["12plus"],
       hydration: ["flasks", "bladder", "both"],
-      priority: ["capacity", "bounce", "poles", "weather"],
-    },
+      priority: ["capacity", "bounce", "poles", "weather"] },
     bestFor: ["UTMB mandatory gear", "100-mile self-supported", "Alpine racing"],
     distances: ["100K", "100 Miles", "Multi-day"],
     pros: [
@@ -701,9 +622,7 @@ export const packs: PackProduct[] = [
       quote:
         "UTMB's mandatory gear list is brutal. The ADV Skin 18 is one of the only vests that fits it all and still lets me run properly.",
       race: "UTMB",
-      runner: "Verified UTMB finisher",
-    },
-  },
+      runner: "Verified UTMB finisher" } },
 
   {
     id: "ud-fastpack-25",
@@ -718,11 +637,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The only running vest that genuinely works for multi-day stage races and self-supported expeditions.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Multi-day stage races",
       "Self-supported expeditions",
@@ -743,23 +658,20 @@ export const packs: PackProduct[] = [
       poleCarry: true,
       whistle: true,
       bladderCompatible: true,
-      includedFlasks: "None",
-    },
+      includedFlasks: "None" },
     ratings: {
       comfort: 3,
       bounce: 3,
       breathability: 3,
       loadDistribution: 5,
       easeOfAccess: 4,
-      durability: 5,
-    },
+      durability: 5 },
     finderTags: {
       distance: ["100m", "multiday"],
       build: ["average", "large", "broad"],
       capacity: ["12plus"],
       hydration: ["bladder", "both"],
-      priority: ["capacity", "poles", "weather"],
-    },
+      priority: ["capacity", "poles", "weather"] },
     bestFor: [
       "Multi-day stage races",
       "Self-supported expeditions",
@@ -781,9 +693,7 @@ export const packs: PackProduct[] = [
       quote:
         "PTL requires carrying a sleeping bag, bivy, and two days of food. The Fastpack 25 is the only running vest that actually works for that.",
       race: "Petite Trotte a Leon (PTL)",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   {
     id: "raidlight-revolutiv-18",
@@ -798,11 +708,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "French-designed for the UTMB circuit with an outstanding weight-to-capacity ratio of 350g for 18L.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "UTMB-style mandatory gear races",
       "Alpine racing",
@@ -823,23 +729,20 @@ export const packs: PackProduct[] = [
       poleCarry: true,
       whistle: true,
       bladderCompatible: true,
-      includedFlasks: "2× 600ml",
-    },
+      includedFlasks: "2× 600ml" },
     ratings: {
       comfort: 4,
       bounce: 4,
       breathability: 4,
       loadDistribution: 5,
       easeOfAccess: 4,
-      durability: 4,
-    },
+      durability: 4 },
     finderTags: {
       distance: ["100k", "100m", "multiday"],
       build: ["average", "large"],
       capacity: ["12plus"],
       hydration: ["flasks", "bladder", "both"],
-      priority: ["capacity", "poles", "weather"],
-    },
+      priority: ["capacity", "poles", "weather"] },
     bestFor: [
       "UTMB-style mandatory gear races",
       "Alpine racing",
@@ -861,9 +764,7 @@ export const packs: PackProduct[] = [
       quote:
         "Raidlight built this vest for the UTMB circuit. It shows — every pocket placement makes sense when you're navigating mandatory gear requirements.",
       race: "CCC",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MINIMALIST VESTS (Under 5 L)
@@ -882,11 +783,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "At 100g with flasks included for $80, this is the ultimate minimalist vest for supported 50Ks.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Supported 50Ks",
       "Elite racers",
@@ -906,23 +803,20 @@ export const packs: PackProduct[] = [
       poleCarry: false,
       whistle: false,
       bladderCompatible: false,
-      includedFlasks: "2× 500ml",
-    },
+      includedFlasks: "2× 500ml" },
     ratings: {
       comfort: 5,
       bounce: 5,
       breathability: 5,
       loadDistribution: 3,
       easeOfAccess: 4,
-      durability: 3,
-    },
+      durability: 3 },
     finderTags: {
       distance: ["50k"],
       build: ["small", "average"],
       capacity: ["under5"],
       hydration: ["flasks"],
-      priority: ["light", "bounce"],
-    },
+      priority: ["light", "bounce"] },
     bestFor: ["Supported 50Ks", "Elite racers", "Warm weather minimalist running"],
     distances: ["50K"],
     pros: [
@@ -939,9 +833,7 @@ export const packs: PackProduct[] = [
       quote:
         "I wore this at a road 50K and felt like I was running in just a singlet. Total weight including flasks was barely 300g.",
       race: "California International 50K",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   {
     id: "omm-trailfire",
@@ -956,11 +848,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "OMM's fell running pedigree in a barely-there 118g vest with innovative flat-pack construction.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Fell/mountain racing",
       "British ultra circuit",
@@ -980,23 +868,20 @@ export const packs: PackProduct[] = [
       poleCarry: false,
       whistle: true,
       bladderCompatible: false,
-      includedFlasks: "None",
-    },
+      includedFlasks: "None" },
     ratings: {
       comfort: 4,
       bounce: 5,
       breathability: 5,
       loadDistribution: 3,
       easeOfAccess: 4,
-      durability: 4,
-    },
+      durability: 4 },
     finderTags: {
       distance: ["50k"],
       build: ["small", "average"],
       capacity: ["under5"],
       hydration: ["flasks"],
-      priority: ["light", "bounce"],
-    },
+      priority: ["light", "bounce"] },
     bestFor: ["Fell/mountain racing", "British ultra circuit", "Minimalist 50K racing"],
     distances: ["50K"],
     pros: [
@@ -1014,9 +899,7 @@ export const packs: PackProduct[] = [
       quote:
         "The fell running community has trusted OMM for decades. The TrailFire is as minimal as a vest can get while still being functional.",
       race: "Lakeland 50",
-      runner: "Verified finisher",
-    },
-  },
+      runner: "Verified finisher" } },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // KITBUILDER-ONLY PACKS (from src/app/gear/kits/KitBuilder.tsx)
@@ -1035,11 +918,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Salomon race-vest DNA at a more accessible price — 165g with included SoftFlasks for supported 50Ks.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: ["Supported 50Ks", "Minimalist racing", "Budget Salomon", "50K", "5L"],
     beginnerPick: false,
     specs: {
@@ -1048,18 +927,15 @@ export const packs: PackProduct[] = [
       genderFit: "Unisex",
       frontPockets: "6 total pockets",
       hydrationSystem: "2× 500ml SoftFlask included",
-      includedFlasks: "2× 500ml SoftFlask",
-    },
+      includedFlasks: "2× 500ml SoftFlask" },
     finderTags: {
       distance: ["50k"],
       build: ["small", "average"],
       capacity: ["under5", "5to8"],
       hydration: ["flasks"],
-      priority: ["light", "bounce", "access"],
-    },
+      priority: ["light", "bounce", "access"] },
     bestFor: ["Supported 50Ks", "Minimalist racing"],
-    distances: ["50K"],
-  },
+    distances: ["50K"] },
 
   {
     id: "camelbak-fastpack-5",
@@ -1074,11 +950,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The best value entry-level race vest at $90 with flasks included — perfect for your first 50K.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: ["Budget race vest", "First ultra", "Supported 50Ks", "50K", "5L"],
     beginnerPick: true,
     specs: {
@@ -1087,18 +959,15 @@ export const packs: PackProduct[] = [
       genderFit: "Unisex",
       frontPockets: "8 total pockets",
       hydrationSystem: "2× 500ml flasks included",
-      includedFlasks: "2× 500ml",
-    },
+      includedFlasks: "2× 500ml" },
     finderTags: {
       distance: ["50k"],
       build: ["small", "average", "large"],
       capacity: ["under5", "5to8"],
       hydration: ["flasks"],
-      priority: ["light", "access", "versatility"],
-    },
+      priority: ["light", "access", "versatility"] },
     bestFor: ["Budget race vest", "First ultra", "Supported 50Ks"],
-    distances: ["50K"],
-  },
+    distances: ["50K"] },
 
   {
     id: "ud-zeal-pro-10",
@@ -1113,11 +982,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Purpose-built for 100-mile races with pole loops, included flasks, and 10L of organized mandatory-gear storage.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "100-mile racing",
       "Mandatory gear",
@@ -1133,18 +998,15 @@ export const packs: PackProduct[] = [
       genderFit: "Unisex",
       hydrationSystem: "2× 500ml flasks included",
       poleCarry: true,
-      includedFlasks: "2× 500ml",
-    },
+      includedFlasks: "2× 500ml" },
     finderTags: {
       distance: ["50m", "100k", "100m"],
       build: ["average", "large"],
       capacity: ["8to12"],
       hydration: ["flasks", "both"],
-      priority: ["capacity", "poles", "access"],
-    },
+      priority: ["capacity", "poles", "access"] },
     bestFor: ["100-mile racing", "Mandatory gear lists", "Technical terrain with poles"],
-    distances: ["50 Miles", "100K", "100 Miles"],
-  },
+    distances: ["50 Miles", "100K", "100 Miles"] },
 
   {
     id: "nathan-race-vest-10",
@@ -1159,11 +1021,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The best budget option for 100-mile mandatory gear at just $100 with included 600ml flasks.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Budget 100-mile vest",
       "Mandatory gear",
@@ -1179,18 +1037,15 @@ export const packs: PackProduct[] = [
       genderFit: "Unisex",
       hydrationSystem: "2× 600ml flasks included",
       poleCarry: true,
-      includedFlasks: "2× 600ml",
-    },
+      includedFlasks: "2× 600ml" },
     finderTags: {
       distance: ["50m", "100k", "100m"],
       build: ["average", "large", "broad"],
       capacity: ["8to12"],
       hydration: ["flasks", "both"],
-      priority: ["capacity", "poles", "versatility"],
-    },
+      priority: ["capacity", "poles", "versatility"] },
     bestFor: ["Budget 100-mile racing", "Mandatory gear lists", "First 100-miler"],
-    distances: ["50 Miles", "100K", "100 Miles"],
-  },
+    distances: ["50 Miles", "100K", "100 Miles"] },
 
   {
     id: "ud-ultra-vest-3",
@@ -1205,11 +1060,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The 8L sweet spot for mid-distance ultras — enough capacity without overkill, with included flasks and pole loops.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "50M-100K racing",
       "All-around",
@@ -1225,18 +1076,15 @@ export const packs: PackProduct[] = [
       genderFit: "Unisex",
       hydrationSystem: "2× 500ml flasks included",
       poleCarry: true,
-      includedFlasks: "2× 500ml",
-    },
+      includedFlasks: "2× 500ml" },
     finderTags: {
       distance: ["50k", "50m", "100k"],
       build: ["average", "large"],
       capacity: ["5to8", "8to12"],
       hydration: ["flasks", "both"],
-      priority: ["versatility", "access", "bounce"],
-    },
+      priority: ["versatility", "access", "bounce"] },
     bestFor: ["50M-100K racing", "All-around training and racing", "Mid-distance ultras"],
-    distances: ["50K", "50 Miles", "100K"],
-  },
+    distances: ["50K", "50 Miles", "100K"] },
 
   {
     id: "osprey-hydraknight-12",
@@ -1251,11 +1099,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Osprey's lifetime warranty and 12L capacity at just $90 make this the best budget all-around vest.",
     image: undefined,
-    affiliateLinks: {
-      rei: "#",
-      amazon: "#",
-      runningWarehouse: "#",
-    },
+    affiliateLinks: { amazon: "#" },
     tags: [
       "Budget all-around vest",
       "50M-100K",
@@ -1272,16 +1116,13 @@ export const packs: PackProduct[] = [
       frontPockets: "10 total pockets",
       hydrationSystem: "2.5L reservoir compatible",
       bladderCompatible: true,
-      includedFlasks: "None",
-    },
+      includedFlasks: "None" },
     finderTags: {
       distance: ["50m", "100k"],
       build: ["average", "large", "broad"],
       capacity: ["8to12"],
       hydration: ["bladder", "both"],
-      priority: ["capacity", "versatility"],
-    },
+      priority: ["capacity", "versatility"] },
     bestFor: ["Budget all-around vest", "50M-100K training and racing", "First long ultra"],
-    distances: ["50 Miles", "100K"],
-  },
+    distances: ["50 Miles", "100K"] },
 ];
