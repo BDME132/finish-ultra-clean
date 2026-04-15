@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { pageMetadata } from "@/lib/seo-metadata";
+import { loadPublishedNewsletters } from "@/lib/newsletter-archive";
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -13,7 +15,9 @@ export const metadata: Metadata = {
   }),
 };
 
-export default function NewsletterPage() {
+export default async function NewsletterPage() {
+  const issues = await loadPublishedNewsletters();
+
   return (
     <>
       <Header />
@@ -58,9 +62,45 @@ export default function NewsletterPage() {
         </section>
 
         <section className="py-16 bg-light">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="font-headline text-2xl font-bold text-dark mb-4">Newsletter Archive</h2>
-            <p className="text-gray">Past issues coming soon. Sign up above to get the next one.</p>
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="font-headline text-2xl font-bold text-dark mb-4 text-center">
+              Newsletter Archive
+            </h2>
+            {issues.length === 0 ? (
+              <p className="text-gray text-center">
+                Past issues will appear here when published. Sign up above to get the next one.
+              </p>
+            ) : (
+              <ul className="space-y-3 text-left max-w-xl mx-auto">
+                {issues.map((issue) => (
+                  <li
+                    key={issue.id}
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 py-3 border-b border-gray-200 last:border-0"
+                  >
+                    <div>
+                      <p className="font-medium text-dark">{issue.subject}</p>
+                      {issue.published_at && (
+                        <p className="text-xs text-gray">
+                          {new Date(issue.published_at).toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </p>
+                      )}
+                    </div>
+                    {issue.slug ? (
+                      <Link
+                        href={`/newsletter/${issue.slug}`}
+                        className="text-sm text-primary font-medium hover:underline shrink-0"
+                      >
+                        Read issue &rarr;
+                      </Link>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
       </main>

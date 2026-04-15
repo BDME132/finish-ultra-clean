@@ -4,11 +4,18 @@ export interface Newsletter {
   body: string;
   sent_at: string;
   recipient_count: number;
+  slug?: string | null;
+  is_published?: boolean | null;
+  published_at?: string | null;
 }
 
 export interface SendNewsletterRequest {
   subject: string;
   body: string;
+  /** When true, publish this issue to the public /newsletter archive */
+  publishToArchive?: boolean;
+  /** Optional URL slug; auto-generated from subject if omitted when publishing */
+  archiveSlug?: string | null;
 }
 
 export interface SendNewsletterResponse {

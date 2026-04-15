@@ -27,7 +27,9 @@ export async function GET(): Promise<NextResponse<SubscribersResponse>> {
         .order("created_at", { ascending: false }),
       supabase
         .from("newsletters")
-        .select("id, subject, body, sent_at, recipient_count")
+        .select(
+          "id, subject, body, sent_at, recipient_count, slug, is_published, published_at"
+        )
         .order("sent_at", { ascending: false })
         .limit(10),
     ]);

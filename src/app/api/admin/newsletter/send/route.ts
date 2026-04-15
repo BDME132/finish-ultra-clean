@@ -4,6 +4,13 @@ import { Resend } from "resend";
 import { verifySessionToken, COOKIE_NAME } from "@/lib/admin-auth";
 import { getSupabase } from "@/lib/supabase";
 import { SendNewsletterRequest, SendNewsletterResponse } from "@/types/newsletter";
+import {
+  FROM,
+  appendNewsletterFooter,
+  listUnsubscribeHeaders,
+  newsletterPlainTextFallback,
+} from "@/lib/email/templates";
+import { uniqueNewsletterSlug } from "@/lib/newsletter-slug";
 
 let _resend: Resend | null = null;
 function getResend(): Resend {
@@ -20,11 +27,18 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function listHeadersFor(email: string): Record<string, string> | undefined {
+  try {
+    return listUnsubscribeHeaders(email);
+  } catch {
+    return undefined;
+  }
+}
+
 export async function POST(
   request: Request
 ): Promise<NextResponse<SendNewsletterResponse>> {
   try {
-    // Verify admin access via session cookie
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get(COOKIE_NAME)?.value;
 
@@ -32,9 +46,8 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse request body
     const body: SendNewsletterRequest = await request.json();
-    const { subject, body: emailBody } = body;
+    const { subject, body: emailBody, publishToArchive, archiveSlug } = body;
 
     if (!subject?.trim() || !emailBody?.trim()) {
       return NextResponse.json(
@@ -43,10 +56,12 @@ export async function POST(
       );
     }
 
-    // Fetch all subscribers
-    const { data: subscribers, error: fetchError } = await getSupabase()
+    const supabase = getSupabase();
+
+    const { data: subscribers, error: fetchError } = await supabase
       .from("email_signups")
-      .select("email");
+      .select("email")
+      .is("unsubscribed_at", null);
 
     if (fetchError) {
       console.error("Error fetching subscribers:", fetchError);
@@ -63,27 +78,38 @@ export async function POST(
       );
     }
 
-    // Send emails in batches
     const resend = getResend();
     let successCount = 0;
     const errors: string[] = [];
+    const subjectTrim = subject.trim();
+    const bodyTrim = emailBody.trim();
 
     for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
       const batch = subscribers.slice(i, i + BATCH_SIZE);
 
-      const emailPromises = batch.map((subscriber) => ({
-        from: "FinishUltra <noreply@mail.finishultra.com>",
-        to: subscriber.email,
-        subject: subject.trim(),
-        html: emailBody.trim(),
-      }));
+      const payloads = batch.map((subscriber) => {
+        const email = subscriber.email;
+        const html = appendNewsletterFooter(bodyTrim, email);
+        const text = newsletterPlainTextFallback(bodyTrim, email);
+        const headers = listHeadersFor(email);
+        return {
+          from: FROM,
+          to: email,
+          subject: subjectTrim,
+          html,
+          text,
+          ...(headers ? { headers } : {}),
+        };
+      });
 
       try {
-        const result = await resend.batch.send(emailPromises);
+        const result = await resend.batch.send(payloads);
 
         if (result.error) {
           console.error("Batch send error:", result.error);
-          errors.push(`Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${result.error.message}`);
+          errors.push(
+            `Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${result.error.message}`
+          );
         } else {
           successCount += batch.length;
         }
@@ -94,22 +120,34 @@ export async function POST(
         );
       }
 
-      // Delay between batches to avoid rate limits
       if (i + BATCH_SIZE < subscribers.length) {
         await delay(BATCH_DELAY_MS);
       }
     }
 
-    // Log newsletter to database
-    const { error: logError } = await getSupabase().from("newsletters").insert({
-      subject: subject.trim(),
-      body: emailBody.trim(),
+    const now = new Date().toISOString();
+    let slug: string | null = null;
+    let isPublished = false;
+    let publishedAt: string | null = null;
+
+    if (publishToArchive) {
+      isPublished = true;
+      publishedAt = now;
+      const base = (archiveSlug && archiveSlug.trim()) || subjectTrim;
+      slug = await uniqueNewsletterSlug(supabase, base);
+    }
+
+    const { error: logError } = await supabase.from("newsletters").insert({
+      subject: subjectTrim,
+      body: bodyTrim,
       recipient_count: successCount,
+      is_published: isPublished,
+      slug,
+      published_at: publishedAt,
     });
 
     if (logError) {
       console.error("Error logging newsletter:", logError);
-      // Don't fail the request, emails were already sent
     }
 
     if (successCount === 0) {

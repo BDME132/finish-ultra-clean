@@ -8,6 +8,8 @@ type Status = "idle" | "loading" | "success" | "error";
 export default function NewsletterPage() {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+  const [publishToArchive, setPublishToArchive] = useState(false);
+  const [archiveSlug, setArchiveSlug] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
   const [recipientCount, setRecipientCount] = useState<number | null>(null);
@@ -29,7 +31,12 @@ export default function NewsletterPage() {
       const res = await fetch("/api/admin/newsletter/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject, body }),
+        body: JSON.stringify({
+          subject,
+          body,
+          publishToArchive,
+          archiveSlug: archiveSlug.trim() || null,
+        }),
       });
 
       const json: SendNewsletterResponse = await res.json();
@@ -43,6 +50,8 @@ export default function NewsletterPage() {
       setRecipientCount(json.recipientCount || null);
       setSubject("");
       setBody("");
+      setPublishToArchive(false);
+      setArchiveSlug("");
     } catch (err) {
       setStatus("error");
       setMessage(err instanceof Error ? err.message : "Unknown error");
@@ -53,10 +62,14 @@ export default function NewsletterPage() {
     <div className="max-w-4xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">Send Newsletter</h1>
 
-      {/* Status Messages */}
       {status === "success" && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <p className="text-green-700">{message}</p>
+          {recipientCount != null && (
+            <p className="text-green-600 text-sm mt-1">
+              Recipients: {recipientCount}. Unsubscribe footer and List-Unsubscribe headers are added automatically per subscriber.
+            </p>
+          )}
         </div>
       )}
       {status === "error" && (
@@ -66,7 +79,6 @@ export default function NewsletterPage() {
       )}
 
       <div className="bg-white rounded-lg shadow p-6 space-y-6">
-        {/* Subject */}
         <div>
           <label
             htmlFor="subject"
@@ -85,7 +97,6 @@ export default function NewsletterPage() {
           />
         </div>
 
-        {/* Body */}
         <div>
           <label
             htmlFor="body"
@@ -104,8 +115,46 @@ export default function NewsletterPage() {
           />
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center space-x-4">
+        <div className="rounded-lg border border-gray-200 p-4 space-y-3">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={publishToArchive}
+              onChange={(e) => setPublishToArchive(e.target.checked)}
+              disabled={status === "loading"}
+              className="mt-1"
+            />
+            <span>
+              <span className="font-medium text-gray-800">
+                Publish to public archive
+              </span>
+              <span className="block text-sm text-gray-500">
+                Shows this issue on /newsletter with a shareable URL. Slug is generated from the subject if left blank.
+              </span>
+            </span>
+          </label>
+          {publishToArchive && (
+            <div>
+              <label
+                htmlFor="archiveSlug"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Archive URL slug (optional)
+              </label>
+              <input
+                type="text"
+                id="archiveSlug"
+                value={archiveSlug}
+                onChange={(e) => setArchiveSlug(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                placeholder="e.g. march-training-tips"
+                disabled={status === "loading"}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-4 flex-wrap gap-y-2">
           <button
             type="button"
             onClick={() => setShowPreview(!showPreview)}
@@ -124,7 +173,7 @@ export default function NewsletterPage() {
               Send Newsletter
             </button>
           ) : (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-wrap">
               <span className="text-sm text-gray-600">Are you sure?</span>
               <button
                 type="button"
@@ -147,10 +196,12 @@ export default function NewsletterPage() {
         </div>
       </div>
 
-      {/* Preview */}
       {showPreview && (
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-medium text-gray-600 mb-4">Preview</h2>
+          <p className="text-xs text-gray-500 mb-3">
+            Subscribers will also receive an automatic footer with an unsubscribe link (not shown in this preview).
+          </p>
           <div className="border rounded-lg p-4">
             <div className="border-b pb-2 mb-4">
               <span className="text-sm text-gray-500">Subject: </span>

@@ -3,6 +3,13 @@ import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { EmailSignupData, EmailSignupResponse } from "@/types/email-signup";
+import { isEmailSignupRateLimited } from "@/lib/email-signup-rate-limit";
+import {
+  FROM,
+  listUnsubscribeHeaders,
+  welcomeEmailHtml,
+  welcomeEmailText,
+} from "@/lib/email/templates";
 
 let _resend: Resend | null = null;
 function getResend(): Resend {
@@ -13,24 +20,6 @@ function getResend(): Resend {
 }
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "hello@finishultra.com";
-
-// Rate limiting: Map of IP -> { count, resetTime }
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX = 5; // 5 requests per window
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
-}
 
 function escapeHtml(str: string): string {
   return str
@@ -43,11 +32,12 @@ function escapeHtml(str: string): string {
 
 export async function POST(request: Request): Promise<NextResponse<EmailSignupResponse>> {
   try {
-    // Rate limiting
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") ||
-               "unknown";
-    if (isRateLimited(ip)) {
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+
+    if (await isEmailSignupRateLimited(ip)) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }
@@ -56,17 +46,12 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
 
     const data: EmailSignupData = await request.json();
 
-    // Validate email
     if (!data.email || typeof data.email !== "string") {
-      return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
     const email = data.email.trim().toLowerCase();
 
-    // Validate email format
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
         { error: "Please enter a valid email address" },
@@ -74,7 +59,6 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
       );
     }
 
-    // Truncate email to prevent abuse
     if (email.length > 254) {
       return NextResponse.json(
         { error: "Email address is too long" },
@@ -82,48 +66,66 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
       );
     }
 
-    // Insert into Supabase
-    const { error: dbError } = await getSupabase()
-      .from("email_signups")
-      .insert({ email });
+    const supabase = getSupabase();
+    const now = new Date().toISOString();
+
+    const { error: dbError } = await supabase.from("email_signups").insert({
+      email,
+      confirmed_at: now,
+    });
 
     if (dbError) {
-      // Handle unique constraint violation
       if (dbError.code === "23505") {
+        const { data: existing } = await supabase
+          .from("email_signups")
+          .select("unsubscribed_at")
+          .eq("email", email)
+          .maybeSingle();
+
+        if (existing?.unsubscribed_at) {
+          const { error: reErr } = await supabase
+            .from("email_signups")
+            .update({ unsubscribed_at: null, confirmed_at: now })
+            .eq("email", email);
+
+          if (reErr) {
+            console.error("Resubscribe error:", reErr);
+            return NextResponse.json(
+              { error: "Failed to save email" },
+              { status: 500 }
+            );
+          }
+        } else {
+          return NextResponse.json(
+            { error: "This email is already on the list" },
+            { status: 409 }
+          );
+        }
+      } else {
+        console.error("Supabase error:", dbError);
         return NextResponse.json(
-          { error: "This email is already on the list" },
-          { status: 409 }
+          { error: "Failed to save email" },
+          { status: 500 }
         );
       }
-      console.error("Supabase error:", dbError);
-      return NextResponse.json(
-        { error: "Failed to save email" },
-        { status: 500 }
-      );
     }
 
     const resend = getResend();
 
-    // Send welcome email to the subscriber
-    const welcomeHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #2563eb;">Welcome to FinishUltra!</h1>
-        <p>Thanks for signing up! You're now part of the FinishUltra community — weekly ultra running tips are on the way.</p>
-        <p>Here's what you'll get:</p>
-        <ul>
-          <li>Training plan updates and tips</li>
-          <li>Honest gear recommendations</li>
-          <li>Race day strategies for beginners</li>
-        </ul>
-        <p>See you on the trails,<br>The FinishUltra Team</p>
-      </div>
-    `;
+    let welcomeHeaders: Record<string, string> = {};
+    try {
+      welcomeHeaders = listUnsubscribeHeaders(email);
+    } catch {
+      // Missing NEWSLETTER_UNSUBSCRIBE_SECRET / ADMIN_PASSWORD — send without list headers
+    }
 
     const { error: welcomeError } = await resend.emails.send({
-      from: "FinishUltra <noreply@mail.finishultra.com>",
+      from: FROM,
       to: email,
       subject: "Welcome to FinishUltra!",
-      html: welcomeHtml,
+      html: welcomeEmailHtml(email),
+      text: welcomeEmailText(email),
+      headers: Object.keys(welcomeHeaders).length ? welcomeHeaders : undefined,
     });
 
     if (welcomeError) {
@@ -132,7 +134,6 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
       console.log("Welcome email sent successfully to:", email);
     }
 
-    // Send notification email to admin
     const adminHtml = `
       <h2>New Email Signup</h2>
       <p><strong>Email:</strong> ${escapeHtml(email)}</p>
@@ -140,7 +141,7 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
     `;
 
     const { error: adminError } = await resend.emails.send({
-      from: "FinishUltra <noreply@mail.finishultra.com>",
+      from: FROM,
       to: ADMIN_EMAIL,
       subject: "New Email Signup",
       html: adminHtml,
@@ -150,14 +151,18 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
       console.error("Admin notification error:", adminError);
     }
 
-    // If a user is logged in, update their profile to mark as subscriber
     try {
       const supabaseAuth = await createSupabaseServer();
-      const { data: { user } } = await supabaseAuth.auth.getUser();
+      const {
+        data: { user },
+      } = await supabaseAuth.auth.getUser();
       if (user) {
-        await getSupabase()
+        await supabase
           .from("profiles")
-          .update({ is_newsletter_subscriber: true })
+          .update({
+            is_newsletter_subscriber: true,
+            updated_at: now,
+          })
           .eq("id", user.id);
       }
     } catch {

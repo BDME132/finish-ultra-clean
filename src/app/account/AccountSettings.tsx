@@ -33,17 +33,24 @@ export default function AccountSettings() {
       const supabase = createSupabaseBrowser();
       if (!supabase) return;
 
-      supabase
-        .from("profiles")
-        .select("display_name, is_newsletter_subscriber")
-        .eq("id", user.id)
-        .single()
-        .then(({ data }) => {
-          if (data) {
-            setProfile(data);
-            setDisplayName(data.display_name || "");
-          }
-        });
+      (async () => {
+        try {
+          await fetch("/api/account/newsletter-sync", { method: "GET" });
+        } catch {
+          // Non-critical
+        }
+
+        const { data } = await supabase
+          .from("profiles")
+          .select("display_name, is_newsletter_subscriber")
+          .eq("id", user.id)
+          .single();
+
+        if (data) {
+          setProfile(data);
+          setDisplayName(data.display_name || "");
+        }
+      })();
     }
   }, [user, isLoading, router, isSupabaseConfigured]);
 

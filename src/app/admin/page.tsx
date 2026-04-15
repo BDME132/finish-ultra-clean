@@ -131,14 +131,25 @@ export default function AdminDashboard() {
           <div className="divide-y">
             {data.newsletters.map((newsletter) => (
               <div key={newsletter.id} className="py-3">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start gap-4">
                   <div>
                     <h3 className="font-medium">{newsletter.subject}</h3>
                     <p className="text-sm text-gray-500">
                       Sent to {newsletter.recipient_count} recipients
+                      {newsletter.is_published && newsletter.slug ? (
+                        <>
+                          {" · "}
+                          <Link
+                            href={`/newsletter/${newsletter.slug}`}
+                            className="text-blue-600 hover:underline"
+                          >
+                            Public archive
+                          </Link>
+                        </>
+                      ) : null}
                     </p>
                   </div>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-gray-400 shrink-0">
                     {new Date(newsletter.sent_at).toLocaleDateString()}
                   </span>
                 </div>
