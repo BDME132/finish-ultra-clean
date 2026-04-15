@@ -21,8 +21,7 @@ export type {
   NutritionSpecs,
 } from "./types";
 
-export { makeLinks, generateAffiliateLinks, parsePrice } from "./helpers";
-export type { ProductLinks } from "./helpers";
+export { generateAffiliateLinks, parsePrice } from "./helpers";
 
 // ─── All Products ───────────────────────────────────────────────────────────
 

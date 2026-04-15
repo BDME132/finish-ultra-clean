@@ -16,7 +16,7 @@ import { pageMetadata } from "@/lib/seo-metadata";
 import {
   Droplets, Candy, Coffee, Zap,
   AlertTriangle, Smile, Frown, Sun, Calendar, PersonStanding,
-  RefreshCcw,
+  RefreshCcw, Wheat, Beef, Salad, Apple,
 } from "lucide-react";
 
 export const metadata: Metadata = {

@@ -228,7 +228,7 @@ function snapshotToBuiltKit(snapshot: {
     why: string;
     tier: GearItem["tier"];
     specs: string[];
-    links: GearItem["links"];
+    links: Record<string, { url: string; price: number }>;
   }>;
   packingChecklist: string[];
   dropBagEssentials: string[];
@@ -246,7 +246,7 @@ function snapshotToBuiltKit(snapshot: {
       why: item.why,
       tier: item.tier,
       specs: item.specs,
-      links: item.links,
+      links: item.links as GearItem["links"],
     })),
     packingChecklist: snapshot.packingChecklist,
     dropBagEssentials: snapshot.dropBagEssentials,
@@ -1005,7 +1005,6 @@ export default function KitBuilder() {
                   </a>
                   </div>
                   <p className="text-gray-400 text-[11px] text-center pt-1">Or purchase items individually below ↓</p>
-                </div>
 
                 {purchasedCount > 0 && (
                   <div className="bg-light rounded-xl border border-gray-200 p-4">
