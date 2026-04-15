@@ -11,6 +11,7 @@ export default function LoginForm() {
     "idle" | "loading" | "sent" | "error"
   >("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [subscribeToNewsletter, setSubscribeToNewsletter] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -59,6 +60,13 @@ export default function LoginForm() {
       setErrorMsg(error.message);
     } else {
       setStatus("sent");
+      if (subscribeToNewsletter) {
+        fetch("/api/email-signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim().toLowerCase() }),
+        }).catch(() => {});
+      }
     }
   }
 
@@ -193,6 +201,15 @@ export default function LoginForm() {
           required
           className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary mb-3"
         />
+        <label className="flex items-center gap-2 mb-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={subscribeToNewsletter}
+            onChange={(e) => setSubscribeToNewsletter(e.target.checked)}
+            className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/30"
+          />
+          <span className="text-sm text-gray">Subscribe to weekly ultra running tips</span>
+        </label>
         <button
           type="submit"
           disabled={status === "loading" || !email.trim()}

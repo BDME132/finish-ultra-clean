@@ -3,7 +3,8 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { getSupabase } from "@/lib/supabase";
 
 /**
- * Syncs `profiles.is_newsletter_subscriber` with `email_signups` for the logged-in user's email.
+ * Returns the newsletter subscription status for the logged-in user.
+ * Subscription status is derived from email_signups.user_id — no profile flag needed.
  */
 export async function GET(): Promise<NextResponse> {
   try {
@@ -12,44 +13,28 @@ export async function GET(): Promise<NextResponse> {
       data: { user },
     } = await auth.auth.getUser();
 
-    if (!user?.email) {
-      return NextResponse.json({ subscribed: false, synced: false });
+    if (!user) {
+      return NextResponse.json({ subscribed: false });
     }
 
-    const email = user.email.trim().toLowerCase();
     const supabase = getSupabase();
 
     const { data: row, error } = await supabase
       .from("email_signups")
-      .select("email")
-      .eq("email", email)
+      .select("id")
+      .eq("user_id", user.id)
       .is("unsubscribed_at", null)
       .maybeSingle();
 
     if (error) {
       console.error("newsletter-sync lookup:", error);
       return NextResponse.json(
-        { error: "Failed to sync subscription status" },
+        { error: "Failed to check subscription status" },
         { status: 500 }
       );
     }
 
-    const subscribed = Boolean(row);
-
-    const { error: upErr } = await supabase
-      .from("profiles")
-      .update({ is_newsletter_subscriber: subscribed, updated_at: new Date().toISOString() })
-      .eq("id", user.id);
-
-    if (upErr) {
-      console.error("newsletter-sync profile:", upErr);
-      return NextResponse.json(
-        { error: "Failed to update profile" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ subscribed, synced: true });
+    return NextResponse.json({ subscribed: Boolean(row) });
   } catch (e) {
     console.error("newsletter-sync:", e);
     return NextResponse.json(

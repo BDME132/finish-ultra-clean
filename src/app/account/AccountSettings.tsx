@@ -7,7 +7,6 @@ import { createSupabaseBrowser, hasSupabaseBrowserEnv } from "@/lib/supabase/cli
 
 interface Profile {
   display_name: string | null;
-  is_newsletter_subscriber: boolean;
 }
 
 export default function AccountSettings() {
@@ -15,6 +14,7 @@ export default function AccountSettings() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [displayName, setDisplayName] = useState("");
+  const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const isSupabaseConfigured = hasSupabaseBrowserEnv();
@@ -34,22 +34,25 @@ export default function AccountSettings() {
       if (!supabase) return;
 
       (async () => {
-        try {
-          await fetch("/api/account/newsletter-sync", { method: "GET" });
-        } catch {
-          // Non-critical
-        }
+        const [{ data: profileData }, { data: subRow }] = await Promise.all([
+          supabase
+            .from("profiles")
+            .select("display_name")
+            .eq("id", user.id)
+            .single(),
+          supabase
+            .from("email_signups")
+            .select("id")
+            .eq("user_id", user.id)
+            .is("unsubscribed_at", null)
+            .maybeSingle(),
+        ]);
 
-        const { data } = await supabase
-          .from("profiles")
-          .select("display_name, is_newsletter_subscriber")
-          .eq("id", user.id)
-          .single();
-
-        if (data) {
-          setProfile(data);
-          setDisplayName(data.display_name || "");
+        if (profileData) {
+          setProfile(profileData);
+          setDisplayName(profileData.display_name || "");
         }
+        setIsSubscribed(!!subRow);
       })();
     }
   }, [user, isLoading, router, isSupabaseConfigured]);
@@ -159,25 +162,27 @@ export default function AccountSettings() {
         <div className="flex items-center gap-3">
           <span
             className={`inline-flex items-center gap-1.5 text-sm font-medium ${
-              profile?.is_newsletter_subscriber
+              isSubscribed
                 ? "text-green-600"
                 : "text-gray"
             }`}
           >
             <span
               className={`w-2 h-2 rounded-full ${
-                profile?.is_newsletter_subscriber
+                isSubscribed
                   ? "bg-green-500"
                   : "bg-gray-300"
               }`}
             />
-            {profile?.is_newsletter_subscriber
+            {isSubscribed === null
+              ? "Loading..."
+              : isSubscribed
               ? "Subscribed to newsletter"
               : "Not subscribed to newsletter"}
           </span>
         </div>
         <p className="text-xs text-gray mt-2">
-          {profile?.is_newsletter_subscriber
+          {isSubscribed
             ? "You receive weekly ultra running tips and updates."
             : "Sign up for the newsletter on the homepage to get weekly tips."}
         </p>

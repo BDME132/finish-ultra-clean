@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { usePheidi } from "./PheidiProvider";
 import ChatInterface from "./ChatInterface";
 
@@ -72,25 +73,48 @@ export default function PheidiSidebar() {
               <p className="text-[10px] text-[#94A3B8]">AI Coach</p>
             </div>
           </div>
-          <button
-            onClick={closePheidi}
-            className="w-8 h-8 flex items-center justify-center text-[#94A3B8] hover:text-[#E2E8F0] transition-colors rounded-lg hover:bg-[#1A2540]"
-            aria-label="Close Pheidi"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="flex items-center gap-1">
+            <Link
+              href="/pheidi"
+              onClick={closePheidi}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#94A3B8] hover:text-[#E2E8F0] hover:bg-[#1A2540] rounded-lg transition-colors"
+              aria-label="Open full Pheidi page"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              Full page
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </Link>
+            <button
+              onClick={closePheidi}
+              className="w-8 h-8 flex items-center justify-center text-[#94A3B8] hover:text-[#E2E8F0] transition-colors rounded-lg hover:bg-[#1A2540]"
+              aria-label="Close Pheidi"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Chat */}

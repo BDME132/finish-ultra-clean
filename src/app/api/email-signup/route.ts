@@ -69,9 +69,13 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
     const supabase = getSupabase();
     const now = new Date().toISOString();
 
+    const supabaseAuth = await createSupabaseServer();
+    const { data: { user } } = await supabaseAuth.auth.getUser();
+
     const { error: dbError } = await supabase.from("email_signups").insert({
       email,
       confirmed_at: now,
+      user_id: user?.id ?? null,
     });
 
     if (dbError) {
@@ -83,9 +87,11 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
           .maybeSingle();
 
         if (existing?.unsubscribed_at) {
+          const updateData: Record<string, unknown> = { unsubscribed_at: null, confirmed_at: now };
+          if (user?.id) updateData.user_id = user.id;
           const { error: reErr } = await supabase
             .from("email_signups")
-            .update({ unsubscribed_at: null, confirmed_at: now })
+            .update(updateData)
             .eq("email", email);
 
           if (reErr) {
@@ -149,24 +155,6 @@ export async function POST(request: Request): Promise<NextResponse<EmailSignupRe
 
     if (adminError) {
       console.error("Admin notification error:", adminError);
-    }
-
-    try {
-      const supabaseAuth = await createSupabaseServer();
-      const {
-        data: { user },
-      } = await supabaseAuth.auth.getUser();
-      if (user) {
-        await supabase
-          .from("profiles")
-          .update({
-            is_newsletter_subscriber: true,
-            updated_at: now,
-          })
-          .eq("id", user.id);
-      }
-    } catch {
-      // Non-critical — profile update failure shouldn't break signup
     }
 
     return NextResponse.json({ success: true });

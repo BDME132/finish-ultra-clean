@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import PheidiProvider from "./PheidiProvider";
 import PheidiSidebar from "./PheidiSidebar";
-import PheidiFAB from "./PheidiFAB";
 
 export default function PheidiShell({
   children,
@@ -17,7 +16,6 @@ export default function PheidiShell({
     <PheidiProvider>
       {children}
       {!hidePheidiUi && <PheidiSidebar />}
-      {!hidePheidiUi && <PheidiFAB />}
     </PheidiProvider>
   );
 }

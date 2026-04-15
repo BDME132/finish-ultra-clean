@@ -16,6 +16,15 @@ export async function GET(request: NextRequest) {
     const supabase = await createSupabaseServer();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Link any existing email_signups row to this account by email match
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        await supabase
+          .from("email_signups")
+          .update({ user_id: user.id })
+          .eq("email", user.email.toLowerCase())
+          .is("user_id", null);
+      }
       return NextResponse.redirect(new URL(next, request.url));
     }
   }
