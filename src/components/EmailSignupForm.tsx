@@ -90,20 +90,20 @@ export default function EmailSignupForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md">
-      <div className="flex flex-col items-center gap-3">
+    <form onSubmit={handleSubmit} className="w-full max-w-xl">
+      <div className="flex flex-col items-stretch gap-3 sm:flex-row">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
-          className="w-full px-2 py-3 text-lg newsletter-input transition-all duration-200"
+          className="newsletter-input w-full px-4 py-3 text-base transition-all duration-200"
           disabled={status === "loading"}
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="px-8 py-3 text-lg font-medium text-white bg-primary rounded-lg hover:bg-primary-dark hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 animate-pulse-glow"
+          className="min-w-[10rem] rounded-lg bg-accent px-6 py-3 text-base font-medium text-white transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {status === "loading" ? (
             <span className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export default function EmailSignupForm() {
         </button>
       </div>
       {status === "error" && (
-        <p className="mt-3 text-sm text-red-600 text-center animate-fade-in">
+        <p className="mt-3 text-center text-sm text-red-600 animate-fade-in">
           {errorMessage}
         </p>
       )}
