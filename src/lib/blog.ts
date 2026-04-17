@@ -1,3 +1,5 @@
+import { getPostBySlug } from "@/lib/content/blog-posts";
+
 export const BLOG_CATEGORIES = [
   "All",
   "Getting Started",
@@ -249,6 +251,26 @@ export function materializeBlogPostRecord(row: BlogPostRow): BlogPostRecord {
   };
 }
 
+/**
+ * Prefer the canonical path from blog-posts.ts when Supabase still has legacy
+ * `/images/blog/*` URLs — that directory is not part of the shipped `public/` tree.
+ */
+export function resolveBlogCoverImageUrl(
+  slug: string,
+  dbCoverImageUrl: string | null | undefined,
+): string {
+  const legacy = getPostBySlug(slug)?.image?.trim() ?? "";
+  const db = (dbCoverImageUrl ?? "").trim();
+
+  if (!db) return legacy;
+
+  if (db.startsWith("/images/blog/")) {
+    return legacy || db;
+  }
+
+  return db;
+}
+
 export function materializePublicBlogPost(
   postRow: BlogPostRow,
   versionRow: BlogPostVersionRow,
@@ -264,7 +286,7 @@ export function materializePublicBlogPost(
     bodyMarkdown: version.bodyMarkdown,
     category: version.category,
     tags: version.tags,
-    coverImageUrl: version.coverImageUrl,
+    coverImageUrl: resolveBlogCoverImageUrl(postRow.slug, version.coverImageUrl),
     readTime: version.readTime,
     featured: version.featured,
     relatedSlugs: version.relatedSlugs,
