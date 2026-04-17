@@ -36,10 +36,10 @@ export default function SearchPage() {
               <p className="text-gray/60 text-sm">
                 Try browsing our{" "}
                 <Link
-                  href="/start-here"
+                  href="/"
                   className="text-primary hover:underline"
                 >
-                  Start Here
+                  home page
                 </Link>{" "}
                 guide or{" "}
                 <Link

@@ -20,20 +20,20 @@ export default function Hero() {
           Your First Ultra Starts Here
         </h1>
         <p className="text-lg sm:text-xl text-gray/70 max-w-[480px] mx-auto mb-10">
-          The all-purpose tool for beginner ultra runners.
+          Free training plans, honest gear reviews, and an AI coach — no gatekeeping, no jargon.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/start-here"
+          <a
+            href="#roadmap"
             className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-accent rounded hover:opacity-90 transition-opacity"
           >
-            Start Here
-          </Link>
+            See the Roadmap
+          </a>
           <Link
             href="/pheidi"
             className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-primary bg-transparent border border-primary/40 rounded hover:bg-primary/5 transition-colors"
           >
-            Chat with Pheidi
+            Talk to AI Coach
           </Link>
         </div>
       </div>

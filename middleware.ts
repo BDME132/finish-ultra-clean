@@ -42,7 +42,6 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (
     (request.nextUrl.pathname.startsWith("/account") ||
-      request.nextUrl.pathname.startsWith("/race-hq") ||
       request.nextUrl.pathname.startsWith("/blog/new")) &&
     !user
   ) {

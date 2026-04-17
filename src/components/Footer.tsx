@@ -3,12 +3,11 @@ import Link from "next/link";
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const exploreLinks = [
-    { href: "/start-here", label: "Start Here" },
     { href: "/training", label: "Training" },
-    { href: "/gear", label: "Gear & Fuel" },
+    { href: "/gear", label: "Gear" },
     { href: "/blog", label: "Blog" },
     { href: "/faq", label: "FAQ" },
-    { href: "/pheidi", label: "Pheidi" },
+    { href: "/pheidi", label: "AI Coach" },
     { href: "/about", label: "About" },
   ];
   const toolLinks = [

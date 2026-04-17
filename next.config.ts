@@ -28,6 +28,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/chat", destination: "/pheidi", permanent: true },
       { source: "/coach", destination: "/pheidi", permanent: true },
+      { source: "/start-here", destination: "/", permanent: true },
     ];
   },
   async headers() {

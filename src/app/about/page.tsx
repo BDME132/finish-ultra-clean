@@ -92,7 +92,7 @@ export default function AboutPage() {
               </Link>
               <div className="mt-6">
                 <Link
-                  href="/start-here"
+                  href="/"
                   className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors"
                 >
                   Ready to Start? &rarr;

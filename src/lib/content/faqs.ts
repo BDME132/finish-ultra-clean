@@ -14,7 +14,7 @@ export const faqs: FAQ[] = [
     question: "What is an ultramarathon?",
     answer: "An ultramarathon is any race longer than a marathon (26.2 miles). The most common distances are 50K (31 miles), 50 miles, 100K (62 miles), and 100 miles. Unlike road marathons, most ultras run on trails, feature significant elevation change, and prioritize finishing over speed. There's no minimum pace requirement — moving forward is all that matters.",
     category: "getting-started",
-    relatedPages: ["/start-here", "/blog/how-hard-is-a-50k"],
+    relatedPages: ["/", "/blog/how-hard-is-a-50k"],
     speakable: true,
   },
   {
@@ -30,7 +30,7 @@ export const faqs: FAQ[] = [
     question: "Do I need to run a marathon before running an ultra?",
     answer: "No. Many runners skip the marathon entirely and go straight to their first ultra. A 50K finish does not require a marathon on your resume. What matters is your training base — if you can run a half marathon comfortably and commit to 16 weeks of structured training, you're ready to prepare for a 50K.",
     category: "getting-started",
-    relatedPages: ["/training/first-50k", "/start-here"],
+    relatedPages: ["/training/first-50k", "/"],
     speakable: true,
   },
   {
@@ -38,21 +38,21 @@ export const faqs: FAQ[] = [
     question: "Can a beginner run an ultramarathon?",
     answer: "Yes. Ultra running has no experience requirement, and the community is one of the most welcoming in all of sport. Beginners finish ultras every weekend. The key is choosing the right first race (flat course, generous cutoffs, good aid stations) and following a structured training plan that builds mileage gradually over 16–20 weeks.",
     category: "getting-started",
-    relatedPages: ["/start-here", "/blog/choosing-first-ultra"],
+    relatedPages: ["/", "/blog/choosing-first-ultra"],
   },
   {
     id: "how-do-i-know-if-im-ready",
     question: "How do I know if I'm ready for an ultramarathon?",
     answer: "You're likely ready if you can comfortably run a half marathon, have been running consistently for 6+ months, and can commit to 4 days per week of training for 16–20 weeks. You don't need to be fast or have run a marathon. If you can run 10–13 miles without it feeling catastrophic, you have the base to train for a 50K.",
     category: "getting-started",
-    relatedPages: ["/start-here", "/training/base-building"],
+    relatedPages: ["/", "/training/base-building"],
   },
   {
     id: "am-i-too-slow-for-an-ultra",
     question: "Am I too slow to run an ultra?",
     answer: "Probably not. Most 50K races have cutoffs of 8–10 hours, which works out to roughly a 15–19 minute per mile average — including walking and aid station stops. Ultra running is not about speed. The people at the back of the pack often have the most fun. As long as you can keep moving forward, you belong at the start line.",
     category: "getting-started",
-    relatedPages: ["/tools/pace-calculator", "/start-here"],
+    relatedPages: ["/tools/pace-calculator", "/"],
   },
   {
     id: "trail-vs-road-ultra",
@@ -383,7 +383,7 @@ export const faqs: FAQ[] = [
     question: "What if I finish last?",
     answer: "You're still a finisher. DFL (Dead Freaking Last) is a cherished term in ultra running — finishing last means you were the toughest person out there, because you kept moving when everyone else had already stopped. Race directors and volunteers celebrate every finisher. Nobody remembers who finished 47th vs. 48th. The finish line belongs to you no matter what time you cross it.",
     category: "mindset",
-    relatedPages: ["/start-here", "/blog/how-hard-is-a-50k"],
+    relatedPages: ["/", "/blog/how-hard-is-a-50k"],
   },
 ];
 

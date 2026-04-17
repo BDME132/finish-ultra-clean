@@ -243,13 +243,98 @@ export default function RaceHQClient() {
     );
   }
 
+  // ─── Unauthenticated preview ──────────────────────────────────────────────
+  if (!authLoading && !user) {
+    return (
+      <div>
+        <div className="bg-dark px-4 sm:px-6 lg:px-8 py-10">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="font-headline text-3xl sm:text-4xl font-bold text-white">
+              Your Dashboard
+            </h1>
+            <p className="text-gray-400 text-sm mt-2">
+              Track your training, gear, and race prep in one place
+            </p>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          {/* Preview cards (blurred/muted) */}
+          <div className="grid md:grid-cols-2 gap-6 relative">
+            {/* Training plan preview */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 opacity-50 pointer-events-none select-none">
+              <p className="text-[11px] font-semibold text-gray uppercase tracking-wider mb-1">Training Plan</p>
+              <h2 className="font-headline text-xl font-bold text-dark">Your First 50K</h2>
+              <p className="text-sm text-gray mt-1">Beginner · 50K · 16 weeks</p>
+              <div className="flex items-center gap-2 mt-5">
+                <Flag className="w-5 h-5 text-primary flex-shrink-0" />
+                <div>
+                  <p className="text-xs text-gray">Race day</p>
+                  <p className="text-sm font-semibold text-dark">August 15, 2026 <span className="ml-2 text-primary font-medium">(12 weeks away)</span></p>
+                </div>
+              </div>
+              <div className="mt-5">
+                <div className="flex justify-between text-xs text-gray mb-1.5">
+                  <span>Workouts completed</span>
+                  <span className="font-semibold text-dark">24 / 64</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="bg-primary h-2 rounded-full" style={{ width: "38%" }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Gear kit preview */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 opacity-50 pointer-events-none select-none">
+              <p className="text-[11px] font-semibold text-gray uppercase tracking-wider mb-1">Gear Kit</p>
+              <h2 className="font-headline text-xl font-bold text-dark">Mountain Trail Kit</h2>
+              <p className="text-sm text-gray mt-1">Built for your race</p>
+              <div className="grid grid-cols-3 gap-3 mt-5">
+                <div className="bg-light rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-dark">12</p>
+                  <p className="text-[11px] text-gray">Items</p>
+                </div>
+                <div className="bg-light rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-dark">5</p>
+                  <p className="text-[11px] text-gray">Categories</p>
+                </div>
+                <div className="bg-light rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-dark">$420</p>
+                  <p className="text-[11px] text-gray">Est. cost</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Overlay CTA */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl border border-gray-200 shadow-lg p-8 text-center max-w-sm">
+                <h3 className="font-headline text-xl font-bold text-dark mb-2">
+                  Your race prep, all in one place
+                </h3>
+                <p className="text-sm text-gray mb-6 leading-relaxed">
+                  Sign in to track your training plan, save your gear kit, and stay on top of race-day prep.
+                </p>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
+                >
+                  Sign in to get started
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Header strip */}
       <div className="bg-dark px-4 sm:px-6 lg:px-8 py-10">
         <div className="max-w-4xl mx-auto">
           <h1 className="font-headline text-3xl sm:text-4xl font-bold text-white">
-            {displayName ? `${displayName}'s Race HQ` : "Race HQ"}
+            {displayName ? `${displayName}'s Dashboard` : "Dashboard"}
           </h1>
           <p className="text-gray-400 text-sm mt-2">Your training command center</p>
         </div>

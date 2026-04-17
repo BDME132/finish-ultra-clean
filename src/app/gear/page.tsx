@@ -17,23 +17,23 @@ export const metadata: Metadata = pageMetadata({
 
 const supportingCategories = [
   {
-    title: "Shoes",
-    description: "Trail shoes that protect your feet and match your terrain, fit, and budget.",
+    title: "Trail Shoes Guide",
+    description: "How to pick trail shoes that match your terrain, foot shape, and budget.",
     href: "/gear/shoes",
   },
   {
-    title: "Packs & Vests",
-    description: "Hydration carry systems for aid-station spacing, mandatory gear, and comfort.",
+    title: "Packs & Vests Guide",
+    description: "How to choose a hydration system based on aid-station spacing and mandatory gear.",
     href: "/gear/packs",
   },
   {
-    title: "Nutrition",
-    description: "Fuel, drink mix, and electrolytes that are easier to practice before race day.",
+    title: "Nutrition Guide",
+    description: "How to pick fuel, drink mix, and electrolytes you can practice with before race day.",
     href: "/gear/nutrition",
   },
   {
-    title: "Apparel",
-    description: "Shorts, layers, shells, and socks that hold up when hours turn into all-day efforts.",
+    title: "Apparel Guide",
+    description: "How to layer for an all-day effort — shorts, shells, socks, and everything between.",
     href: "/gear/apparel",
   },
 ];
@@ -163,26 +163,11 @@ export default function GearPage() {
           </div>
         </section>
 
-        <section className="pb-14">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-primary/10 bg-primary/5 p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">Custom Kit</p>
-                <p className="text-sm text-dark">Personalized to your race, climate, runner profile, and budget. Best when you want product-level recommendations.</p>
-              </div>
-              <div className="rounded-2xl border border-accent/10 bg-accent/5 p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-2">Shared Kits</p>
-                <p className="text-sm text-dark">Public runner-built kits. Best when you want inspiration, comparisons, and real-world ideas before customizing your own setup.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section className="py-16 border-t border-gray-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 mb-10">
               <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-xs font-medium text-gray uppercase tracking-wider">Browse by category</span>
+              <span className="text-xs font-medium text-gray uppercase tracking-wider">Gear Guides</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -195,7 +180,7 @@ export default function GearPage() {
                 >
                   <h2 className="font-headline text-xl font-bold text-dark mb-2">{category.title}</h2>
                   <p className="text-sm text-gray leading-relaxed mb-4">{category.description}</p>
-                  <span className="text-sm font-semibold text-primary group-hover:underline">Explore {category.title.toLowerCase()}</span>
+                  <span className="text-sm font-semibold text-primary group-hover:underline">Read the guide</span>
                 </Link>
               ))}
             </div>

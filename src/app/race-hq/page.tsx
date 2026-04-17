@@ -5,11 +5,10 @@ import { pageMetadata } from "@/lib/seo-metadata";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Race HQ — Your Race Prep Hub | FinishUltra",
+    title: "Dashboard — Your Race Prep Hub | FinishUltra",
     description:
-      "Private race dashboard: your training plan, gear kit, and checklists in one place. Sign in required.",
+      "Track your training plan, gear kit, and race-day checklists in one place. Sign in to access your dashboard.",
     path: "/race-hq",
-    robots: { index: false, follow: false },
   }),
 };
 

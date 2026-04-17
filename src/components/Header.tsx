@@ -6,23 +6,20 @@ import { useState, useEffect } from "react";
 import { usePheidi } from "./PheidiProvider";
 import { useAuth } from "./AuthProvider";
 
-const navLinksBeforeTraining = [
-  { href: "/start-here", label: "Start Here" },
+const primaryLinks = [
+  { href: "/training", label: "Training" },
+  { href: "/gear", label: "Gear" },
+  { href: "/blog", label: "Blog" },
 ];
 
-const navLinksAfterTraining = [
-  { href: "/gear", label: "Gear & Fuel" },
-];
-
-const toolsLinks = [
+const moreLinks = [
   { href: "/tools/pace-calculator", label: "Pace Calculator" },
   { href: "/tools/glossary", label: "Glossary" },
-];
-
-const navLinksAfter = [
-  { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+  { href: "/newsletter", label: "Newsletter" },
+  { href: "/search", label: "Search" },
 ];
 
 /* 16x16 pixel art: running AI coach character */
@@ -104,9 +101,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { openPheidi } = usePheidi();
   const { user, isLoading: authLoading } = useAuth();
-  const isTrainingSection = pathname?.startsWith("/training");
-  const isTrainingDashboard = pathname?.startsWith("/training/dashboard");
-  const isTrainingPlans = Boolean(isTrainingSection && !isTrainingDashboard);
+  const isMoreActive = pathname?.startsWith("/tools") || pathname?.startsWith("/faq") || pathname?.startsWith("/about") || pathname?.startsWith("/contact") || pathname?.startsWith("/newsletter") || pathname?.startsWith("/search");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -124,7 +119,7 @@ export default function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
-            {navLinksBeforeTraining.map((link) => (
+            {primaryLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -138,93 +133,23 @@ export default function Header() {
               </Link>
             ))}
 
-            {/* Training dropdown */}
-            <div className="relative group">
-              <div className="flex items-center gap-0.5">
-                <Link
-                  href="/training"
-                  className={`text-sm font-medium transition-colors pb-0.5 ${
-                    isTrainingSection
-                      ? "text-primary border-b-2 border-accent"
-                      : "text-dark hover:text-primary border-b-2 border-transparent"
-                  }`}
-                >
-                  Training
-                </Link>
-                <svg
-                  className={`w-3.5 h-3.5 mt-px transition-colors ${
-                    isTrainingSection
-                      ? "text-primary"
-                      : "text-dark group-hover:text-primary group-focus-within:text-primary"
-                  }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 pointer-events-none transition-opacity duration-150 group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto">
-                <div className="bg-white border border-gray-100 rounded-lg shadow-lg py-1 min-w-[160px]">
-                  {user && (
-                    <Link
-                      href="/training/dashboard"
-                      className={`block px-4 py-2 text-sm transition-colors ${
-                        isTrainingDashboard
-                          ? "text-primary bg-primary/5"
-                          : "text-dark hover:text-primary hover:bg-gray-50"
-                      }`}
-                    >
-                      Dashboard
-                    </Link>
-                  )}
-                  <Link
-                    href="/training"
-                    className={`block px-4 py-2 text-sm transition-colors ${
-                      isTrainingPlans
-                        ? "text-primary bg-primary/5"
-                        : "text-dark hover:text-primary hover:bg-gray-50"
-                    }`}
-                  >
-                    Plans
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {navLinksAfterTraining.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors pb-0.5 ${
-                  pathname?.startsWith(link.href)
-                    ? "text-primary border-b-2 border-accent"
-                    : "text-dark hover:text-primary border-b-2 border-transparent"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            {/* Tools dropdown */}
+            {/* More dropdown */}
             <div className="relative group">
               <button
-                className={`text-sm font-medium transition-colors flex items-center gap-0.5 ${
-                  pathname?.startsWith("/tools")
-                    ? "text-primary"
-                    : "text-dark hover:text-primary"
+                className={`text-sm font-medium transition-colors flex items-center gap-0.5 pb-0.5 ${
+                  isMoreActive
+                    ? "text-primary border-b-2 border-accent"
+                    : "text-dark hover:text-primary border-b-2 border-transparent"
                 }`}
               >
-                Tools
+                More
                 <svg className="w-3.5 h-3.5 mt-px" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
               <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150">
                 <div className="bg-white border border-gray-100 rounded-lg shadow-lg py-1 min-w-[160px]">
-                  {toolsLinks.map((link) => (
+                  {moreLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
@@ -241,32 +166,7 @@ export default function Header() {
               </div>
             </div>
 
-            {navLinksAfter.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors pb-0.5 ${
-                  pathname?.startsWith(link.href)
-                    ? "text-primary border-b-2 border-accent"
-                    : "text-dark hover:text-primary border-b-2 border-transparent"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            {/* Search icon */}
-            <Link
-              href="/search"
-              className="text-dark hover:text-primary transition-colors"
-              aria-label="Search"
-            >
-              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </Link>
-
-            {/* Pheidi — pill button with pixel art hover */}
+            {/* AI Coach — pill button with pixel art hover */}
             <button
               onClick={openPheidi}
               className={`text-sm font-medium transition-all group border rounded-md px-3 py-1 ${
@@ -277,7 +177,7 @@ export default function Header() {
             >
               <span className="block overflow-hidden h-5">
                 <span className="flex flex-col transition-transform duration-[250ms] ease-in-out group-hover:-translate-y-5">
-                  <span className="h-5 flex items-center">Pheidi</span>
+                  <span className="h-5 flex items-center">AI Coach</span>
                   <span className="h-5 flex items-center justify-center">
                     <ChatPixelArt />
                   </span>
@@ -285,34 +185,32 @@ export default function Header() {
               </span>
             </button>
 
-            {/* Auth button */}
+            {/* Dashboard + Auth */}
+            <Link
+              href="/race-hq"
+              className={`text-sm font-medium transition-colors pb-0.5 ${
+                pathname?.startsWith("/race-hq")
+                  ? "text-primary border-b-2 border-accent"
+                  : "text-dark hover:text-primary border-b-2 border-transparent"
+              }`}
+            >
+              Dashboard
+            </Link>
             {!authLoading && (
               user ? (
-                <>
-                  <Link
-                    href="/race-hq"
-                    className={`text-sm font-medium transition-colors pb-0.5 ${
-                      pathname?.startsWith("/race-hq")
-                        ? "text-primary border-b-2 border-accent"
-                        : "text-dark hover:text-primary border-b-2 border-transparent"
-                    }`}
-                  >
-                    Race HQ
-                  </Link>
-                  <Link
-                    href="/account"
-                    className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
-                    title="Account"
-                  >
-                    {(user.user_metadata?.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
-                  </Link>
-                </>
+                <Link
+                  href="/account"
+                  className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
+                  title="Account"
+                >
+                  {(user.user_metadata?.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
+                </Link>
               ) : (
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-dark hover:text-primary transition-colors"
+                  className="text-sm font-medium text-dark/60 hover:text-primary transition-colors"
                 >
-                  Log in
+                  Sign in
                 </Link>
               )
             )}
@@ -339,20 +237,8 @@ export default function Header() {
         {/* Mobile nav */}
         {mobileOpen && (
           <nav className="md:hidden pb-4 border-t border-gray-100 pt-4">
-            {/* Search bar at top of mobile menu */}
-            <Link
-              href="/search"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2 px-2 py-2 mb-3 text-sm text-gray hover:text-primary transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              Search
-            </Link>
-
             <div className="flex flex-col gap-3">
-              {navLinksBeforeTraining.map((link) => (
+              {primaryLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -367,62 +253,9 @@ export default function Header() {
                 </Link>
               ))}
 
-              <div className="flex flex-col gap-1">
-                <Link
-                  href="/training"
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-sm font-medium px-2 py-1 transition-colors ${
-                    isTrainingSection
-                      ? "text-primary"
-                      : "text-dark hover:text-primary"
-                  }`}
-                >
-                  Training
-                </Link>
-                {user && (
-                  <Link
-                    href="/training/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className={`text-sm font-medium px-2 py-1 pl-4 transition-colors ${
-                      isTrainingDashboard
-                        ? "text-primary"
-                        : "text-dark hover:text-primary"
-                    }`}
-                  >
-                    Dashboard
-                  </Link>
-                )}
-                <Link
-                  href="/training"
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-sm font-medium px-2 py-1 pl-4 transition-colors ${
-                    isTrainingPlans
-                      ? "text-primary"
-                      : "text-dark hover:text-primary"
-                  }`}
-                >
-                  Plans
-                </Link>
-              </div>
-
-              {navLinksAfterTraining.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-sm font-medium px-2 py-1 transition-colors ${
-                    pathname?.startsWith(link.href)
-                      ? "text-primary"
-                      : "text-dark hover:text-primary"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-
-              {/* Tools section */}
-              <p className="text-[11px] font-medium text-gray uppercase tracking-wider px-2 pt-2">Tools</p>
-              {toolsLinks.map((link) => (
+              {/* More section */}
+              <p className="text-[11px] font-medium text-gray uppercase tracking-wider px-2 pt-2">More</p>
+              {moreLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -437,22 +270,7 @@ export default function Header() {
                 </Link>
               ))}
 
-              {navLinksAfter.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-sm font-medium px-2 py-1 transition-colors ${
-                    pathname?.startsWith(link.href)
-                      ? "text-primary"
-                      : "text-dark hover:text-primary"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-
-              {/* Pheidi — distinct row at bottom */}
+              {/* AI Coach */}
               <button
                 onClick={() => {
                   setMobileOpen(false);
@@ -464,39 +282,37 @@ export default function Header() {
                     : "text-primary border-primary/40"
                 }`}
               >
-                Pheidi
+                AI Coach
               </button>
 
-              {/* Auth button (mobile) */}
+              {/* Dashboard + Auth (mobile) */}
+              <Link
+                href="/race-hq"
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm font-medium px-3 py-2 border rounded-md text-center transition-colors ${
+                  pathname?.startsWith("/race-hq")
+                    ? "border-primary text-primary bg-primary/5"
+                    : "border-gray-200 text-dark hover:text-primary"
+                }`}
+              >
+                Dashboard
+              </Link>
               {!authLoading && (
                 user ? (
-                  <>
-                    <Link
-                      href="/race-hq"
-                      onClick={() => setMobileOpen(false)}
-                      className={`text-sm font-medium px-3 py-2 border rounded-md text-center transition-colors ${
-                        pathname?.startsWith("/race-hq")
-                          ? "border-primary text-primary bg-primary/5"
-                          : "border-gray-200 text-dark hover:text-primary"
-                      }`}
-                    >
-                      Race HQ
-                    </Link>
-                    <Link
-                      href="/account"
-                      onClick={() => setMobileOpen(false)}
-                      className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
-                    >
-                      Account
-                    </Link>
-                  </>
+                  <Link
+                    href="/account"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
+                  >
+                    Account
+                  </Link>
                 ) : (
                   <Link
                     href="/login"
                     onClick={() => setMobileOpen(false)}
                     className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
                   >
-                    Log in
+                    Sign in
                   </Link>
                 )
               )}
