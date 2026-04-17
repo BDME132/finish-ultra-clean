@@ -743,7 +743,7 @@ The hardest part of winter running is getting out the door. Two strategies that 
     category: "Training",
     tags: ["winter", "cold weather", "layering", "seasonal", "traction"],
     publishedAt: "2025-11-01",
-    image: "/images/blog/winter-running.jpg",
+    image: "/cold.jpg",
     readTime: "6 min read",
     relatedSlugs: ["strength-training-ultra-runners", "first-50k-training-guide"],
     affiliateProducts: [
@@ -834,7 +834,7 @@ The hallucinations and emotions are actually signs that your brain is incredibly
     category: "Training",
     tags: ["science", "sleep deprivation", "100-miler", "mental toughness", "research"],
     publishedAt: "2025-07-01",
-    image: "/images/blog/brain-science.jpg",
+    image: "/brain.avif",
     readTime: "8 min read",
     relatedSlugs: ["first-100-miler-guide", "western-states-course-guide"],
   },
