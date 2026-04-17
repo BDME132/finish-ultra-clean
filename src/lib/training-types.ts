@@ -132,6 +132,42 @@ export interface SavedPlan {
   raceCountdown?: RaceCountdownChecklist;
 }
 
+export interface PublicTrainingShare {
+  slug: string;
+  publishedAt: string;
+  updatedAt: string;
+}
+
+export interface PublicTrainingPlan {
+  id: string;
+  sourcePlanId: string;
+  slug: string;
+  authorDisplayName: string;
+  planTitle: string;
+  raceName: string;
+  raceDate: string;
+  distance: SavedPlan["distance"];
+  level: SavedPlan["level"];
+  weeksTotal: number;
+  currentWeeklyMiles: number;
+  weeks: SavedWeek[];
+  publishedAt: string;
+  updatedAt: string;
+}
+
+export interface PublicTrainingPlanFilters {
+  distance?: SavedPlan["distance"];
+  level?: SavedPlan["level"];
+  sort?: "newest" | "updated";
+}
+
+export interface LoadPlanRecordResult {
+  plan: SavedPlan | null;
+  planId: string | null;
+  planUpdatedAt: string | null;
+  publicShare: PublicTrainingShare | null;
+}
+
 // ─── Default gear items by distance ──────────────────────────────────────────
 export function getDefaultGearItems(distance: string): GearTrackingItem[] {
   const is100 = distance === "100M" || distance === "100K";
