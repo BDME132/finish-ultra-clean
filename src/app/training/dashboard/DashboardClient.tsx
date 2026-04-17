@@ -11,24 +11,24 @@ import Link from "next/link";
 import {
   SavedPlan,
   CompletedWorkout,
-  GearTrackingItem,
-  NutritionProduct,
   DailyTask,
   PostRaceReport,
+  PublicTrainingShare,
   RaceDayChecklistItem,
   RunnerProfile,
-  loadSavedPlan,
-  savePlan,
   generateDailyTasks,
-  PLAN_STORAGE_KEY,
 } from "@/lib/training-types";
 import { useAuth } from "@/components/AuthProvider";
-import { loadPlan, persistPlan, deletePlanData } from "@/lib/training-sync";
+import { loadPlanRecord, persistPlan, deletePlanData } from "@/lib/training-sync";
 import { loadKits, deleteKit as deleteKitSync, updateKit as updateKitSync } from "@/lib/kit-sync";
 import {
   publishKit as publishPublicKit,
   unpublishKit as unpublishPublicKit,
 } from "@/lib/public-kit-sync";
+import {
+  publishTrainingPlan as publishPublicTrainingPlan,
+  unpublishTrainingPlan as unpublishPublicTrainingPlan,
+} from "@/lib/public-training-plan-sync";
 import type { SavedKit } from "@/lib/kit-types";
 import { calculateFuelingStrategy, FuelingStrategy, generateDynamicPlan, getTimelineAssessment } from "@/lib/plan-generator";
 import CalendarTab from "./CalendarTab";
@@ -115,6 +115,10 @@ export default function DashboardClient() {
   // Saved kits
   const [savedKits, setSavedKits] = useState<SavedKit[]>([]);
   const [expandedKitId, setExpandedKitId] = useState<string | null>(null);
+  const [planPublicShare, setPlanPublicShare] = useState<PublicTrainingShare | null>(null);
+  const [planShareAction, setPlanShareAction] = useState<"publishing" | "unpublishing" | null>(null);
+  const [planShareError, setPlanShareError] = useState(false);
+  const [planUpdatedAt, setPlanUpdatedAt] = useState<string | null>(null);
   const [shareAction, setShareAction] = useState<{ kitId: string; action: "publishing" | "unpublishing" } | null>(null);
   const [shareErrorKitId, setShareErrorKitId] = useState<string | null>(null);
   const [kitPurchaseModal, setKitPurchaseModal] = useState<{ kitId: string; itemIndex: number } | null>(null);
@@ -140,12 +144,18 @@ export default function DashboardClient() {
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      const saved = await loadPlan(user);
+      const record = await loadPlanRecord(user);
+      const saved = record.plan;
       if (!cancelled) {
         setPlan(saved);
+        setPlanPublicShare(record.publicShare);
+        setPlanUpdatedAt(record.publicShare?.updatedAt ?? record.planUpdatedAt);
         if (saved) {
           setSettingsRaceName(saved.raceName || "");
           setSettingsRaceDate(saved.raceDate);
+        } else {
+          setPlanPublicShare(null);
+          setPlanUpdatedAt(null);
         }
         if (saved?.runnerProfile) {
           setFuelingWeight(String(saved.runnerProfile.weightLbs ?? ""));
@@ -227,6 +237,51 @@ export default function DashboardClient() {
       ),
     );
     setShareAction(null);
+  }
+
+  function updateShareablePlan(nextPlan: SavedPlan) {
+    setPlan(nextPlan);
+    setPlanUpdatedAt(new Date().toISOString());
+  }
+
+  async function publishCurrentPlan() {
+    if (!user || !plan) return;
+
+    setPlanShareError(false);
+    setPlanShareAction("publishing");
+
+    if (persistTimerRef.current) clearTimeout(persistTimerRef.current);
+    await persistPlan(plan, user);
+
+    const result = await publishPublicTrainingPlan();
+
+    if (!result) {
+      setPlanShareAction(null);
+      setPlanShareError(true);
+      return;
+    }
+
+    setPlanPublicShare(result.publicShare);
+    setPlanUpdatedAt(result.publicShare.updatedAt);
+    setPlanShareAction(null);
+  }
+
+  async function unpublishCurrentPlan() {
+    if (!user) return;
+
+    setPlanShareError(false);
+    setPlanShareAction("unpublishing");
+
+    const success = await unpublishPublicTrainingPlan();
+
+    if (!success) {
+      setPlanShareAction(null);
+      setPlanShareError(true);
+      return;
+    }
+
+    setPlanPublicShare(null);
+    setPlanShareAction(null);
   }
 
   if (!loaded) return null;
@@ -314,6 +369,11 @@ export default function DashboardClient() {
 
   // Overall readiness
   const overallReadiness = Math.round(trainingReadiness * 0.5 + gearReadiness * 0.25 + nutritionReadiness * 0.25);
+  const hasUnpublishedPublicPlanChanges = Boolean(
+    planPublicShare &&
+    planUpdatedAt &&
+    new Date(planUpdatedAt).getTime() > new Date(planPublicShare.updatedAt).getTime(),
+  );
 
   // ─── Daily tasks ────────────────────────────────────────────────────────
   const dateStr = todayDateStr();
@@ -487,7 +547,8 @@ export default function DashboardClient() {
 
   function saveRaceName(name: string) {
     if (!plan) return;
-    setPlan({ ...plan, raceName: name });
+    if (name === plan.raceName) return;
+    updateShareablePlan({ ...plan, raceName: name });
   }
 
   function requestRaceDateChange(newDate: string) {
@@ -504,7 +565,7 @@ export default function DashboardClient() {
     const totalWeeks = Math.max(1, weeksUntil);
     const assessment = getTimelineAssessment(totalWeeks, plan.distance as Parameters<typeof getTimelineAssessment>[1]);
     const newWeeks = generateDynamicPlan(totalWeeks, plan.distance as Parameters<typeof generateDynamicPlan>[1], plan.level as Parameters<typeof generateDynamicPlan>[2], plan.currentWeeklyMiles, pendingRaceDate, assessment);
-    setPlan({ ...plan, raceDate: pendingRaceDate, weeks: newWeeks, weeksTotal: totalWeeks });
+    updateShareablePlan({ ...plan, raceDate: pendingRaceDate, weeks: newWeeks, weeksTotal: totalWeeks });
     setSettingsRaceDate(pendingRaceDate);
     setRaceDateConfirmOpen(false);
     setPendingRaceDate("");
@@ -526,6 +587,18 @@ export default function DashboardClient() {
 
   function saveEditWorkout() {
     if (!plan) return;
+    const originalWeek = plan.weeks.find((w) => w.weekNumber === editWeek);
+    const originalWorkout = originalWeek?.days[editDayIndex];
+    if (
+      originalWorkout &&
+      originalWorkout.workout === editWorkoutType &&
+      originalWorkout.distance === editDistance &&
+      originalWorkout.effort === editEffort &&
+      originalWorkout.notes === editNotes
+    ) {
+      setEditWorkoutOpen(false);
+      return;
+    }
     const updatedWeeks = plan.weeks.map((w) => {
       if (w.weekNumber !== editWeek) return w;
       return {
@@ -536,7 +609,7 @@ export default function DashboardClient() {
         }),
       };
     });
-    setPlan({ ...plan, weeks: updatedWeeks });
+    updateShareablePlan({ ...plan, weeks: updatedWeeks });
     setEditWorkoutOpen(false);
   }
 
@@ -651,6 +724,8 @@ export default function DashboardClient() {
   function deletePlan() {
     deletePlanData(user);
     setPlan(null);
+    setPlanPublicShare(null);
+    setPlanUpdatedAt(null);
   }
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -734,6 +809,111 @@ export default function DashboardClient() {
       </nav>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-1">Shared Plan</p>
+              {!user ? (
+                <>
+                  <p className="text-sm font-semibold text-dark">Publishing requires a FinishUltra account.</p>
+                  <p className="text-sm text-gray mt-1">
+                    Your current plan stays private on this device until you sign in.
+                  </p>
+                </>
+              ) : planPublicShare ? (
+                hasUnpublishedPublicPlanChanges ? (
+                  <>
+                    <p className="text-sm font-semibold text-dark">Your public page is live, but your private schedule has newer edits.</p>
+                    <p className="text-sm text-gray mt-1">
+                      Republish to refresh the shared schedule other runners can browse.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold text-dark">This plan is public.</p>
+                    <p className="text-sm text-gray mt-1">
+                      Other runners can view this schedule snapshot, while your dashboard tracking stays private.
+                    </p>
+                  </>
+                )
+              ) : (
+                <>
+                  <p className="text-sm font-semibold text-dark">Keep this private or publish it for other runners.</p>
+                  <p className="text-sm text-gray mt-1">
+                    Publishing creates a read-only schedule page without exposing your workout logs, gear, or checklist data.
+                  </p>
+                </>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {!user ? (
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+                >
+                  Sign In to Publish
+                </Link>
+              ) : (
+                <>
+                  {planPublicShare && (
+                    <Link
+                      href={`/training/shared-plans/${planPublicShare.slug}`}
+                      className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+                    >
+                      View Public Page
+                    </Link>
+                  )}
+                  {planPublicShare ? (
+                    <>
+                      {hasUnpublishedPublicPlanChanges && (
+                        <button
+                          onClick={publishCurrentPlan}
+                          disabled={planShareAction === "publishing"}
+                          className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                            planShareAction === "publishing"
+                              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                              : "bg-primary text-white hover:bg-blue-700"
+                          }`}
+                        >
+                          {planShareAction === "publishing" ? "Publishing..." : "Update Public Page"}
+                        </button>
+                      )}
+                      <button
+                        onClick={unpublishCurrentPlan}
+                        disabled={planShareAction === "unpublishing"}
+                        className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
+                          planShareAction === "unpublishing"
+                            ? "border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed"
+                            : "border-gray-300 bg-white text-dark hover:bg-gray-100"
+                        }`}
+                      >
+                        {planShareAction === "unpublishing" ? "Making Private..." : "Make Private"}
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={publishCurrentPlan}
+                      disabled={planShareAction === "publishing"}
+                      className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                        planShareAction === "publishing"
+                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          : "bg-primary text-white hover:bg-blue-700"
+                      }`}
+                    >
+                      {planShareAction === "publishing" ? "Publishing..." : "Make Public"}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
+          {planShareError && (
+            <p className="text-xs text-red-600 mt-3">Couldn&apos;t update sharing for this plan. Try again.</p>
+          )}
+        </div>
+
         {/* ─── TODAY TAB ──────────────────────────────────────────────── */}
         {tab === "today" && (
           <div className="space-y-6">

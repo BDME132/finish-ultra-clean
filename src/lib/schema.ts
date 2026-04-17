@@ -33,6 +33,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   "race-week": "Race Week",
   "race-day-checklist": "Race Day Checklist",
   plans: "Training Plans",
+  "shared-plans": "Shared Plans",
   dashboard: "Training Dashboard",
   "pace-calculator": "Pace Calculator",
   glossary: "Glossary",
