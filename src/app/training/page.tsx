@@ -7,6 +7,7 @@ import { faqsByCategory } from "@/lib/content/faqs";
 import JsonLd from "@/components/JsonLd";
 import TrainingPlanCard from "@/components/TrainingPlanCard";
 import { trainingPlans } from "@/lib/content/training-plans";
+import { loadPublicTrainingPlansServer } from "@/lib/public-training-plans-server";
 import { pageMetadata } from "@/lib/seo-metadata";
 import { itemListJsonLd, SITE_URL } from "@/lib/schema";
 
@@ -31,9 +32,15 @@ const trainingHubItemListJsonLd = itemListJsonLd({
   })),
 });
 
-export default function TrainingPage() {
+export default async function TrainingPage() {
   const featuredPlan = trainingPlans.find((p) => p.slug === "plans");
   const otherPlans = trainingPlans.filter((p) => p.slug !== "plans");
+  const sharedPlans = await loadPublicTrainingPlansServer();
+  const sharedPlansCount = sharedPlans.length;
+  const sharedPlansLabel =
+    sharedPlansCount > 0
+      ? `See ${sharedPlansCount} Runner-Built Plan${sharedPlansCount === 1 ? "" : "s"}`
+      : "See Real Runner Plans";
 
   return (
     <>
@@ -60,11 +67,17 @@ export default function TrainingPage() {
               </Link>
               <Link
                 href="/training/shared-plans"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-primary/20 bg-white text-primary font-bold hover:bg-primary/5 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-primary/20 bg-white text-primary font-bold shadow-sm hover:bg-primary/5 hover:border-primary/30 transition-colors"
               >
-                Browse Shared Plans
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5V4H2v16h5m10 0v-4c0-1.105-.895-2-2-2H9c-1.105 0-2 .895-2 2v4m10 0H7m8-10a2 2 0 11-4 0 2 2 0 014 0zm-6 0a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {sharedPlansLabel}
               </Link>
             </div>
+            <p className="mt-4 text-sm text-gray/80 max-w-2xl mx-auto">
+              Want a stronger starting point? Compare real FinishUltra plans by distance, level, and weekly structure before building your own.
+            </p>
           </div>
         </section>
 
