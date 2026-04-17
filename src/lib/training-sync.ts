@@ -1,25 +1,44 @@
 import type { User } from "@supabase/supabase-js";
-import type { SavedPlan } from "./training-types";
+import type { LoadPlanRecordResult, SavedPlan } from "./training-types";
 import { loadSavedPlan, savePlan as saveToLocalStorage, PLAN_STORAGE_KEY } from "./training-types";
 
 // ─── Load plan: Supabase for auth users, localStorage for guests ─────────────
 
-export async function loadPlan(user: User | null): Promise<SavedPlan | null> {
+function localPlanRecordFallback(): LoadPlanRecordResult {
+  return {
+    plan: loadSavedPlan(),
+    planId: null,
+    planUpdatedAt: null,
+    publicShare: null,
+  };
+}
+
+export async function loadPlanRecord(user: User | null): Promise<LoadPlanRecordResult> {
   if (!user) {
-    return loadSavedPlan();
+    return localPlanRecordFallback();
   }
 
   try {
     const res = await fetch("/api/training-plans", { credentials: "include" });
     if (!res.ok) {
       // Fall back to localStorage if API fails
-      return loadSavedPlan();
+      return localPlanRecordFallback();
     }
     const data = await res.json();
-    return data.plan ?? null;
+    return {
+      plan: data.plan ?? null,
+      planId: data.planId ?? null,
+      planUpdatedAt: data.planUpdatedAt ?? null,
+      publicShare: data.publicShare ?? null,
+    };
   } catch {
-    return loadSavedPlan();
+    return localPlanRecordFallback();
   }
+}
+
+export async function loadPlan(user: User | null): Promise<SavedPlan | null> {
+  const record = await loadPlanRecord(user);
+  return record.plan;
 }
 
 // ─── Persist plan: Supabase for auth users, localStorage for guests ──────────
