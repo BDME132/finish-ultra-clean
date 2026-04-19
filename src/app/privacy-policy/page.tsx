@@ -158,10 +158,10 @@ export default function PrivacyPolicyPage() {
                   <p>
                     Questions about this policy can be sent to{" "}
                     <a
-                      href="mailto:hello@finishultra.com"
+                      href="mailto:finishultra@finishultra.com"
                       className="text-primary font-medium hover:underline"
                     >
-                      hello@finishultra.com
+                      finishultra@finishultra.com
                     </a>
                     . You can also visit our{" "}
                     <Link href="/contact" className="text-primary font-medium hover:underline">

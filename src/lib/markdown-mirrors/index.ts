@@ -429,7 +429,7 @@ See our [affiliate disclosure](/affiliate-disclosure) and [privacy policy](/priv
 
 ## Contact
 
-[Contact page](/contact) — hello@finishultra.com
+[Contact page](/contact) — finishultra@finishultra.com
 `,
 
   // --- Contact ---
@@ -442,7 +442,7 @@ See our [affiliate disclosure](/affiliate-disclosure) and [privacy policy](/priv
     ) +
     `# Contact FinishUltra
 
-Email: hello@finishultra.com
+Email: finishultra@finishultra.com
 
 We typically respond within 2–3 business days.
 
@@ -1203,7 +1203,7 @@ We recommend products based on merit, not affiliate income. We will always discl
 
 - Amazon Associates (amazon.com)
 
-Questions? Email hello@finishultra.com.
+Questions? Email finishultra@finishultra.com.
 `,
 
   "/privacy-policy":
@@ -1242,11 +1242,11 @@ Questions? Email hello@finishultra.com.
 
 - **Unsubscribe** from the newsletter at any time via the link in any email
 - **Disable cookies** in your browser settings
-- **Request deletion** of your data: email hello@finishultra.com
+- **Request deletion** of your data: email finishultra@finishultra.com
 
 ## Contact
 
-hello@finishultra.com
+finishultra@finishultra.com
 `,
 };
 

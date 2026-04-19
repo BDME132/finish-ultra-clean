@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Camera, Trash2 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { hasSupabaseBrowserEnv } from "@/lib/supabase/client";
 import Avatar from "@/components/account/Avatar";
+import AvatarEditorModal from "@/components/account/AvatarEditorModal";
 import {
   GOAL_DISTANCES,
   type AccountProfile,
@@ -62,6 +64,7 @@ export default function ProfileForm() {
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [migrationPending, setMigrationPending] = useState(false);
+  const [editorSrc, setEditorSrc] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -110,14 +113,23 @@ export default function ProfileForm() {
     setSavedAt(null);
   }
 
-  async function handleAvatarChange(event: React.ChangeEvent<HTMLInputElement>) {
+  // Step 1: file selected → open editor
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    const url = URL.createObjectURL(file);
+    setEditorSrc(url);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  // Step 2: editor applied → upload cropped blob
+  async function handleEditorApply(blob: Blob) {
+    setEditorSrc(null);
     setUploading(true);
     setError(null);
     try {
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", new File([blob], "avatar.jpg", { type: "image/jpeg" }));
       const res = await fetch("/api/account/avatar", {
         method: "POST",
         body: fd,
@@ -125,15 +137,31 @@ export default function ProfileForm() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Upload failed");
-      setForm((prev) => ({ ...prev, avatar_url: json.avatar_url }));
-      setProfile((prev) => (prev ? { ...prev, avatar_url: json.avatar_url } : prev));
+      const newUrl = json.avatar_url as string;
+      setForm((prev) => ({ ...prev, avatar_url: newUrl }));
+      setProfile((prev) => (prev ? { ...prev, avatar_url: newUrl } : prev));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not upload avatar.");
     } finally {
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
+
+  function handleEditorCancel() {
+    if (editorSrc) URL.revokeObjectURL(editorSrc);
+    setEditorSrc(null);
+  }
+
+  function handleRemoveAvatar() {
+    setForm((prev) => ({ ...prev, avatar_url: null }));
+  }
+
+  // Revoke object URLs when they're no longer needed
+  useEffect(() => {
+    return () => {
+      if (editorSrc) URL.revokeObjectURL(editorSrc);
+    };
+  }, [editorSrc]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -214,28 +242,78 @@ export default function ProfileForm() {
   }
 
   return (
+    <>
+      {editorSrc && (
+        <AvatarEditorModal
+          imageSrc={editorSrc}
+          onApply={handleEditorApply}
+          onCancel={handleEditorCancel}
+        />
+      )}
+
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <h2 className="text-sm font-medium text-gray uppercase tracking-wider mb-4">Avatar</h2>
         <div className="flex items-center gap-5">
-          <Avatar profile={{ ...profile!, ...form, avatar_url: form.avatar_url }} size="lg" />
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
-              onChange={handleAvatarChange}
-              className="hidden"
-            />
+          {/* Clickable avatar with camera overlay */}
+          <div className="relative group shrink-0">
+            <div className="w-20 h-20 rounded-full overflow-hidden bg-primary/10">
+              {form.avatar_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={form.avatar_url}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Avatar
+                  profile={{ ...profile!, ...form, avatar_url: null }}
+                  size="lg"
+                />
+              )}
+            </div>
+            {/* Edit overlay */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="px-4 py-2 border border-gray-200 text-sm font-medium text-dark rounded-lg hover:bg-gray-50 disabled:opacity-50"
+              aria-label="Change avatar"
+              className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity disabled:cursor-not-allowed"
             >
-              {uploading ? "Uploading..." : "Upload new avatar"}
+              <Camera className="w-6 h-6 text-white" />
             </button>
-            <p className="text-xs text-gray mt-2">PNG, JPG, WEBP, or GIF, up to 4 MB.</p>
+          </div>
+
+          <div className="space-y-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="px-3 py-1.5 border border-gray-200 text-sm font-medium text-dark rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              >
+                {uploading ? "Uploading…" : "Upload photo"}
+              </button>
+              {form.avatar_url && (
+                <button
+                  type="button"
+                  onClick={handleRemoveAvatar}
+                  disabled={uploading}
+                  className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 disabled:opacity-50 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Remove
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-gray">PNG or JPG up to 4 MB. You can drag and zoom to crop.</p>
           </div>
         </div>
       </div>
@@ -390,5 +468,6 @@ export default function ProfileForm() {
         {savedAt && <span className="text-sm text-green-600">Saved</span>}
       </div>
     </form>
+    </>
   );
 }

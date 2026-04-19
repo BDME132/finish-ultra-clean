@@ -86,7 +86,7 @@ export default function Footer() {
                 ))}
               </div>
               <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-2">
-              <a href="mailto:hello@finishultra.com" className="text-white/60 hover:text-white transition-colors duration-300 text-sm no-underline">hello@finishultra.com</a>
+              <a href="mailto:finishultra@finishultra.com" className="text-white/60 hover:text-white transition-colors duration-300 text-sm no-underline">finishultra@finishultra.com</a>
               <a
                 href="https://instagram.com/finishultra"
                 target="_blank"

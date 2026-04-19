@@ -20,7 +20,7 @@ export function mailtoUnsubscribeUrl(email: string): string {
   const body = encodeURIComponent(
     `Please unsubscribe this address from the FinishUltra newsletter: ${email}`
   );
-  return `mailto:hello@finishultra.com?subject=${subject}&body=${body}`;
+  return `mailto:finishultra@finishultra.com?subject=${subject}&body=${body}`;
 }
 
 export function listUnsubscribeHeaders(email: string): Record<string, string> {

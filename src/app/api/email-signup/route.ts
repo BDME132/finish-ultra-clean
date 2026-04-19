@@ -19,7 +19,7 @@ function getResend(): Resend {
   return _resend;
 }
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "hello@finishultra.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "finishultra@finishultra.com";
 
 function escapeHtml(str: string): string {
   return str

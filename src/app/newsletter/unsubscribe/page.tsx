@@ -39,10 +39,10 @@ export default async function NewsletterUnsubscribePage({
               <p className="text-gray mb-6">
                 This unsubscribe link may have expired. Contact us at{" "}
                 <a
-                  href="mailto:hello@finishultra.com"
+                  href="mailto:finishultra@finishultra.com"
                   className="text-primary underline"
                 >
-                  hello@finishultra.com
+                  finishultra@finishultra.com
                 </a>{" "}
                 and we&apos;ll remove you from the list.
               </p>

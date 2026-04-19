@@ -103,10 +103,10 @@ export default function AffiliateDisclosurePage() {
                   <p>
                     Questions about an affiliate link or recommendation can be sent to{" "}
                     <a
-                      href="mailto:hello@finishultra.com"
+                      href="mailto:finishultra@finishultra.com"
                       className="text-primary font-medium hover:underline"
                     >
-                      hello@finishultra.com
+                      finishultra@finishultra.com
                     </a>
                     . You can also use the{" "}
                     <Link href="/contact" className="text-primary font-medium hover:underline">

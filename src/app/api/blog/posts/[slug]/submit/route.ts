@@ -55,16 +55,9 @@ export async function POST(
       );
     }
 
-    if (latestVersion.moderation_status === "pending_review") {
-      return NextResponse.json(
-        { error: "This post is already under review." },
-        { status: 409 },
-      );
-    }
-
     if (post.published_version_id && latestVersion.id === post.published_version_id) {
       return NextResponse.json(
-        { error: "Save your changes before submitting a revision." },
+        { error: "Save your changes before publishing a revision." },
         { status: 409 },
       );
     }
@@ -97,12 +90,14 @@ export async function POST(
     }
 
     const now = new Date().toISOString();
+
+    // Auto-approve: mark version as approved and publish the post immediately
     const { error: versionError } = await supabase
       .from("blog_post_versions")
       .update({
-        moderation_status: "pending_review",
+        moderation_status: "approved",
         reviewer_note: null,
-        reviewed_at: null,
+        reviewed_at: now,
         submitted_at: now,
       })
       .eq("id", latestVersion.id);
@@ -110,18 +105,27 @@ export async function POST(
     if (versionError) {
       console.error("Submit blog post error:", versionError);
       return NextResponse.json(
-        { error: "Failed to submit post for review" },
+        { error: "Failed to publish post" },
         { status: 500 },
       );
     }
 
     const { error: postError } = await supabase
       .from("blog_posts")
-      .update({ updated_at: now })
+      .update({
+        visibility: "public",
+        published_version_id: latestVersion.id,
+        published_at: post.published_at ?? now,
+        updated_at: now,
+      })
       .eq("id", post.id);
 
     if (postError) {
-      console.error("Submit blog post timestamp error:", postError);
+      console.error("Submit blog post publish error:", postError);
+      return NextResponse.json(
+        { error: "Failed to publish post" },
+        { status: 500 },
+      );
     }
 
     const updatedPost = await loadAuthorBlogPostForEditServer(user.id, post.id);

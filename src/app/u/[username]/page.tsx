@@ -5,7 +5,6 @@ import { Globe, MapPin, Trophy } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Avatar from "@/components/account/Avatar";
-import FollowButton from "@/components/account/FollowButton";
 import {
   createSupabaseServer,
   hasSupabaseServerEnv,
@@ -69,20 +68,10 @@ async function loadPublicProfile(username: string): Promise<PublicProfilePayload
   if (profile.profile_visibility !== "public") return null;
 
   const [
-    { count: followers },
-    { count: following },
     { data: kits },
     { data: plans },
     { data: races },
   ] = await Promise.all([
-    supabase
-      .from("follows")
-      .select("follower_user_id", { count: "exact", head: true })
-      .eq("followed_user_id", profile.id),
-    supabase
-      .from("follows")
-      .select("followed_user_id", { count: "exact", head: true })
-      .eq("follower_user_id", profile.id),
     supabase
       .from("public_kits")
       .select("id, slug, kit_title, kit_subtitle, total_cost, published_at")
@@ -112,8 +101,8 @@ async function loadPublicProfile(username: string): Promise<PublicProfilePayload
     location: profile.location,
     website_url: profile.website_url,
     goal_distance: profile.goal_distance,
-    follower_count: followers ?? 0,
-    following_count: following ?? 0,
+    follower_count: 0,
+    following_count: 0,
   };
 
   return {
@@ -212,25 +201,6 @@ export default async function PublicProfilePage({
                     </a>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
-                  <Link
-                    href={`/u/${profile.username}/followers`}
-                    className="text-dark hover:text-primary"
-                  >
-                    <span className="font-bold">{profile.follower_count}</span>{" "}
-                    <span className="text-gray">followers</span>
-                  </Link>
-                  <Link
-                    href={`/u/${profile.username}/following`}
-                    className="text-dark hover:text-primary"
-                  >
-                    <span className="font-bold">{profile.following_count}</span>{" "}
-                    <span className="text-gray">following</span>
-                  </Link>
-                </div>
-              </div>
-              <div className="md:self-start">
-                <FollowButton targetUserId={profile.id} />
               </div>
             </div>
           </div>
@@ -263,7 +233,7 @@ export default async function PublicProfilePage({
                 {kits.map((kit) => (
                   <li key={kit.id} className="border border-gray-100 rounded-lg p-4 bg-white">
                     <Link
-                      href={`/gear/kits/${kit.slug}`}
+                      href={`/gear/race-day-kit/${kit.slug}`}
                       className="font-semibold text-dark hover:text-primary"
                     >
                       {kit.kit_title}

@@ -90,7 +90,7 @@ export function organizationJsonLd() {
       url: `${SITE_URL}/logo.png`,
     },
     description: ORG_DESCRIPTION,
-    email: "hello@finishultra.com",
+    email: "finishultra@finishultra.com",
     sameAs: ["https://instagram.com/finishultra"],
   };
 }

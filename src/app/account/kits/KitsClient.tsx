@@ -215,7 +215,7 @@ function KitRow({
             <>
               {" · "}
               <Link
-                href={`/gear/kits/${kit.publicShare.slug}`}
+                href={`/gear/race-day-kit/${kit.publicShare.slug}`}
                 className="text-primary hover:underline inline-flex items-center gap-1"
               >
                 Public

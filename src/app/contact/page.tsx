@@ -55,10 +55,10 @@ export default function ContactPage() {
                   Email
                 </h2>
                 <a
-                  href="mailto:hello@finishultra.com"
+                  href="mailto:finishultra@finishultra.com"
                   className="text-primary text-lg font-medium hover:underline"
                 >
-                  hello@finishultra.com
+                  finishultra@finishultra.com
                 </a>
                 <p className="text-gray leading-relaxed mt-4">
                   Include as much detail as you can so we can help quickly. If your message

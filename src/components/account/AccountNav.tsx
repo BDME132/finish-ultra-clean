@@ -9,21 +9,15 @@ import {
   Package,
   Calendar,
   PenSquare,
-  Users,
-  UserPlus,
-  Rss,
 } from "lucide-react";
 
 const ITEMS: { href: string; label: string; icon: React.ReactNode; exact?: boolean }[] = [
   { href: "/account", label: "Settings", icon: <Settings className="w-4 h-4" />, exact: true },
   { href: "/account/profile", label: "Profile", icon: <UserCircle className="w-4 h-4" /> },
-  { href: "/account/feed", label: "Feed", icon: <Rss className="w-4 h-4" /> },
   { href: "/account/history", label: "Race log", icon: <History className="w-4 h-4" /> },
   { href: "/account/plans", label: "Plans", icon: <Calendar className="w-4 h-4" /> },
   { href: "/account/kits", label: "Kits", icon: <Package className="w-4 h-4" /> },
   { href: "/account/posts", label: "Posts", icon: <PenSquare className="w-4 h-4" /> },
-  { href: "/account/followers", label: "Followers", icon: <Users className="w-4 h-4" /> },
-  { href: "/account/following", label: "Following", icon: <UserPlus className="w-4 h-4" /> },
 ];
 
 function isActive(pathname: string | null, href: string, exact?: boolean): boolean {
