@@ -24,8 +24,7 @@ export const nutrition: NutritionProduct[] = [
       servings: "30 per bag" },
     nutritionType: "drink-mix",
     stomachFriendly: true,
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Tailwind%20Endurance%20Fuel&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/47QVr3H" },
     tags: ["drink-mix", "all-in-one", "calories", "electrolytes", "stomach-friendly"],
     beginnerPick: true },
   {
@@ -46,8 +45,7 @@ export const nutrition: NutritionProduct[] = [
       servings: "20 per bag" },
     nutritionType: "drink-mix",
     stomachFriendly: true,
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Skratch%20Labs%20Sport%20Hydration%20Mix&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4bE9pY6" },
     tags: ["drink-mix", "electrolytes", "low-sugar", "heavy-sweater", "hot-weather"] },
 
   // ── Gels ──────────────────────────────────────────────────────────────────
@@ -69,8 +67,7 @@ export const nutrition: NutritionProduct[] = [
       caffeine: "0-40mg (varies by flavor)",
       servings: "24 per box" },
     nutritionType: "gel",
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=GU%20Energy%20Gels%2024%20pack&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/473VbOB" },
     tags: ["gel", "amino-acids", "variety-pack", "aid-station-staple"],
     beginnerPick: true },
   {
@@ -90,8 +87,7 @@ export const nutrition: NutritionProduct[] = [
       servings: "12 per box" },
     nutritionType: "gel",
     stomachFriendly: true,
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Spring%20Energy%20Awesome%20Sauce%20Gel&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/40z9siL" },
     tags: ["gel", "real-food", "stomach-friendly", "rice-based"] },
   {
     id: "maurten-gel-100",
@@ -110,8 +106,7 @@ export const nutrition: NutritionProduct[] = [
       caffeine: "0mg (plain)" },
     nutritionType: "gel",
     stomachFriendly: true,
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Maurten%20Gel%20100&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4uzo13p" },
     tags: ["gel", "hydrogel", "sensitive-stomach", "premium", "gi-friendly"] },
 
   // ── Real Food ─────────────────────────────────────────────────────────────
@@ -173,8 +168,7 @@ export const nutrition: NutritionProduct[] = [
       sodium: "70mg per 3 bloks",
       servings: "18 packages" },
     nutritionType: "chew",
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Clif%20Shot%20Bloks%20Energy%20Chews&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4rDbMAk" },
     tags: ["chew", "portable", "cold-weather-friendly", "variety"] },
 
   // ── Electrolytes ──────────────────────────────────────────────────────────
@@ -194,8 +188,7 @@ export const nutrition: NutritionProduct[] = [
       sodium: "1500mg per serving",
       servings: "10 sachets per box" },
     nutritionType: "electrolyte",
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Precision%20Hydration%20PH%201500&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4cNCz9g" },
     tags: ["electrolyte", "high-sodium", "heavy-sweater", "hot-weather", "hyponatremia-prevention"] },
   {
     id: "saltstick-fastchews",
@@ -212,8 +205,7 @@ export const nutrition: NutritionProduct[] = [
       sodium: "100mg per tab",
       servings: "60 per tube" },
     nutritionType: "electrolyte",
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=SaltStick%20Fastchews%20electrolytes&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/40yeBHP" },
     tags: ["electrolyte", "chewable", "portable", "precise-dosing"] },
 
   // ── Recovery Nutrition ────────────────────────────────────────────────────
@@ -233,7 +225,6 @@ export const nutrition: NutritionProduct[] = [
       calories: "~130 per serving",
       servings: "30 per container" },
     nutritionType: "recovery",
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Momentous%20Grass-Fed%20Whey%20Protein&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4rz1PDN" },
     tags: ["recovery", "protein", "nsf-certified", "post-race"] },
 ];

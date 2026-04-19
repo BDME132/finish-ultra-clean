@@ -27,7 +27,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The most proven race vest in ultra running — SensiFit eliminates bounce and 16 pockets keep everything organized.",
     image: undefined,
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/47PXJA2" },
     tags: ["50K race day", "Fast 50M efforts", "Minimalist training", "50K", "50 Miles", "5L"],
     beginnerPick: false,
     specs: {
@@ -86,7 +86,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Best value race vest on the market with the game-changing kangaroo front pocket for instant access to nutrition.",
     image: undefined,
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/3NpYeKo" },
     tags: [
       "Versatile 50K-50M",
       "Kangaroo-style access",
@@ -225,7 +225,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The best hot-weather race vest with angled Exoshot flasks that make drinking at speed effortless.",
     image: undefined,
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4bObB06" },
     tags: ["Supported 50Ks", "Minimalist racers", "Warm weather events", "50K", "4L"],
     beginnerPick: false,
     specs: {
@@ -289,7 +289,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The most trusted vest in ultra running — worn by more elites than any other, with 12L that still feels like a race vest.",
     image: undefined,
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/47apuDo" },
     tags: [
       "50M to 100M races",
       "UTMB mandatory gear",
@@ -357,7 +357,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Osprey's lifetime warranty and gender-specific fit make this the most breathable and long-lasting all-around vest.",
     image: undefined,
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/47QUisV" },
     tags: [
       "Training runs",
       "50K to 50M",
@@ -424,7 +424,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "Rob Krar's signature vest delivers wide front pockets and 12L capacity at a better price than the Salomon ADV Skin 12.",
     image: undefined,
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4uBMOUm" },
     tags: [
       "100K to 100M with mandatory gear",
       "Wide pockets",
@@ -637,7 +637,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "The only running vest that genuinely works for multi-day stage races and self-supported expeditions.",
     image: undefined,
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/3NmjZe7" },
     tags: [
       "Multi-day stage races",
       "Self-supported expeditions",
@@ -783,7 +783,7 @@ export const packs: PackProduct[] = [
     whyWeRecommend:
       "At 100g with flasks included for $80, this is the ultimate minimalist vest for supported 50Ks.",
     image: undefined,
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4rJgSuN" },
     tags: [
       "Supported 50Ks",
       "Elite racers",

@@ -23,8 +23,7 @@ export const accessories: AccessoryProduct[] = [
       runtime: "100hr low / 2hr high",
       charge: "USB-C rechargeable",
       weight: "105g" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Petzl%20Iko%20Core%20500&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/40CwFk6" },
     tags: ["headlamp", "rechargeable", "usb-c", "night-running", "primary"] },
   {
     id: "black-diamond-core-headlamp-400",
@@ -62,8 +61,7 @@ export const accessories: AccessoryProduct[] = [
       charge: "USB-C rechargeable",
       modes: "Spot, flood, red night-vision",
       weight: "~95g" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Black%20Diamond%20Spot%20400-R%20Headlamp&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4bg1Asv" },
     tags: ["headlamp", "rechargeable", "red-mode", "night-vision"] },
   {
     id: "black-diamond-spot-400-e",
@@ -100,8 +98,7 @@ export const accessories: AccessoryProduct[] = [
       charge: "USB-C rechargeable",
       weight: "69g",
       modes: "Spot, flood, red" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=BioLite%20HeadLamp%20330&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4dsBiEP" },
     tags: ["headlamp", "crew-gear", "lightweight", "rechargeable"] },
 
   // ── Accessories — Watches ─────────────────────────────────────────────────
@@ -122,8 +119,7 @@ export const accessories: AccessoryProduct[] = [
       navigation: "Full course GPS + breadcrumb",
       sensors: "HR, altimeter, compass, gyroscope",
       weight: "53g" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Garmin%20Forerunner%20955%20Solar&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4bumseh" },
     tags: ["watch", "gps", "navigation", "ultra-battery", "solar"] },
 
   // ── Accessories — Eyewear ─────────────────────────────────────────────────
@@ -167,8 +163,7 @@ export const accessories: AccessoryProduct[] = [
       collapsed: "~13\" folded",
       material: "Aluminum",
       grip: "EVA foam" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Black%20Diamond%20Distance%20Z%20Trekking%20Poles&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/47EKEtn" },
     tags: ["trekking-poles", "folding", "ultralight", "mountain", "climbing"] },
 
   // ── Accessories — Power ───────────────────────────────────────────────────
@@ -189,8 +184,7 @@ export const accessories: AccessoryProduct[] = [
       output: "USB-A + USB-C",
       weight: "~180g",
       charges: "~2 full GPS watch charges" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Anker%20PowerCore%2010000%20Power%20Bank&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4buCp4p" },
     tags: ["power-bank", "drop-bag", "charging", "100-mile"] },
 
   // ── Accessories — Anti-Chafe ──────────────────────────────────────────────
@@ -232,8 +226,7 @@ export const accessories: AccessoryProduct[] = [
       spf: "70",
       type: "Sweat-proof sport formula",
       size: "2.5 fl oz" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Neutrogena%20Sport%20Face%20SPF%2070&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/3NcPd7r" },
     tags: ["sunscreen", "sun-protection", "sweat-proof", "drop-bag"] },
 
   // ── Safety ────────────────────────────────────────────────────────────────
@@ -254,8 +247,7 @@ export const accessories: AccessoryProduct[] = [
       packed: "3.5\" x 5.5\"",
       material: "Reflective polyethylene",
       heatRetention: "90%" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=SOL%20Escape%20Pro%20Bivvy&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/40yVjC7" },
     tags: ["emergency", "bivvy", "mandatory-gear", "mountain", "safety"],
     beginnerPick: true },
   {
@@ -293,8 +285,7 @@ export const accessories: AccessoryProduct[] = [
       messaging: "Two-way SMS via satellite",
       tracking: "Customizable intervals",
       sos: "24/7 GEOS response center" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=SPOT%20X%20Satellite%20Communicator&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/40ChtDu" },
     tags: ["satellite", "communication", "sos", "tracking", "remote", "100-mile"] },
   {
     id: "adventure-medical-kits-trail",
@@ -311,8 +302,7 @@ export const accessories: AccessoryProduct[] = [
       contents: "Blister care, wound closure, pain management",
       size: "Compact crew-bag size",
       weight: "~8oz" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Adventure%20Medical%20Kits%20Trail%20Series&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4bOT6bZ" },
     tags: ["first-aid", "crew-gear", "blister-care", "medical"] },
 
   // ── Foot Care ─────────────────────────────────────────────────────────────
@@ -372,8 +362,7 @@ export const accessories: AccessoryProduct[] = [
       reduction: "37% less impact vs. traditional",
       closure: "Slip-on",
       weight: "~200g/pair" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Oofos%20OOahh%20Sport%20Flex%20Sandals&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4sM5TBB" },
     tags: ["recovery", "sandals", "post-race", "impact-absorption"],
     beginnerPick: true },
   {
@@ -411,8 +400,7 @@ export const accessories: AccessoryProduct[] = [
       dimensions: "13\" x 5.5\"",
       weight: "~500g",
       durability: "Hollow core, maintains shape" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=TriggerPoint%20GRID%20Foam%20Roller&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4bqqF2M" },
     tags: ["foam-roller", "recovery", "self-massage", "post-race"] },
   {
     id: "theragun-mini",
@@ -430,8 +418,7 @@ export const accessories: AccessoryProduct[] = [
       speed: "1750-2400 PPM",
       battery: "150 minutes",
       weight: "680g" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Theragun%20Mini&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4lCJ4hu" },
     tags: ["percussion", "recovery", "portable", "deep-tissue", "premium"] },
 
   // ── Crew Gear ─────────────────────────────────────────────────────────────
@@ -452,8 +439,7 @@ export const accessories: AccessoryProduct[] = [
       capacity: "265 lbs",
       packed: "10\" x 4\"",
       material: "DAC aluminum, ripstop polyester" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Helinox%20Chair%20Zero&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/3NJTPC3" },
     tags: ["crew-gear", "chair", "ultralight", "packable"] },
   {
     id: "yeti-roadie-24",
@@ -471,8 +457,7 @@ export const accessories: AccessoryProduct[] = [
       insulation: "Permafrost insulation, 24hr ice retention",
       material: "Rotomolded polyethylene",
       weight: "12.8 lbs" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=YETI%20Roadie%2024%20Hard%20Cooler&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4rBGLfS" },
     tags: ["crew-gear", "cooler", "food-storage", "100-mile"] },
   {
     id: "thermacell-mr450",
@@ -490,8 +475,7 @@ export const accessories: AccessoryProduct[] = [
       fuel: "Butane cartridge",
       runtime: "12 hours per cartridge",
       weight: "~230g" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=Thermacell%20MR450%20Mosquito%20Repeller&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4dcGxbR" },
     tags: ["crew-gear", "bug-protection", "aid-station"] },
   {
     id: "dude-wipes-48pack",
@@ -508,7 +492,6 @@ export const accessories: AccessoryProduct[] = [
       count: "48 per pack",
       type: "Biodegradable, flushable",
       size: "7\" x 7.5\"" },
-    affiliateLinks: { amazon:
-        "https://www.amazon.com/s?k=DUDE%20Wipes%20Flushable%2048%20Pack&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4ly8BbL" },
     tags: ["wipes", "hygiene", "crew-gear", "drop-bag", "mental-reset"] },
 ];

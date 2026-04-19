@@ -26,7 +26,7 @@ export const shoes: ShoeProduct[] = [
       "The gold standard for high-mileage trail comfort. Vibram Megagrip traction handles technical terrain without sacrificing plush underfoot feel.",
     whyWeRecommend:
       "Best-in-class Vibram traction paired with plush all-day comfort makes the Speedgoat 6 the most trusted high-mileage trail shoe for 100-mile efforts.",
-    affiliateLinks: { amazon: "https://amzn.to/4broufc" },
+    affiliateLinks: { amazon: "https://amzn.to/41b2CQt" },
     tags: ["max-cushion", "technical trails", "100-mile races", "high weekly mileage", "vibram", "plush"],
     specs: {
       weight: "10.1 oz",
@@ -66,7 +66,7 @@ export const shoes: ShoeProduct[] = [
       "Built for 100-mile punishment. Dual-density midsole with aggressive Vibram outsole — when you need maximum protection on brutal courses.",
     whyWeRecommend:
       "Exceptional durability and bomber stability make the Mafate Speed 4 the tank you need for rocky 100-mile mountain courses.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/3PcIyus" },
     tags: ["max-cushion", "100-mile races", "rocky terrain", "mountain", "durability", "heavy runners"],
     specs: {
       weight: "11.0 oz",
@@ -105,7 +105,7 @@ export const shoes: ShoeProduct[] = [
       "Zero-drop maximum cushion with Altra's anatomical FootShape toe box. Ideal for runners who want plush comfort without heel elevation.",
     whyWeRecommend:
       "The Olympus 5 delivers maximum stack cushion with a zero-drop platform and roomy toe box, making it ideal for zero-drop advocates tackling 100-mile desert and mixed-terrain courses.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4sDutES" },
     tags: ["max-cushion", "zero-drop", "wide forefoot", "desert", "mixed terrain", "anatomical toe box"],
     specs: {
       weight: "11.2 oz",
@@ -147,7 +147,7 @@ export const shoes: ShoeProduct[] = [
       "PEBA foam with a carbon plate for trail runners who want road-shoe responsiveness on groomed singletrack. Surprisingly fast for its cushion level.",
     whyWeRecommend:
       "Exceptional PEBA foam energy return and a carbon plate give the Endorphin Edge road-shoe speed on groomed trails with enough cushion for long ultras.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4sIF8Oo" },
     tags: ["max-cushion", "carbon plate", "PEBA", "groomed trails", "fast", "road-to-trail"],
     specs: {
       weight: "9.7 oz",
@@ -229,7 +229,7 @@ export const shoes: ShoeProduct[] = [
       "The reliable workhorse. TrailTack rubber and a versatile lug pattern make it one of the most trusted everyday trainers in ultra running.",
     whyWeRecommend:
       "Bulletproof durability and a versatile lug pattern at an unbeatable price make the Peregrine 14 the best value everyday trail trainer for ultra runners.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4dqik1w" },
     tags: ["lightweight", "workhorse", "versatile", "mixed terrain", "great value", "training"],
     specs: {
       weight: "9.6 oz",
@@ -268,7 +268,7 @@ export const shoes: ShoeProduct[] = [
       "Vibram Megagrip traction at a budget-friendly price with Topo's roomy toe box and a versatile 5mm drop that works for runners transitioning from heeled shoes.",
     whyWeRecommend:
       "The Terraventure 4 delivers Vibram Megagrip grip at the lowest price in its class, making it the smart budget pick for versatile mixed-terrain racing.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/3NcJxdD" },
     tags: ["lightweight", "budget", "versatile", "mixed terrain", "vibram", "roomy toe box"],
     specs: {
       weight: "9.7 oz",
@@ -307,7 +307,7 @@ export const shoes: ShoeProduct[] = [
       "Altra's lightest trail shoe. Zero-drop minimalism meets a wide toe box for natural foot mechanics — beloved by ultra runners chasing PRs.",
     whyWeRecommend:
       "At just 8.7 oz with zero drop and a wide toe box, the Superior 6 is the minimalist racer's dream for fast 50K and 50M efforts.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/41ehkpS" },
     tags: ["lightweight", "zero-drop", "minimalist", "wide toe box", "fast", "race day"],
     specs: {
       weight: "8.7 oz",
@@ -340,7 +340,7 @@ export const shoes: ShoeProduct[] = [
       "Italian precision for gnarly terrain. FriXion AT rubber and a flex grooved outsole grip wet roots and angled rock faces with confidence.",
     whyWeRecommend:
       "FriXion AT rubber is exceptional on wet rock, making the Bushido III the go-to technical shoe for PNW and mountain racing where grip is everything.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4bARBNp" },
     tags: ["technical", "wet rock", "mountain racing", "FriXion", "Italian", "roots"],
     specs: {
       weight: "10.4 oz",
@@ -379,7 +379,7 @@ export const shoes: ShoeProduct[] = [
       "The ultimate mud shoe. Deep chevron lugs bite into soft terrain like nothing else — if your race is muddy, these are your answer.",
     whyWeRecommend:
       "Unmatched mud performance with self-cleaning chevron lugs makes the Speedcross 6 the only choice for soggy PNW and UK-style ultra courses.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4sOhhNn" },
     tags: ["technical", "mud", "soft terrain", "PNW", "chevron lugs", "self-cleaning"],
     specs: {
       weight: "9.6 oz",
@@ -418,7 +418,7 @@ export const shoes: ShoeProduct[] = [
       "Graphene-enhanced rubber with 8mm spike-like lugs. Designed for wet, boggy, and ultra-technical courses where grip is life.",
     whyWeRecommend:
       "Graphene-enhanced rubber and 8mm spike-like lugs give the Mudclaw G 260 the most aggressive grip available for bog, fell, and ultra-technical courses.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4uT1rTN" },
     tags: ["technical", "graphene", "fell running", "bog", "mud", "spike lugs"],
     specs: {
       weight: "9.2 oz",
@@ -461,7 +461,7 @@ export const shoes: ShoeProduct[] = [
       "The most popular ultra shoe of all time. FootShape toe box, zero drop, and bomber durability across any terrain. A legend for a reason.",
     whyWeRecommend:
       "With 14+ years of trust from ultra runners worldwide, the Lone Peak 8 is the proven zero-drop, wide-toe-box workhorse for any distance on any terrain.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4bsYAaV" },
     tags: ["wide toe box", "zero-drop", "all terrain", "all distances", "durability", "legend"],
     specs: {
       weight: "9.7 oz",
@@ -501,7 +501,7 @@ export const shoes: ShoeProduct[] = [
       "The cushioned wide-toe-box choice. More stack than the Lone Peak with aggressive TrailClaw lugs — perfect for technical 100-mile courses.",
     whyWeRecommend:
       "The Timp 5 bridges the gap between the Lone Peak's wide fit and the Olympus's cushion, delivering aggressive traction for technical 100-mile courses.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4sj1g2h" },
     tags: ["wide toe box", "zero-drop", "cushion", "technical", "100-mile", "TrailClaw"],
     specs: {
       weight: "10.1 oz",
@@ -540,7 +540,7 @@ export const shoes: ShoeProduct[] = [
       "Topo's roomy fit and 5mm drop bridge the gap between zero-drop and traditional shoes. Great for wide-footed runners who want versatility.",
     whyWeRecommend:
       "The Ultraventure 3 pairs Vibram Megagrip traction with a wide toe box and a 5mm drop, making it the ideal transition shoe for runners new to wider fits.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/4rAEWQo" },
     tags: ["wide toe box", "5mm drop", "vibram", "transition shoe", "mixed terrain", "versatile"],
     specs: {
       weight: "10.1 oz",
@@ -583,7 +583,7 @@ export const shoes: ShoeProduct[] = [
       "Built for the mountains. Gaiter-compatible, rockered construction, and Italian FriXion AT rubber that sticks to wet granite.",
     whyWeRecommend:
       "Gaiter compatibility, FriXion AT grip, and a protective rock plate make the Ultra Raptor II the definitive shoe for Hardrock, UTMB, and high-altitude scree.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/47TxfxF" },
     tags: ["mountain", "alpine", "gaiter compatible", "rock plate", "Hardrock", "UTMB", "FriXion"],
     specs: {
       weight: "11.6 oz",
@@ -663,7 +663,7 @@ export const shoes: ShoeProduct[] = [
       "Italian mountain craftsmanship with SILV-R rubber that excels on wet rock. Natural flex and exceptional durability for alpine races.",
     whyWeRecommend:
       "Scarpa's mountain heritage shines in the Golden Gate ATR with SILV-R rubber grip and ground feel that make it a favorite for European alpine races.",
-    affiliateLinks: { amazon: "#" },
+    affiliateLinks: { amazon: "https://amzn.to/477rDQh" },
     tags: ["mountain", "alpine", "Italian", "wet rock", "ground feel", "durability"],
     specs: {
       weight: "10.2 oz",
@@ -707,7 +707,7 @@ export const shoes: ShoeProduct[] = [
       "The previous-generation Speedgoat with proven Vibram Megagrip traction and plush cushion. A reliable all-conditions trail shoe for any ultra distance.",
     whyWeRecommend:
       "A proven all-conditions trail shoe with reliable Vibram grip and race-tested cushion that you forget you are wearing.",
-    affiliateLinks: { amazon: "https://www.amazon.com/s?k=HOKA%20Speedgoat%205&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4rvMtjk" },
     tags: ["max-cushion", "vibram", "all-conditions", "proven", "previous-gen"],
     specs: {
       weight: "10.9 oz",
@@ -819,7 +819,7 @@ export const shoes: ShoeProduct[] = [
       "A breathable, secure trail shoe with Quicklace lockdown and Sensifit mesh. Ideal for hot conditions and dusty, sandy terrain where airflow matters.",
     whyWeRecommend:
       "The Sense Ride 5's breathable upper and secure Quicklace system keep feet cool and locked in on hot, dusty courses where blister prevention is key.",
-    affiliateLinks: { amazon: "https://www.amazon.com/s?k=Salomon%20Sense%20Ride%205&tag=finishultra-20" },
+    affiliateLinks: { amazon: "https://amzn.to/4uBSmOR" },
     tags: ["lightweight", "breathable", "hot conditions", "desert", "Quicklace", "Sensifit"],
     specs: {
       weight: "9.5 oz",

@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AccountNav from "@/components/account/AccountNav";
 import AccountPostsClient from "@/app/account/posts/AccountPostsClient";
 import { loadAuthorBlogPostsServer } from "@/lib/blog-server";
 import {
@@ -59,6 +60,8 @@ export default async function AccountPostsPage() {
       <Header />
       <main className="bg-light min-h-[calc(100vh-4rem)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="font-headline text-3xl font-bold text-dark mb-6">Account</h1>
+          <AccountNav />
           <AccountPostsClient initialPosts={posts} />
         </div>
       </main>

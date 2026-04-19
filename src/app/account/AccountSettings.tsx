@@ -1,18 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { createSupabaseBrowser, hasSupabaseBrowserEnv } from "@/lib/supabase/client";
-
-interface Profile {
-  display_name: string | null;
-}
+import Avatar from "@/components/account/Avatar";
+import {
+  PROFILE_FIELDS,
+  profileDisplayName,
+  type AccountProfile,
+} from "@/lib/account/profile";
 
 export default function AccountSettings() {
   const { user, isLoading, signOut } = useAuth();
   const router = useRouter();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<AccountProfile | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
   const [saving, setSaving] = useState(false);
@@ -34,24 +37,47 @@ export default function AccountSettings() {
       if (!supabase) return;
 
       (async () => {
-        const [{ data: profileData }, { data: subRow }] = await Promise.all([
-          supabase
-            .from("profiles")
-            .select("display_name")
-            .eq("id", user.id)
-            .single(),
-          supabase
-            .from("email_signups")
-            .select("id")
-            .eq("user_id", user.id)
-            .is("unsubscribed_at", null)
-            .maybeSingle(),
-        ]);
+        // Try full profile; fall back to base fields if migration not yet applied
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select(PROFILE_FIELDS)
+          .eq("id", user.id)
+          .maybeSingle();
 
-        if (profileData) {
-          setProfile(profileData);
-          setDisplayName(profileData.display_name || "");
+        if (profileError) {
+          // New columns don't exist yet — load base fields only
+          const { data: baseData } = await supabase
+            .from("profiles")
+            .select("id, display_name, updated_at")
+            .eq("id", user.id)
+            .maybeSingle();
+          if (baseData) {
+            const base = baseData as { id: string; display_name: string | null };
+            setProfile({
+              id: base.id,
+              display_name: base.display_name,
+              username: null,
+              bio: null,
+              avatar_url: null,
+              location: null,
+              website_url: null,
+              profile_visibility: "public",
+              goal_distance: null,
+            });
+            setDisplayName(base.display_name || "");
+          }
+        } else if (profileData) {
+          const typed = profileData as AccountProfile;
+          setProfile(typed);
+          setDisplayName(typed.display_name || "");
         }
+
+        const { data: subRow } = await supabase
+          .from("email_signups")
+          .select("id")
+          .eq("user_id", user.id)
+          .is("unsubscribed_at", null)
+          .maybeSingle();
         setIsSubscribed(!!subRow);
       })();
     }
@@ -67,11 +93,14 @@ export default function AccountSettings() {
 
     await supabase
       .from("profiles")
-      .update({
-        display_name: displayName.trim() || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.id);
+      .upsert(
+        {
+          id: user.id,
+          display_name: displayName.trim() || null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "id" },
+      );
 
     setSaving(false);
     setSaved(true);
@@ -104,12 +133,45 @@ export default function AccountSettings() {
     );
   }
 
+  const publicProfileHref = profile?.username ? `/u/${profile.username}` : null;
+
   return (
     <div className="space-y-6">
-      {/* Email (read-only) */}
+      <div className="bg-white rounded-xl border border-gray-100 p-6">
+        <div className="flex items-center gap-4">
+          <Avatar profile={profile} size="lg" />
+          <div className="flex-1 min-w-0">
+            <p className="font-headline text-lg font-bold text-dark truncate">
+              {profileDisplayName(
+                profile ?? {
+                  display_name: displayName || null,
+                  username: null,
+                },
+              )}
+            </p>
+            <p className="text-sm text-gray truncate">{user.email}</p>
+            {publicProfileHref ? (
+              <Link
+                href={publicProfileHref}
+                className="text-xs text-primary font-medium hover:underline mt-1 inline-block"
+              >
+                View public profile →
+              </Link>
+            ) : (
+              <Link
+                href="/account/profile"
+                className="text-xs text-primary font-medium hover:underline mt-1 inline-block"
+              >
+                Choose a username →
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <h2 className="text-sm font-medium text-gray uppercase tracking-wider mb-4">
-          Profile
+          Quick edit
         </h2>
 
         <div className="space-y-4">
@@ -147,14 +209,17 @@ export default function AccountSettings() {
             >
               {saving ? "Saving..." : "Save changes"}
             </button>
-            {saved && (
-              <span className="text-sm text-green-600">Saved</span>
-            )}
+            {saved && <span className="text-sm text-green-600">Saved</span>}
+            <Link
+              href="/account/profile"
+              className="text-sm text-primary font-medium hover:underline ml-auto"
+            >
+              Edit full profile →
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Subscription status */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <h2 className="text-sm font-medium text-gray uppercase tracking-wider mb-4">
           Subscription
@@ -162,16 +227,12 @@ export default function AccountSettings() {
         <div className="flex items-center gap-3">
           <span
             className={`inline-flex items-center gap-1.5 text-sm font-medium ${
-              isSubscribed
-                ? "text-green-600"
-                : "text-gray"
+              isSubscribed ? "text-green-600" : "text-gray"
             }`}
           >
             <span
               className={`w-2 h-2 rounded-full ${
-                isSubscribed
-                  ? "bg-green-500"
-                  : "bg-gray-300"
+                isSubscribed ? "bg-green-500" : "bg-gray-300"
               }`}
             />
             {isSubscribed === null
@@ -188,22 +249,6 @@ export default function AccountSettings() {
         </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h2 className="text-sm font-medium text-gray uppercase tracking-wider mb-4">
-          Community Posts
-        </h2>
-        <p className="text-sm text-gray mb-4">
-          Write, submit, and manage your public blog posts.
-        </p>
-        <a
-          href="/account/posts"
-          className="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
-        >
-          Manage posts
-        </a>
-      </div>
-
-      {/* Sign out */}
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <button
           onClick={handleSignOut}

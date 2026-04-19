@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { usePheidi } from "./PheidiProvider";
 import { useAuth } from "./AuthProvider";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 const primaryLinks = [
   { href: "/training", label: "Training" },
@@ -100,7 +101,13 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { openPheidi } = usePheidi();
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading, signOut } = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [profile, setProfile] = useState<{
+    username: string | null;
+    avatar_url: string | null;
+    display_name: string | null;
+  } | null>(null);
   const isMoreActive = pathname?.startsWith("/tools") || pathname?.startsWith("/faq") || pathname?.startsWith("/about") || pathname?.startsWith("/contact") || pathname?.startsWith("/newsletter") || pathname?.startsWith("/search");
 
   useEffect(() => {
@@ -108,6 +115,47 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setProfile(null);
+      return;
+    }
+    const supabase = createSupabaseBrowser();
+    if (!supabase) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("username, avatar_url, display_name")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (!cancelled && data) setProfile(data);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const onClick = () => setUserMenuOpen(false);
+    window.addEventListener("click", onClick);
+    return () => window.removeEventListener("click", onClick);
+  }, [userMenuOpen]);
+
+  async function handleSignOut() {
+    await signOut();
+    setUserMenuOpen(false);
+  }
+
+  const initial = (
+    profile?.display_name?.[0] ||
+    user?.user_metadata?.full_name?.[0] ||
+    user?.email?.[0] ||
+    "U"
+  ).toUpperCase();
+  const publicProfileHref = profile?.username ? `/u/${profile.username}` : null;
 
   return (
     <header className={`border-b border-gray-100 sticky top-0 z-50 transition-all duration-200 ${scrolled ? "nav-scrolled" : "bg-white"}`}>
@@ -198,13 +246,79 @@ export default function Header() {
             </Link>
             {!authLoading && (
               user ? (
-                <Link
-                  href="/account"
-                  className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
-                  title="Account"
-                >
-                  {(user.user_metadata?.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
-                </Link>
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setUserMenuOpen((v) => !v);
+                    }}
+                    className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary hover:bg-primary/20 transition-colors overflow-hidden"
+                    title="Account menu"
+                    aria-haspopup="menu"
+                    aria-expanded={userMenuOpen}
+                  >
+                    {profile?.avatar_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={profile.avatar_url}
+                        alt="Avatar"
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      initial
+                    )}
+                  </button>
+                  {userMenuOpen && (
+                    <div
+                      className="absolute right-0 top-full mt-2 bg-white border border-gray-100 rounded-lg shadow-lg py-1 min-w-[180px] z-50"
+                      role="menu"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {publicProfileHref && (
+                        <Link
+                          href={publicProfileHref}
+                          onClick={() => setUserMenuOpen(false)}
+                          className="block px-4 py-2 text-sm text-dark hover:bg-gray-50"
+                          role="menuitem"
+                        >
+                          View public profile
+                        </Link>
+                      )}
+                      <Link
+                        href="/account/feed"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-dark hover:bg-gray-50"
+                        role="menuitem"
+                      >
+                        Feed
+                      </Link>
+                      <Link
+                        href="/account"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-dark hover:bg-gray-50"
+                        role="menuitem"
+                      >
+                        Account settings
+                      </Link>
+                      <Link
+                        href="/account/profile"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-dark hover:bg-gray-50"
+                        role="menuitem"
+                      >
+                        Edit profile
+                      </Link>
+                      <div className="border-t border-gray-100 my-1" />
+                      <button
+                        onClick={handleSignOut}
+                        className="block w-full text-left px-4 py-2 text-sm text-dark hover:bg-gray-50"
+                        role="menuitem"
+                      >
+                        Sign out
+                      </button>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <Link
                   href="/login"
@@ -299,13 +413,31 @@ export default function Header() {
               </Link>
               {!authLoading && (
                 user ? (
-                  <Link
-                    href="/account"
-                    onClick={() => setMobileOpen(false)}
-                    className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
-                  >
-                    Account
-                  </Link>
+                  <>
+                    <Link
+                      href="/account/feed"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
+                    >
+                      Feed
+                    </Link>
+                    <Link
+                      href="/account"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
+                    >
+                      Account
+                    </Link>
+                    {publicProfileHref && (
+                      <Link
+                        href={publicProfileHref}
+                        onClick={() => setMobileOpen(false)}
+                        className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-md text-center text-dark hover:text-primary transition-colors"
+                      >
+                        Public profile
+                      </Link>
+                    )}
+                  </>
                 ) : (
                   <Link
                     href="/login"
