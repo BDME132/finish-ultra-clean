@@ -920,4 +920,92 @@ export const shoes: ShoeProduct[] = [
       priority: ["cushion"],
       distance: ["100k", "100m"] },
     bestFor: ["Drop-bag swap at mile 60-70", "100-mile late-race comfort", "Groomed/flat final sections"] },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // NEW ADDITIONS
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    id: "hoka-tecton-x3",
+    name: "Tecton X3",
+    brand: "Hoka",
+    category: "shoes",
+    subcategory: "carbon",
+    price: 225,
+    priceDisplay: "$225",
+    description:
+      "Carbon-fiber plated trail racing shoe with PEBA EVO SuperCritical foam and Vibram Megagrip outsole. Built for runners who want elite road-shoe energy return on technical terrain.",
+    whyWeRecommend:
+      "Carbon plate energy return with Vibram traction makes the Tecton X3 the fastest technical trail shoe Hoka has made — ideal for runners targeting competitive times at 50K and 50-mile distances.",
+    affiliateLinks: { amazon: "https://amzn.to/4cFjTqm" },
+    tags: ["carbon-plate", "race-day", "technical trails", "speed", "vibram", "lightweight"],
+    specs: {
+      weight: "8.1 oz",
+      drop: "5mm",
+      stack: "37/32mm",
+      lug: "5mm",
+      midsole: "PEBA (EVO SuperCritical)",
+      outsole: "Vibram Megagrip",
+      rockPlate: true,
+      widths: "Regular" },
+    finderTags: {
+      terrain: ["technical", "mountain", "mixed"],
+      priority: ["speed", "traction"],
+      distance: ["50k", "50m"] },
+    bestFor: ["Race-day speed on technical terrain", "50K and 50-mile competitive efforts", "Carbon plate performance seekers"] },
+  {
+    id: "salomon-ultra-glide-2",
+    name: "Ultra Glide 2",
+    brand: "Salomon",
+    category: "shoes",
+    subcategory: "lightweight",
+    price: 140,
+    priceDisplay: "$140",
+    description:
+      "Versatile lightweight trail shoe with Contagrip MA outsole and a glide-skin upper that sheds mud and water. Balances speed and protection across mixed terrain.",
+    whyWeRecommend:
+      "The Ultra Glide 2 hits the sweet spot between light enough for fast efforts and cushioned enough for 50-mile days. Contagrip MA handles anything from groomed to technical terrain without compromise.",
+    affiliateLinks: { amazon: "https://amzn.to/4tqf23F" },
+    tags: ["lightweight", "versatile", "mixed terrain", "50K", "50 miles", "Contagrip"],
+    specs: {
+      weight: "9.5 oz",
+      drop: "4mm",
+      stack: "32/28mm",
+      lug: "4mm",
+      midsole: "EnergyFoam+",
+      outsole: "Contagrip MA",
+      rockPlate: false,
+      widths: "Regular" },
+    finderTags: {
+      terrain: ["mixed", "smooth", "technical"],
+      priority: ["versatility", "cushion"],
+      distance: ["50k", "50m"] },
+    bestFor: ["Mixed terrain training and racing", "Versatile everyday trail running", "50K to 50-mile distances"] },
+  {
+    id: "la-sportiva-jackal-ii",
+    name: "Jackal II",
+    brand: "La Sportiva",
+    category: "shoes",
+    subcategory: "mountain",
+    price: 135,
+    priceDisplay: "$135",
+    description:
+      "Purpose-built mountain racing shoe with FriXion AT outsole and precise low-drop geometry. Trusted by mountain ultra runners who prioritize ground connection over cushion.",
+    whyWeRecommend:
+      "FriXion AT grip and a responsive feel underfoot make the Jackal II the mountain racer's choice for technical courses where precision matters more than plush.",
+    affiliateLinks: { amazon: "https://amzn.to/3QU0WZN" },
+    tags: ["mountain", "technical", "FriXion", "racing", "low-drop", "responsive"],
+    specs: {
+      weight: "8.3 oz",
+      drop: "6mm",
+      stack: "29/23mm",
+      lug: "4mm",
+      midsole: "IDYG foam",
+      outsole: "FriXion AT",
+      rockPlate: false,
+      widths: "Regular" },
+    finderTags: {
+      terrain: ["mountain", "technical"],
+      priority: ["traction", "ground-feel"],
+      distance: ["50k", "50m", "100k"] },
+    bestFor: ["Technical mountain racing", "Runners prioritizing ground feel", "Steep technical terrain"] },
 ];

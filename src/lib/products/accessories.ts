@@ -494,4 +494,45 @@ export const accessories: AccessoryProduct[] = [
       size: "7\" x 7.5\"" },
     affiliateLinks: { amazon: "https://amzn.to/4ly8BbL" },
     tags: ["wipes", "hygiene", "crew-gear", "drop-bag", "mental-reset"] },
+
+  // ── New Additions — Tech & Safety ─────────────────────────────────────────
+
+  {
+    id: "garmin-running-dynamics-pod",
+    name: "Running Dynamics Pod",
+    brand: "Garmin",
+    category: "accessories",
+    price: 70,
+    priceDisplay: "$70",
+    description:
+      "Clip-on running pod that measures cadence, ground contact time, vertical oscillation, stride length, and vertical ratio. Pairs with compatible Garmin watches to surface running form data without a chest strap.",
+    whyWeRecommend:
+      "Running form breaks down after mile 50 in ways you can't feel. Real-time cadence and vertical oscillation data lets you catch form degradation before it becomes injury — correcting your stride can unlock miles of sustainable running late in a race.",
+    specs: {
+      metrics: "Cadence, ground contact time, vertical oscillation, stride length",
+      battery: "~1 year (coin cell)",
+      connectivity: "ANT+",
+      weight: "7g" },
+    affiliateLinks: { amazon: "https://amzn.to/4sLRvck" },
+    tags: ["running-pod", "form-metrics", "cadence", "garmin", "training-tool"] },
+
+  {
+    id: "bodyglide-leukotape-blister-kit",
+    name: "BODYGLIDE + Leukotape Anti-Blister Kit",
+    brand: "BODYGLIDE",
+    category: "footcare",
+    price: 28,
+    priceDisplay: "$28",
+    description:
+      "BODYGLIDE anti-chafe balm paired with Leukotape K, the gold-standard blister prevention tape used by podiatrists and elite ultra runners. Address hot spots before they become DNF-level problems.",
+    whyWeRecommend:
+      "Blisters end more ultras than fitness does. BODYGLIDE prevents friction buildup and Leukotape K stops hot spots dead — together they're the most effective foot-care system for 50-mile to 100-mile races.",
+    specs: {
+      components: "BODYGLIDE balm + Leukotape K roll",
+      application: "Pre-race and aid station reapplication",
+      coverage: "Feet, thighs, armpits",
+      weight: "~85g combined" },
+    affiliateLinks: { amazon: "https://amzn.to/4tZkNF8" },
+    tags: ["blister-prevention", "footcare", "leukotape", "chafe", "mandatory-kit", "100-mile"],
+    beginnerPick: true },
 ];
