@@ -84,10 +84,7 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         <meta name="theme-color" content="#0066FF" />
-        {/* AvantLink ownership verification — remove after confirmed */}
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script type="text/javascript" src="http://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=a3c09e1fd551b3517344ea106b7b9112af05ca3c" />
-        <script
+<script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
