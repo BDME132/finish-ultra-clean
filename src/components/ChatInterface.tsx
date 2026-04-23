@@ -3,6 +3,12 @@
 import { useChat } from "@ai-sdk/react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const ANON_DAILY_LIMIT = 5;
+const LS_KEY = "pheidi_anon_v1";
 
 const suggestedPrompts = [
   "I want to run my first 50K",
@@ -11,7 +17,46 @@ const suggestedPrompts = [
   "How do I train for an ultra?",
 ];
 
+// ─── localStorage helpers ─────────────────────────────────────────────────────
+
+function getTodayKey(): string {
+  return new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+}
+
+function getAnonState(): { count: number; date: string } {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return { count: 0, date: getTodayKey() };
+    const parsed = JSON.parse(raw) as { count: number; date: string };
+    // Reset if it's a new day
+    if (parsed.date !== getTodayKey()) return { count: 0, date: getTodayKey() };
+    return parsed;
+  } catch {
+    return { count: 0, date: getTodayKey() };
+  }
+}
+
+function saveAnonState(count: number): void {
+  localStorage.setItem(LS_KEY, JSON.stringify({ count, date: getTodayKey() }));
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function ChatInterface() {
+  // Pro / auth status
+  const [isPro, setIsPro] = useState<boolean | null>(null); // null = still loading
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Freemium gate state (anonymous users only)
+  const [anonCount, setAnonCount] = useState(0);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [modalDismissed, setModalDismissed] = useState(false);
+  const [showLimitWarning, setShowLimitWarning] = useState(false);
+
+  // Stripe checkout loading
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  // Legacy server-side state (still used for subscribed / auth users)
   const [remaining, setRemaining] = useState<number | null>(null);
   const [resetAt, setResetAt] = useState<string | null>(null);
   const [rateLimitError, setRateLimitError] = useState<
@@ -21,7 +66,60 @@ export default function ChatInterface() {
   const [signupLoading, setSignupLoading] = useState(false);
   const [signupError, setSignupError] = useState("");
 
+  // Track messages in a ref for history saving
+  const messagesRef = useRef<ReturnType<typeof useChat>["messages"]>([]);
+
+  // ─── Auth / Pro check ───────────────────────────────────────────────────────
+
+  useEffect(() => {
+    async function checkProStatus() {
+      const supabase = createSupabaseBrowser();
+      if (!supabase) { setIsPro(false); return; }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setIsPro(false); return; }
+
+      setUserId(user.id);
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_pro")
+        .eq("id", user.id)
+        .single();
+      setIsPro(data?.is_pro === true);
+    }
+    checkProStatus();
+  }, []);
+
+  // ─── Load anon count from localStorage ─────────────────────────────────────
+
+  useEffect(() => {
+    // Only gate anonymous users
+    if (isPro === null) return; // still loading
+    if (isPro || userId) return; // pro or logged-in non-pro: no client-side gate
+    const state = getAnonState();
+    setAnonCount(state.count);
+    if (state.count >= ANON_DAILY_LIMIT) {
+      // Already at limit from a previous session today
+      setShowUpgradeModal(true);
+    }
+  }, [isPro, userId]);
+
+  // ─── Handle ?upgraded=1 success return from Stripe ─────────────────────────
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("upgraded") === "1") {
+      // Clean the URL without a full reload
+      window.history.replaceState({}, "", "/pheidi");
+      // isPro will already be true after the webhook fires & user refreshes auth
+    }
+  }, []);
+
+  // ─── Server rate limit fetch (for subscribed / auth users) ─────────────────
+
   const fetchRemaining = useCallback(async () => {
+    if (isPro) return; // Pro users don't need this
     try {
       const res = await fetch("/api/chat");
       if (res.ok) {
@@ -33,18 +131,18 @@ export default function ChatInterface() {
         }
       }
     } catch {
-      // Silently fail — not critical
+      // Not critical
     }
-  }, []);
+  }, [isPro]);
 
-  // Fetch remaining count on mount
   useEffect(() => {
     fetchRemaining();
   }, [fetchRemaining]);
 
+  // ─── useChat ────────────────────────────────────────────────────────────────
+
   const { messages, sendMessage, status, error } = useChat({
     onError(err) {
-      // Try to parse rate limit errors from the response body
       try {
         const parsed = JSON.parse(err.message);
         if (parsed.error === "signup_required") {
@@ -56,35 +154,105 @@ export default function ChatInterface() {
           if (parsed.resetAt) setResetAt(parsed.resetAt);
         }
       } catch {
-        // Not a rate limit error
+        // Non-rate-limit error
       }
     },
     onFinish() {
-      // Refresh remaining count after each completed message
       fetchRemaining();
+
+      // Anonymous: check if we just hit the 4th message (1 left warning)
+      if (!isPro && !userId) {
+        const current = getAnonState().count;
+        if (current === ANON_DAILY_LIMIT - 1) {
+          setShowLimitWarning(true);
+        }
+      }
+
+      // Pro users: save chat history to Supabase
+      if (isPro && userId) {
+        saveChatHistory(userId, messagesRef.current);
+      }
     },
   });
 
+  // Keep ref in sync
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   const isLoading = status === "submitted" || status === "streaming";
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading, status, rateLimitError]);
+  }, [messages, isLoading, status, rateLimitError, showLimitWarning, showUpgradeModal]);
+
+  // ─── Submit handler ─────────────────────────────────────────────────────────
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim() || isLoading || rateLimitError) return;
+    if (!input.trim() || isLoading) return;
+
+    // Anonymous gate
+    if (!isPro && !userId) {
+      const state = getAnonState();
+      if (state.count >= ANON_DAILY_LIMIT) {
+        setShowUpgradeModal(true);
+        return;
+      }
+      const newCount = state.count + 1;
+      saveAnonState(newCount);
+      setAnonCount(newCount);
+    }
+
+    if (rateLimitError) return;
     sendMessage({ text: input.trim() });
     setInput("");
   }
 
   function sendSuggested(text: string) {
     if (isLoading || rateLimitError) return;
+
+    if (!isPro && !userId) {
+      const state = getAnonState();
+      if (state.count >= ANON_DAILY_LIMIT) {
+        setShowUpgradeModal(true);
+        return;
+      }
+      const newCount = state.count + 1;
+      saveAnonState(newCount);
+      setAnonCount(newCount);
+    }
+
     sendMessage({ text });
   }
+
+  // ─── Stripe checkout ────────────────────────────────────────────────────────
+
+  async function handleUpgradeClick() {
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      const data = await res.json();
+
+      if (res.status === 401 && data.error === "login_required") {
+        // Need to log in first — redirect to auth with return path
+        window.location.href = "/auth/callback?next=/pheidi";
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      // Fall through — button re-enables
+    } finally {
+      setCheckoutLoading(false);
+    }
+  }
+
+  // ─── Newsletter signup (legacy — for subscribed users hitting server limit) ─
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -100,7 +268,6 @@ export default function ChatInterface() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-
       const data = await res.json();
 
       if (!res.ok && res.status !== 409) {
@@ -109,13 +276,9 @@ export default function ChatInterface() {
         return;
       }
 
-      // Set cookie so server knows they're subscribed
       document.cookie = `chat_subscribed=${encodeURIComponent(email)}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=strict`;
-
-      // Clear the rate limit error and refresh remaining
       setRateLimitError(null);
       setSignupEmail("");
-      // Small delay to let the cookie propagate, then refresh count
       setTimeout(() => fetchRemaining(), 100);
     } catch {
       setSignupError("Failed to connect. Please try again.");
@@ -123,6 +286,25 @@ export default function ChatInterface() {
       setSignupLoading(false);
     }
   }
+
+  // ─── Derived UI state ───────────────────────────────────────────────────────
+
+  // Input is disabled when:
+  // - A message is being sent/streamed
+  // - Server-side rate limit hit
+  // - Modal dismissed ("come back tomorrow")
+  const inputDisabled =
+    isLoading ||
+    !!rateLimitError ||
+    modalDismissed;
+
+  const inputPlaceholder = modalDismissed
+    ? "Come back tomorrow or upgrade to keep going"
+    : rateLimitError
+    ? "Message limit reached"
+    : "Ask about training, gear, nutrition...";
+
+  // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <div className="flex flex-col flex-1 min-w-0 bg-[#0B1120]">
@@ -203,7 +385,17 @@ export default function ChatInterface() {
           </div>
         )}
 
-        {/* Newsletter signup gate */}
+        {/* "1 message left today" inline warning — shown after 4th response */}
+        {showLimitWarning && !showUpgradeModal && !modalDismissed && (
+          <div className="flex justify-start animate-fade-in-up">
+            <div className="rounded-2xl rounded-bl-md px-4 py-2.5 bg-[#1A2540] border border-amber-500/30 flex items-center gap-2">
+              <span className="text-amber-400 text-xs">⚡</span>
+              <p className="text-xs text-amber-300/90">1 message left today — make it count.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Newsletter signup gate (legacy — server-side signup_required) */}
         {rateLimitError === "signup_required" && (
           <div className="flex justify-start animate-fade-in-up">
             <div className="max-w-sm rounded-2xl rounded-bl-md p-5 bg-[#141C2E] border border-[#2A3A55]">
@@ -225,9 +417,7 @@ export default function ChatInterface() {
                   required
                   className="w-full px-3 py-2 bg-[#0B1120] border border-[#2A3A55] rounded-lg text-sm text-[#E2E8F0] placeholder:text-[#94A3B8]/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
                 />
-                {signupError && (
-                  <p className="text-xs text-red-400">{signupError}</p>
-                )}
+                {signupError && <p className="text-xs text-red-400">{signupError}</p>}
                 <button
                   type="submit"
                   disabled={signupLoading || !signupEmail.trim()}
@@ -240,35 +430,18 @@ export default function ChatInterface() {
           </div>
         )}
 
-        {/* Daily limit reached */}
+        {/* Daily limit reached (server-side, subscribed users) */}
         {rateLimitError === "daily_limit_reached" && (
           <div className="flex justify-start animate-fade-in-up">
             <div className="max-w-sm rounded-2xl rounded-bl-md p-5 bg-[#141C2E] border border-[#2A3A55]">
               <h3 className="text-sm font-semibold text-[#E2E8F0] mb-2">Daily message limit reached</h3>
-              <p className="text-xs text-[#94A3B8] mb-1">
-                You&apos;ve used all 30 messages for today.
-              </p>
+              <p className="text-xs text-[#94A3B8] mb-1">You&apos;ve used all 30 messages for today.</p>
               {resetAt && <CountdownTimer resetAt={resetAt} />}
               <p className="text-xs text-[#94A3B8] mt-3 mb-3">While you wait, check out:</p>
               <div className="flex flex-col gap-2">
-                <Link
-                  href="/training/first-50k"
-                  className="text-xs text-primary hover:text-primary-dark transition-colors"
-                >
-                  First 50K Training Plan &rarr;
-                </Link>
-                <Link
-                  href="/gear"
-                  className="text-xs text-primary hover:text-primary-dark transition-colors"
-                >
-                  Gear Guides &rarr;
-                </Link>
-                <Link
-                  href="/newsletter"
-                  className="text-xs text-primary hover:text-primary-dark transition-colors"
-                >
-                  Newsletter &rarr;
-                </Link>
+                <Link href="/training/first-50k" className="text-xs text-primary hover:text-primary-dark transition-colors">First 50K Training Plan &rarr;</Link>
+                <Link href="/gear" className="text-xs text-primary hover:text-primary-dark transition-colors">Gear Guides &rarr;</Link>
+                <Link href="/newsletter" className="text-xs text-primary hover:text-primary-dark transition-colors">Newsletter &rarr;</Link>
               </div>
             </div>
           </div>
@@ -311,27 +484,89 @@ export default function ChatInterface() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={rateLimitError ? "Message limit reached" : "Ask about training, gear, nutrition..."}
+            placeholder={inputPlaceholder}
             className="flex-1 px-4 py-3 bg-[#141C2E] border border-[#2A3A55] rounded-lg text-[#E2E8F0] placeholder:text-[#94A3B8]/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-sm transition-colors disabled:opacity-50"
-            disabled={isLoading || !!rateLimitError}
+            disabled={inputDisabled}
           />
           <button
             type="submit"
-            disabled={!input.trim() || isLoading || !!rateLimitError}
+            disabled={!input.trim() || isLoading || !!rateLimitError || modalDismissed}
             className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium active:scale-95"
           >
             Send
           </button>
         </div>
-        {remaining !== null && remaining < 10 && !rateLimitError && (
+        {remaining !== null && remaining < 10 && !rateLimitError && !isPro && (
           <p className="text-xs text-[#94A3B8]/50 mt-2 text-right">
             {remaining} message{remaining !== 1 ? "s" : ""} remaining today
           </p>
         )}
       </form>
+
+      {/* Upgrade modal */}
+      {showUpgradeModal && (
+        <UpgradeModal
+          onUpgrade={handleUpgradeClick}
+          onDismiss={() => {
+            setShowUpgradeModal(false);
+            setModalDismissed(true);
+          }}
+          checkoutLoading={checkoutLoading}
+        />
+      )}
     </div>
   );
 }
+
+// ─── Upgrade modal ────────────────────────────────────────────────────────────
+
+function UpgradeModal({
+  onUpgrade,
+  onDismiss,
+  checkoutLoading,
+}: {
+  onUpgrade: () => void;
+  onDismiss: () => void;
+  checkoutLoading: boolean;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+      <div className="w-full max-w-sm bg-[#141C2E] border border-[#2A3A55] rounded-2xl p-6 shadow-2xl animate-scale-in">
+        {/* Icon */}
+        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 mx-auto">
+          <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+
+        <h2 className="font-headline text-xl font-bold text-[#E2E8F0] text-center mb-2">
+          You&apos;ve hit your daily limit
+        </h2>
+        <p className="text-sm text-[#94A3B8] text-center mb-6">
+          Upgrade to Pheidi Pro for unlimited coaching, saved conversation history, and weekly training summaries —&nbsp;
+          <span className="text-[#E2E8F0] font-semibold">$7/month.</span>
+        </p>
+
+        <button
+          onClick={onUpgrade}
+          disabled={checkoutLoading}
+          className="w-full px-4 py-3 bg-primary hover:bg-blue-600 text-white font-semibold text-sm rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed active:scale-95 mb-3"
+        >
+          {checkoutLoading ? "Loading checkout..." : "Upgrade for $7/month"}
+        </button>
+
+        <button
+          onClick={onDismiss}
+          className="w-full text-sm text-[#94A3B8] hover:text-[#E2E8F0] transition-colors py-2"
+        >
+          Come back tomorrow
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Countdown timer ──────────────────────────────────────────────────────────
 
 function CountdownTimer({ resetAt }: { resetAt: string }) {
   const [timeLeft, setTimeLeft] = useState("");
@@ -364,4 +599,33 @@ function CountdownTimer({ resetAt }: { resetAt: string }) {
       Resets in <span className="text-[#E2E8F0] font-medium">{timeLeft}</span>
     </p>
   );
+}
+
+// ─── Chat history save (pro users) ───────────────────────────────────────────
+
+async function saveChatHistory(
+  userId: string,
+  messages: ReturnType<typeof useChat>["messages"]
+) {
+  if (!messages.length) return;
+  try {
+    const supabase = createSupabaseBrowser();
+    if (!supabase) return;
+
+    // Try to update an existing session from today (upsert by user_id + date prefix)
+    const today = new Date().toISOString().split("T")[0];
+    const sessionId = `${userId}-${today}`;
+
+    await supabase.from("pheidi_chat_history").upsert(
+      {
+        user_id: userId,
+        session_id: sessionId,
+        messages: messages,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "session_id" }
+    );
+  } catch {
+    // History save is non-critical — swallow errors
+  }
 }
