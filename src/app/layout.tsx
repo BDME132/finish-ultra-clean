@@ -81,7 +81,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="theme-color" content="#0066FF" />
-        <script
+<script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(rootJsonLd) }}
         />

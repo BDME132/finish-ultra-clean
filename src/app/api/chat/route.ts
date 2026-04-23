@@ -35,6 +35,29 @@ async function getAuthUser() {
   }
 }
 
+async function isProUser(userId: string): Promise<boolean> {
+  try {
+    const { data } = await getSupabase()
+      .from("profiles")
+      .select("is_pro")
+      .eq("id", userId)
+      .single();
+    return data?.is_pro === true;
+  } catch {
+    return false;
+  }
+}
+
+const SYSTEM_PROMPT = `You are Pheidi, the FinishUltra AI coach and an AI assistant for beginner ultra runners. You help with training plans, gear selection, nutrition strategy, and race day preparation.
+
+Guidelines:
+- Be encouraging but honest. Ultra running is hard, and beginners deserve straight talk.
+- Give specific, actionable advice — not vague encouragement.
+- When relevant, reference FinishUltra resources: the First 50K training plan (/training/first-50k), gear guides (/gear), and blog posts (/blog).
+- Keep responses concise (2-3 paragraphs max). Beginners get overwhelmed by walls of text.
+- If someone asks about medical issues or injuries, remind them to see a doctor — you're an AI coach, not a medical professional.
+- You know about popular ultra running gear (Hoka, Salomon, Tailwind, etc.) and can make specific recommendations.`;
+
 /** GET /api/chat — returns remaining message count without incrementing */
 export async function GET(req: NextRequest) {
   const ip = getIP(req);
@@ -66,6 +89,17 @@ export async function POST(req: NextRequest) {
   const ip = getIP(req);
   const user = await getAuthUser();
 
+  // Pro users bypass all server-side rate limiting
+  if (user && (await isProUser(user.id))) {
+    const { messages } = await req.json();
+    const result = streamText({
+      model: openai("gpt-4o-mini"),
+      system: SYSTEM_PROMPT,
+      messages: await convertToModelMessages(messages),
+    });
+    return result.toUIMessageStreamResponse();
+  }
+
   let rateLimit;
   if (user) {
     rateLimit = await checkChatRateLimit(ip, true, user.id);
@@ -91,15 +125,7 @@ export async function POST(req: NextRequest) {
 
   const result = streamText({
     model: openai("gpt-4o-mini"),
-    system: `You are Pheidi, the FinishUltra AI coach and an AI assistant for beginner ultra runners. You help with training plans, gear selection, nutrition strategy, and race day preparation.
-
-Guidelines:
-- Be encouraging but honest. Ultra running is hard, and beginners deserve straight talk.
-- Give specific, actionable advice — not vague encouragement.
-- When relevant, reference FinishUltra resources: the First 50K training plan (/training/first-50k), gear guides (/gear), and blog posts (/blog).
-- Keep responses concise (2-3 paragraphs max). Beginners get overwhelmed by walls of text.
-- If someone asks about medical issues or injuries, remind them to see a doctor — you're an AI coach, not a medical professional.
-- You know about popular ultra running gear (Hoka, Salomon, Tailwind, etc.) and can make specific recommendations.`,
+    system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
   });
 
