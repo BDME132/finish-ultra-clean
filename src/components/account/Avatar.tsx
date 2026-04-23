@@ -1,13 +1,14 @@
+import Image from "next/image";
 import { profileInitials, type AccountProfile } from "@/lib/account/profile";
 
 type AvatarSubject = Pick<AccountProfile, "display_name" | "username" | "avatar_url">;
 
 const SIZES = {
-  xs: "w-6 h-6 text-[10px]",
-  sm: "w-8 h-8 text-xs",
-  md: "w-12 h-12 text-sm",
-  lg: "w-20 h-20 text-xl",
-  xl: "w-28 h-28 text-2xl",
+  xs: { classes: "w-6 h-6 text-[10px]", px: 24 },
+  sm: { classes: "w-8 h-8 text-xs", px: 32 },
+  md: { classes: "w-12 h-12 text-sm", px: 48 },
+  lg: { classes: "w-20 h-20 text-xl", px: 80 },
+  xl: { classes: "w-28 h-28 text-2xl", px: 112 },
 } as const;
 
 export type AvatarSize = keyof typeof SIZES;
@@ -21,15 +22,17 @@ export default function Avatar({
   size?: AvatarSize;
   className?: string;
 }) {
-  const sizeClasses = SIZES[size];
+  const { classes: sizeClasses, px } = SIZES[size];
   const initials = profile ? profileInitials(profile) : "?";
 
   if (profile?.avatar_url) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={profile.avatar_url}
         alt={profile.display_name || profile.username || "Avatar"}
+        width={px}
+        height={px}
+        unoptimized
         className={`${sizeClasses} rounded-full object-cover bg-gray-100 ${className}`}
       />
     );

@@ -21,6 +21,8 @@ import type {
 
 // ─── Static Params ──────────────────────────────────────────────────────────
 
+export const revalidate = 86400;
+
 export function generateStaticParams() {
   return ALL_PRODUCTS.map((p) => ({ productId: p.id }));
 }

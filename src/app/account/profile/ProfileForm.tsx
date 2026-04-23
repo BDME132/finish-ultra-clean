@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Camera, Trash2 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
@@ -259,10 +260,12 @@ export default function ProfileForm() {
           <div className="relative group shrink-0">
             <div className="w-20 h-20 rounded-full overflow-hidden bg-primary/10">
               {form.avatar_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={form.avatar_url}
                   alt="Avatar"
+                  width={80}
+                  height={80}
+                  unoptimized
                   className="w-full h-full object-cover"
                 />
               ) : (

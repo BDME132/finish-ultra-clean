@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { loadPublicBlogPostsServer } from "@/lib/blog-server";
 
+export const revalidate = 3600;
+
 const BASE_URL = "https://www.finishultra.com";
 
 type ChangeFreq =

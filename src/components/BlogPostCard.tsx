@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { PersonStanding, Dumbbell, Package, Zap, Flag, FileText } from "lucide-react";
 import { PublicBlogPost, getBlogSourceLabel } from "@/lib/blog";
 
@@ -24,10 +25,12 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
       {/* Taller thumbnail — ~55% of card height */}
       <div className="aspect-[4/3] bg-gradient-to-br from-light to-gray-100 flex flex-col items-center justify-center relative overflow-hidden">
         {post.coverImageUrl ? (
-          <img
+          <Image
             src={post.coverImageUrl}
             alt={post.title}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (
           <>

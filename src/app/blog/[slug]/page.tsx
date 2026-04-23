@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import Header from "@/components/Header";
@@ -86,6 +87,13 @@ const peopleAlsoAskBySlug: Record<string, { question: string; href: string }[]> 
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  const posts = await loadPublicBlogPostsServer();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 const aiDisclaimer =
@@ -206,11 +214,14 @@ export default async function BlogPostPage({ params }: Props) {
           {post.coverImageUrl && (
             <section className="pb-4">
               <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="overflow-hidden rounded-3xl border border-gray-200 shadow-sm">
-                  <img
+                <div className="relative aspect-[16/9] overflow-hidden rounded-3xl border border-gray-200 shadow-sm">
+                  <Image
                     src={post.coverImageUrl}
                     alt={post.title}
-                    className="h-full w-full object-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 896px"
+                    className="object-cover"
                   />
                 </div>
               </div>

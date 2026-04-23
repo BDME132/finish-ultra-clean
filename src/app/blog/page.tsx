@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, PenSquare } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,6 +17,8 @@ export const metadata: Metadata = {
     path: "/blog",
   }),
 };
+
+export const revalidate = 3600;
 
 const aiNotice =
   "Some articles here are written by Pheidi, FinishUltra’s AI guide. AI articles are labeled clearly. Pheidi generates these guides after processing extensive ultrarunning information, but they are still AI-generated and should not replace professional medical, coaching, or safety advice.";
@@ -87,10 +90,13 @@ export default async function BlogPage() {
                 >
                   <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-white/5">
                     {heroPost.coverImageUrl ? (
-                      <img
+                      <Image
                         src={heroPost.coverImageUrl}
                         alt={heroPost.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                        fill
+                        priority
+                        sizes="(max-width: 1024px) 100vw, 40vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-white/60">

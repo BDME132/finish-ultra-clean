@@ -171,21 +171,16 @@ export function isBlogArticlePathname(normalizedPath: string): boolean {
   return parts.length === 2 && parts[0] === "blog";
 }
 
-export function rootLayoutJsonLdGraph(pathname: string) {
-  const normalized =
-    pathname === "" ? "/" : pathname.startsWith("/") ? pathname : `/${pathname}`;
-
-  const graph: Record<string, unknown>[] = [organizationJsonLd()];
-
-  if (normalized === "/") {
-    graph.push(websiteWithSearchActionJsonLd());
-  } else if (!isBlogArticlePathname(normalized)) {
-    graph.push(breadcrumbListFromPath(normalized));
-  }
-
+/**
+ * Static JSON-LD emitted from the root layout on every page. Breadcrumbs now
+ * live on the individual pages that need them (blog slug page already does).
+ * Keeping this pathname-free lets the layout be statically prerendered, which
+ * in turn lets pages opt into ISR via `revalidate`.
+ */
+export function rootLayoutJsonLdGraph() {
   return {
     "@context": "https://schema.org",
-    "@graph": graph,
+    "@graph": [organizationJsonLd(), websiteWithSearchActionJsonLd()],
   };
 }
 

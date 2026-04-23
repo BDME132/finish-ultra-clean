@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, Lora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { headers } from "next/headers";
 import PheidiShell from "@/components/PheidiShell";
 import AuthProvider from "@/components/AuthProvider";
 import { rootLayoutJsonLdGraph } from "@/lib/schema";
 import "./globals.css";
+
+const rootJsonLd = rootLayoutJsonLdGraph();
 
 const inter = Inter({
   variable: "--font-inter",
@@ -71,22 +72,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname") ?? "/";
-  const jsonLd = rootLayoutJsonLdGraph(pathname);
-
   return (
     <html lang="en">
       <head>
         <meta name="theme-color" content="#0066FF" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(rootJsonLd) }}
         />
       </head>
       <body
