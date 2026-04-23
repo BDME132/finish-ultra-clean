@@ -85,7 +85,16 @@ export default function ChatInterface() {
         .select("is_pro")
         .eq("id", user.id)
         .single();
-      setIsPro(data?.is_pro === true);
+      const pro = data?.is_pro === true;
+      setIsPro(pro);
+
+      // Auto-trigger Stripe checkout if user just logged in to upgrade
+      if (!pro && localStorage.getItem("pheidi_checkout_intent")) {
+        localStorage.removeItem("pheidi_checkout_intent");
+        const res = await fetch("/api/stripe/checkout", { method: "POST" });
+        const checkoutData = await res.json();
+        if (checkoutData.url) window.location.href = checkoutData.url;
+      }
     }
     checkProStatus();
   }, []);
@@ -237,8 +246,9 @@ export default function ChatInterface() {
       const data = await res.json();
 
       if (res.status === 401 && data.error === "login_required") {
-        // Need to log in first — redirect to auth with return path
-        window.location.href = "/auth/callback?next=/pheidi";
+        // Store intent so we auto-trigger checkout after login
+        localStorage.setItem("pheidi_checkout_intent", "1");
+        window.location.href = "/login?next=/pheidi";
         return;
       }
 
