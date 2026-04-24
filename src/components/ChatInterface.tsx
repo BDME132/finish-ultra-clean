@@ -104,7 +104,7 @@ export default function ChatInterface() {
   useEffect(() => {
     // Only gate anonymous users
     if (isPro === null) return; // still loading
-    if (isPro || userId) return; // pro or logged-in non-pro: no client-side gate
+    if (isPro) return; // pro users have no gate
     const state = getAnonState();
     setAnonCount(state.count);
     if (state.count >= ANON_DAILY_LIMIT) {
@@ -169,8 +169,8 @@ export default function ChatInterface() {
     onFinish() {
       fetchRemaining();
 
-      // Anonymous: check if we just hit the 4th message (1 left warning)
-      if (!isPro && !userId) {
+      // Non-pro: check if we just hit the 4th message (1 left warning)
+      if (isPro === false) {
         const current = getAnonState().count;
         if (current === ANON_DAILY_LIMIT - 1) {
           setShowLimitWarning(true);
@@ -203,8 +203,8 @@ export default function ChatInterface() {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    // Anonymous gate
-    if (!isPro && !userId) {
+    // Non-pro gate
+    if (isPro === false) {
       const state = getAnonState();
       if (state.count >= ANON_DAILY_LIMIT) {
         setShowUpgradeModal(true);
@@ -223,7 +223,7 @@ export default function ChatInterface() {
   function sendSuggested(text: string) {
     if (isLoading || rateLimitError) return;
 
-    if (!isPro && !userId) {
+    if (isPro === false) {
       const state = getAnonState();
       if (state.count >= ANON_DAILY_LIMIT) {
         setShowUpgradeModal(true);
