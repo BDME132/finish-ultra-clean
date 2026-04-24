@@ -455,11 +455,23 @@ const shoesItemListJsonLd = itemListJsonLd({
     "Compare top trail shoes by terrain, cushion, and drop — expert picks for 50K through 100 miles.",
   url: `${SITE_URL}/gear/shoes`,
   items: categories.flatMap((cat) =>
-    cat.shoes.map((shoe) => ({
-      name: `${shoe.brand} ${shoe.name}`,
-      url: `${SITE_URL}/gear/shoes#${gearProductAnchorId(cat.id, shoe.brand, shoe.name)}`,
-      description: shoe.bestFor.join(", "),
-    }))
+    cat.shoes.map((shoe) => {
+      const anchor = gearProductAnchorId(cat.id, shoe.brand, shoe.name);
+      const url = `${SITE_URL}/gear/shoes#${anchor}`;
+      return {
+        name: `${shoe.brand} ${shoe.name}`,
+        url,
+        description: shoe.bestFor.join(", "),
+        product: {
+          id: anchor,
+          name: `${shoe.brand} ${shoe.name}`,
+          brand: shoe.brand,
+          description: `${cat.title} trail running shoe. Best for: ${shoe.bestFor.join(", ")}.`,
+          category: "Trail Running Shoes",
+          url,
+        },
+      };
+    })
   ),
 });
 

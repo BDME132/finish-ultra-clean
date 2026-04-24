@@ -465,11 +465,23 @@ const nutritionItemListJsonLd = itemListJsonLd({
     "Energy gels, drink mixes, electrolytes, and real-food fuel reviewed for 50K through 100 miles.",
   url: `${SITE_URL}/gear/nutrition`,
   items: productCategories.flatMap((cat) =>
-    cat.products.map((product) => ({
-      name: `${product.brand} ${product.name}`,
-      url: `${SITE_URL}/gear/nutrition#${gearProductAnchorId(cat.id, product.brand, product.name)}`,
-      description: product.bestFor.join(", "),
-    }))
+    cat.products.map((product) => {
+      const anchor = gearProductAnchorId(cat.id, product.brand, product.name);
+      const url = `${SITE_URL}/gear/nutrition#${anchor}`;
+      return {
+        name: `${product.brand} ${product.name}`,
+        url,
+        description: product.bestFor.join(", "),
+        product: {
+          id: anchor,
+          name: `${product.brand} ${product.name}`,
+          brand: product.brand,
+          description: `${cat.title} for ultra marathon fueling. Best for: ${product.bestFor.join(", ")}.`,
+          category: "Ultra Running Nutrition",
+          url,
+        },
+      };
+    })
   ),
 });
 

@@ -7,6 +7,10 @@ import {
   loadPublicBlogPostsServer,
 } from "@/lib/blog-server";
 import { glossaryTerms } from "@/lib/content/glossary";
+import { getProductById } from "@/lib/products";
+import { loadPublicKitBySlugServer } from "@/lib/public-kits-server";
+import { loadPublicTrainingPlanBySlugServer } from "@/lib/public-training-plans-server";
+import { loadPublishedNewsletterBySlug } from "@/lib/newsletter-archive";
 
 const BASE_URL = "https://www.finishultra.com";
 
@@ -1376,6 +1380,90 @@ function getGlossaryMarkdown(): string {
 // Public API
 // ---------------------------------------------------------------------------
 
+async function getProductMarkdown(productId: string): Promise<string | null> {
+  const product = getProductById(productId);
+  if (!product) return null;
+
+  const path = `/gear/library/${product.id}`;
+  const title = `${product.brand} ${product.name} | FinishUltra`;
+  let md = fm(
+    title,
+    product.description,
+    path,
+    new Date().toISOString().split("T")[0],
+  );
+  md += `# ${product.brand} ${product.name}\n\n`;
+  md += `*${product.category}${product.subcategory ? ` · ${product.subcategory}` : ""} · ${product.priceDisplay}*\n\n`;
+  md += `${product.description}\n\n`;
+  md += `## Why We Recommend It\n\n${product.whyWeRecommend}\n\n`;
+
+  if (product.tags.length > 0) {
+    md += `## Tags\n\n${product.tags.map((t) => `- ${t}`).join("\n")}\n\n`;
+  }
+
+  if (product.affiliateLinks.amazon && product.affiliateLinks.amazon !== "#") {
+    md += `## Where to Buy\n\n- [Buy on Amazon](${product.affiliateLinks.amazon})\n\n`;
+  }
+
+  md += `[View full product page](${path})\n`;
+  return md;
+}
+
+async function getSharedKitMarkdown(slug: string): Promise<string | null> {
+  const kit = await loadPublicKitBySlugServer(slug);
+  if (!kit) return null;
+
+  const path = `/gear/race-day-kit/${kit.slug}`;
+  const updated = kit.updatedAt ?? kit.publishedAt ?? new Date().toISOString();
+  let md = fm(
+    `${kit.kitTitle} | Shared Kits | FinishUltra`,
+    kit.kitSubtitle || `Public ultra race day kit shared by ${kit.authorDisplayName}.`,
+    path,
+    updated.slice(0, 10),
+  );
+  md += `# ${kit.kitTitle}\n\n`;
+  md += `*Shared by ${kit.authorDisplayName}*\n\n`;
+  if (kit.kitSubtitle) md += `${kit.kitSubtitle}\n\n`;
+  md += `[View full kit with items and checklists](${path})\n`;
+  return md;
+}
+
+async function getSharedPlanMarkdown(slug: string): Promise<string | null> {
+  const plan = await loadPublicTrainingPlanBySlugServer(slug);
+  if (!plan) return null;
+
+  const path = `/training/shared-plans/${plan.slug}`;
+  const updated = plan.updatedAt ?? plan.publishedAt ?? new Date().toISOString();
+  let md = fm(
+    `${plan.planTitle} | Shared Training Plans | FinishUltra`,
+    `Public ${plan.distance} ${plan.level} ultra training plan shared by ${plan.authorDisplayName}.`,
+    path,
+    updated.slice(0, 10),
+  );
+  md += `# ${plan.planTitle}\n\n`;
+  md += `*${plan.distance} · ${plan.level} · Shared by ${plan.authorDisplayName}*\n\n`;
+  md += `[View full week-by-week schedule](${path})\n`;
+  return md;
+}
+
+async function getNewsletterMarkdown(slug: string): Promise<string | null> {
+  const issue = await loadPublishedNewsletterBySlug(slug);
+  if (!issue?.body || !issue.slug) return null;
+
+  const path = `/newsletter/${issue.slug}`;
+  const updated = (issue.published_at ?? new Date().toISOString()).slice(0, 10);
+  let md = fm(
+    `${issue.subject} | FinishUltra Newsletter`,
+    `Past FinishUltra newsletter issue: ${issue.subject}`,
+    path,
+    updated,
+  );
+  md += `# ${issue.subject}\n\n`;
+  md += `*Published ${updated}*\n\n`;
+  md += `${issue.body}\n`;
+  return md;
+}
+
 export async function getMarkdownForPath(path: string): Promise<string | null> {
   // Normalize trailing slash
   const normalized = path === "/" ? "/" : path.replace(/\/$/, "");
@@ -1403,6 +1491,30 @@ export async function getMarkdownForPath(path: string): Promise<string | null> {
   if (normalized.startsWith("/blog/")) {
     const slug = normalized.slice("/blog/".length);
     return await getBlogPostMarkdown(slug);
+  }
+
+  // Gear library products — /gear/library/:productId
+  if (normalized.startsWith("/gear/library/")) {
+    const productId = normalized.slice("/gear/library/".length);
+    return await getProductMarkdown(productId);
+  }
+
+  // Shared race-day kits — /gear/race-day-kit/:slug
+  if (normalized.startsWith("/gear/race-day-kit/")) {
+    const slug = normalized.slice("/gear/race-day-kit/".length);
+    return await getSharedKitMarkdown(slug);
+  }
+
+  // Shared training plans — /training/shared-plans/:slug
+  if (normalized.startsWith("/training/shared-plans/")) {
+    const slug = normalized.slice("/training/shared-plans/".length);
+    return await getSharedPlanMarkdown(slug);
+  }
+
+  // Newsletter editions — /newsletter/:slug
+  if (normalized.startsWith("/newsletter/") && normalized !== "/newsletter/unsubscribe") {
+    const slug = normalized.slice("/newsletter/".length);
+    return await getNewsletterMarkdown(slug);
   }
 
   return null;

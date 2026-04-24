@@ -1,4 +1,5 @@
 import type { PublicBlogPost } from "@/lib/blog";
+import type { Product } from "@/lib/products/types";
 import type { GlossaryTerm } from "@/types/content";
 
 /** Canonical site origin — all structured-data URLs must use this. */
@@ -278,7 +279,12 @@ export function howToJsonLd(input: {
   };
 }
 
-export type ItemListEntry = { name: string; url: string; description?: string };
+export type ItemListEntry = {
+  name: string;
+  url: string;
+  description?: string;
+  product?: ProductSchemaInput;
+};
 
 export function itemListJsonLd(input: {
   name: string;
@@ -296,10 +302,124 @@ export function itemListJsonLd(input: {
     itemListElement: input.items.map((it, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      name: it.name,
-      item: it.url,
-      ...(it.description ? { description: it.description } : {}),
+      ...(it.product
+        ? { item: productJsonLdNode(it.product, it.url) }
+        : {
+            name: it.name,
+            item: it.url,
+            ...(it.description ? { description: it.description } : {}),
+          }),
     })),
+  };
+}
+
+// ─── Product / Review / AggregateRating ───────────────────────────────────
+
+export type ProductSchemaInput = {
+  id: string;
+  name: string;
+  brand: string;
+  description: string;
+  category?: string;
+  image?: string;
+  url?: string;
+  aggregateRating?: {
+    ratingValue: number;
+    reviewCount: number;
+    bestRating?: number;
+    worstRating?: number;
+  };
+  reviews?: ReviewSchemaInput[];
+};
+
+export type ReviewSchemaInput = {
+  ratingValue: number;
+  author: string;
+  datePublished: string;
+  reviewBody: string;
+  title?: string;
+  bestRating?: number;
+  worstRating?: number;
+};
+
+function resolveProductImage(image?: string): string {
+  if (!image) return `${SITE_URL}/og-image.png`;
+  return image.startsWith("http") ? image : absoluteUrl(image);
+}
+
+function reviewJsonLdNode(review: ReviewSchemaInput) {
+  return {
+    "@type": "Review",
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: review.ratingValue,
+      bestRating: review.bestRating ?? 5,
+      worstRating: review.worstRating ?? 1,
+    },
+    author: { "@type": "Person", name: review.author },
+    datePublished: review.datePublished,
+    reviewBody: review.reviewBody,
+    ...(review.title ? { name: review.title } : {}),
+  };
+}
+
+function productJsonLdNode(input: ProductSchemaInput, fallbackUrl?: string) {
+  const url = input.url ?? fallbackUrl ?? absoluteUrl(`/gear/library/${input.id}`);
+  return {
+    "@type": "Product",
+    name: input.name,
+    sku: input.id,
+    description: input.description,
+    brand: { "@type": "Brand", name: input.brand },
+    image: resolveProductImage(input.image),
+    url,
+    ...(input.category ? { category: input.category } : {}),
+    ...(input.aggregateRating && input.aggregateRating.reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: input.aggregateRating.ratingValue,
+            reviewCount: input.aggregateRating.reviewCount,
+            bestRating: input.aggregateRating.bestRating ?? 5,
+            worstRating: input.aggregateRating.worstRating ?? 1,
+          },
+        }
+      : {}),
+    ...(input.reviews && input.reviews.length > 0
+      ? { review: input.reviews.map(reviewJsonLdNode) }
+      : {}),
+  };
+}
+
+/**
+ * Full-document Product JSON-LD for a product detail page. Offer is intentionally
+ * omitted because we use affiliate links and cannot guarantee authoritative
+ * price/availability; emitting a stub would trigger Search Console warnings.
+ */
+export function productJsonLd(input: ProductSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    ...productJsonLdNode(input),
+  };
+}
+
+export function productFromLibrary(
+  product: Product,
+  extras: {
+    aggregateRating?: ProductSchemaInput["aggregateRating"];
+    reviews?: ReviewSchemaInput[];
+  } = {},
+): ProductSchemaInput {
+  return {
+    id: product.id,
+    name: `${product.brand} ${product.name}`,
+    brand: product.brand,
+    description: product.description,
+    category: product.category,
+    image: product.image,
+    url: absoluteUrl(`/gear/library/${product.id}`),
+    aggregateRating: extras.aggregateRating,
+    reviews: extras.reviews,
   };
 }
 

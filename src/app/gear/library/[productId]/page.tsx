@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import ReviewSection from "./ReviewSection";
 import CommentSection from "./CommentSection";
 import AddToKitButton from "./AddToKitButton";
@@ -10,6 +11,8 @@ import {
   ALL_PRODUCTS,
   getProductById,
 } from "@/lib/products";
+import { loadProductReviewAggregateServer } from "@/lib/products/reviews-server";
+import { productFromLibrary, productJsonLd } from "@/lib/schema";
 import type {
   Product,
   ShoeProduct,
@@ -479,6 +482,8 @@ export default async function ProductDetailPage({ params }: Params) {
 
   if (!product) notFound();
 
+  const reviewAggregate = await loadProductReviewAggregateServer(product.id);
+
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -510,13 +515,22 @@ export default async function ProductDetailPage({ params }: Params) {
     ],
   };
 
+  const productSchema = productJsonLd(
+    productFromLibrary(product, {
+      aggregateRating: reviewAggregate
+        ? {
+            ratingValue: reviewAggregate.ratingValue,
+            reviewCount: reviewAggregate.reviewCount,
+          }
+        : undefined,
+      reviews: reviewAggregate?.reviews,
+    }),
+  );
+
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={[breadcrumbJsonLd, productSchema]} />
 
       <main className="bg-light min-h-screen">
         {/* Back link */}

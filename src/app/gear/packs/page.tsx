@@ -410,11 +410,23 @@ const packsItemListJsonLd = itemListJsonLd({
     "Compare running vests by capacity, fit, and distance — from 50K race vests to 100-mile expedition packs.",
   url: `${SITE_URL}/gear/packs`,
   items: categories.flatMap((cat) =>
-    cat.vests.map((vest) => ({
-      name: `${vest.brand} ${vest.name}`,
-      url: `${SITE_URL}/gear/packs#${gearProductAnchorId(cat.id, vest.brand, vest.name)}`,
-      description: vest.bestFor.join(", "),
-    }))
+    cat.vests.map((vest) => {
+      const anchor = gearProductAnchorId(cat.id, vest.brand, vest.name);
+      const url = `${SITE_URL}/gear/packs#${anchor}`;
+      return {
+        name: `${vest.brand} ${vest.name}`,
+        url,
+        description: vest.bestFor.join(", "),
+        product: {
+          id: anchor,
+          name: `${vest.brand} ${vest.name}`,
+          brand: vest.brand,
+          description: `${vest.capacity} running vest. Best for: ${vest.bestFor.join(", ")}.`,
+          category: "Hydration Packs & Vests",
+          url,
+        },
+      };
+    })
   ),
 });
 

@@ -1,7 +1,14 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import { ALL_PRODUCTS } from "@/lib/products";
+import {
+  absoluteUrl,
+  itemListJsonLd,
+  productFromLibrary,
+  SITE_URL,
+} from "@/lib/schema";
 import LibraryClient from "./LibraryClient";
 
 export const metadata: Metadata = {
@@ -15,20 +22,33 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://finishultra.com" },
-    { "@type": "ListItem", position: 2, name: "Gear", item: "https://finishultra.com/gear" },
-    { "@type": "ListItem", position: 3, name: "Library", item: "https://finishultra.com/gear/library" },
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Gear", item: `${SITE_URL}/gear` },
+    { "@type": "ListItem", position: 3, name: "Library", item: `${SITE_URL}/gear/library` },
   ],
 };
+
+const libraryItemListJsonLd = itemListJsonLd({
+  name: "FinishUltra Gear Library",
+  description:
+    "Full catalog of trail running shoes, hydration packs, apparel, nutrition, and accessories for ultra marathons.",
+  url: `${SITE_URL}/gear/library`,
+  items: ALL_PRODUCTS.map((product) => {
+    const url = absoluteUrl(`/gear/library/${product.id}`);
+    return {
+      name: `${product.brand} ${product.name}`,
+      url,
+      description: product.description,
+      product: productFromLibrary(product),
+    };
+  }),
+});
 
 export default function LibraryPage() {
   return (
     <>
       <Header />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={[breadcrumbJsonLd, libraryItemListJsonLd]} />
       <main>
         <section className="bg-gradient-to-b from-light to-white py-16 sm:py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -134,11 +134,23 @@ const apparelItemListJsonLd = itemListJsonLd({
     "Base layers, shorts, shells, socks, and accessories reviewed for trail ultras from 50K to 100 miles.",
   url: `${SITE_URL}/gear/apparel`,
   items: categories.flatMap((cat) =>
-    cat.products.map((product) => ({
-      name: `${product.brand} ${product.name}`,
-      url: `${SITE_URL}/gear/apparel#${gearProductAnchorId(cat.id, product.brand, product.name)}`,
-      description: product.bestFor.join(", "),
-    }))
+    cat.products.map((product) => {
+      const anchor = gearProductAnchorId(cat.id, product.brand, product.name);
+      const url = `${SITE_URL}/gear/apparel#${anchor}`;
+      return {
+        name: `${product.brand} ${product.name}`,
+        url,
+        description: product.bestFor.join(", "),
+        product: {
+          id: anchor,
+          name: `${product.brand} ${product.name}`,
+          brand: product.brand,
+          description: `${cat.title} for ultra running. Best for: ${product.bestFor.join(", ")}.`,
+          category: "Ultra Running Apparel",
+          url,
+        },
+      };
+    })
   ),
 });
 

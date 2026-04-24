@@ -73,48 +73,47 @@ Converted 6 blog post hero images from JPEG to AVIF using sharp:
 
 ---
 
-## Phase 2 — SEO/AEO (pending)
+## Phase 2 — SEO/AEO ✅ Complete
 
-### 2.1 Sitemap completeness
+### 2.1 Sitemap completeness ✅
 
-**File**: `src/app/sitemap.ts`
+`src/app/sitemap.ts` now loads in parallel and emits URLs for:
+- **Gear library products** — 136 products from `ALL_PRODUCTS` (in-memory), priority 0.7, weekly.
+- **Shared training plans** (`/training/shared-plans/[slug]`) via `loadPublicTrainingPlansServer`, priority 0.6, weekly.
+- **Shared race-day kits** (`/gear/race-day-kit/[slug]`) via `loadPublicKitsServer`, priority 0.6, weekly.
+- **Public user profiles** (`/u/[username]`) via new `loadPublicProfilesServer` (filters `profile_visibility = public`), priority 0.4, monthly.
+- **Newsletter editions** (`/newsletter/[slug]`) via `loadPublishedNewsletters`, priority 0.6, monthly.
 
-Currently covers: static routes + blog posts. Missing:
+Glossary is a single page with anchors (not per-term routes) — no additional URLs required. Added `/start-here` and `/gear/library` top-level entries too.
 
-- [ ] **Gear library products** (`/gear/library/[productId]`): fetch all live products from Supabase. Priority 0.7, `weekly`, `lastModified` from `updated_at`.
-- [ ] **Shared training plans** (`/training/shared-plans/[slug]`): fetch all public plans. Priority 0.6, `weekly`.
-- [ ] **Shared race-day kits** (`/gear/race-day-kit/[slug]`): fetch all public kits. Priority 0.6, `weekly`.
-- [ ] **Public user profiles** (`/u/[username]`): fetch profiles where `is_public = true`. Priority 0.4, `monthly`.
-- [ ] **Newsletter editions** (`/newsletter/[slug]`): list published editions. Priority 0.6, `monthly`.
-- [ ] **Glossary terms** — check if `/tools/glossary` renders individual term pages or anchors. If individual pages, add them.
+New helper: `src/lib/account/public-profiles-server.ts`.
 
-Server-side loader helpers to create (mirroring `src/lib/blog-server.ts` pattern):
-- `src/lib/products-server.ts`
-- `src/lib/shared-plans-server.ts`
-- `src/lib/shared-kits-server.ts`
-- `src/lib/profiles-server.ts`
+### 2.2 Product + Review schema ✅
 
-Use `createSupabaseServer` (not the browser client) in all loaders.
+`src/lib/schema.ts` additions:
+- `productJsonLd(input)` / `productJsonLdNode(input, url)` — full Schema.org `Product` (name, sku, brand, image, description, category, url, aggregateRating, review).
+- `productFromLibrary(product, extras)` — builds `ProductSchemaInput` from a library `Product`, with optional aggregateRating + reviews.
+- `reviewJsonLdNode(review)` — `Review` with nested `Rating` (bestRating 5, worstRating 1).
+- `itemListJsonLd` extended — each item can now carry a `product` field, producing a full `Product` node as the ListItem `item` (vs. URL only).
 
-### 2.2 Product + Review schema
+**Offer intentionally omitted**: we use affiliate links with no authoritative price/availability; stub offers cause Search Console warnings.
 
-Biggest AEO win. Gear queries are where LLM answer engines source structured data, and `/gear/library/[productId]` currently ships no `Product` JSON-LD.
+**Injected JSON-LD**:
+- `src/app/gear/library/[productId]/page.tsx` — server-side review aggregate via new `loadProductReviewAggregateServer` (cookieless Supabase client so the page stays SSG). Emits `<JsonLd data={[breadcrumb, productSchema]} />` with aggregateRating + top 5 reviews when available.
+- `src/app/gear/library/page.tsx` — full catalog ItemList with `Product`-typed entries.
+- `src/app/gear/shoes/page.tsx`, `/packs`, `/nutrition`, `/apparel` — existing ItemLists upgraded to emit Product items (name, brand, description, category, anchor URL).
 
-**`src/lib/schema.ts`** — add two new builders:
-- [ ] `productSchema(product)` → `{ "@type": "Product", name, image, description, brand, sku, offers, aggregateRating?, review? }`
-- [ ] `reviewSchema(review)` → `{ "@type": "Review", reviewRating, author, datePublished, reviewBody }`
+New helper: `src/lib/products/reviews-server.ts` (uses `getSupabasePublic`, no cookies, safe for SSG).
 
-**Note**: Only include `Offer.price` if we have authoritative pricing. For affiliate-only products, omit `offers` entirely — do not stub a fake price (causes Search Console warnings).
+### 2.3 Markdown mirrors ✅
 
-**Where to inject**:
-- [ ] `src/app/gear/library/[productId]/page.tsx` — `<JsonLd data={productSchema(product)} />`. Include `aggregateRating` if product has ≥1 review; include top 5 recent reviews as nested `review` entries.
-- [ ] `src/app/gear/{shoes,packs,nutrition,apparel}/page.tsx` — `ItemList` of `Product` items for category landing pages.
+`src/lib/markdown-mirrors/index.ts` extended with dynamic handlers for the new sitemap URLs:
+- `/gear/library/:productId` → product summary (brand/name, category, price, description, why we recommend, tags, affiliate link).
+- `/gear/race-day-kit/:slug` → shared kit title/subtitle/author.
+- `/training/shared-plans/:slug` → shared plan title/distance/level/author.
+- `/newsletter/:slug` → full newsletter body.
 
-`src/components/JsonLd.tsx` already exists and is wired. New schemas just need builders + `<JsonLd>` insertion.
-
-### 2.3 Verify markdown mirrors cover new sitemap URLs
-
-`/middleware.ts` + `src/lib/markdown-mirrors/` already generate `/<path>/index.md` for every page. Spot-check that the new sitemap URLs (product library items, shared plans, shared kits, profiles, newsletter editions) resolve via `/<url>/index.md`. If any return 404, extend the generator. Free AEO win — LLMs prefer the `.md` endpoint.
+`/u/:username` intentionally not mirrored — user profile pages are low-value for LLM crawling.
 
 ---
 
@@ -127,7 +126,8 @@ Biggest AEO win. Gear queries are where LLM answer engines source structured dat
 - [ ] `npm run analyze` — capture before/after bundle sizes for `/`, `/blog`, `/blog/[slug]`, `/training/first-50k`
 - [ ] PageSpeed / Lighthouse on deployed preview: target LCP < 2.5s, TBT < 200ms, CLS < 0.1 mobile
 
-**Phase 2 (when ready):**
+**Phase 2 (done in code; verify on deployed preview):**
+- [x] Production build passes with 136 product pages SSG (`●`) via `generateStaticParams`
 - [ ] `/sitemap.xml` on deployed preview — confirm product, shared-plan, shared-kit, newsletter, profile URLs present
 - [ ] Load a product page → view source → paste JSON-LD into Google Rich Results Test → should pass as `Product` with no errors
 - [ ] Re-run Rich Results Test on blog post, FAQ page, homepage — confirm no regressions
