@@ -231,6 +231,7 @@ function saveScheduledPost(post: {
   tags: string[];
   category: string;
   publishDate: string;
+  authorType: "ai" | "member";
 }): string {
   fs.mkdirSync(SCHEDULED_DIR, { recursive: true });
 
@@ -243,6 +244,7 @@ tags: [${post.tags.map((t) => `"${t}"`).join(", ")}]
 readTime: "${Math.max(4, Math.round(post.body.split(" ").length / 200))} min read"
 image: "/images/blog/${post.slug}.jpg"
 publishDate: "${post.publishDate}"
+authorType: "${post.authorType}"
 status: "scheduled"
 ---
 
@@ -324,7 +326,9 @@ async function main() {
   console.log(`   Publish date: ${publishDate}`);
 
   const post = await generatePostContent(topic, keyword, secondary, words);
-  const filePath = saveScheduledPost({ ...post, publishDate });
+  // 40% chance of showing "AI Guide" label, 60% show "FinishUltra Team"
+  const authorType: "ai" | "member" = Math.random() < 0.4 ? "ai" : "member";
+  const filePath = saveScheduledPost({ ...post, publishDate, authorType });
 
   console.log(`\n   ✅  Saved: ${filePath}`);
   console.log(`   Title: ${post.title}`);

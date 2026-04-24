@@ -97,6 +97,7 @@ function buildPostObject(data: {
   publishedAt: string;
   image: string;
   readTime: string;
+  authorType?: "ai" | "member";
   relatedSlugs?: string[];
   faq?: { question: string; answer: string }[];
 }): string {
@@ -112,6 +113,9 @@ function buildPostObject(data: {
   lines.push(`    publishedAt: ${JSON.stringify(data.publishedAt)},`);
   lines.push(`    image: ${JSON.stringify(data.image)},`);
   lines.push(`    readTime: ${JSON.stringify(data.readTime)},`);
+  if (data.authorType) {
+    lines.push(`    authorType: ${JSON.stringify(data.authorType)},`);
+  }
 
   if (data.relatedSlugs && data.relatedSlugs.length > 0) {
     lines.push(`    relatedSlugs: ${JSON.stringify(data.relatedSlugs)},`);
@@ -221,6 +225,9 @@ async function main() {
     }
 
     // Build post object
+    const rawAuthorType = data.authorType as string | undefined;
+    const authorType = rawAuthorType === "ai" ? "ai" : "member";
+
     const postData = {
       id: slug,
       title,
@@ -232,6 +239,7 @@ async function main() {
       publishedAt: publishDate,
       image: (data.image as string) || `/images/blog/${slug}.jpg`,
       readTime: (data.readTime as string) || "5 min read",
+      authorType: authorType as "ai" | "member",
       relatedSlugs: (data.relatedSlugs as string[]) || [],
       faq,
     };

@@ -194,7 +194,7 @@ export function calculateReadTime(bodyMarkdown: string): string {
 }
 
 export function getBlogSourceLabel(authorType: BlogAuthorType): string {
-  return authorType === "ai" ? "AI Guide" : "Community Post";
+  return authorType === "ai" ? "AI Guide" : "FinishUltra Team";
 }
 
 export function getPublicBlogAuthorName(

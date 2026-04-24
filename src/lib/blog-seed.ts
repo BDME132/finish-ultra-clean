@@ -34,7 +34,7 @@ export function getLegacySeedRows(): {
           slug: post.slug,
           author_user_id: null,
           author_name: "Pheidi (AI)",
-          author_type: "ai",
+          author_type: (post.authorType ?? "member") as import("@/lib/blog").BlogAuthorType,
           visibility: "public",
           published_version_id: versionId,
           latest_version_id: versionId,

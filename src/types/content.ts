@@ -47,6 +47,7 @@ export interface BlogPost {
   image: string;
   readTime: string;
   featured?: boolean;
+  authorType?: "ai" | "member";
   affiliateProducts?: BlogAffiliateProduct[];
   relatedSlugs?: string[];
   faq?: { question: string; answer: string }[];

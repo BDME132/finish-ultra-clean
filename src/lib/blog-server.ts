@@ -199,7 +199,7 @@ export async function ensureSeedBlogContent() {
           slug: postRow.slug,
           author_user_id: null,
           author_name: "Pheidi (AI)",
-          author_type: "ai",
+          author_type: "member",
           visibility: "public",
           published_at: postRow.published_at,
           created_at: postRow.created_at,
