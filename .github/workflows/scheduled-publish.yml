@@ -1,9 +1,10 @@
 name: Scheduled Blog Publish
 
-# Runs daily at 8am UTC. Also triggerable manually from the GitHub Actions tab.
+# Runs every Tuesday and Friday at 8am Mountain Time (14:00 UTC).
+# Also triggerable manually from the GitHub Actions tab.
 on:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: "0 14 * * 2,5"  # Tuesday and Friday at 8am MT (UTC-6)
   workflow_dispatch:
     inputs:
       dry_run:
@@ -11,12 +12,17 @@ on:
         required: false
         default: "false"
         type: boolean
+      generate_new:
+        description: "Generate a new post from blog-calendar.csv before publishing"
+        required: false
+        default: "true"
+        type: boolean
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # needed to commit and push
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -37,6 +43,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate new post from calendar
+        if: github.event.inputs.generate_new != 'false'
+        run: npx tsx scripts/generate-post.ts --from-csv
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
       - name: Check for posts due today
         id: check
         run: |
@@ -55,21 +67,22 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          git diff --quiet && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet && git diff --staged --quiet && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
 
-      - name: Commit and push published posts
+      - name: Commit and push
         if: steps.changes.outputs.changed == 'true' && github.event.inputs.dry_run != 'true'
         run: |
           git config user.name "FinishUltra Bot"
           git config user.email "bot@finishultra.com"
           git add src/lib/content/blog-posts.ts
+          git add content/scheduled/ || true
           git add content/published/ || true
+          git add content/blog-calendar.csv || true
           git add public/llms.txt || true
-          PUBLISHED=$(git diff --cached --name-only | grep -c "blog-posts.ts" || true)
           DATE=$(date +%Y-%m-%d)
-          git commit -m "📝 Auto-publish scheduled blog post(s) — ${DATE}"
+          git commit -m "📝 Auto-publish blog post — ${DATE}"
           git push
 
-      - name: No posts published
+      - name: No changes
         if: steps.changes.outputs.changed == 'false'
-        run: echo "No posts were due today — nothing to publish."
+        run: echo "Nothing to publish today."

@@ -11,6 +11,7 @@
     "blog:draft": "tsx scripts/generate-blog-draft.ts",
     "blog:calendar": "tsx scripts/generate-content-calendar.ts",
     "blog:publish": "tsx scripts/publish-scheduled.ts",
+    "generate-post": "tsx scripts/generate-post.ts",
     "blog:social": "tsx scripts/generate-social-posts.ts",
     "check:gear-links": "node scripts/check-gear-links.mjs",
     "db:apply-007": "node scripts/apply-migration-007.mjs"

@@ -23,11 +23,28 @@ const LLMS_TXT_FILE = path.join(ROOT, "public", "llms.txt");
 const BASE_URL = "https://www.finishultra.com";
 
 // ---------------------------------------------------------------------------
-// Extract slugs from blog-posts.ts via regex (no TS eval needed)
+// Extract slugs + titles + excerpts from blog-posts.ts via regex
 // ---------------------------------------------------------------------------
+function extractPostsFromSource(source: string): { slug: string; title: string; excerpt: string }[] {
+  // Split by top-level objects (each starts with a leading `{` after array entry)
+  const results: { slug: string; title: string; excerpt: string }[] = [];
+  const slugMatches = [...source.matchAll(/slug:\s*["']([^"']+)["']/g)];
+  const titleMatches = [...source.matchAll(/title:\s*["']([^"']+)["']/g)];
+  const excerptMatches = [...source.matchAll(/excerpt:\s*["'`]([^"'`]+)["'`]/g)];
+
+  for (let i = 0; i < slugMatches.length; i++) {
+    results.push({
+      slug: slugMatches[i][1],
+      title: titleMatches[i]?.[1] ?? slugMatches[i][1],
+      excerpt: excerptMatches[i]?.[1]?.slice(0, 120).replace(/\n/g, " ") ?? "",
+    });
+  }
+  return results;
+}
+
+// Keep backward-compat alias
 function extractSlugsFromSource(source: string): string[] {
-  const matches = [...source.matchAll(/slug:\s*["']([^"']+)["']/g)];
-  return matches.map((m) => m[1]);
+  return extractPostsFromSource(source).map((p) => p.slug);
 }
 
 // ---------------------------------------------------------------------------
@@ -62,18 +79,18 @@ function main() {
   }
 
   const source = fs.readFileSync(BLOG_POSTS_FILE, "utf-8");
-  const slugs = extractSlugsFromSource(source);
-  console.log(`   Found ${slugs.length} blog posts in blog-posts.ts`);
+  const posts = extractPostsFromSource(source);
+  console.log(`   Found ${posts.length} blog posts in blog-posts.ts`);
 
   const llmsTxt = fs.readFileSync(LLMS_TXT_FILE, "utf-8");
   const existingMirrors = extractExistingMirrors(llmsTxt);
 
   // Find which slugs are missing a mirror URL
-  const missing: string[] = [];
-  for (const slug of slugs) {
-    const mirrorUrl = `${BASE_URL}/blog/${slug}/index.md`;
+  const missing: typeof posts = [];
+  for (const post of posts) {
+    const mirrorUrl = `${BASE_URL}/blog/${post.slug}/index.md`;
     if (!existingMirrors.has(mirrorUrl)) {
-      missing.push(slug);
+      missing.push(post);
     }
   }
 
@@ -83,12 +100,18 @@ function main() {
   }
 
   console.log(`   Adding ${missing.length} missing mirror URL(s) to llms.txt:`);
-  for (const slug of missing) {
-    console.log(`   + /blog/${slug}/index.md`);
+  for (const post of missing) {
+    console.log(`   + /blog/${post.slug}/index.md`);
   }
 
-  // Append to the Blog Posts section in llms.txt
-  const newLines = missing.map((slug) => `- ${BASE_URL}/blog/${slug}/index.md`).join("\n");
+  // Append to the Blog Posts section in llms.txt — rich format with title and summary
+  const newLines = missing
+    .map((post) => {
+      const url = `${BASE_URL}/blog/${post.slug}/index.md`;
+      const summary = post.excerpt ? ` — ${post.excerpt}` : "";
+      return `- [${post.title}](${url})${summary}`;
+    })
+    .join("\n");
 
   // Find the Blog Posts section and append after its last entry
   const blogSectionMarker = "### Blog Posts";
