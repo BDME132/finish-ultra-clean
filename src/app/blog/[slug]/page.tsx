@@ -398,6 +398,31 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </section>
 
+          {/* Pheidi CTA */}
+          <section className="py-8 border-t border-gray-100 bg-[#0B1120]">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <p className="font-headline font-bold text-white text-base mb-1">
+                    Questions after reading? Ask Pheidi.
+                  </p>
+                  <p className="text-sm text-white/60">
+                    Your free AI ultra running coach — training, gear, nutrition &amp; more.
+                  </p>
+                </div>
+                <Link
+                  href={`/login?next=%2Fpheidi`}
+                  className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-blue-600 text-white text-sm font-semibold rounded-xl transition-all"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                  Sign in to chat with Pheidi
+                </Link>
+              </div>
+            </div>
+          </section>
+
           <section className="py-8 border-t border-gray-100">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <Link

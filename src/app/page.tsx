@@ -373,6 +373,12 @@ export default async function HomePage() {
             >
               Chat with Pheidi
             </Link>
+            <p className="text-white/40 text-sm mt-4">
+              Free account required —{" "}
+              <Link href="/login?next=%2Fpheidi" className="text-white/70 hover:text-white underline underline-offset-2 transition-colors">
+                sign up in seconds
+              </Link>
+            </p>
           </div>
         </section>
 

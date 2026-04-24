@@ -2,6 +2,8 @@
 
 import { useChat } from "@ai-sdk/react";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -40,6 +42,8 @@ function saveAnonCount(count: number): void {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ChatInterface() {
+  const pathname = usePathname();
+
   // Pro / auth status
   const [isPro, setIsPro] = useState<boolean | null>(null); // null = still loading
   const [userId, setUserId] = useState<string | null>(null);
@@ -243,13 +247,33 @@ export default function ChatInterface() {
 
   // ─── Derived UI state ───────────────────────────────────────────────────────
 
+  const authLoaded = isPro !== null;
+  const isLoggedIn = userId !== null;
+
   const inputDisabled = isLoading || upgradeRequired;
 
   const inputPlaceholder = upgradeRequired
     ? "Upgrade to keep chatting with Pheidi"
     : "Ask about training, gear, nutrition...";
 
+  // Return URL for auth redirects (current page)
+  const returnUrl = encodeURIComponent(pathname ?? "/pheidi");
+
   // ─── Render ─────────────────────────────────────────────────────────────────
+
+  // Loading state — auth check in flight
+  if (!authLoaded) {
+    return (
+      <div className="flex flex-col flex-1 min-w-0 bg-[#0B1120] items-center justify-center">
+        <div className="w-6 h-6 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+      </div>
+    );
+  }
+
+  // Auth gate — not logged in
+  if (!isLoggedIn) {
+    return <AuthGate returnUrl={returnUrl} />;
+  }
 
   return (
     <div className="flex flex-col flex-1 min-w-0 bg-[#0B1120]">
@@ -408,6 +432,67 @@ export default function ChatInterface() {
           checkoutError={checkoutError}
         />
       )}
+    </div>
+  );
+}
+
+// ─── Auth gate ────────────────────────────────────────────────────────────────
+
+function AuthGate({ returnUrl }: { returnUrl: string }) {
+  return (
+    <div className="flex flex-col flex-1 min-w-0 bg-[#0B1120]">
+      {/* Messages area — blurred placeholder */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        {/* Icon */}
+        <div className="w-16 h-16 bg-[#1A2540] rounded-2xl flex items-center justify-center mb-5 animate-scale-in">
+          <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+        </div>
+
+        <h2 className="font-headline text-2xl font-bold text-[#E2E8F0] mb-3 animate-fade-in-up">
+          Meet Pheidi, Your Ultra Coach
+        </h2>
+        <p className="text-[#94A3B8] text-sm mb-8 max-w-sm animate-fade-in-up animation-delay-100">
+          Create a free account to start chatting with Pheidi — your personal AI ultramarathon coach.
+        </p>
+
+        <div className="w-full max-w-xs space-y-3 animate-fade-in-up animation-delay-200">
+          <Link
+            href={`/login?next=${returnUrl}`}
+            className="block w-full px-5 py-3 bg-primary hover:bg-blue-600 text-white font-semibold text-sm rounded-xl text-center transition-all active:scale-95"
+          >
+            Sign Up Free
+          </Link>
+          <p className="text-xs text-[#94A3B8] text-center">
+            Already have an account?{" "}
+            <Link
+              href={`/login?next=${returnUrl}`}
+              className="text-primary hover:underline font-medium"
+            >
+              Log in
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      {/* Greyed-out input */}
+      <div className="border-t border-[#1E293B] p-4 max-w-3xl mx-auto w-full">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            disabled
+            placeholder="Sign in to chat with Pheidi..."
+            className="flex-1 px-4 py-3 bg-[#141C2E] border border-[#2A3A55] rounded-lg text-[#E2E8F0] placeholder:text-[#94A3B8]/40 text-sm opacity-50 cursor-not-allowed"
+          />
+          <button
+            disabled
+            className="px-6 py-3 bg-primary text-white rounded-lg text-sm font-medium opacity-30 cursor-not-allowed"
+          >
+            Send
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

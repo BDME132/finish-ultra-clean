@@ -17,10 +17,12 @@ export default function LoginForm() {
   const { user } = useAuth();
   const isSupabaseConfigured = hasSupabaseBrowserEnv();
 
-  // If already logged in, redirect to account
+  const nextParam = searchParams.get("next") ?? "/account";
+
+  // If already logged in, redirect to next destination
   useEffect(() => {
-    if (user) router.replace("/account");
-  }, [user, router]);
+    if (user) router.replace(nextParam);
+  }, [user, router, nextParam]);
 
   // Show error from callback
   useEffect(() => {
@@ -48,10 +50,11 @@ export default function LoginForm() {
       return;
     }
 
+    const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextParam)}`;
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim().toLowerCase(),
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: callbackUrl,
       },
     });
 
@@ -81,7 +84,7 @@ export default function LoginForm() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextParam)}`,
       },
     });
   }
