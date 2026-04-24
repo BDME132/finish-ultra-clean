@@ -44,8 +44,9 @@ function saveAnonCount(count: number): void {
 export default function ChatInterface() {
   const pathname = usePathname();
 
-  // Pro / auth status
-  const [isPro, setIsPro] = useState<boolean | null>(null); // null = still loading
+  // Auth / Pro status
+  const [authChecked, setAuthChecked] = useState(false); // true once getUser() settles
+  const [isPro, setIsPro] = useState<boolean | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
   // Upgrade gate state
@@ -67,27 +68,42 @@ export default function ChatInterface() {
 
   useEffect(() => {
     async function checkProStatus() {
-      const supabase = createSupabaseBrowser();
-      if (!supabase) { setIsPro(false); return; }
+      try {
+        const supabase = createSupabaseBrowser();
+        if (!supabase) {
+          setIsPro(false);
+          setAuthChecked(true);
+          return;
+        }
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { setIsPro(false); return; }
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setIsPro(false);
+          setAuthChecked(true);
+          return;
+        }
 
-      setUserId(user.id);
-      const { data } = await supabase
-        .from("profiles")
-        .select("is_pro")
-        .eq("id", user.id)
-        .single();
-      const pro = data?.is_pro === true;
-      setIsPro(pro);
+        setUserId(user.id);
+        const { data } = await supabase
+          .from("profiles")
+          .select("is_pro")
+          .eq("id", user.id)
+          .single();
+        const pro = data?.is_pro === true;
+        setIsPro(pro);
+        setAuthChecked(true);
 
-      // Auto-trigger Stripe checkout if user just logged in to upgrade
-      if (!pro && localStorage.getItem("pheidi_checkout_intent")) {
-        localStorage.removeItem("pheidi_checkout_intent");
-        const res = await fetch("/api/stripe/checkout", { method: "POST" });
-        const checkoutData = await res.json();
-        if (checkoutData.url) window.location.href = checkoutData.url;
+        // Auto-trigger Stripe checkout if user just logged in to upgrade
+        if (!pro && localStorage.getItem("pheidi_checkout_intent")) {
+          localStorage.removeItem("pheidi_checkout_intent");
+          const res = await fetch("/api/stripe/checkout", { method: "POST" });
+          const checkoutData = await res.json();
+          if (checkoutData.url) window.location.href = checkoutData.url;
+        }
+      } catch {
+        // Network error or bad cookie — treat as logged out
+        setIsPro(false);
+        setAuthChecked(true);
       }
     }
     checkProStatus();
@@ -96,13 +112,13 @@ export default function ChatInterface() {
   // ─── Load anon count from localStorage ─────────────────────────────────────
 
   useEffect(() => {
-    if (isPro === null) return; // still loading
+    if (!authChecked) return; // still loading
     if (isPro || userId) return; // logged-in users tracked server-side
     const count = getAnonCount();
     if (count >= FREE_LIMIT) {
       setShowUpgradeModal(true);
     }
-  }, [isPro, userId]);
+  }, [authChecked, isPro, userId]);
 
   // ─── Handle ?upgraded=1 success return from Stripe ─────────────────────────
 
@@ -247,7 +263,6 @@ export default function ChatInterface() {
 
   // ─── Derived UI state ───────────────────────────────────────────────────────
 
-  const authLoaded = isPro !== null;
   const isLoggedIn = userId !== null;
 
   const inputDisabled = isLoading || upgradeRequired;
@@ -262,7 +277,7 @@ export default function ChatInterface() {
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   // Loading state — auth check in flight
-  if (!authLoaded) {
+  if (!authChecked) {
     return (
       <div className="flex flex-col flex-1 min-w-0 bg-[#0B1120] items-center justify-center">
         <div className="w-6 h-6 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
