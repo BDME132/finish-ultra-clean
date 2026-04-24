@@ -16,7 +16,8 @@
  *   npm run generate-post -- --from-csv
  */
 
-import OpenAI from "openai";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const OpenAI = require("openai").default ?? require("openai");
 import * as fs from "fs";
 import * as path from "path";
 
@@ -157,7 +158,8 @@ async function generatePostContent(
   tags: string[];
   category: string;
 }> {
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const client = new (OpenAI as any)({ apiKey: process.env.OPENAI_API_KEY });
 
   const userPrompt = `Write a complete blog post for FinishUltra.
 
@@ -211,7 +213,7 @@ BODY:
   const category = catMatch?.[1]?.trim() ?? "Getting Started";
   const tags = (tagsMatch?.[1] ?? keyword)
     .split(",")
-    .map((t) => t.trim())
+    .map((t: string) => t.trim())
     .filter(Boolean);
   const body = bodyMatch[1].trim();
   const slug = toSlug(topic);

@@ -178,45 +178,7 @@ export const shoes: ShoeProduct[] = [
   // ─────────────────────────────────────────────────────────────────────────
   // LIGHTWEIGHT
   // ─────────────────────────────────────────────────────────────────────────
-  {
-    id: "salomon-slab-ultra-3",
-    name: "S/Lab Ultra 3",
-    brand: "Salomon",
-    category: "shoes",
-    subcategory: "lightweight",
-    price: 200,
-    priceDisplay: "$200",
-    description:
-      "Race-day weapon from Salomon's elite lab. SensiFit upper locks your foot down on descents while Contagrip keeps you planted on wet rocks.",
-    whyWeRecommend:
-      "The S/Lab Ultra 3 is the elite race-day pick with an unmatched fit-to-feel ratio and Contagrip traction trusted by top ultra runners worldwide.",
-    affiliateLinks: { amazon: "#" },
-    tags: ["lightweight", "race day", "technical trails", "elite", "SensiFit", "Contagrip"],
-    specs: {
-      weight: "9.2 oz",
-      drop: "6mm",
-      stack: "30/24mm",
-      lug: "4mm",
-      midsole: "EnergyCell foam",
-      outsole: "Contagrip MA",
-      rockPlate: false,
-      widths: "Regular" },
-    ratings: { cushioning: 3, traction: 4, durability: 4, breathability: 5, groundFeel: 4 },
-    finderTags: {
-      terrain: ["technical", "mixed", "mountain"],
-      priority: ["light", "traction"],
-      distance: ["50k", "50m", "100k"] },
-    bestFor: ["Race day 50K/50M", "Technical trails at speed", "Experienced runners with strong feet"],
-    pros: [
-      "SensiFit cradles foot perfectly on descents",
-      "Excellent fit-to-feel ratio",
-      "Used by elite ultra runners worldwide",
-    ],
-    cons: ["Expensive", "Narrow fit", "Not enough cushion for 100M"],
-    review: {
-      quote: "SensiFit is the most secure trail fit I've ever worn. I flew down the descents with zero slippage.",
-      race: "UTMB",
-      runner: "Elite finisher" } },
+
   {
     id: "saucony-peregrine-14",
     name: "Peregrine 14",
@@ -528,45 +490,7 @@ export const shoes: ShoeProduct[] = [
       quote: "Lone Peak fit, Olympus cushion. The Timp 5 is my go-to for everything above 50 miles.",
       race: "Bear 100",
       runner: "Verified 100-mile finisher" } },
-  {
-    id: "topo-ultraventure-3",
-    name: "Ultraventure 3",
-    brand: "Topo",
-    category: "shoes",
-    subcategory: "wide",
-    price: 140,
-    priceDisplay: "$140",
-    description:
-      "Topo's roomy fit and 5mm drop bridge the gap between zero-drop and traditional shoes. Great for wide-footed runners who want versatility.",
-    whyWeRecommend:
-      "The Ultraventure 3 pairs Vibram Megagrip traction with a wide toe box and a 5mm drop, making it the ideal transition shoe for runners new to wider fits.",
-    affiliateLinks: { amazon: "https://amzn.to/4rAEWQo" },
-    tags: ["wide toe box", "5mm drop", "vibram", "transition shoe", "mixed terrain", "versatile"],
-    specs: {
-      weight: "10.1 oz",
-      drop: "5mm",
-      stack: "28/23mm",
-      lug: "4mm",
-      midsole: "ZipFoam",
-      outsole: "Vibram Megagrip",
-      rockPlate: false,
-      widths: "Regular" },
-    ratings: { cushioning: 4, traction: 5, durability: 4, breathability: 4, groundFeel: 3 },
-    finderTags: {
-      terrain: ["smooth", "mixed"],
-      priority: ["wide", "cushion"],
-      distance: ["50k", "50m", "100k"] },
-    bestFor: ["Runners transitioning to wider toe boxes", "Mixed terrain", "50K to 100K"],
-    pros: [
-      "5mm drop bridges the gap for non-zero-drop runners",
-      "Vibram Megagrip for excellent traction",
-      "Roomy fit without being extreme",
-    ],
-    cons: ["Less roomy than Altra", "Heavier build"],
-    review: {
-      quote: "I couldn't go zero-drop, but the Ultraventure's wide box still saved my toes at mile 60.",
-      race: "Zion 100",
-      runner: "Verified finisher" } },
+
 
   // ─────────────────────────────────────────────────────────────────────────
   // MOUNTAIN / ALPINE
@@ -611,46 +535,7 @@ export const shoes: ShoeProduct[] = [
       quote: "Hardrock is essentially a mountain climbing race. The Ultra Raptor is the only shoe I trust on the Grouse-Ouray section.",
       race: "Hardrock 100",
       runner: "Verified finisher" } },
-  {
-    id: "hoka-tecton-x2",
-    name: "Tecton X2",
-    brand: "Hoka",
-    category: "shoes",
-    subcategory: "mountain",
-    price: 225,
-    priceDisplay: "$225",
-    description:
-      "Two carbon fiber plates meet Hoka's max cushion platform. Explosive uphill response and plush downhill protection — the pinnacle of trail tech.",
-    whyWeRecommend:
-      "Dual carbon plates and max cushion in a lightweight package make the Tecton X2 the pinnacle of mountain ultra footwear for runners who demand speed and protection.",
-    affiliateLinks: { amazon: "#" },
-    tags: ["mountain", "carbon plate", "max cushion", "lightweight", "vibram", "climbing", "descents"],
-    specs: {
-      weight: "9.5 oz",
-      drop: "8mm",
-      stack: "38/30mm",
-      lug: "4mm",
-      midsole: "ProFly X with dual carbon plates",
-      outsole: "Vibram Megagrip",
-      rockPlate: true,
-      widths: "Regular" },
-    ratings: { cushioning: 5, traction: 5, durability: 4, breathability: 4, groundFeel: 3 },
-    finderTags: {
-      terrain: ["mountain", "technical", "mixed"],
-      priority: ["cushion", "light"],
-      distance: ["50k", "50m", "100k"] },
-    bestFor: ["Mixed mountain terrain", "Runners wanting max cushion + mountain grip", "Technical 100K/100M"],
-    pros: [
-      "Two carbon fiber plates for explosive climbing",
-      "Max cushion for descents",
-      "Vibram Megagrip on alpine terrain",
-      "Surprisingly lightweight",
-    ],
-    cons: ["Premium price", "High stack can feel unstable on off-camber", "Requires break-in on technical ground"],
-    review: {
-      quote: "The uphills felt effortless and the descents didn't destroy my quads. It's the future of mountain ultra footwear.",
-      race: "Transvulcania",
-      runner: "Elite finisher" } },
+
   {
     id: "scarpa-golden-gate-atr",
     name: "Golden Gate ATR",
@@ -864,34 +749,7 @@ export const shoes: ShoeProduct[] = [
       priority: ["cushion", "stability"],
       distance: ["50k", "50m"] },
     bestFor: ["Budget-conscious racers", "First-time ultra runners", "Groomed trails"] },
-  {
-    id: "la-sportiva-ultraventure-pro",
-    name: "Ultraventure Pro",
-    brand: "La Sportiva",
-    category: "shoes",
-    subcategory: "mountain",
-    price: 170,
-    priceDisplay: "$170",
-    description:
-      "A premium all-conditions mountain shoe with FriXion XT Climb outsole and high-stack cushion. Built for runners who want the best on every surface.",
-    whyWeRecommend:
-      "FriXion XT Climb grip and a generous 33mm stack make the Ultraventure Pro a premium all-terrain mountain shoe for runners who refuse to compromise.",
-    affiliateLinks: { amazon: "https://www.amazon.com/s?k=La%20Sportiva%20Ultraventure%20Pro&tag=finishultra-20" },
-    tags: ["mountain", "premium", "all-terrain", "FriXion", "high-stack", "Italian"],
-    specs: {
-      weight: "10.4 oz",
-      drop: "5mm",
-      stack: "33/28mm",
-      lug: undefined,
-      midsole: "MEMlex foam",
-      outsole: "FriXion XT Climb",
-      rockPlate: true,
-      widths: "Regular" },
-    finderTags: {
-      terrain: ["mountain", "technical", "mixed"],
-      priority: ["cushion", "traction"],
-      distance: ["50k", "50m", "100k"] },
-    bestFor: ["All-conditions mountain racing", "Premium gear seekers", "Technical and mixed terrain"] },
+
   {
     id: "hoka-clifton-9-trail",
     name: "Clifton 9 Trail",
