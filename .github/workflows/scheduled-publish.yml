@@ -47,7 +47,7 @@ jobs:
         if: github.event.inputs.generate_new != 'false'
         run: npx tsx scripts/generate-post.ts --from-csv
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Check for posts due today
         id: check

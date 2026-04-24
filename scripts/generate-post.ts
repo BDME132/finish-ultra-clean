@@ -16,7 +16,7 @@
  *   npm run generate-post -- --from-csv
  */
 
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -157,7 +157,7 @@ async function generatePostContent(
   tags: string[];
   category: string;
 }> {
-  const client = new Anthropic();
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const userPrompt = `Write a complete blog post for FinishUltra.
 
@@ -182,19 +182,18 @@ TAGS: [tag1, tag2, tag3, tag4]
 BODY:
 [full post body here — everything after this line until end of response]`;
 
-  console.log(`\n   🤖  Calling Claude API for: "${topic}"...`);
+  console.log(`\n   🤖  Generating post for: "${topic}"...`);
 
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-5",
+  const response = await client.chat.completions.create({
+    model: "gpt-4o",
     max_tokens: 8096,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: userPrompt }],
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: userPrompt },
+    ],
   });
 
-  const raw = message.content
-    .filter((b) => b.type === "text")
-    .map((b) => (b as { type: "text"; text: string }).text)
-    .join("");
+  const raw = response.choices[0]?.message?.content ?? "";
 
   // Parse structured response
   const titleMatch = raw.match(/^TITLE:\s*(.+)$/m);
@@ -204,7 +203,7 @@ BODY:
   const bodyMatch = raw.match(/^BODY:\n([\s\S]+)$/m);
 
   if (!titleMatch || !bodyMatch) {
-    throw new Error("Claude response did not contain expected TITLE: or BODY: sections.\n\nRaw output:\n" + raw.slice(0, 500));
+    throw new Error("Response did not contain expected TITLE: or BODY: sections.\n\nRaw output:\n" + raw.slice(0, 500));
   }
 
   const title = titleMatch[1].trim();
