@@ -5,18 +5,6 @@ import { checkChatRateLimit, peekChatRateLimit } from "@/lib/chat-rate-limit";
 import { getSupabase } from "@/lib/supabase";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
-async function resolveSubscription(req: NextRequest): Promise<boolean> {
-  const subscriberEmail = req.cookies.get("chat_subscribed")?.value;
-  if (!subscriberEmail) return false;
-
-  const { data } = await getSupabase()
-    .from("email_signups")
-    .select("email")
-    .eq("email", decodeURIComponent(subscriberEmail))
-    .single();
-  return !!data;
-}
-
 function getIP(req: NextRequest): string {
   return (
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -63,23 +51,11 @@ export async function GET(req: NextRequest) {
   const ip = getIP(req);
   const user = await getAuthUser();
 
-  if (user) {
-    const rateLimit = await peekChatRateLimit(ip, true, user.id);
-    return Response.json({
-      remaining: rateLimit.remaining,
-      resetAt: rateLimit.resetAt,
-      requiresSignup: false,
-      allowed: rateLimit.allowed,
-    });
-  }
-
-  const isSubscribed = await resolveSubscription(req);
-  const rateLimit = await peekChatRateLimit(ip, isSubscribed);
-
+  const rateLimit = await peekChatRateLimit(ip, user?.id);
   return Response.json({
     remaining: rateLimit.remaining,
     resetAt: rateLimit.resetAt,
-    requiresSignup: rateLimit.requiresSignup,
+    requiresSignup: false,
     allowed: rateLimit.allowed,
   });
 }
@@ -89,7 +65,7 @@ export async function POST(req: NextRequest) {
   const ip = getIP(req);
   const user = await getAuthUser();
 
-  // Pro users bypass all server-side rate limiting
+  // Pro users bypass all rate limiting
   if (user && (await isProUser(user.id))) {
     const { messages } = await req.json();
     const result = streamText({
@@ -100,23 +76,11 @@ export async function POST(req: NextRequest) {
     return result.toUIMessageStreamResponse();
   }
 
-  let rateLimit;
-  if (user) {
-    rateLimit = await checkChatRateLimit(ip, true, user.id);
-  } else {
-    const isSubscribed = await resolveSubscription(req);
-    rateLimit = await checkChatRateLimit(ip, isSubscribed);
-  }
+  const rateLimit = await checkChatRateLimit(ip, user?.id);
 
   if (!rateLimit.allowed) {
     return Response.json(
-      {
-        error: rateLimit.requiresSignup
-          ? "signup_required"
-          : "daily_limit_reached",
-        remaining: 0,
-        resetAt: rateLimit.resetAt,
-      },
+      { error: "upgrade_required", remaining: 0 },
       { status: 429 }
     );
   }
