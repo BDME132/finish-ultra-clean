@@ -50,6 +50,7 @@ export default function ChatInterface() {
 
   // Stripe checkout loading
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   // Server-side rate limit state (for logged-in non-pro users)
   const [upgradeRequired, setUpgradeRequired] = useState(false);
@@ -218,21 +219,23 @@ export default function ChatInterface() {
 
   async function handleUpgradeClick() {
     setCheckoutLoading(true);
+    setCheckoutError(null);
     try {
       const res = await fetch("/api/stripe/checkout", { method: "POST" });
       const data = await res.json();
 
-      if (res.status === 401 && data.error === "login_required") {
-        localStorage.setItem("pheidi_checkout_intent", "1");
-        window.location.href = "/login?next=/pheidi";
+      if (data.url) {
+        window.location.href = data.url;
         return;
       }
 
-      if (data.url) {
-        window.location.href = data.url;
-      }
+      setCheckoutError(
+        data.error === "stripe_not_configured"
+          ? "Checkout isn't configured yet. Please try again soon."
+          : data.error || "Couldn't open checkout. Please try again."
+      );
     } catch {
-      // Fall through — button re-enables
+      setCheckoutError("Couldn't reach Stripe. Check your connection and try again.");
     } finally {
       setCheckoutLoading(false);
     }
@@ -397,7 +400,12 @@ export default function ChatInterface() {
       {showUpgradeModal && (
         <UpgradeModal
           onUpgrade={handleUpgradeClick}
+          onClose={() => {
+            setShowUpgradeModal(false);
+            setCheckoutError(null);
+          }}
           checkoutLoading={checkoutLoading}
+          checkoutError={checkoutError}
         />
       )}
     </div>
@@ -408,14 +416,35 @@ export default function ChatInterface() {
 
 function UpgradeModal({
   onUpgrade,
+  onClose,
   checkoutLoading,
+  checkoutError,
 }: {
   onUpgrade: () => void;
+  onClose: () => void;
   checkoutLoading: boolean;
+  checkoutError: string | null;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-sm bg-[#141C2E] border border-[#2A3A55] rounded-2xl p-6 shadow-2xl animate-scale-in">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-sm bg-[#141C2E] border border-[#2A3A55] rounded-2xl p-6 shadow-2xl animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#E2E8F0] hover:bg-[#1A2540] transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         {/* Icon */}
         <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 mx-auto">
           <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -438,6 +467,10 @@ function UpgradeModal({
         >
           {checkoutLoading ? "Loading checkout..." : "Upgrade for $7/month"}
         </button>
+
+        {checkoutError && (
+          <p className="text-xs text-red-400 text-center mt-3">{checkoutError}</p>
+        )}
       </div>
     </div>
   );

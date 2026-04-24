@@ -8,35 +8,35 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: NextRequest) {
   try {
+    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID;
+    if (!priceId) {
+      console.error("[stripe/checkout] NEXT_PUBLIC_STRIPE_PRICE_ID not set");
+      return Response.json({ error: "stripe_not_configured" }, { status: 500 });
+    }
+
     const supabase = await createSupabaseServer();
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
-    if (!user) {
-      return Response.json({ error: "login_required" }, { status: 401 });
-    }
 
     const origin =
       req.headers.get("origin") ??
       req.headers.get("referer")?.replace(/\/$/, "") ??
       "https://www.finishultra.com";
 
+    // Logged-in users: pass supabase_user_id so webhook can flip is_pro.
+    // Anonymous users: let Stripe collect email; webhook will match by email
+    // when they sign up afterward.
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: [
-        {
-          price: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID!,
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      customer_email: user.email,
-      // supabase_user_id flows through to the subscription metadata so the
-      // webhook can set is_pro without needing a separate lookup table.
-      subscription_data: {
-        metadata: { supabase_user_id: user.id },
-      },
+      ...(user
+        ? {
+            customer_email: user.email,
+            subscription_data: { metadata: { supabase_user_id: user.id } },
+          }
+        : {}),
       success_url: `${origin}/pheidi?upgraded=1`,
       cancel_url: `${origin}/pheidi`,
     });
@@ -44,9 +44,7 @@ export async function POST(req: NextRequest) {
     return Response.json({ url: session.url });
   } catch (err) {
     console.error("[stripe/checkout]", err);
-    return Response.json(
-      { error: "Failed to create checkout session" },
-      { status: 500 }
-    );
+    const message = err instanceof Error ? err.message : "Failed to create checkout session";
+    return Response.json({ error: message }, { status: 500 });
   }
 }
