@@ -1,7 +1,6 @@
 import { getSupabase } from "./supabase";
 
-const FREE_LIMIT = 10; // free messages per 7-day window for non-pro users
-const WINDOW_DAYS = 7; // reset window in days
+const FREE_LIMIT = 5; // lifetime free messages — never resets, upgrade to pro for more
 
 export interface RateLimitResult {
   allowed: boolean;
@@ -35,15 +34,13 @@ export async function peekChatRateLimit(
 async function checkUserRateLimit(userId: string): Promise<RateLimitResult> {
   const supabase = getSupabase();
   const now = new Date();
-  const windowCutoff = new Date(now.getTime() - WINDOW_DAYS * 24 * 60 * 60 * 1000);
 
   const { data: existing } = await supabase
     .from("chat_rate_limits")
-    .select("message_count, window_start")
+    .select("message_count")
     .eq("user_id", userId)
     .single();
 
-  // No record yet — create one
   if (!existing) {
     await supabase.from("chat_rate_limits").insert({
       ip_address: `user:${userId}`,
@@ -55,18 +52,8 @@ async function checkUserRateLimit(userId: string): Promise<RateLimitResult> {
     return { allowed: true, remaining: FREE_LIMIT - 1, resetAt: null, requiresSignup: false };
   }
 
-  // Window expired — reset the count
-  if (new Date(existing.window_start) < windowCutoff) {
-    await supabase
-      .from("chat_rate_limits")
-      .update({ message_count: 1, window_start: now.toISOString() })
-      .eq("user_id", userId);
-    return { allowed: true, remaining: FREE_LIMIT - 1, resetAt: null, requiresSignup: false };
-  }
-
   if (existing.message_count >= FREE_LIMIT) {
-    const resetAt = new Date(new Date(existing.window_start).getTime() + WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
-    return { allowed: false, remaining: 0, resetAt, requiresSignup: false };
+    return { allowed: false, remaining: 0, resetAt: null, requiresSignup: false };
   }
 
   const newCount = existing.message_count + 1;
@@ -80,23 +67,19 @@ async function checkUserRateLimit(userId: string): Promise<RateLimitResult> {
 
 async function peekUserRateLimit(userId: string): Promise<RateLimitResult> {
   const supabase = getSupabase();
-  const windowCutoff = new Date(Date.now() - WINDOW_DAYS * 24 * 60 * 60 * 1000);
 
   const { data: existing } = await supabase
     .from("chat_rate_limits")
-    .select("message_count, window_start")
+    .select("message_count")
     .eq("user_id", userId)
     .single();
 
-  if (!existing || new Date(existing.window_start) < windowCutoff) {
+  if (!existing) {
     return { allowed: true, remaining: FREE_LIMIT, resetAt: null, requiresSignup: false };
   }
 
   const remaining = Math.max(0, FREE_LIMIT - existing.message_count);
-  const resetAt = remaining === 0
-    ? new Date(new Date(existing.window_start).getTime() + WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString()
-    : null;
-  return { allowed: remaining > 0, remaining, resetAt, requiresSignup: false };
+  return { allowed: remaining > 0, remaining, resetAt: null, requiresSignup: false };
 }
 
 // ─── IP-based rate limiting (anonymous users) ────────────────────────────────

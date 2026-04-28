@@ -19,6 +19,10 @@ export async function POST(req: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) {
+      return Response.json({ error: "login_required" }, { status: 401 });
+    }
+
     const origin =
       req.headers.get("origin") ??
       req.headers.get("referer")?.replace(/\/$/, "") ??
@@ -31,12 +35,8 @@ export async function POST(req: NextRequest) {
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      ...(user
-        ? {
-            customer_email: user.email,
-            subscription_data: { metadata: { supabase_user_id: user.id } },
-          }
-        : {}),
+      customer_email: user.email,
+      subscription_data: { metadata: { supabase_user_id: user.id } },
       success_url: `${origin}/pheidi?upgraded=1`,
       cancel_url: `${origin}/pheidi`,
     });

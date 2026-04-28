@@ -8,7 +8,7 @@ import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const FREE_LIMIT = 10;
+const FREE_LIMIT = 5;
 const LS_KEY = "pheidi_anon_v2"; // v2 = lifetime count, no daily reset
 
 const suggestedPrompts = [
@@ -63,7 +63,6 @@ export default function ChatInterface() {
   // Server-side rate limit state (for logged-in non-pro users)
   const [upgradeRequired, setUpgradeRequired] = useState(false);
   const [remaining, setRemaining] = useState<number | null>(null);
-  const [resetAt, setResetAt] = useState<string | null>(null);
 
   // Track messages in a ref for history saving
   const messagesRef = useRef<ReturnType<typeof useChat>["messages"]>([]);
@@ -133,7 +132,6 @@ export default function ChatInterface() {
       if (res.ok) {
         const data = await res.json();
         setRemaining(data.remaining);
-        if (data.resetAt) setResetAt(data.resetAt);
         if (!data.allowed) {
           setUpgradeRequired(true);
           setShowUpgradeModal(true);
@@ -358,7 +356,7 @@ export default function ChatInterface() {
           <div className="flex justify-start animate-fade-in-up">
             <div className="rounded-2xl rounded-bl-md px-4 py-2.5 bg-[#1A2540] border border-amber-500/30 flex items-center gap-2">
               <span className="text-amber-400 text-xs">⚡</span>
-              <p className="text-xs text-amber-300/90">Last free message this week — make it count.</p>
+              <p className="text-xs text-amber-300/90">1 free message left — make it count.</p>
             </div>
           </div>
         )}
@@ -429,7 +427,6 @@ export default function ChatInterface() {
           }}
           checkoutLoading={checkoutLoading}
           checkoutError={checkoutError}
-          resetAt={resetAt}
         />
       )}
     </div>
@@ -504,17 +501,12 @@ function UpgradeModal({
   onClose,
   checkoutLoading,
   checkoutError,
-  resetAt,
 }: {
   onUpgrade: () => void;
   onClose: () => void;
   checkoutLoading: boolean;
   checkoutError: string | null;
-  resetAt: string | null;
 }) {
-  const resetDate = resetAt
-    ? new Date(resetAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-    : null;
 
   return (
     <div
@@ -544,18 +536,12 @@ function UpgradeModal({
         </div>
 
         <h2 className="font-headline text-xl font-bold text-[#E2E8F0] text-center mb-2">
-          You&apos;ve used your 10 free messages
+          You&apos;ve used your 5 free messages
         </h2>
-        <p className="text-sm text-[#94A3B8] text-center mb-1">
+        <p className="text-sm text-[#94A3B8] text-center mb-6">
           Upgrade to Pheidi Pro for unlimited coaching, saved conversation history, and weekly training summaries —&nbsp;
           <span className="text-[#E2E8F0] font-semibold">$7/month.</span>
         </p>
-        {resetDate && (
-          <p className="text-xs text-[#94A3B8]/60 text-center mb-5">
-            Free messages reset on {resetDate}.
-          </p>
-        )}
-        {!resetDate && <div className="mb-5" />}
 
         <button
           onClick={onUpgrade}
