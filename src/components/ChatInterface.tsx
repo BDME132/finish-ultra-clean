@@ -8,7 +8,7 @@ import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const FREE_LIMIT = 5;
+const FREE_LIMIT = 10;
 const LS_KEY = "pheidi_anon_v2"; // v2 = lifetime count, no daily reset
 
 const suggestedPrompts = [
@@ -45,7 +45,10 @@ export default function ChatInterface() {
   const pathname = usePathname();
 
   // Auth / Pro status
-  const [authChecked, setAuthChecked] = useState(false); // true once getUser() settles
+  // showAuthGate defaults to true — the gate is shown immediately and only hidden
+  // once we confirm via getUser() that the visitor has an active session.
+  const [showAuthGate, setShowAuthGate] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
   const [isPro, setIsPro] = useState<boolean | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -60,6 +63,7 @@ export default function ChatInterface() {
   // Server-side rate limit state (for logged-in non-pro users)
   const [upgradeRequired, setUpgradeRequired] = useState(false);
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [resetAt, setResetAt] = useState<string | null>(null);
 
   // Track messages in a ref for history saving
   const messagesRef = useRef<ReturnType<typeof useChat>["messages"]>([]);
@@ -70,20 +74,15 @@ export default function ChatInterface() {
     async function checkProStatus() {
       try {
         const supabase = createSupabaseBrowser();
-        if (!supabase) {
-          setIsPro(false);
-          setAuthChecked(true);
-          return;
-        }
+        if (!supabase) return; // showAuthGate stays true
 
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          setIsPro(false);
-          setAuthChecked(true);
-          return;
-        }
+        if (!user) return; // showAuthGate stays true — not logged in
 
+        // Confirmed session — reveal the chat
         setUserId(user.id);
+        setShowAuthGate(false);
+
         const { data } = await supabase
           .from("profiles")
           .select("is_pro")
@@ -101,9 +100,7 @@ export default function ChatInterface() {
           if (checkoutData.url) window.location.href = checkoutData.url;
         }
       } catch {
-        // Network error or bad cookie — treat as logged out
-        setIsPro(false);
-        setAuthChecked(true);
+        // Network error — keep the auth gate showing (safe default)
       }
     }
     checkProStatus();
@@ -112,13 +109,10 @@ export default function ChatInterface() {
   // ─── Load anon count from localStorage ─────────────────────────────────────
 
   useEffect(() => {
-    if (!authChecked) return; // still loading
-    if (isPro || userId) return; // logged-in users tracked server-side
-    const count = getAnonCount();
-    if (count >= FREE_LIMIT) {
-      setShowUpgradeModal(true);
-    }
-  }, [authChecked, isPro, userId]);
+    if (!authChecked) return; // pro status not loaded yet
+    if (isPro) return; // pro users have no limit
+    // logged-in free users: check server-side remaining via fetchRemaining
+  }, [authChecked, isPro]);
 
   // ─── Handle ?upgraded=1 success return from Stripe ─────────────────────────
 
@@ -139,6 +133,7 @@ export default function ChatInterface() {
       if (res.ok) {
         const data = await res.json();
         setRemaining(data.remaining);
+        if (data.resetAt) setResetAt(data.resetAt);
         if (!data.allowed) {
           setUpgradeRequired(true);
           setShowUpgradeModal(true);
@@ -263,8 +258,6 @@ export default function ChatInterface() {
 
   // ─── Derived UI state ───────────────────────────────────────────────────────
 
-  const isLoggedIn = userId !== null;
-
   const inputDisabled = isLoading || upgradeRequired;
 
   const inputPlaceholder = upgradeRequired
@@ -276,17 +269,8 @@ export default function ChatInterface() {
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
-  // Loading state — auth check in flight
-  if (!authChecked) {
-    return (
-      <div className="flex flex-col flex-1 min-w-0 bg-[#0B1120] items-center justify-center">
-        <div className="w-6 h-6 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-      </div>
-    );
-  }
-
-  // Auth gate — not logged in
-  if (!isLoggedIn) {
+  // Auth gate — shown immediately by default; hidden only after confirmed login
+  if (showAuthGate) {
     return <AuthGate returnUrl={returnUrl} />;
   }
 
@@ -374,7 +358,7 @@ export default function ChatInterface() {
           <div className="flex justify-start animate-fade-in-up">
             <div className="rounded-2xl rounded-bl-md px-4 py-2.5 bg-[#1A2540] border border-amber-500/30 flex items-center gap-2">
               <span className="text-amber-400 text-xs">⚡</span>
-              <p className="text-xs text-amber-300/90">1 free message left — make it count.</p>
+              <p className="text-xs text-amber-300/90">Last free message this week — make it count.</p>
             </div>
           </div>
         )}
@@ -445,6 +429,7 @@ export default function ChatInterface() {
           }}
           checkoutLoading={checkoutLoading}
           checkoutError={checkoutError}
+          resetAt={resetAt}
         />
       )}
     </div>
@@ -519,12 +504,18 @@ function UpgradeModal({
   onClose,
   checkoutLoading,
   checkoutError,
+  resetAt,
 }: {
   onUpgrade: () => void;
   onClose: () => void;
   checkoutLoading: boolean;
   checkoutError: string | null;
+  resetAt: string | null;
 }) {
+  const resetDate = resetAt
+    ? new Date(resetAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : null;
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
@@ -553,12 +544,18 @@ function UpgradeModal({
         </div>
 
         <h2 className="font-headline text-xl font-bold text-[#E2E8F0] text-center mb-2">
-          You&apos;ve used your 5 free messages
+          You&apos;ve used your 10 free messages
         </h2>
-        <p className="text-sm text-[#94A3B8] text-center mb-6">
+        <p className="text-sm text-[#94A3B8] text-center mb-1">
           Upgrade to Pheidi Pro for unlimited coaching, saved conversation history, and weekly training summaries —&nbsp;
           <span className="text-[#E2E8F0] font-semibold">$7/month.</span>
         </p>
+        {resetDate && (
+          <p className="text-xs text-[#94A3B8]/60 text-center mb-5">
+            Free messages reset on {resetDate}.
+          </p>
+        )}
+        {!resetDate && <div className="mb-5" />}
 
         <button
           onClick={onUpgrade}

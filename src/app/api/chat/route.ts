@@ -65,8 +65,13 @@ export async function POST(req: NextRequest) {
   const ip = getIP(req);
   const user = await getAuthUser();
 
+  // Login required — block all unauthenticated requests
+  if (!user) {
+    return Response.json({ error: "login_required" }, { status: 401 });
+  }
+
   // Pro users bypass all rate limiting
-  if (user && (await isProUser(user.id))) {
+  if (await isProUser(user.id)) {
     const { messages } = await req.json();
     const result = streamText({
       model: openai("gpt-4o-mini"),
@@ -76,7 +81,7 @@ export async function POST(req: NextRequest) {
     return result.toUIMessageStreamResponse();
   }
 
-  const rateLimit = await checkChatRateLimit(ip, user?.id);
+  const rateLimit = await checkChatRateLimit(ip, user.id);
 
   if (!rateLimit.allowed) {
     return Response.json(
