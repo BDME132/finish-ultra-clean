@@ -1,9 +1,12 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import Header from "@/components/Header";
 import ChatInterface from "@/components/ChatInterface";
 import JsonLd from "@/components/JsonLd";
 import { pageMetadata } from "@/lib/seo-metadata";
 import { webApplicationJsonLd, SITE_URL } from "@/lib/schema";
+import { createSupabaseServer } from "@/lib/supabase/server";
+import { claimPendingPro } from "@/lib/claim-pending-pro";
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -22,7 +25,31 @@ const pheidiJsonLd = webApplicationJsonLd({
   applicationCategory: "LifestyleApplication",
 });
 
-export default function PheidiPage() {
+interface PheidiPageProps {
+  searchParams: Promise<{ upgraded?: string }>;
+}
+
+export default async function PheidiPage({ searchParams }: PheidiPageProps) {
+  const params = await searchParams;
+  const justUpgraded = params.upgraded === "1";
+
+  // If the visitor is logged in, try to claim any pending pro subscription
+  // tied to their email. This covers the anonymous-checkout-then-signup path.
+  let showAnonUpgradedPrompt = false;
+  try {
+    const supabase = await createSupabaseServer();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.email) {
+      await claimPendingPro(user.id, user.email);
+    } else if (justUpgraded) {
+      showAnonUpgradedPrompt = true;
+    }
+  } catch {
+    // Non-fatal; chat still works.
+  }
+
   return (
     <>
       <Header />
@@ -71,6 +98,20 @@ export default function PheidiPage() {
 
         {/* Chat area */}
         <div className="flex-1 flex flex-col min-w-0 shadow-[0_0_80px_rgba(0,102,255,0.06)]">
+          {showAnonUpgradedPrompt && (
+            <div className="bg-emerald-900/40 border-b border-emerald-700/60 text-emerald-100 px-6 py-3 text-sm flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span className="font-medium">Payment received — last step:</span>
+              <span>
+                Create your account using the same email you entered at checkout to activate Pheidi Pro.
+              </span>
+              <Link
+                href="/login"
+                className="ml-auto inline-flex items-center rounded-md bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 text-sm font-medium"
+              >
+                Sign up / sign in
+              </Link>
+            </div>
+          )}
           <ChatInterface />
         </div>
       </main>
