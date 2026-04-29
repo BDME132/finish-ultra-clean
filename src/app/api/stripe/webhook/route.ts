@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { getSupabase } from "@/lib/supabase";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-04-22.dahlia",
+  apiVersion: "2026-03-25.dahlia",
 });
 
 // Next.js App Router delivers the raw body via req.text() — no special config needed.
