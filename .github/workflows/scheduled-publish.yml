@@ -1,10 +1,10 @@
 name: Scheduled Blog Publish
 
-# Runs every Tuesday and Friday at 8am Mountain Time (14:00 UTC).
+# Runs every Monday and Friday at 8am Mountain Time (14:00 UTC).
 # Also triggerable manually from the GitHub Actions tab.
 on:
   schedule:
-    - cron: "0 14 * * 2,5"  # Tuesday and Friday at 8am MT (UTC-6)
+    - cron: "0 14 * * 1,5"  # Monday and Friday at 8am MT (UTC-6)
   workflow_dispatch:
     inputs:
       dry_run:

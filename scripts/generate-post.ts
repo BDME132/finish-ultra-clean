@@ -2,7 +2,7 @@
 /**
  * FinishUltra Blog Post Generator
  *
- * Calls the Anthropic API to generate a fully SEO/AEO-optimized blog post,
+ * Calls the OpenAI API to generate a fully SEO/AEO-optimized blog post,
  * then saves it as a scheduled .md file ready for publish-scheduled.ts to pick up.
  *
  * Usage:
@@ -16,10 +16,10 @@
  *   npm run generate-post -- --from-csv
  */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const OpenAI = require("openai").default ?? require("openai");
+import OpenAI from "openai";
 import * as fs from "fs";
 import * as path from "path";
+import { ALL_PRODUCTS } from "../src/lib/products/index";
 
 const ROOT = process.cwd();
 const SCHEDULED_DIR = path.join(ROOT, "content", "scheduled");
@@ -114,17 +114,94 @@ function toSlug(topic: string): string {
     .replace(/-+/g, "-");
 }
 
-// ─── Publish date: next Tuesday or Friday ────────────────────────────────────
+// ─── Publish date: next Monday or Friday ─────────────────────────────────────
 
 function nextPublishDate(): string {
   const now = new Date();
-  const day = now.getDay(); // 0=Sun, 2=Tue, 5=Fri
-  let daysUntil = 1;
-  if (day < 2) daysUntil = 2 - day;
-  else if (day < 5) daysUntil = 5 - day;
-  else daysUntil = 9 - day; // next Tuesday
+  const day = now.getDay(); // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+  let daysUntil: number;
+  if (day === 1 || day === 5) {
+    daysUntil = 0; // Today IS Mon or Fri — publish today
+  } else if (day === 0) {
+    daysUntil = 1; // Sun → Mon
+  } else if (day === 6) {
+    daysUntil = 2; // Sat → Mon
+  } else {
+    daysUntil = 5 - day; // Tue(3)/Wed(2)/Thu(1) → Fri
+  }
   now.setDate(now.getDate() + daysUntil);
   return now.toISOString().split("T")[0];
+}
+
+// ─── Affiliate link replacement ───────────────────────────────────────────────
+
+/**
+ * Build a flat lookup of product keywords → { name, brand, url }.
+ * Called once so we don't re-process on every placeholder.
+ */
+function buildAffiliateLookup(): Array<{ terms: string[]; displayName: string; url: string }> {
+  const entries: Array<{ terms: string[]; displayName: string; url: string }> = [];
+
+  for (const product of ALL_PRODUCTS) {
+    const url = (product.affiliateLinks as Record<string, string> | undefined)?.amazon;
+    if (!url) continue;
+
+    entries.push({
+      terms: [
+        product.name.toLowerCase(),
+        product.brand.toLowerCase(),
+        `${product.brand} ${product.name}`.toLowerCase(),
+        ...product.tags.map((t) => t.toLowerCase()),
+      ],
+      displayName: `${product.brand} ${product.name}`,
+      url,
+    });
+  }
+  return entries;
+}
+
+/**
+ * Replace [AFFILIATE: product name here] placeholders with real Amazon affiliate links.
+ * Fuzzy-matches the hint against product name, brand, and tags.
+ * Falls back to the gear page if no product is found.
+ */
+function replaceAffiliateLinks(body: string): string {
+  const lookup = buildAffiliateLookup();
+
+  return body.replace(/\[AFFILIATE:\s*([^\]]+)\]/gi, (_match, hint: string) => {
+    const normalized = hint.toLowerCase().trim();
+
+    let bestDisplay = "";
+    let bestUrl = "";
+    let bestScore = 0;
+
+    for (const entry of lookup) {
+      for (const term of entry.terms) {
+        if (term === normalized) {
+          // Exact match — use immediately
+          return `[${entry.displayName} on Amazon](${entry.url})`;
+        }
+        if (term.includes(normalized) || normalized.includes(term)) {
+          const score =
+            Math.min(term.length, normalized.length) /
+            Math.max(term.length, normalized.length);
+          if (score > bestScore) {
+            bestScore = score;
+            bestDisplay = entry.displayName;
+            bestUrl = entry.url;
+          }
+        }
+      }
+    }
+
+    if (bestScore >= 0.3) {
+      return `[${bestDisplay} on Amazon](${bestUrl})`;
+    }
+
+    // No product match — link to the gear page with the hint as anchor text
+    console.log(`   ⚠️  No affiliate match for: "${hint.trim()}" — linking to /gear`);
+    return `[${hint.trim()}](/gear)`;
+  });
 }
 
 // ─── AI generation ────────────────────────────────────────────────────────────
@@ -133,17 +210,25 @@ const SYSTEM_PROMPT = `You are the expert content writer for FinishUltra, the #1
 
 Voice: Encouraging, practical, honest. You've run ultras. You know what it's actually like. No fluff, no padding, no vague motivational filler. Write like you're talking to a friend who's nervous about their first 50K.
 
+SEO & AEO rules (these directly affect Google rankings and AI citation):
+- Write for "People Also Ask" and featured snippets. Every H2 should be a question someone types into Google or asks an AI assistant.
+- The "**Quick Answer:**" box at the top gets quoted verbatim by AI search engines (ChatGPT, Perplexity, Gemini) — make it complete and factual enough to stand alone.
+- Mention the primary keyword in the first 100 words, at least one H2, and naturally 3-4 more times throughout.
+- Secondary keywords should appear naturally in body text and at least one H3.
+- Use specific numbers, product names, and distances — AI search engines prefer specificity over generality.
+- Each FAQ answer must be 2-4 sentences minimum — short FAQ answers get ignored by AI citation systems.
+
 Format rules you MUST follow exactly:
-1. Start the ENTIRE post with a "**Quick Answer:**" paragraph (no heading above it) — 2-3 sentences that directly answer the primary question. This is critical for AI citation.
-2. Use one H1 (title is handled by frontmatter — do NOT repeat it in the body)
-3. H2s must be full questions (e.g. "## What Shoes Are Best for Beginners?")
-4. H3s for sub-points under H2s
-5. Never skip heading levels
+1. Start the ENTIRE post with a "**Quick Answer:**" paragraph (no heading above it) — 2-4 sentences that directly answer the primary question with specific facts. This is the AI citation snippet.
+2. Title is handled by frontmatter — do NOT repeat it as an H1 in the body.
+3. H2s must be full questions (e.g. "## What Shoes Are Best for Beginners?"). These become Google featured snippet targets.
+4. H3s for sub-points under H2s — use for specific product recommendations or sub-topics.
+5. Never skip heading levels.
 6. Include EXACTLY 3 internal links using this format: [anchor text](/path) — choose from: /training/first-50k, /gear, /gear/shoes, /gear/packs, /gear/nutrition, /tools/pace-calculator, /tools/glossary, /blog, /pheidi
-7. Include EXACTLY 2 affiliate placeholders formatted as: [AFFILIATE: product name here]
-8. End with a "## Frequently Asked Questions" section with EXACTLY 6 questions and thorough answers
-9. Target word count must be met
-10. No markdown tables — use bullet lists or numbered lists instead`;
+7. Include EXACTLY 2 affiliate placeholders formatted as: [AFFILIATE: product name here] — use real gear brand + product names (e.g. "Hoka Speedgoat 6", "Salomon Advanced Skin 12", "Tailwind Endurance Fuel", "Nathan VaporAir 7L", "Garmin Forerunner 255").
+8. End with a "## Frequently Asked Questions" section with EXACTLY 6 questions and thorough answers (2-4 sentences each).
+9. Target word count must be met — do not pad with filler, use it for depth.
+10. No markdown tables — use bullet lists or numbered lists instead.`;
 
 async function generatePostContent(
   topic: string,
@@ -158,8 +243,7 @@ async function generatePostContent(
   tags: string[];
   category: string;
 }> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const client = new (OpenAI as any)({ apiKey: process.env.OPENAI_API_KEY });
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const userPrompt = `Write a complete blog post for FinishUltra.
 
@@ -326,17 +410,22 @@ async function main() {
   console.log(`   Publish date: ${publishDate}`);
 
   const post = await generatePostContent(topic, keyword, secondary, words);
+
+  // Replace [AFFILIATE: ...] placeholders with real Amazon affiliate links
+  const bodyWithLinks = replaceAffiliateLinks(post.body);
+  const postWithLinks = { ...post, body: bodyWithLinks };
+
   // 40% chance of showing "AI Guide" label, 60% show "FinishUltra Team"
   const authorType: "ai" | "member" = Math.random() < 0.4 ? "ai" : "member";
-  const filePath = saveScheduledPost({ ...post, publishDate, authorType });
+  const filePath = saveScheduledPost({ ...postWithLinks, publishDate, authorType });
 
   console.log(`\n   ✅  Saved: ${filePath}`);
-  console.log(`   Title: ${post.title}`);
-  console.log(`   Slug: ${post.slug}`);
-  console.log(`   Words: ~${post.body.split(" ").length}`);
+  console.log(`   Title: ${postWithLinks.title}`);
+  console.log(`   Slug: ${postWithLinks.slug}`);
+  console.log(`   Words: ~${bodyWithLinks.split(" ").length}`);
 
   // Update llms.txt immediately
-  updateLlmsTxt(post.slug, post.title, post.description);
+  updateLlmsTxt(postWithLinks.slug, postWithLinks.title, postWithLinks.description);
 
   // Mark CSV row as published (topic queued, not yet live)
   if (calendarRowIndex !== null) {
