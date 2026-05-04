@@ -280,16 +280,18 @@ BODY:
   });
 
   const raw = response.choices[0]?.message?.content ?? "";
+  // Normalize: strip markdown bold markers GPT sometimes adds (e.g. **TITLE:**)
+  const normalized = raw.replace(/\*\*/g, "").replace(/\r\n/g, "\n");
 
   // Parse structured response
-  const titleMatch = raw.match(/^TITLE:\s*(.+)$/m);
-  const descMatch = raw.match(/^DESCRIPTION:\s*(.+)$/m);
-  const catMatch = raw.match(/^CATEGORY:\s*(.+)$/m);
-  const tagsMatch = raw.match(/^TAGS:\s*(.+)$/m);
-  const bodyMatch = raw.match(/^BODY:\n([\s\S]+)$/m);
+  const titleMatch = normalized.match(/^TITLE:\s*(.+)$/m);
+  const descMatch = normalized.match(/^DESCRIPTION:\s*(.+)$/m);
+  const catMatch = normalized.match(/^CATEGORY:\s*(.+)$/m);
+  const tagsMatch = normalized.match(/^TAGS:\s*(.+)$/m);
+  const bodyMatch = normalized.match(/^BODY:\s*\n([\s\S]+)$/m);
 
   if (!titleMatch || !bodyMatch) {
-    throw new Error("Response did not contain expected TITLE: or BODY: sections.\n\nRaw output:\n" + raw.slice(0, 500));
+    throw new Error("Response did not contain expected TITLE: or BODY: sections.\n\nRaw output:\n" + normalized.slice(0, 500));
   }
 
   const title = titleMatch[1].trim();
@@ -299,7 +301,8 @@ BODY:
     .split(",")
     .map((t: string) => t.trim())
     .filter(Boolean);
-  const body = bodyMatch[1].trim();
+  const rawBody = bodyMatch[1].trim();
+  const body = rawBody;
   const slug = toSlug(topic);
 
   return { title, slug, description, body, tags, category };

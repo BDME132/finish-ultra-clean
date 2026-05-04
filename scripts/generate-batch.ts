@@ -226,14 +226,16 @@ BODY:
   });
 
   const raw = response.choices[0]?.message?.content ?? "";
-  const titleMatch = raw.match(/^TITLE:\s*(.+)$/m);
-  const descMatch = raw.match(/^DESCRIPTION:\s*(.+)$/m);
-  const catMatch = raw.match(/^CATEGORY:\s*(.+)$/m);
-  const tagsMatch = raw.match(/^TAGS:\s*(.+)$/m);
-  const bodyMatch = raw.match(/^BODY:\n([\s\S]+)$/m);
+  // Normalize: strip markdown bold markers GPT sometimes adds (e.g. **TITLE:**)
+  const normalized = raw.replace(/\*\*/g, "").replace(/\r\n/g, "\n");
+  const titleMatch = normalized.match(/^TITLE:\s*(.+)$/m);
+  const descMatch = normalized.match(/^DESCRIPTION:\s*(.+)$/m);
+  const catMatch = normalized.match(/^CATEGORY:\s*(.+)$/m);
+  const tagsMatch = normalized.match(/^TAGS:\s*(.+)$/m);
+  const bodyMatch = normalized.match(/^BODY:\s*\n([\s\S]+)$/m);
 
   if (!titleMatch || !bodyMatch) {
-    throw new Error(`[${topic}] Response missing TITLE or BODY sections.\n\n${raw.slice(0, 300)}`);
+    throw new Error(`[${topic}] Response missing TITLE or BODY sections.\n\n${normalized.slice(0, 300)}`);
   }
 
   const title = titleMatch[1].trim();
