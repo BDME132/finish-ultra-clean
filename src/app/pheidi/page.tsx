@@ -1,9 +1,13 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import Header from "@/components/Header";
 import ChatInterface from "@/components/ChatInterface";
 import JsonLd from "@/components/JsonLd";
 import { pageMetadata } from "@/lib/seo-metadata";
 import { webApplicationJsonLd, SITE_URL } from "@/lib/schema";
+import { createSupabaseServer } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase";
+import { claimPendingPro } from "@/lib/claim-pending-pro";
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -22,7 +26,57 @@ const pheidiJsonLd = webApplicationJsonLd({
   applicationCategory: "LifestyleApplication",
 });
 
-export default function PheidiPage() {
+interface PheidiPageProps {
+  searchParams: Promise<{ upgraded?: string }>;
+}
+
+interface InitialAuthState {
+  userId: string | null;
+  userEmail: string | null;
+  isPro: boolean;
+}
+
+async function loadInitialAuth(): Promise<InitialAuthState> {
+  try {
+    const supabase = await createSupabaseServer();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return { userId: null, userEmail: null, isPro: false };
+    }
+
+    // Claim any pending pro subscription tied to this email.
+    let claimed = false;
+    if (user.email) {
+      claimed = await claimPendingPro(user.id, user.email);
+    }
+
+    // Read pro status (post-claim).
+    const service = getSupabase();
+    const { data: profile } = await service
+      .from("profiles")
+      .select("is_pro")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    return {
+      userId: user.id,
+      userEmail: user.email ?? null,
+      isPro: claimed || profile?.is_pro === true,
+    };
+  } catch {
+    return { userId: null, userEmail: null, isPro: false };
+  }
+}
+
+export default async function PheidiPage({ searchParams }: PheidiPageProps) {
+  const params = await searchParams;
+  const justUpgraded = params.upgraded === "1";
+
+  const initialAuth = await loadInitialAuth();
+  const showAnonUpgradedPrompt = justUpgraded && !initialAuth.userId;
+
   return (
     <>
       <Header />
@@ -37,10 +91,18 @@ export default function PheidiPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
-            <div>
+            <div className="flex-1">
               <h2 className="font-headline text-sm font-semibold text-[#E2E8F0]">FinishUltra</h2>
               <p className="text-xs text-[#94A3B8]">Pheidi</p>
             </div>
+            {initialAuth.isPro && (
+              <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 border border-primary/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.17c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.966c.3.922-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.196-1.539-1.118l1.286-3.966a1 1 0 00-.364-1.118L2.075 9.394c-.783-.57-.38-1.81.588-1.81h4.17a1 1 0 00.95-.69l1.286-3.967z" />
+                </svg>
+                Pro
+              </span>
+            )}
           </div>
 
           {/* Capabilities */}
@@ -71,7 +133,27 @@ export default function PheidiPage() {
 
         {/* Chat area */}
         <div className="flex-1 flex flex-col min-w-0 shadow-[0_0_80px_rgba(0,102,255,0.06)]">
-          <ChatInterface />
+          {showAnonUpgradedPrompt && (
+            <div className="bg-emerald-900/40 border-b border-emerald-700/60 text-emerald-100 px-6 py-3 text-sm flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span className="font-medium">Payment received — last step:</span>
+              <span>
+                Create your account using the same email you entered at checkout to activate Pheidi Pro.
+              </span>
+              <Link
+                href="/login?next=/pheidi"
+                className="ml-auto inline-flex items-center rounded-md bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 text-sm font-medium"
+              >
+                Sign up / sign in
+              </Link>
+            </div>
+          )}
+          <ChatInterface
+            seeded
+            initialUserId={initialAuth.userId}
+            initialUserEmail={initialAuth.userEmail}
+            initialIsPro={initialAuth.isPro}
+            justUpgraded={justUpgraded && !!initialAuth.userId}
+          />
         </div>
       </main>
     </>
