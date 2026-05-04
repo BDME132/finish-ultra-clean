@@ -11,7 +11,7 @@ tags:
   - "injury prevention"
 readTime: "6 min read"
 image: "/images/blog/cross-training-ultra-runners.jpg"
-publishDate: "2027-09-22"
+publishDate: "2026-06-19"
 relatedSlugs:
   - "first-50k-training-guide"
   - "strength-training-ultra-runners"

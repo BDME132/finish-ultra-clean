@@ -11,7 +11,7 @@ tags:
   - "first ultra"
 readTime: "8 min read"
 image: "/images/blog/best-beginner-50k-races-us.jpg"
-publishDate: "2026-09-09"
+publishDate: "2026-05-29"
 relatedSlugs:
   - "choosing-first-ultra"
   - "how-hard-is-a-50k"

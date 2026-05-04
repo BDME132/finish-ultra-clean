@@ -11,7 +11,7 @@ tags:
   - "travel"
 readTime: "8 min read"
 image: "/images/blog/beginner-ultra-marathons-europe.jpg"
-publishDate: "2027-10-06"
+publishDate: "2026-05-22"
 relatedSlugs:
   - "choosing-first-ultra"
   - "how-hard-is-a-50k"

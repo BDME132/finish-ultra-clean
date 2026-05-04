@@ -11,7 +11,7 @@ tags:
   - "ultra training"
 readTime: "6 min read"
 image: "/images/blog/back-to-back-long-runs-ultra.jpg"
-publishDate: "2027-12-29"
+publishDate: "2026-05-18"
 relatedSlugs:
   - "first-50k-training-guide"
   - "strength-training-ultra-runners"

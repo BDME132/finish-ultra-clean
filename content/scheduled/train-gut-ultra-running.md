@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "6 min read"
 image: "/images/blog/train-gut-ultra-running.jpg"
-publishDate: "2026-12-30"
+publishDate: "2026-08-28"
 relatedSlugs:
   - "ultra-nutrition-beginners"
   - "electrolyte-guide-ultra-runners"

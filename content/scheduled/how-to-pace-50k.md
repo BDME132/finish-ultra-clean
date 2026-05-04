@@ -11,7 +11,7 @@ tags:
   - "race day"
 readTime: "7 min read"
 image: "/images/blog/how-to-pace-50k.jpg"
-publishDate: "2027-04-07"
+publishDate: "2026-07-20"
 relatedSlugs:
   - "how-hard-is-a-50k"
   - "first-trail-race-what-to-expect"

@@ -11,7 +11,7 @@ tags:
   - "injury prevention"
 readTime: "6 min read"
 image: "/images/blog/trail-shoe-rotation-budget.jpg"
-publishDate: "2026-09-23"
+publishDate: "2026-08-24"
 relatedSlugs:
   - "trail-shoe-rotation"
   - "hoka-speedgoat-6-review"

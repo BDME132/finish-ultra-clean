@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "6 min read"
 image: "/images/blog/prevent-chafing-trail-running.jpg"
-publishDate: "2026-08-26"
+publishDate: "2026-08-07"
 relatedSlugs:
   - "what-to-wear-first-ultra"
   - "race-day-checklist"

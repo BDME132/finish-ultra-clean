@@ -11,7 +11,7 @@ tags:
   - "social running"
 readTime: "5 min read"
 image: "/images/blog/ultra-running-group-training.jpg"
-publishDate: "2028-04-06"
+publishDate: "2026-09-25"
 relatedSlugs:
   - "first-50k-training-guide"
   - "ultra-training-full-time-job"

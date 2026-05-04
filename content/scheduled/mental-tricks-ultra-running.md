@@ -11,7 +11,7 @@ tags:
   - "ultra running"
 readTime: "6 min read"
 image: "/images/blog/mental-tricks-ultra-running.jpg"
-publishDate: "2027-06-02"
+publishDate: "2026-07-24"
 relatedSlugs:
   - "ultra-running-goals-beginner"
   - "how-to-pace-50k"

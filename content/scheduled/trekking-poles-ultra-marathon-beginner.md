@@ -11,7 +11,7 @@ tags:
   - "race strategy"
 readTime: "6 min read"
 image: "/images/blog/trekking-poles-ultra-marathon-beginner.jpg"
-publishDate: "2027-03-10"
+publishDate: "2026-09-04"
 relatedSlugs:
   - "what-to-wear-first-ultra"
   - "downhill-running-technique-ultra"

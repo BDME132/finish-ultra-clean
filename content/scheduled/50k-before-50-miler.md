@@ -11,7 +11,7 @@ tags:
   - "ultra distance"
 readTime: "5 min read"
 image: "/images/blog/50k-before-50-miler.jpg"
-publishDate: "2027-07-14"
+publishDate: "2026-05-08"
 relatedSlugs:
   - "how-hard-is-a-50k"
   - "pick-right-ultra-distance"

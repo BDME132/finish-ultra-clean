@@ -11,7 +11,7 @@ tags:
   - "motivation"
 readTime: "5 min read"
 image: "/images/blog/dnf-ultra-marathon-come-back.jpg"
-publishDate: "2027-12-01"
+publishDate: "2026-06-22"
 relatedSlugs:
   - "ultra-running-goals-beginner"
   - "mental-tricks-ultra-running"

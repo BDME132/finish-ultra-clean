@@ -11,7 +11,7 @@ tags:
   - "what to expect"
 readTime: "6 min read"
 image: "/images/blog/first-trail-race-what-to-expect.jpg"
-publishDate: "2027-03-24"
+publishDate: "2026-07-03"
 relatedSlugs:
   - "race-day-checklist"
   - "how-hard-is-a-50k"

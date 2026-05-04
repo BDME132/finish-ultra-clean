@@ -11,7 +11,7 @@ tags:
   - "training"
 readTime: "5 min read"
 image: "/images/blog/ultra-running-goals-beginner.jpg"
-publishDate: "2026-12-16"
+publishDate: "2026-09-21"
 relatedSlugs:
   - "first-50k-training-guide"
   - "how-hard-is-a-50k"

@@ -11,7 +11,7 @@ tags:
   - "learning"
 readTime: "5 min read"
 image: "/images/blog/ultra-running-podcasts.jpg"
-publishDate: "2027-12-15"
+publishDate: "2026-10-02"
 relatedSlugs:
   - "how-hard-is-a-50k"
   - "pick-right-ultra-distance"

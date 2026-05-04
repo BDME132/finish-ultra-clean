@@ -11,7 +11,7 @@ tags:
   - "race entry"
 readTime: "7 min read"
 image: "/images/blog/ultramarathon-cost.jpg"
-publishDate: "2026-08-12"
+publishDate: "2026-10-12"
 relatedSlugs:
   - "choosing-first-ultra"
   - "what-to-wear-first-ultra"

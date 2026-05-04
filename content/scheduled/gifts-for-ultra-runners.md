@@ -11,7 +11,7 @@ tags:
   - "budget"
 readTime: "6 min read"
 image: "/images/blog/gifts-for-ultra-runners.jpg"
-publishDate: "2026-12-02"
+publishDate: "2026-07-06"
 relatedSlugs:
   - "what-to-wear-first-ultra"
   - "ultramarathon-cost"

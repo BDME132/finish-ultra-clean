@@ -11,7 +11,7 @@ tags:
   - "ultra distance"
 readTime: "6 min read"
 image: "/images/blog/pick-right-ultra-distance.jpg"
-publishDate: "2026-07-15"
+publishDate: "2026-08-03"
 relatedSlugs:
   - "how-hard-is-a-50k"
   - "choosing-first-ultra"

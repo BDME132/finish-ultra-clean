@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "5 min read"
 image: "/images/blog/ultra-race-canceled.jpg"
-publishDate: "2026-10-21"
+publishDate: "2026-09-14"
 relatedSlugs:
   - "choosing-first-ultra"
   - "first-50k-training-guide"

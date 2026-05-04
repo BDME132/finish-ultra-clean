@@ -11,7 +11,7 @@ tags:
   - "night running"
 readTime: "6 min read"
 image: "/images/blog/caffeine-ultra-running.jpg"
-publishDate: "2027-01-13"
+publishDate: "2026-06-15"
 relatedSlugs:
   - "ultra-nutrition-beginners"
   - "train-gut-ultra-running"

@@ -11,7 +11,7 @@ tags:
   - "product comparison"
 readTime: "6 min read"
 image: "/images/blog/tailwind-vs-skratch-vs-lmnt.jpg"
-publishDate: "2027-08-25"
+publishDate: "2026-08-21"
 relatedSlugs:
   - "electrolyte-guide-ultra-runners"
   - "best-electrolyte-drinks-ultra-running-2027"

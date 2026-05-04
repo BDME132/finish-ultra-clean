@@ -11,7 +11,7 @@ tags:
   - "hour by hour"
 readTime: "7 min read"
 image: "/images/blog/race-day-nutrition-plan-ultra.jpg"
-publishDate: "2028-04-20"
+publishDate: "2026-08-10"
 relatedSlugs:
   - "ultra-nutrition-beginners"
   - "train-gut-ultra-running"

@@ -11,7 +11,7 @@ tags:
   - "health"
 readTime: "6 min read"
 image: "/images/blog/overtraining-signs-ultra-runner.jpg"
-publishDate: "2028-01-26"
+publishDate: "2026-07-31"
 relatedSlugs:
   - "first-50k-training-guide"
   - "ultra-marathon-recovery-plan"

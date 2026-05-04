@@ -11,7 +11,7 @@ tags:
   - "mindset"
 readTime: "6 min read"
 image: "/images/blog/what-no-one-tells-you-ultramarathon.jpg"
-publishDate: "2028-05-04"
+publishDate: "2026-10-19"
 relatedSlugs:
   - "how-hard-is-a-50k"
   - "mental-tricks-ultra-running"

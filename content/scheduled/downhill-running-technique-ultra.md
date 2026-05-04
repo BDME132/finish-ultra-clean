@@ -11,7 +11,7 @@ tags:
   - "trail running"
 readTime: "7 min read"
 image: "/images/blog/downhill-running-technique-ultra.jpg"
-publishDate: "2027-01-27"
+publishDate: "2026-06-26"
 relatedSlugs:
   - "strength-training-ultra-runners"
   - "first-50k-training-guide"

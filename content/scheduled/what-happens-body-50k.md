@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "7 min read"
 image: "/images/blog/what-happens-body-50k.jpg"
-publishDate: "2027-08-11"
+publishDate: "2026-10-16"
 relatedSlugs:
   - "ultra-nutrition-beginners"
   - "how-to-pace-50k"

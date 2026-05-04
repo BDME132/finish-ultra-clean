@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "6 min read"
 image: "/images/blog/how-to-carry-water-trail-running.jpg"
-publishDate: "2027-07-28"
+publishDate: "2026-07-17"
 relatedSlugs:
   - "running-vest-vs-hydration-pack"
   - "best-running-vests-2025"

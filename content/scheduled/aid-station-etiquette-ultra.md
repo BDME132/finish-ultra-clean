@@ -11,7 +11,7 @@ tags:
   - "ultra culture"
 readTime: "5 min read"
 image: "/images/blog/aid-station-etiquette-ultra.jpg"
-publishDate: "2027-05-19"
+publishDate: "2026-05-15"
 relatedSlugs:
   - "first-trail-race-what-to-expect"
   - "race-day-checklist"

@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "6 min read"
 image: "/images/blog/blisters-during-ultra-marathon.jpg"
-publishDate: "2027-09-08"
+publishDate: "2026-06-12"
 relatedSlugs:
   - "prevent-chafing-trail-running"
   - "what-to-wear-first-ultra"

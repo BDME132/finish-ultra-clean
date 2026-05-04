@@ -11,7 +11,7 @@ tags:
   - "race preparation"
 readTime: "7 min read"
 image: "/images/blog/night-running-ultra-training.jpg"
-publishDate: "2026-10-07"
+publishDate: "2026-07-27"
 relatedSlugs:
   - "first-50k-training-guide"
   - "race-day-checklist"

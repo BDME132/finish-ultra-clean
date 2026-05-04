@@ -10,7 +10,7 @@ tags:
   - "training"
 readTime: "6 min read"
 image: "/images/blog/mental-toughness-ultra-running.jpg"
-publishDate: "2099-01-01"
+publishDate: "2026-06-29"
 relatedSlugs:
   - "how-hard-is-a-50k"
   - "first-50k-training-guide"

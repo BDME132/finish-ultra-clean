@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "6 min read"
 image: "/images/blog/ultra-marathon-recovery-plan.jpg"
-publishDate: "2027-06-16"
+publishDate: "2026-09-11"
 relatedSlugs:
   - "first-50k-training-guide"
   - "strength-training-ultra-runners"

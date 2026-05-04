@@ -11,7 +11,7 @@ tags:
   - "cross training"
 readTime: "6 min read"
 image: "/images/blog/treadmill-ultra-training.jpg"
-publishDate: "2026-11-18"
+publishDate: "2026-08-31"
 relatedSlugs:
   - "first-50k-training-guide"
   - "ultra-training-cold-weather"

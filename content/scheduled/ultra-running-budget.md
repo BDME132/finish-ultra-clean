@@ -11,7 +11,7 @@ tags:
   - "money-saving"
 readTime: "6 min read"
 image: "/images/blog/ultra-running-budget.jpg"
-publishDate: "2028-01-12"
+publishDate: "2026-09-18"
 relatedSlugs:
   - "ultramarathon-cost"
   - "what-to-wear-first-ultra"

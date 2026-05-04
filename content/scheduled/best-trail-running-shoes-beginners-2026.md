@@ -11,7 +11,7 @@ tags:
   - "2026"
 readTime: "8 min read"
 image: "/images/blog/best-trail-running-shoes-beginners-2026.jpg"
-publishDate: "2026-07-29"
+publishDate: "2026-06-08"
 relatedSlugs:
   - "hoka-speedgoat-6-review"
   - "trail-shoe-rotation"

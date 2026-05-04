@@ -11,7 +11,7 @@ tags:
   - "water carrying"
 readTime: "6 min read"
 image: "/images/blog/running-vest-vs-hydration-pack.jpg"
-publishDate: "2027-02-10"
+publishDate: "2026-08-17"
 relatedSlugs:
   - "best-running-vests-2025"
   - "what-to-wear-first-ultra"

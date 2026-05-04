@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "5 min read"
 image: "/images/blog/best-anti-chafe-products-running.jpg"
-publishDate: "2028-02-09"
+publishDate: "2026-05-25"
 relatedSlugs:
   - "prevent-chafing-trail-running"
   - "what-to-wear-first-ultra"

@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "7 min read"
 image: "/images/blog/ultra-training-cold-weather.jpg"
-publishDate: "2026-11-04"
+publishDate: "2026-10-05"
 relatedSlugs:
   - "first-50k-training-guide"
   - "what-to-wear-first-ultra"

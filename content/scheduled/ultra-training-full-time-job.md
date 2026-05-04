@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "7 min read"
 image: "/images/blog/ultra-training-full-time-job.jpg"
-publishDate: "2027-11-03"
+publishDate: "2026-10-09"
 relatedSlugs:
   - "first-50k-training-guide"
   - "treadmill-ultra-training"

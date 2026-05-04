@@ -11,7 +11,7 @@ tags:
   - "packing"
 readTime: "6 min read"
 image: "/images/blog/ultra-marathon-drop-bag.jpg"
-publishDate: "2028-02-23"
+publishDate: "2026-09-07"
 relatedSlugs:
   - "race-day-checklist"
   - "first-trail-race-what-to-expect"

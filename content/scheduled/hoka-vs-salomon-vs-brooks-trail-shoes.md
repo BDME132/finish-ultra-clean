@@ -12,7 +12,7 @@ tags:
   - "beginner"
 readTime: "7 min read"
 image: "/images/blog/hoka-vs-salomon-vs-brooks-trail-shoes.jpg"
-publishDate: "2027-04-21"
+publishDate: "2026-07-10"
 relatedSlugs:
   - "best-trail-running-shoes-beginners-2026"
   - "hoka-speedgoat-6-review"

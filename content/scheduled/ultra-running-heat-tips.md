@@ -11,7 +11,7 @@ tags:
   - "ultra running"
 readTime: "7 min read"
 image: "/images/blog/ultra-running-heat-tips.jpg"
-publishDate: "2027-05-05"
+publishDate: "2026-09-28"
 relatedSlugs:
   - "electrolyte-guide-ultra-runners"
   - "ultra-nutrition-beginners"

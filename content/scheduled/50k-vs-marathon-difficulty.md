@@ -11,7 +11,7 @@ tags:
   - "getting started"
 readTime: "5 min read"
 image: "/images/blog/50k-vs-marathon-difficulty.jpg"
-publishDate: "2028-03-23"
+publishDate: "2026-05-11"
 relatedSlugs:
   - "how-hard-is-a-50k"
   - "pick-right-ultra-distance"

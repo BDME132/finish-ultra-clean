@@ -11,7 +11,7 @@ tags:
   - "getting started"
 readTime: "6 min read"
 image: "/images/blog/road-ultra-vs-trail-ultra.jpg"
-publishDate: "2028-03-09"
+publishDate: "2026-08-14"
 relatedSlugs:
   - "pick-right-ultra-distance"
   - "choosing-first-ultra"

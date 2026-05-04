@@ -11,7 +11,7 @@ tags:
   - "safety"
 readTime: "6 min read"
 image: "/images/blog/best-headlamps-ultra-running.jpg"
-publishDate: "2027-11-17"
+publishDate: "2026-06-05"
 relatedSlugs:
   - "night-running-ultra-training"
   - "what-to-wear-first-ultra"

@@ -11,7 +11,7 @@ tags:
   - "budget"
 readTime: "7 min read"
 image: "/images/blog/homemade-ultra-running-nutrition.jpg"
-publishDate: "2027-10-20"
+publishDate: "2026-07-13"
 relatedSlugs:
   - "real-food-ultra-marathon"
   - "ultra-nutrition-beginners"

@@ -11,7 +11,7 @@ tags:
   - "2027"
 readTime: "7 min read"
 image: "/images/blog/best-electrolyte-drinks-ultra-running-2027.jpg"
-publishDate: "2027-06-30"
+publishDate: "2026-06-01"
 relatedSlugs:
   - "electrolyte-guide-ultra-runners"
   - "ultra-nutrition-beginners"

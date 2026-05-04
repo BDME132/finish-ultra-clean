@@ -11,7 +11,7 @@ tags:
   - "beginner"
 readTime: "5 min read"
 image: "/images/blog/what-to-eat-night-before-ultra.jpg"
-publishDate: "2027-02-24"
+publishDate: "2026-10-23"
 relatedSlugs:
   - "ultra-nutrition-beginners"
   - "train-gut-ultra-running"
