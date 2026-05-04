@@ -1,0 +1,51 @@
+name: Batch Generate Blog Posts
+
+# Trigger manually from the GitHub Actions tab.
+# Set count to how many new posts you want generated (up to 48).
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "Number of posts to generate"
+        required: true
+        default: "10"
+        type: string
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate posts
+        run: npx tsx scripts/generate-batch.ts --count=${{ github.event.inputs.count }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Commit and push
+        run: |
+          git config user.name "FinishUltra Bot"
+          git config user.email "bot@finishultra.com"
+          git add content/scheduled/
+          git add content/blog-calendar.csv
+          git add public/llms.txt || true
+          git diff --staged --quiet && echo "Nothing generated." || git commit -m "📝 Batch generate ${{ github.event.inputs.count }} blog posts" && git push
